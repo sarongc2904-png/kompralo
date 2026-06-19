@@ -52,8 +52,8 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Sofía & Alejandro | Nuestra Boda",
-  description: "Acompáñanos a celebrar nuestra unión matrimonial el 24 de Octubre de 2026. RSVP digital, itinerario y mesa de regalos.",
+  title: "Kompralo — Invitaciones digitales",
+  description: "Crea y comparte tu invitación digital para bodas, XV años, bautizos y más.",
 };
 
 export default function RootLayout({
