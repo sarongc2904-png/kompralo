@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { sendMagicLink } from './actions';
@@ -162,9 +163,9 @@ export default function LoginPage() {
       <div aria-hidden style={{ position:'absolute', bottom:'-60px', left:'-60px', width:'220px', height:'220px', borderRadius:'50%', background:'radial-gradient(circle, rgba(184,150,106,0.07) 0%, transparent 70%)', pointerEvents:'none' }} />
 
       {/* Back link */}
-      <a href="/invitaciones" style={{ position:'absolute', top:'1.25rem', left:'1.25rem', fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500 }}>
+      <Link href="/invitaciones" style={{ position:'absolute', top:'1.25rem', left:'1.25rem', fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500 }}>
         ← Volver
-      </a>
+      </Link>
 
       {/* Card */}
       <div className="lg2-card" style={{
@@ -204,9 +205,9 @@ export default function LoginPage() {
         <div style={{ marginTop:'1.75rem', paddingTop:'1.375rem', borderTop:`1px solid ${T.border}`, textAlign:'center' }}>
           <p style={{ fontSize:'.78rem', color:T.light, margin:0 }}>
             ¿Aún no tienes una invitación?{' '}
-            <a href="/invitaciones/precios" className="lg2-secondary-link" style={{ color:T.gold, fontWeight:700, textDecoration:'none' }}>
+            <Link href="/invitaciones/precios" className="lg2-secondary-link" style={{ color:T.gold, fontWeight:700, textDecoration:'none' }}>
               Ver planes →
-            </a>
+            </Link>
           </p>
         </div>
       </div>

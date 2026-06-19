@@ -16,6 +16,19 @@ interface TimeLeft {
   seconds: number;
 }
 
+function useCompactCountdown() {
+  const [isCompact, setIsCompact] = useState(true);
+
+  useEffect(() => {
+    const update = () => setIsCompact(window.innerWidth < 768);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  return isCompact;
+}
+
 function isEventPast(eventDate: string): boolean {
   return +new Date(eventDate) - +new Date() <= 0;
 }
@@ -37,6 +50,7 @@ function getTimeLeft(eventDate: string): TimeLeft {
 // ─── FLIP CARD ────────────────────────────────────────────────────────────────
 
 function FlipCard({ value, label, theme, maxDigits = 2 }: { value: number; label: string; theme: Theme; maxDigits?: number }) {
+  const isCompact = useCompactCountdown();
   const prevRef     = useRef(value);
   const [display,   setDisplay]   = useState(value);
   const [prev,      setPrev]      = useState(value);
@@ -63,10 +77,10 @@ function FlipCard({ value, label, theme, maxDigits = 2 }: { value: number; label
   const currStr = fmt(display);
   const prevStr = fmt(prev);
 
-  // Responsive card sizing via CSS custom props
-  const W = maxDigits > 2 ? 110 : 92;
-  const H = 116;
-  const FS = maxDigits > 2 ? 52 : 56;
+  // Fixed pixel sizing is kept for the flip math; compact values prevent mobile overflow.
+  const W = isCompact ? (maxDigits > 2 ? 82 : 74) : (maxDigits > 2 ? 110 : 92);
+  const H = isCompact ? 92 : 116;
+  const FS = isCompact ? (maxDigits > 2 ? 36 : 40) : (maxDigits > 2 ? 52 : 56);
   const HALF = H / 2;
 
   const cardBase: React.CSSProperties = {
@@ -96,7 +110,7 @@ function FlipCard({ value, label, theme, maxDigits = 2 }: { value: number; label
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isCompact ? 10 : 14, minWidth: 0 }}>
       {/* Card */}
       <div style={{ position: 'relative', width: W, height: H, perspective: '600px' }}>
 
@@ -187,7 +201,7 @@ function FlipCard({ value, label, theme, maxDigits = 2 }: { value: number; label
 
       {/* Label */}
       <span style={{
-        fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase',
+        fontSize: isCompact ? 8 : 9, letterSpacing: isCompact ? '0.18em' : '0.28em', textTransform: 'uppercase',
         color: theme.colors.textSecondary || '#7A5C35', fontFamily: 'Georgia, serif', opacity: 1, fontWeight: 600,
       }}>
         {label}
@@ -240,7 +254,7 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
   ];
 
   return (
-    <section className="pt-32 pb-28 md:pt-40 md:pb-36 px-4 bg-transparent text-center select-none">
+    <section className="pt-28 pb-24 md:pt-40 md:pb-36 px-4 bg-transparent text-center select-none overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -252,7 +266,7 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
         <p className={`text-xs uppercase tracking-[0.3em] mb-3 ${theme.accentText} ${theme.bodyFont}`}>
           {eventPassed ? 'Un Momento Especial' : 'Cuenta Regresiva'}
         </p>
-        <svg width="100" height="18" viewBox="0 0 100 18" fill="none" className="mb-10 opacity-40">
+        <svg width="100" height="18" viewBox="0 0 100 18" fill="none" className="mb-8 md:mb-10 opacity-40">
           <line x1="0"  y1="9" x2="40" y2="9" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.7" />
           <circle cx="50" cy="9" r="3" fill={`var(--v2-color-accent, ${theme.colors.accent})`} />
           <line x1="60" y1="9" x2="100" y2="9" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.7" />
@@ -288,11 +302,15 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
           </motion.div>
         ) : (
           /* ── COUNTDOWN STATE ────────────────────────────────────────────── */
-          <div className="flex items-center gap-3 md:gap-5">
+          <div className="grid w-full max-w-[360px] grid-cols-2 place-items-center gap-x-4 gap-y-7 px-1 md:flex md:max-w-none md:items-center md:justify-center md:gap-5 md:px-0">
             {units.map((u, i) => (
               <React.Fragment key={u.label}>
                 <FlipCard value={u.value} label={u.label} maxDigits={u.max} theme={theme} />
-                {i < units.length - 1 && <Separator theme={theme} />}
+                {i < units.length - 1 && (
+                  <div className="hidden md:block">
+                    <Separator theme={theme} />
+                  </div>
+                )}
               </React.Fragment>
             ))}
           </div>

@@ -448,7 +448,7 @@ function HeroSection() {
             fontStyle:'italic',
             fontWeight:500,
           }}>
-            "Compra tu invitación, personalízala en línea y compártela por WhatsApp con todos tus invitados."
+            &quot;Compra tu invitación, personalízala en línea y compártela por WhatsApp con todos tus invitados.&quot;
           </p>
 
           {/* CTAs */}

@@ -57,7 +57,7 @@ export default function InvitationRenderer({
 
   return (
     <div
-      className={`min-h-screen relative transition-colors duration-1000 ${theme.bodyText}`}
+      className={`min-h-screen relative min-w-0 overflow-x-hidden transition-colors duration-1000 ${theme.bodyText}`}
       data-render-mode={mode}
       data-plan-id={plan.id}
       data-theme-v2={themeV2.id}

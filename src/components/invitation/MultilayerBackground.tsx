@@ -24,7 +24,7 @@ function FloatingHearts() {
     canvas.width = W;
     canvas.height = H;
 
-    const COUNT = Math.min(Math.floor(W * H / 18000), 55);
+    const COUNT = Math.min(Math.floor(W * H / 18000), W < 768 ? 18 : 55);
 
     type Heart = {
       x: number; y: number;
@@ -590,24 +590,27 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
 
       {/* 1. Parallax Layer 1 — deep/slow (0.04× scroll + mouse depth 1) */}
       <motion.div
+        className="invitation-bg-layer invitation-bg-layer-1"
         aria-hidden="true"
-        style={{ x: xLayer1, y: yLayer1, position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        style={{ x: xLayer1, y: yLayer1, position: 'absolute', inset: 0, pointerEvents: 'none', willChange: isMobile ? 'auto' : 'transform' }}
       >
         {layerContent.layer1}
       </motion.div>
 
       {/* 2. Parallax Layer 2 — midground (0.1× scroll + mouse depth 2) */}
       <motion.div
+        className="invitation-bg-layer invitation-bg-layer-2"
         aria-hidden="true"
-        style={{ x: xLayer2, y: yLayer2, position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        style={{ x: xLayer2, y: yLayer2, position: 'absolute', inset: 0, pointerEvents: 'none', willChange: isMobile ? 'auto' : 'transform' }}
       >
         {layerContent.layer2}
       </motion.div>
 
       {/* 3. Parallax Layer 3 — foreground drift (0.2× scroll + mouse depth 3) */}
       <motion.div
+        className="invitation-bg-layer invitation-bg-layer-3"
         aria-hidden="true"
-        style={{ x: xLayer3, y: yLayer3, position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        style={{ x: xLayer3, y: yLayer3, position: 'absolute', inset: 0, pointerEvents: 'none', willChange: isMobile ? 'auto' : 'transform' }}
       >
         {layerContent.layer3}
       </motion.div>

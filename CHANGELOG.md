@@ -5,6 +5,129 @@
 
 ---
 
+## FASE AWWWARDS-PUBLIC-LANDING-UPGRADE — Diseño editorial premium con Framer Motion
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Elevar todas las páginas públicas a calidad Awwwards usando Framer Motion (ya instalado v12.40.0), tipografía editorial (Playfair Display / Cormorant Garamond), paleta ivory/cream/gold/dark y motion con curva `[0.65, 0, 0.35, 1]`. Mockup de teléfono CSS puro con dynamic island y badges flotantes.
+
+### Archivos creados / modificados
+
+- `src/components/public/Motion.tsx` — **NUEVO** — Client Component con Reveal, Stagger, Item, HoverCard, HoverButton
+- `src/app/invitaciones/page.tsx` — reescritura completa (editorial, phone mockup, DemoTeaser, dark benefits, event cards)
+- `src/app/invitaciones/precios/page.tsx` — Stagger/Item/HoverCard en cards, badge MÁS POPULAR, planMeta, microcopy post-compra
+- `src/app/checkout/success/page.tsx` — Reveal, check animado SVG, próximos pasos con íconos, sin `/dashboard` links
+- `src/app/login/page.tsx` — animación de entrada, orbs decorativos, gold accent top, inputs con focus ring gold
+
+### Cambios realizados
+
+1. **`Motion.tsx`** — utilidades de scroll reveal (`Reveal`, `Stagger`, `Item`) y hover (`HoverCard`, `HoverButton`) con `useInView`. Fire-once, margin `-72px 0px`. Easing cubic `[0.65, 0, 0.35, 1]`.
+2. **`/invitaciones` hero** — animaciones CSS puras (no JS) para LCP rápido: `aw-hero-label`, `aw-hero-h1`, `aw-hero-body`, `aw-hero-cta`, `aw-phone-in`. Framer Motion solo debajo del fold.
+3. **Phone mockup CSS** — iPhone simulado con dynamic island (oval recortado), contenido de invitación de boda, 3 badges flotantes (`aw-badge-a/b/c`) con rotación + float estagger.
+4. **DemoTeaser** — nueva sección con enlace a demo `/sofia-y-alejandro`.
+5. **5 event cards** — gradientes únicos por tipo de evento, inicial decorativa fantasma, hover lift.
+6. **Benefits section** — fondo dark, íconos en anillo gold, stagger reveals.
+7. **`/precios`** — `ProductCard` envuelto en `HoverCard`, featured card dark con inset box-shadow dorado, badge MÁS POPULAR, `planMeta` con copy `ideal` + `highlight`.
+8. **`/checkout/success`** — eliminados links a `/dashboard`, eliminado `?email=` de URLs, email mostrado solo en la UI del card de próximos pasos.
+9. **`/login`** — animación de entrada card, orbs radial gradient, top accent gold 3px, foco gold `rgba(184,150,106,0.14)`.
+10. **`prefers-reduced-motion`** — todos los `@keyframes` deshabilitados vía media query CSS en cada página.
+11. Fix TS1117: eliminada propiedad `color` duplicada en `TopNav` del `<Link>` de "Ver planes".
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK
+- `npm run build`: OK
+- Commit: `d672020`
+
+### Notas
+
+- GSAP instalado pero no utilizado — Framer Motion fue suficiente.
+- Páginas raíz permanecen Server Components (`○` static en build output).
+- `CheckoutButton` no modificado; recibe `productId`, `label`, `className` sin cambios.
+
+---
+
+## FASE PUBLIC-PAGES-PREMIUM-MOTION-VISUALS — Animaciones CSS y mejoras visuales premium
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Agregar animaciones CSS/JS, phone mockup, hover lifts, event cards con gradientes únicos y mejoras visuales a todas las páginas públicas sin tocar lógica crítica (Stripe, Auth, Supabase, checkout, webhook).
+
+### Archivos modificados
+
+- `src/app/invitaciones/page.tsx` — phone mockup, badges flotantes, event cards con color, benefits dark section, step connectors
+- `src/app/invitaciones/precios/page.tsx` — pricing cards con hover, badge MÁS POPULAR, trust microcopy
+- `src/app/checkout/success/page.tsx` — check animado, próximos pasos, eliminados links a `/dashboard`
+- `src/app/login/page.tsx` — animación de entrada, focus ring gold, back link, "Ver planes" footer
+- `src/app/cliente/page.tsx` — `OrderCard` mejorado, empty state con CTA a precios
+
+### Cambios realizados
+
+1. Phone mockup CSS puro en hero de `/invitaciones`: dynamic island, contenido de invitación, badges flotantes.
+2. 5 cards de tipo de evento con gradientes únicos y letra decorativa fantasma.
+3. Benefits section con fondo dark y anillos icon dorados.
+4. Hover lift en pricing cards (`transform: translateY`).
+5. Badge "MÁS POPULAR" sobre la card de Premium.
+6. Success page: check SVG animado con spring, card de próximos pasos, eliminado `?email=` de URL.
+7. Login: animación entrada card, orb decorativo, focus gold, footer link.
+8. Cliente: `OrderCard` con border verde en `paid`, pills de estado con color, empty state descriptivo.
+9. `prefers-reduced-motion` en todos los `@keyframes`.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK
+- `npm run build`: OK
+- Commit: `d58d6a7`
+
+---
+
+## FASE EXPERT-TEAM-PUBLIC-PAGES-UPGRADE — Creación y mejora de páginas públicas
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Crear la landing `/invitaciones` (inexistente, daba 404), mejorar `/invitaciones/precios`, corregir `/checkout/success` y redirigir `/` a `/invitaciones` en producción.
+
+### Archivos creados / modificados
+
+- `src/app/invitaciones/page.tsx` — **CREADO** — landing page completa con hero, features, HowItWorks, event types, pricing teaser, FAQs, footer
+- `src/app/invitaciones/precios/page.tsx` — mejorado con mejor copy, trust signals, CheckoutButton funcional
+- `src/app/checkout/success/page.tsx` — eliminados links a `/dashboard`, eliminado `?email=` en URL, guidance de magic link
+- `src/app/page.tsx` — redirect a `/invitaciones` en producción, muestra DevPlayground en desarrollo
+- `src/app/login/page.tsx` — mejoras de copy y UX
+- `src/app/cliente/page.tsx` — mejoras de OrderCard y empty state
+
+### Cambios realizados
+
+1. `src/app/invitaciones/page.tsx` creado desde cero — ruta antes era 404.
+2. `src/app/page.tsx` actualizado: `redirect('/invitaciones')` en producción, `<DevPlayground />` en desarrollo.
+3. `/checkout/success`: removidos dos links a `/dashboard` (ruta admin), removido `?email=` de href de `/cliente`.
+4. `/invitaciones/precios`: mejor copy por plan, microcopy post-compra, trust signals.
+5. `/login`: copy actualizado, link de regreso a `/invitaciones`.
+6. `/cliente`: OrderCard mejorado, empty state con CTA.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK
+- `npm run build`: OK
+- Commit: `b708439`
+
+### Notas
+
+- Las tres rutas públicas (`/invitaciones`, `/invitaciones/precios`, `/login`) permanecen `○` (static) en el build output de Next.js.
+- `CheckoutButton` no fue modificado en ningún momento.
+- No se tocaron: Stripe, webhook, Supabase, Auth, Theme Engine V2, InvitationRenderer, MultilayerBackground, checkout flow, magic link flow.
+
+---
+
 ## FASE FEATURES-UI-SPACING-FIX — Espaciado y layout responsive del catálogo de features
 
 Fecha: 2026-06-19
@@ -2175,3 +2298,46 @@ npm run lint                                         # 0 errors, 53 warnings (pr
 - Los exports legacy en `repository.ts` se mantienen por compatibilidad (ninguna ruta activa los usa ya — solo por si acaso).
 - `DevPlayground` está en `src/components/invitation/dev/DevPlayground.tsx` — no importar desde rutas de producción.
 - `NEXT_PUBLIC_APP_URL` debe configurarse en `.env.local` para que OG URLs sean correctas en desarrollo.
+
+---
+
+## FASE INVITATION-MOBILE-PERFORMANCE-LAYERS-FIX - Invitacion publica movil, contador y fondos
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Corregir la experiencia publica de invitacion en movil sin tocar Stripe, webhook, orders, Resend, Auth, dashboard, pricing, asistentes ni logica de compra.
+
+### Archivos modificados
+
+- `src/components/invitation/Countdown.tsx` - contador responsive en 2 columnas para movil y fila original en desktop.
+- `src/components/invitation/InvitationRenderer.tsx` - contencion horizontal del renderer publico.
+- `src/components/invitation/MultilayerBackground.tsx` - clases por capa y menor carga de particulas en movil.
+- `src/app/globals.css` - mascaras/opacity responsive para fondos decorativos y soporte reduced motion.
+
+### Cambios realizados
+
+1. El contador dejo de depender de una sola fila fija en movil; ahora usa grid 2x2 bajo `md` y conserva separadores solo en desktop.
+2. Las flip cards usan tamanos compactos en pantallas menores a 768px para evitar cortes laterales.
+3. El renderer publico usa `overflow-x-hidden` y `min-w-0` para evitar scroll horizontal accidental.
+4. Las imagenes decorativas de fondo reciben mascara radial, opacity reducida y blur leve en movil para eliminar bordes cuadrados visibles.
+5. Las particulas del fondo bajan su limite en movil para reducir trabajo de canvas.
+6. Se agrego regla `prefers-reduced-motion` para desactivar animaciones decorativas de capas cuando el usuario lo solicita.
+
+### Estado
+
+- Finalizado: validacion visual y tecnica completada.
+
+### Validacion final de INVITATION-MOBILE-PERFORMANCE-LAYERS-FIX
+
+- `http://127.0.0.1:3003/sofia-y-alejandro`: 200 local.
+- `http://127.0.0.1:3003/i/sofia-y-alejandro`: 200 local.
+- `http://127.0.0.1:3003/invitacion/sofia-y-alejandro`: 200 local.
+- `http://127.0.0.1:3003/invitaciones/sofia-y-alejandro`: 200 local.
+- `http://127.0.0.1:3003/no-existe`: 404 local controlado.
+- Viewports medidos: 390px, 430px, 768px, 1440px.
+- Overflow horizontal medido: 0px en 390px y 430px; sin overflow positivo en 768px y 1440px.
+- `npx.cmd --no-install tsc --noEmit`: OK.
+- `npm.cmd --prefix "D:\josed\Descargas\invitacion maestra" run lint`: OK con 11 warnings preexistentes.
+- `npm.cmd --prefix "D:\josed\Descargas\invitacion maestra" run build`: OK.

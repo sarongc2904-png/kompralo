@@ -156,6 +156,46 @@ html, body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
+/* Public invitation background containment */
+.invitation-bg-layer {
+  max-width: 100vw;
+  contain: layout paint style;
+}
+
+.invitation-bg-layer img {
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+  transform-origin: center;
+  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 34%, rgba(0, 0, 0, 0.72) 56%, transparent 78%);
+  mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 34%, rgba(0, 0, 0, 0.72) 56%, transparent 78%);
+}
+
+@media (max-width: 767px) {
+  .paper-noise {
+    opacity: 0.025;
+  }
+
+  .invitation-bg-layer img {
+    width: clamp(220px, 78vw, 340px) !important;
+    max-width: none !important;
+    opacity: 0.2 !important;
+    filter: blur(0.35px) saturate(0.96);
+  }
+
+  .invitation-bg-layer-1 img {
+    opacity: 0.22 !important;
+  }
+
+  .invitation-bg-layer-2 img {
+    opacity: 0.16 !important;
+  }
+
+  .invitation-bg-layer-3 img {
+    opacity: 0.13 !important;
+  }
+}
+
 /* Elegant editorial styling */
 .editorial-border {
   position: relative;
@@ -354,3 +394,9 @@ html.lenis, html.lenis body {
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .invitation-bg-layer img,
+  .paper-noise {
+    animation: none !important;
+  }
+}
