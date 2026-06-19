@@ -149,14 +149,14 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         boxShadow:'0 4px 24px rgba(15,12,9,0.05)',
       }}>
         <p style={{ margin:'0 0 1.25rem', fontSize:'.6875rem', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', color:T.gold }}>
-          Pasos a seguir
+          Tu acceso
         </p>
 
         {[
-          { n:'1', icon:'📧', text: order?.customerEmail ? `Revisa el correo de confirmación de KOMPRALO en ${order.customerEmail}` : 'Revisa el correo de confirmación de KOMPRALO en tu bandeja' },
-          { n:'2', icon:'🔗', text:'Haz clic en "Enviar enlace de acceso" — recibirás un segundo correo con tu acceso seguro al editor' },
-          { n:'3', icon:'✏️', text:'Abre el enlace y personaliza tu invitación: fecha, fotos, textos y todo lo que necesites' },
-          { n:'4', icon:'💬', text:'Comparte el link con tus invitados por WhatsApp' },
+          { n:'1', icon:'📧', text: order?.customerEmail ? `Revisa el correo de KOMPRALO enviado a ${order.customerEmail}` : 'Revisa el correo de KOMPRALO en tu bandeja' },
+          { n:'2', icon:'🔗', text:'Haz clic en “Acceder a mi invitación”. Es un enlace seguro y no necesitas contraseña' },
+          { n:'3', icon:'✏️', text:'Personaliza tu invitación: fecha, fotos, textos y todo lo que necesites' },
+          { n:'4', icon:'💬', text:'Comparte el enlace de tu invitación con tus invitados por WhatsApp' },
         ].map(({ n, icon, text }) => (
           <div key={n} style={{ display:'flex', alignItems:'flex-start', gap:'.875rem', marginBottom: n !== '4' ? '1rem' : 0 }}>
             <div style={{
@@ -179,7 +179,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
           background:T.dark, color:'#F1E3C8',
           borderRadius:'.625rem', fontSize:'.875rem', fontWeight:700, textDecoration:'none',
         }}>
-          Iniciar sesión →
+          Acceso alternativo →
         </Link>
         <Link href="/cliente" className="cs2-btn" style={{
           display:'inline-block', padding:'.875rem 2rem',
@@ -193,7 +193,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
 
       <div className="cs2-anim cs2-d4" style={{ marginTop:'.5rem' }}>
         <p style={{ fontSize:'.78rem', color:T.light, margin:0 }}>
-          ¿No llegó el correo de acceso? Revisa tu bandeja de spam o escríbenos a soporte.
+          Te enviamos un solo correo de acceso. Si no aparece, revisa spam o escríbenos a soporte.
         </p>
       </div>
     </main>

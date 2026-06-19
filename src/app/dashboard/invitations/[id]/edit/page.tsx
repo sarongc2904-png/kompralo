@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { invitationRepository } from '@/domain/invitations';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import EditForm from './EditForm';
 import MediaForm from './MediaForm';
 import GalleryForm from './GalleryForm';
@@ -75,12 +76,18 @@ export default async function EditInvitationPage({ params }: Props) {
       // Supabase not configured — fall through to redirect
     }
 
-    if (!sessionUser) {
+    const hasScopedAccess = await verifyInvitationAccess(id);
+
+    if (!sessionUser && !hasScopedAccess) {
       redirect(`/login?redirect=/dashboard/invitations/${id}/edit`);
     }
 
     const ownerEmail = invitation.customerEmail ?? null;
-    if (ownerEmail && ownerEmail.toLowerCase() !== (sessionUser.email ?? '').toLowerCase()) {
+    if (
+      !hasScopedAccess &&
+      ownerEmail &&
+      ownerEmail.toLowerCase() !== (sessionUser?.email ?? '').toLowerCase()
+    ) {
       return (
         <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
           <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#C62828', marginBottom: '0.5rem' }}>

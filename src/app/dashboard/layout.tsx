@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import { DashboardShell } from './DashboardShell';
 
 function isAdminMode(): boolean {
@@ -36,10 +37,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const adminMode = isAdminMode();
 
   if (!adminMode) {
+    const headersList = await headers();
+    const pathname = headersList.get('x-pathname') ?? '/dashboard';
     const user = await getSessionUser();
-    if (!user) {
-      const headersList = await headers();
-      const pathname = headersList.get('x-pathname') ?? '/dashboard';
+    const editMatch = pathname.match(/^\/dashboard\/invitations\/([^/]+)\/edit\/?$/);
+    const hasScopedAccess = !user && editMatch
+      ? await verifyInvitationAccess(decodeURIComponent(editMatch[1]))
+      : false;
+
+    if (!user && !hasScopedAccess) {
       redirect(`/login?redirect=${encodeURIComponent(pathname)}`);
     }
   }

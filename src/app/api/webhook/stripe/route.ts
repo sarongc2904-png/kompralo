@@ -21,6 +21,7 @@ import type { PlanId } from '@/domain/plans/types';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { sendOrderConfirmationEmail } from '@/lib/resend';
+import { createInvitationAccessToken } from '@/lib/access/createInvitationAccessToken';
 
 function ok()  { return NextResponse.json({ received: true }, { status: 200 }); }
 function fail() { return NextResponse.json({ received: false }, { status: 400 }); }
@@ -152,14 +153,34 @@ export async function POST(request: NextRequest) {
         }
 
         try {
+          if (!finalInvitationId || !freshOrder) {
+            throw new Error('Invitation or order is not ready for customer access.');
+          }
+
+          const appUrlValue = process.env.NEXT_PUBLIC_APP_URL?.trim();
+          if (!appUrlValue) {
+            throw new Error('NEXT_PUBLIC_APP_URL is required to create the access link.');
+          }
+          const appUrl = new URL(appUrlValue);
+          if (appUrl.protocol !== 'https:' && process.env.NODE_ENV === 'production') {
+            throw new Error('NEXT_PUBLIC_APP_URL must use HTTPS in production.');
+          }
+
+          const { rawToken } = await createInvitationAccessToken({
+            invitationId: finalInvitationId,
+            orderId: freshOrder.id,
+            customerEmail,
+          });
+          const accessUrl = new URL('/access/consume', appUrl);
+          accessUrl.searchParams.set('token', rawToken);
+
           await sendOrderConfirmationEmail({
             to:              customerEmail,
             customerName,
             planId,
             amountTotal:     session.amount_total,
             currency:        session.currency,
-            invitationId:    finalInvitationId,
-            stripeSessionId: session.id,
+            accessUrl:       accessUrl.toString(),
           });
           await orderRepo.markConfirmationEmailSent(session.id);
           console.log('[webhook/stripe] confirmation email sent to %s (session=%s)', customerEmail, session.id);

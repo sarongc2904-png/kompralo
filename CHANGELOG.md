@@ -2379,3 +2379,57 @@ Corregir la experiencia publica de invitacion en movil sin tocar Stripe, webhook
 - `npx.cmd --no-install tsc --noEmit`: OK.
 - `npm.cmd --prefix "D:\josed\Descargas\invitacion maestra" run lint`: OK con 11 warnings preexistentes.
 - `npm.cmd --prefix "D:\josed\Descargas\invitacion maestra" run build`: OK.
+
+---
+
+## FASE ONE-EMAIL-ACCESS-FLOW - Acceso post-pago con un solo correo
+
+Fecha: 2026-06-19
+
+### Decisión técnica
+
+- El webhook genera un token opaco de 32 bytes y guarda únicamente su hash SHA-256.
+- El enlace es reutilizable durante 7 días para reducir incidencias por aperturas repetidas.
+- `/access/consume` valida token, expiración, orden pagada, invitación y email antes de crear acceso.
+- La cookie `kompralo_access` es HttpOnly, SameSite=Lax, Secure en producción y está firmada con HMAC-SHA256 mediante `ACCESS_TOKEN_SECRET`.
+- La cookie solo autoriza la invitación indicada; no habilita el dashboard general, listados ni otras invitaciones.
+
+### Archivos creados
+
+- `supabase/invitation_access_tokens.sql`
+- `src/lib/access/createInvitationAccessToken.ts`
+- `src/lib/access/verifyInvitationAccess.ts`
+- `src/app/access/consume/route.ts`
+
+### Archivos modificados
+
+- `.env.example`
+- `src/app/api/webhook/stripe/route.ts`
+- `src/lib/resend/emailTemplates.ts`
+- `src/lib/resend/sendOrderConfirmationEmail.ts`
+- `src/app/checkout/success/page.tsx`
+- `src/app/dashboard/layout.tsx`
+- `src/app/dashboard/invitations/[id]/edit/page.tsx`
+- `src/app/dashboard/invitations/[id]/edit/actions.ts`
+
+### Seguridad
+
+- El token original no se guarda ni se registra en logs.
+- La cookie no contiene email, token de acceso, service role ni secretos.
+- El editor y sus server actions aceptan sesión Supabase del propietario o cookie firmada para el mismo `invitationId`.
+- Tokens inválidos o vencidos redirigen a `/login` con error controlado.
+- La verificación de firma del webhook Stripe continúa usando el body crudo y no fue modificada.
+
+### Requisitos de despliegue pendientes
+
+1. Aplicar `supabase/invitation_access_tokens.sql` en Supabase SQL Editor.
+2. Configurar `ACCESS_TOKEN_SECRET` con un valor aleatorio de al menos 32 caracteres en Vercel.
+3. Confirmar `NEXT_PUBLIC_APP_URL` con HTTPS en Vercel.
+4. Desplegar y ejecutar una compra test nueva para validar Resend, cookie y persistencia real.
+
+### Validación local
+
+- `npx.cmd --no-install tsc --noEmit`: OK.
+- `npm.cmd run lint`: OK con 10 warnings preexistentes y 0 errores.
+- `npm.cmd run build`: OK.
+- Prueba E2E real: pendiente de aplicar SQL, configurar secreto y desplegar.

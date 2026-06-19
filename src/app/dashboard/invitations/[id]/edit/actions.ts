@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { IInvitationRepository } from '@/domain/invitations';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
 import type {
   GalleryImageItem,
@@ -42,18 +43,21 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
     return repository;
   }
 
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const sessionEmail = user?.email?.toLowerCase() ?? null;
+  let sessionEmail: string | null = null;
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    sessionEmail = user?.email?.toLowerCase() ?? null;
+  } catch {
+    sessionEmail = null;
+  }
   const ownerEmail = invitation.customerEmail?.toLowerCase() ?? null;
+  const hasScopedAccess = await verifyInvitationAccess(invitationId);
 
-  // Require an authenticated session always.
-  if (!sessionEmail) {
+  if (!sessionEmail && !hasScopedAccess) {
     throw new Error('Sesión requerida para guardar cambios.');
   }
-  // Only deny when we know the owner and the session email doesn't match.
-  // When ownerEmail is null (customer_email not set), trust the session.
-  if (ownerEmail && ownerEmail !== sessionEmail) {
+  if (!hasScopedAccess && ownerEmail && ownerEmail !== sessionEmail) {
     throw new Error('No tienes permiso para editar esta invitación.');
   }
 
