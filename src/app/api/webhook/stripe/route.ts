@@ -22,19 +22,16 @@ import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repo
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { sendOrderConfirmationEmail } from '@/lib/resend';
 
-// Next.js 13+ App Router: disable body parsing so we can read raw bytes.
-export const config = { api: { bodyParser: false } };
-
 function ok()  { return NextResponse.json({ received: true }, { status: 200 }); }
 function fail() { return NextResponse.json({ received: false }, { status: 400 }); }
 
 export async function POST(request: NextRequest) {
-  const rawBody = Buffer.from(await request.arrayBuffer());
+  const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 
   let event: Stripe.Event;
   try {
-    event = verifyWebhookSignature(rawBody, signature);
+    event = verifyWebhookSignature(body, signature);
   } catch (err) {
     console.error('[webhook/stripe] signature verification failed:', err);
     return fail();
