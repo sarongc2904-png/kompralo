@@ -1,0 +1,212 @@
+/**
+ * Stripe webhook endpoint.
+ *
+ * Configure in Stripe Dashboard → Webhooks:
+ *   URL: https://<your-domain>/api/webhook/stripe
+ *   Events to listen for:
+ *     - checkout.session.completed
+ *     - checkout.session.expired
+ *     - payment_intent.payment_failed
+ *
+ * The handler is idempotent — duplicate webhook deliveries are safe.
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import type Stripe from 'stripe';
+import { verifyWebhookSignature } from '@/lib/stripe';
+import { SupabaseOrderRepository } from '@/domain/orders';
+import type { CreateOrderInput } from '@/domain/orders';
+import type { ProductId } from '@/domain/products';
+import type { PlanId } from '@/domain/plans/types';
+import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { sendOrderConfirmationEmail } from '@/lib/resend';
+
+// Next.js 13+ App Router: disable body parsing so we can read raw bytes.
+export const config = { api: { bodyParser: false } };
+
+function ok()  { return NextResponse.json({ received: true }, { status: 200 }); }
+function fail() { return NextResponse.json({ received: false }, { status: 400 }); }
+
+export async function POST(request: NextRequest) {
+  const rawBody = Buffer.from(await request.arrayBuffer());
+  const signature = request.headers.get('stripe-signature');
+
+  let event: Stripe.Event;
+  try {
+    event = verifyWebhookSignature(rawBody, signature);
+  } catch (err) {
+    console.error('[webhook/stripe] signature verification failed:', err);
+    return fail();
+  }
+
+  const supabase        = createServiceRoleSupabaseClient();
+  const orderRepo       = new SupabaseOrderRepository(supabase);
+  const invitationRepo  = new SupabaseInvitationRepository(supabase);
+
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        console.log('[webhook/stripe] checkout.session.completed received — session=%s', session.id);
+
+        const productId = session.metadata?.productId as ProductId | undefined;
+        const planId    = session.metadata?.planId    as PlanId    | undefined;
+
+        if (!productId || !planId) {
+          // Session not from this app — ignore silently.
+          break;
+        }
+
+        const invitationId    = session.metadata?.invitationId ?? null;
+        const customerEmail   = session.customer_details?.email ?? null;
+        const customerName    = session.customer_details?.name  ?? null;
+        const paymentIntent   = typeof session.payment_intent === 'string'
+          ? session.payment_intent
+          : null;
+
+        // ── 1. Create or update order (idempotent) ──────────────────────────
+
+        let order = await orderRepo.getBySessionId(session.id);
+
+        if (order) {
+          console.log('[webhook/stripe] order reused — session=%s status=%s', session.id, order.status);
+          if (order.status !== 'paid') {
+            await orderRepo.updateStatus(session.id, 'paid', paymentIntent ?? undefined);
+            // Re-fetch so we have the latest row (including email columns).
+            order = await orderRepo.getBySessionId(session.id);
+          }
+        } else {
+          const orderInput: CreateOrderInput = {
+            stripeSessionId:       session.id,
+            stripePaymentIntentId: paymentIntent,
+            productId,
+            planId,
+            amountTotal:   session.amount_total ?? 0,
+            currency:      session.currency ?? 'mxn',
+            status:        'paid',
+            invitationId,
+            customerEmail,
+            customerName,
+          };
+          order = await orderRepo.create(orderInput);
+          console.log('[webhook/stripe] order created — session=%s productId=%s', session.id, productId);
+        }
+
+        // ── 2. Resolve final invitation id ─────────────────────────────────
+        // If metadata had invitationId → activate it.
+        // If not → auto-create a blank invitation (idempotent: reuse order.invitationId if set).
+
+        let finalInvitationId: string | null = invitationId ?? order?.invitationId ?? null;
+
+        if (invitationId) {
+          // Existing flow: invitation was pre-selected at checkout.
+          try {
+            await invitationRepo.activateAfterPayment({
+              invitationId,
+              planId,
+              stripeSessionId: session.id,
+              customerEmail:   customerEmail ?? undefined,
+            });
+            console.log('[webhook/stripe] invitation %s activated — planId=%s', invitationId, planId);
+          } catch (activateErr) {
+            console.error('[webhook/stripe] activateAfterPayment failed (invitation=%s):', invitationId, activateErr);
+          }
+        } else if (customerEmail) {
+          // Auto-create flow: no invitation was linked at checkout time.
+          // Idempotency: if order.invitationId is already set (e.g. previous webhook delivery), reuse it.
+          if (!finalInvitationId) {
+            try {
+              const { invitationId: newId } = await invitationRepo.createFromPaidOrder({
+                planId,
+                customerEmail,
+                customerName,
+                stripeSessionId: session.id,
+              });
+              finalInvitationId = newId;
+
+              await orderRepo.attachInvitationToOrder({
+                stripeSessionId: session.id,
+                invitationId:    newId,
+              });
+              console.log('[webhook/stripe] auto-created invitation %s for %s', newId, customerEmail);
+            } catch (createErr) {
+              console.error('[webhook/stripe] createFromPaidOrder failed (session=%s):', session.id, createErr);
+            }
+          } else {
+            console.log('[webhook/stripe] reusing existing invitationId=%s (session=%s)', finalInvitationId, session.id);
+          }
+        }
+
+        // ── 3. Send confirmation email (idempotent via confirmation_email_sent_at) ──
+
+        if (!customerEmail) {
+          console.warn('[webhook/stripe] skipping email — no customerEmail (session=%s)', session.id);
+          break;
+        }
+
+        // Re-fetch order so email guard reflects any updates from step 1.
+        const freshOrder = await orderRepo.getBySessionId(session.id);
+
+        // Skip if already sent (duplicate webhook delivery).
+        if (freshOrder?.confirmationEmailSentAt) {
+          console.log('[webhook/stripe] email already sent at %s — skipping (session=%s)', freshOrder.confirmationEmailSentAt, session.id);
+          break;
+        }
+
+        try {
+          await sendOrderConfirmationEmail({
+            to:              customerEmail,
+            customerName,
+            planId,
+            amountTotal:     session.amount_total,
+            currency:        session.currency,
+            invitationId:    finalInvitationId,
+            stripeSessionId: session.id,
+          });
+          await orderRepo.markConfirmationEmailSent(session.id);
+          console.log('[webhook/stripe] confirmation email sent to %s (session=%s)', customerEmail, session.id);
+        } catch (emailErr) {
+          const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
+          console.error('[webhook/stripe] email failed (session=%s):', session.id, msg);
+          try {
+            await orderRepo.markConfirmationEmailFailed(session.id, msg);
+          } catch (markErr) {
+            console.error('[webhook/stripe] markConfirmationEmailFailed also failed:', markErr);
+          }
+          // Do NOT re-throw — Stripe must receive 200 regardless of email failure.
+        }
+        break;
+      }
+
+      case 'checkout.session.expired': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (!session.metadata?.productId) break;
+
+        const existing = await orderRepo.getBySessionId(session.id);
+        if (existing && existing.status === 'pending') {
+          await orderRepo.updateStatus(session.id, 'failed');
+        }
+        break;
+      }
+
+      case 'payment_intent.payment_failed': {
+        const pi = event.data.object as Stripe.PaymentIntent;
+        // Look up by payment_intent id is not directly indexed; skip for now.
+        // The checkout.session.expired event covers most failure scenarios.
+        console.log('[webhook/stripe] payment_intent.payment_failed:', pi.id);
+        break;
+      }
+
+      default:
+        // Unhandled event type — ignore.
+        break;
+    }
+  } catch (err) {
+    console.error('[webhook/stripe] handler error:', err);
+    // Return 200 so Stripe does not retry on application errors.
+    // Log the failure for investigation.
+  }
+
+  return ok();
+}

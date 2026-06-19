@@ -1,0 +1,156 @@
+import { InvitationContent } from '../types';
+
+export const birthdayDemoInvitation: InvitationContent = {
+  id: 'birthday-demo',
+  slug: 'birthday-demo',
+  category: 'birthday',
+  variant: 'woman',
+  templateId: 'kompralo-master-birthday-v1',
+  planId: 'gold',
+  status: 'published',
+  themeId: 'azure',
+  featureOverrides: {
+    showStoryBook: false,
+    showTimeline: false,
+    showParents: false,
+    showPadrinos: false,
+    showGiftRegistry: true,
+    showHashtag: true,
+  },
+  title: 'Cumpleaños de Isabella',
+  subtitle: '30 años',
+  protagonists: [
+    {
+      id: 'isabella',
+      name: 'Isabella',
+      role: 'bride',
+      familyLabel: 'Isabella',
+    },
+  ],
+  eventDate: '2027-05-20T19:00:00',
+  eventTime: '19:00 HRS',
+  location: {
+    venueName: 'Terraza Vista Hermosa',
+    address: 'Paseo de la Reforma 250, Piso 14, Col. Cuauhtémoc, CDMX, CP 06600',
+    googleMapsLink: 'https://maps.google.com',
+    wazeLink: 'https://waze.com/ul',
+  },
+  hero: {
+    emotionalPhrase: '"Treinta años de historias, risas y sueños. Esta noche los celebramos contigo."',
+    imageUrl: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=800',
+    eventLabel: '30 Años',
+  },
+  music: {
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+  },
+  story: {
+    slides: [],
+  },
+  gallery: {
+    images: [
+      'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=800',
+      'https://images.unsplash.com/photo-1464349153735-7db50ed83c84?q=80&w=800',
+      'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=800',
+      'https://images.unsplash.com/photo-1578269174936-2709b6aeb913?q=80&w=800',
+    ],
+  },
+  timeline: [],
+  itinerary: [
+    {
+      id: 'iti-1',
+      time: '19:00 HRS',
+      title: 'Coctelería de Bienvenida',
+      location: 'Terraza principal con vista a la ciudad',
+      icon: 'glass',
+    },
+    {
+      id: 'iti-2',
+      time: '20:30 HRS',
+      title: 'Cena de Gala',
+      location: 'Salón principal Vista Hermosa',
+      icon: 'utensils',
+    },
+    {
+      id: 'iti-3',
+      time: '22:00 HRS',
+      title: 'Pastel y Brindis',
+      location: 'Centro del salón',
+      icon: 'rings',
+    },
+    {
+      id: 'iti-4',
+      time: '22:30 HRS',
+      title: 'Música y Baile',
+      location: 'Pista de baile',
+      icon: 'music',
+    },
+  ],
+  dressCode: {
+    type: 'Cocktail',
+    description: 'Vestido de cóctel o traje formal. Colores vibrantes bienvenidos.',
+    suggestions: 'Paleta sugerida: azules, dorados y blancos rotos. ¡Luce espléndida!',
+  },
+  giftRegistry: {
+    items: [
+      {
+        id: 'gift-1',
+        provider: 'Amazon Wish List',
+        logoType: 'amazon',
+        link: 'https://www.amazon.com',
+      },
+      {
+        id: 'gift-2',
+        provider: 'Transferencia Bancaria',
+        logoType: 'bank',
+        bankDetails: {
+          bankName: 'BBVA México',
+          clabe: '0123 4567 8901 2345 67',
+          accountOwner: 'Isabella Moreno',
+        },
+      },
+      {
+        id: 'gift-3',
+        provider: 'Mesa de Regalos Liverpool',
+        logoType: 'liverpool',
+        link: 'https://mesaderegalos.liverpool.com.mx',
+      },
+    ],
+  },
+  finalMessage: {
+    quote: 'Tu compañía hace que cada momento valga doble. Gracias por ser parte de mi historia y de esta noche tan especial.',
+    imageUrl: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?q=80&w=800',
+  },
+  parents: [],
+  padrinos: [],
+  hotels: [
+    {
+      id: 'h-1',
+      name: 'Hotel Marquis Reforma',
+      stars: 5,
+      distance: '2 min del venue',
+      priceRange: '$$$',
+      address: 'Paseo de la Reforma 465, CDMX',
+      phone: '+52 55 5229 1200',
+      bookingLink: 'https://booking.com',
+    },
+    {
+      id: 'h-2',
+      name: 'Camino Real Polanco',
+      stars: 5,
+      distance: '10 min del venue',
+      priceRange: '$$$',
+      address: 'Mariano Escobedo 700, Polanco, CDMX',
+      phone: '+52 55 5263 8888',
+      bookingLink: 'https://booking.com',
+    },
+  ],
+  social: {
+    hashtag: '#Isabella30',
+    instagramHandle: '@isabella30fest',
+    note: 'Comparte los mejores momentos de la noche. ¡Queremos verlos!',
+  },
+  rsvpWhatsAppNumber: '5215512345678',
+  createdAt: '2026-06-17T10:00:00-05:00',
+  updatedAt: '2026-06-17T10:00:00-05:00',
+  publishedAt: '2026-06-17T10:00:00-05:00',
+};

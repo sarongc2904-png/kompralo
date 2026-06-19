@@ -1,0 +1,255 @@
+'use client';
+
+import React from 'react';
+import { Theme } from '@/domain/themes/types';
+import { MapPin, Navigation } from 'lucide-react';
+import SectionHeader from './SectionHeader';
+import SectionShell from './SectionShell';
+
+interface LocationProps {
+  location: {
+    venueName: string;
+    address: string;
+    googleMapsLink: string;
+    wazeLink: string;
+  };
+  theme: Theme;
+}
+
+// Cycle: 0-39% draw, 39-82% hold+circle travels, 82-93% erase, 93-100% pause
+// Total = 14s. Path length ≈ 620 units (overestimate is safe).
+const PATH_LEN = 650;
+const ROUTE_D = `M 35 218 C 100 180, 120 280, 180 230 C 225 190, 130 90, 180 80 C 220 70, 280 120, 310 70 C 322 50, 330 35, 340 45`;
+
+const svgStyles = `
+  @keyframes route-draw {
+    0%          { stroke-dashoffset: ${PATH_LEN}; }
+    39%         { stroke-dashoffset: 0; }
+    82%         { stroke-dashoffset: 0; }
+    93%         { stroke-dashoffset: ${PATH_LEN}; }
+    100%        { stroke-dashoffset: ${PATH_LEN}; }
+  }
+  @keyframes dot-fade {
+    0%   { opacity: 0; }
+    38%  { opacity: 0; }
+    42%  { opacity: 1; }
+    80%  { opacity: 1; }
+    86%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  .route-clip-path {
+    stroke-dasharray: ${PATH_LEN};
+    stroke-dashoffset: ${PATH_LEN};
+    animation: route-draw 14s ease-in-out infinite;
+  }
+  .traveler-dot {
+    opacity: 0;
+    animation: dot-fade 14s ease-in-out infinite;
+  }
+`;
+
+export default function Location({ location, theme }: LocationProps) {
+  if (!location) return null;
+
+  // V2 CSS var with v1 fallback — resolves to correct accent for each theme
+  const accentVar = `var(--v2-color-accent, ${theme.colors.accent})`;
+  const borderVar = `var(--v2-color-border, ${theme.colors.border})`;
+  const surfaceVar = `var(--v2-color-surface, ${theme.colors.surface})`;
+  const surfaceAltVar = `var(--v2-color-surface-alt, ${theme.colors.surfaceAlt || '#FAF6EE'})`;
+  const textSecondaryVar = `var(--v2-color-text-secondary, ${theme.colors.textSecondary})`;
+  const textPrimaryVar = `var(--v2-color-text-primary, ${theme.colors.textPrimary})`;
+
+  return (
+    <SectionShell className="select-none" contentClassName="max-w-4xl mx-auto">
+
+        {/* Header */}
+        <SectionHeader eyebrow="Ubicación" title="¿Dónde y Cuándo?" theme={theme} />
+        {/* Location Info & Map Panel */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center mt-12">
+
+          {/* Info Details */}
+          <div className="md:col-span-5 flex flex-col justify-center text-center md:text-left">
+            <h4 className={`text-2xl font-light tracking-wide mb-4 ${theme.headingFont} ${theme.bodyText}`}>
+              {location.venueName}
+            </h4>
+            <p className={`text-sm leading-relaxed opacity-75 mb-8 max-w-sm mx-auto md:mx-0 ${theme.bodyFont} ${theme.bodyText}`}>
+              {location.address}
+            </p>
+
+            <div className="flex flex-col gap-2 w-full max-w-xs mx-auto md:mx-0">
+              <a
+                href={location.googleMapsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-center gap-3 w-full py-4 px-6 border backdrop-blur-sm transition-all duration-300 group ${theme.bodyFont}`}
+                style={{ borderRadius: `var(--v2-radius-sm, 6px)`, borderColor: borderVar, background: surfaceVar }}
+              >
+                <MapPin className="w-4 h-4 transition-colors duration-300 flex-shrink-0" style={{ color: textSecondaryVar }} />
+                <span className="text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300" style={{ color: textPrimaryVar }}>
+                  Google Maps
+                </span>
+              </a>
+              <a
+                href={location.wazeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-center gap-3 w-full py-4 px-6 border backdrop-blur-sm transition-all duration-300 group ${theme.bodyFont}`}
+                style={{ borderRadius: `var(--v2-radius-sm, 6px)`, borderColor: borderVar, background: surfaceVar }}
+              >
+                <Navigation className="w-4 h-4 transition-colors duration-300 flex-shrink-0" style={{ color: textSecondaryVar }} />
+                <span className="text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300" style={{ color: textPrimaryVar }}>
+                  Waze GPS
+                </span>
+              </a>
+            </div>
+          </div>
+
+          {/* Animated SVG Map */}
+          <div className="md:col-span-7">
+            <div className="relative aspect-video md:aspect-[4/3] p-3 shadow-md border overflow-hidden group" style={{ background: surfaceVar, borderColor: borderVar }}>
+              <div className="absolute inset-3 border pointer-events-none z-20" style={{ borderColor: theme.borders.subtle }} />
+
+              <div className="w-full h-full relative z-10">
+                <svg
+                  className="w-full h-full select-none"
+                  style={{ background: surfaceAltVar }}
+                  viewBox="0 0 400 300"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <defs>
+                    <style>{svgStyles}</style>
+
+                    {/* Clip path uses a solid stroke animated via CSS dashoffset */}
+                    <clipPath id="route-clip">
+                      <path
+                        d={ROUTE_D}
+                        stroke="white"
+                        strokeWidth="12"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="route-clip-path"
+                      />
+                    </clipPath>
+                  </defs>
+
+                  {/* Background roads */}
+                  <path d="M-20 160 C 60 155, 120 165, 180 150 C 240 135, 290 170, 430 158"
+                    stroke="#DDD6C8" strokeWidth="7" strokeLinecap="round" />
+                  <path d="M-20 160 C 60 155, 120 165, 180 150 C 240 135, 290 170, 430 158"
+                    stroke="#F0EBE0" strokeWidth="4" strokeLinecap="round" opacity="0.7" />
+                  <path d="M200 -20 C 210 50, 190 100, 200 160 C 212 215, 195 255, 205 330"
+                    stroke="#DDD6C8" strokeWidth="5" strokeLinecap="round" />
+                  <path d="M200 -20 C 210 50, 190 100, 200 160 C 212 215, 195 255, 205 330"
+                    stroke="#F0EBE0" strokeWidth="3" strokeLinecap="round" opacity="0.6" />
+                  <path d="M380 280 C 340 240, 300 220, 270 190 C 235 155, 220 120, 200 160"
+                    stroke="#DDD6C8" strokeWidth="4" strokeLinecap="round" />
+                  <path d="M40 -10 C 55 60, 70 110, 60 200 C 52 260, 80 290, 70 330"
+                    stroke="#E8E2D8" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="6 6" opacity="0.5" />
+                  <path d="M-10 240 C 80 220, 140 235, 200 220 C 265 205, 310 240, 430 225"
+                    stroke="#E8E2D8" strokeWidth="2" strokeLinecap="round" strokeDasharray="4 5" opacity="0.4" />
+
+                  {/* Compass */}
+                  <g transform="translate(58, 58)">
+                    <circle cx="0" cy="0" r="26" stroke={accentVar} strokeWidth="0.5" strokeDasharray="2 3" opacity="0.35" />
+                    <circle cx="0" cy="0" r="18" stroke={accentVar} strokeWidth="0.3" opacity="0.2" />
+                    <path d="M0 -28 L 0 28 M -28 0 L 28 0 M -16 -16 L 16 16 M -16 16 L 16 -16"
+                      stroke={accentVar} strokeWidth="0.4" opacity="0.25" />
+                    <path d="M0 -18 L 4 -4 L 18 0 L 4 4 L 0 18 L -4 4 L -18 0 L -4 -4 Z"
+                      fill={accentVar} fillOpacity="0.9" stroke={textSecondaryVar} strokeWidth="0.8" />
+                    <circle cx="0" cy="0" r="3" fill="#FAF6EE" />
+                  </g>
+
+                  {/* Route glow — clipped */}
+                  <path
+                    d={ROUTE_D}
+                    stroke={accentVar}
+                    strokeWidth="7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity={0.15}
+                    clipPath="url(#route-clip)"
+                  />
+
+                  {/* Dashed route — revealed by clip */}
+                  <path
+                    d={ROUTE_D}
+                    stroke={accentVar}
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray="6 6"
+                    clipPath="url(#route-clip)"
+                  />
+
+                  {/* Traveler dot — appears after line is drawn, travels the full route */}
+                  <circle r="4.5" fill={accentVar} stroke={surfaceAltVar} strokeWidth="2" className="traveler-dot">
+                    {/*
+                      keyPoints: stay at 0 during draw phase (0-39%),
+                      travel 0→1 during hold phase (39-82%),
+                      stay at 1 during erase (82-100%)
+                    */}
+                    <animateMotion
+                      dur="14s"
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                      keyTimes="0;0.39;0.82;1"
+                      keyPoints="0;0;1;1"
+                      path={ROUTE_D}
+                    />
+                  </circle>
+
+                  {/* INICIO marker */}
+                  <g transform="translate(35, 218)">
+                    <circle cx="0" cy="0" r="6" fill="#8D7D64" stroke="#FAF6EE" strokeWidth="1.5" />
+                    <circle cx="0" cy="0" r="3" fill="#FAF6EE" />
+                    <text x="14" y="3" fill="#8D7D64" fontSize="8" fontWeight="bold"
+                      fontFamily="sans-serif" letterSpacing="0.12em">INICIO</text>
+                  </g>
+
+                  {/* CENTRO checkpoint */}
+                  <g transform="translate(165, 140)">
+                    <circle cx="0" cy="0" r="3.5" fill={accentVar} fillOpacity="0.6" stroke={surfaceAltVar} strokeWidth="1" />
+                    <text x="9" y="3" fill={textSecondaryVar} fontSize="7" fontFamily="sans-serif"
+                      letterSpacing="0.08em" opacity="0.8">CENTRO</text>
+                  </g>
+
+                  {/* Distance label */}
+                  <text x="200" y="175" fill={textSecondaryVar} fontSize="7" fontFamily="sans-serif"
+                    letterSpacing="0.1em" opacity="0.6">~ 2.4 km</text>
+
+                  {/* HACIENDA destination */}
+                  <g transform="translate(340, 45)">
+                    <circle cx="0" cy="0" r="14" fill={accentVar} fillOpacity="0.15">
+                      <animate attributeName="r" values="8;20;8" dur="2.2s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.7;0;0.7" dur="2.2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="0" cy="0" r="10" fill={accentVar} fillOpacity="0.1">
+                      <animate attributeName="r" values="5;14;5" dur="2.2s" begin="0.4s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" values="0.5;0;0.5" dur="2.2s" begin="0.4s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="0" cy="0" r="9" fill={accentVar} stroke={surfaceAltVar} strokeWidth="2" />
+                    <path d="M-3.5 -2.5 L0 -6 L3.5 -2.5 L3.5 2.5 L-3.5 2.5 Z" fill="white" />
+                    <rect x="-0.75" y="-2.5" width="1.5" height="5" fill={accentVar} />
+                    <rect x="-2.5" y="-0.75" width="5" height="1.5" fill={accentVar} />
+                    <text x="-16" y="3" textAnchor="end" fill="#8D7D64" fontSize="9" fontWeight="bold"
+                      fontFamily="sans-serif" letterSpacing="0.15em">HACIENDA</text>
+                  </g>
+
+                </svg>
+              </div>
+
+              {/* Overlay label */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent flex items-end p-8 z-10 pointer-events-none">
+                <span className="text-white text-[10px] uppercase tracking-[0.25em] font-medium flex items-center gap-2">
+                  <MapPin className="w-4 h-4 animate-bounce" />
+                  Ruta al Evento
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+    </SectionShell>
+  );
+}
