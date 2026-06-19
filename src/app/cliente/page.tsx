@@ -7,6 +7,18 @@ import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/l
 
 export const metadata: Metadata = { title: 'Mis invitaciones — Kompralo' };
 
+const T = {
+  ivory:     '#FAF7F2',
+  cream:     '#F2EBD8',
+  dark:      '#0F0C09',
+  mid:       '#5C4A37',
+  light:     '#9B8165',
+  gold:      '#B8966A',
+  champagne: '#D4B896',
+  white:     '#FFFFFF',
+  border:    '#E5DDD2',
+} as const;
+
 const planLabels: Record<string, string> = {
   basic:    'Basic',
   gold:     'Premium',
@@ -14,9 +26,9 @@ const planLabels: Record<string, string> = {
 };
 
 const statusLabels: Record<string, string> = {
-  pending: 'Pendiente',
+  pending: 'Pendiente de pago',
   paid:    'Pagado',
-  failed:  'Fallido',
+  failed:  'Pago fallido',
   refunded:'Reembolsado',
 };
 
@@ -62,6 +74,31 @@ async function fetchOrders(email: string): Promise<Order[]> {
   }
 }
 
+// ─── CSS ─────────────────────────────────────────────────────────────────────
+function PageStyles() {
+  return (
+    <style>{`
+      .cl-btn {
+        transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+      }
+      .cl-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(15,12,9,0.1);
+      }
+      .cl-btn:active {
+        transform: translateY(0);
+      }
+      .cl-card {
+        transition: transform .25s ease, box-shadow .25s ease;
+      }
+      .cl-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(15,12,9,0.06);
+      }
+    `}</style>
+  );
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
@@ -77,30 +114,32 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
         placeholder="correo@ejemplo.com"
         required
         style={{
-          padding:      '0.625rem 1rem',
-          border:       '1px solid #D4C9BC',
-          borderRadius: '0.5rem',
+          padding:      '0.75rem 1.125rem',
+          border:       `1.5px solid ${T.border}`,
+          borderRadius: '0.625rem',
           fontSize:     '0.875rem',
-          color:        '#1A1410',
-          background:   '#FFFFFF',
+          color:        T.dark,
+          background:   T.white,
           width:        '18rem',
           maxWidth:     '100%',
+          outline:      'none',
         }}
       />
       <button
         type="submit"
+        className="cl-btn"
         style={{
-          padding:      '0.625rem 1.25rem',
-          background:   '#1A1410',
-          color:        '#F5F3F0',
-          borderRadius: '0.5rem',
+          padding:      '0.75rem 1.5rem',
+          background:   T.dark,
+          color:        '#F5EDD8',
+          borderRadius: '0.625rem',
           fontSize:     '0.875rem',
-          fontWeight:   600,
+          fontWeight:   700,
           border:       'none',
           cursor:       'pointer',
         }}
       >
-        Ver mis órdenes
+        Buscar órdenes
       </button>
     </form>
   );
@@ -108,51 +147,52 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
 
 function OrderCard({ order }: { order: Order }) {
   const statusColor: Record<string, string> = {
-    pending:  '#9B8878',
-    paid:     '#2E7D32',
-    failed:   '#C62828',
-    refunded: '#7B5EA7',
+    pending:  '#8A6D3B',
+    paid:     '#238636',
+    failed:   '#D32F2F',
+    refunded: '#6A1B9A',
   };
 
   const statusBg: Record<string, string> = {
-    pending:  '#F5F0EB',
-    paid:     '#F0FBF0',
-    failed:   '#FEF2F2',
-    refunded: '#F5F0FB',
+    pending:  '#FCF8E3',
+    paid:     '#E6F4EA',
+    failed:   '#FCE8E6',
+    refunded: '#F3E5F5',
   };
 
   const isPaid = order.status === 'paid';
 
   return (
     <div
+      className="cl-card"
       style={{
-        background:   '#FFFFFF',
-        border:       `1px solid ${isPaid ? 'rgba(46,125,50,0.2)' : '#E8E2DA'}`,
-        borderRadius: '1rem',
-        padding:      '1.625rem 1.5rem',
-        marginBottom: '1rem',
-        boxShadow:    isPaid ? '0 2px 12px rgba(46,125,50,0.07)' : '0 2px 8px rgba(26,20,16,0.05)',
-        transition:   'box-shadow .2s ease',
+        background:   T.white,
+        border:       `1px solid ${isPaid ? 'rgba(35,134,54,0.18)' : T.border}`,
+        borderRadius: '1.25rem',
+        padding:      '1.75rem 1.5rem',
+        marginBottom: '1.25rem',
+        boxShadow:    isPaid ? '0 4px 16px rgba(35,134,54,0.04)' : '0 2px 8px rgba(15,12,9,0.03)',
       }}
     >
       {/* Header row */}
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', flexWrap:'wrap', marginBottom:'0.875rem' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', flexWrap:'wrap', marginBottom:'1rem' }}>
         <div>
-          <p style={{ margin:'0 0 4px', fontSize:'1.0625rem', fontWeight:700, color:'#1A1410' }}>
+          <p style={{ margin:'0 0 4px', fontSize:'1.125rem', fontWeight:700, color:T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
             Plan {planLabels[order.planId] ?? order.planId}
           </p>
-          <p style={{ margin:0, fontSize:'0.875rem', color:'#6B5B4E' }}>
-            {formatPrice(order.amountTotal, order.currency)} · {formatDate(order.createdAt)}
+          <p style={{ margin:0, fontSize:'.8125rem', color:T.mid }}>
+            {formatPrice(order.amountTotal, order.currency)} MXN · Adquirido el {formatDate(order.createdAt)}
           </p>
         </div>
         <span
           style={{
-            padding:      '0.3rem 0.875rem',
+            padding:      '0.35rem 0.875rem',
             borderRadius: '2rem',
             fontSize:     '0.75rem',
             fontWeight:   700,
-            color:        statusColor[order.status] ?? '#6B5B4E',
-            background:   statusBg[order.status] ?? '#F5F0EB',
+            color:        statusColor[order.status] ?? T.mid,
+            background:   statusBg[order.status] ?? T.cream,
+            letterSpacing:'.02em',
           }}
         >
           {statusLabels[order.status] ?? order.status}
@@ -160,28 +200,30 @@ function OrderCard({ order }: { order: Order }) {
       </div>
 
       {/* Email confirmation */}
-      <p style={{ margin:'0 0 1.125rem', fontSize:'0.8rem', color: order.confirmationEmailSentAt ? '#2E7D32' : '#9B8878', display:'flex', alignItems:'center', gap:'0.375rem' }}>
-        <span>{order.confirmationEmailSentAt ? '✓' : '○'}</span>
+      <p style={{ margin:'0 0 1.25rem', fontSize:'0.8125rem', color: order.confirmationEmailSentAt ? '#238636' : T.light, display:'flex', alignItems:'center', gap:'0.375rem', fontWeight:500 }}>
+        <span style={{ fontSize:'1rem', lineHeight:1 }}>{order.confirmationEmailSentAt ? '✓' : '○'}</span>
         {order.confirmationEmailSentAt
-          ? `Correo enviado el ${formatDate(order.confirmationEmailSentAt)}`
-          : 'Correo de confirmación pendiente'}
+          ? `Correo de acceso enviado el ${formatDate(order.confirmationEmailSentAt)}`
+          : 'Preparando correo de confirmación'}
       </p>
 
       {/* Action */}
-      {order.invitationId && (
+      {order.invitationId && isPaid && (
         <Link
           href={`/dashboard/invitations/${order.invitationId}/edit`}
+          className="cl-btn"
           style={{
             display:        'inline-flex',
             alignItems:     'center',
             gap:            '0.375rem',
-            padding:        '0.5625rem 1.25rem',
-            background:     '#C5A880',
-            color:          '#1A1410',
-            borderRadius:   '0.5rem',
+            padding:        '0.625rem 1.5rem',
+            background:     T.gold,
+            color:          T.dark,
+            borderRadius:   '0.625rem',
             fontSize:       '0.875rem',
             fontWeight:     700,
             textDecoration: 'none',
+            boxShadow:      '0 4px 12px rgba(184,150,106,0.2)',
           }}
         >
           ✏️ Editar invitación
@@ -219,87 +261,141 @@ export default async function ClientePage({ searchParams }: Props) {
     <main
       style={{
         minHeight:     '100dvh',
-        background:    '#F5F0EB',
-        padding:       '3rem 1rem',
+        background:    T.ivory,
+        backgroundImage: `radial-gradient(ellipse at 50% 0%, rgba(184,150,106,0.06) 0%, transparent 60%)`,
+        padding:       '4rem 1.25rem',
         fontFamily:    'var(--font-inter, system-ui, sans-serif)',
+        position:      'relative',
       }}
     >
-      <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+      <div className="paper-noise" />
+      <PageStyles />
+
+      {/* Navigation bar header */}
+      <nav style={{
+        position:'absolute', top:0, left:0, right:0,
+        display:'flex', alignItems:'center', justifyContent:'space-between',
+        padding:'.875rem clamp(1.25rem,5vw,3rem)',
+        borderBottom:`1px solid ${T.border}`,
+        background:'rgba(250,247,242,0.85)', backdropFilter:'blur(10px)',
+        zIndex:10,
+      }}>
+        <Link href="/invitaciones" style={{
+          fontSize:'.75rem', fontWeight:800, letterSpacing:'.2em',
+          textTransform:'uppercase', color:T.dark, textDecoration:'none',
+        }}>
+          Kompralo
+        </Link>
+        {isAuthenticated && (
+          <Link href="/auth/signout" style={{
+            fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500,
+          }}
+          className="pr2-nav-link"
+          >
+            Cerrar sesión
+          </Link>
+        )}
+      </nav>
+
+      <div style={{ maxWidth: '640px', margin: '2rem auto 0', position:'relative', zIndex:2 }}>
         {/* Title */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '1.625rem', fontWeight: 700, color: '#1A1410', margin: '0 0 0.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <p style={{ fontSize:'.6875rem', fontWeight:700, letterSpacing:'.2em', color:T.gold, textTransform:'uppercase', margin:'0 0 .5rem' }}>
+            Panel de Cliente
+          </p>
+          <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: '#1A1410', margin: '0 0 0.5rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
             Mis invitaciones
           </h1>
-          <p style={{ color: '#6B5B4E', fontSize: '0.9rem', margin: 0 }}>
-            Consulta las invitaciones asociadas a tu cuenta.
+          <p style={{ color: T.mid, fontSize: '0.9rem', margin: 0 }}>
+            Aquí aparecen tus invitaciones compradas y su estado.
           </p>
         </div>
 
         {/* Admin/dev email lookup — disabled in production mode */}
         {isAdminEmailFallback && (
-          <>
+          <div style={{ background: T.white, border: `1.5px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.5rem', marginBottom: '2rem', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
             <p
               style={{
                 textAlign: 'center',
-                color: '#9B8878',
-                fontSize: '0.8rem',
+                color: T.light,
+                fontSize: '0.8125rem',
                 marginBottom: '1rem',
+                fontWeight: 600,
+                letterSpacing: '.05em',
+                textTransform: 'uppercase',
               }}
             >
-              Modo admin/dev: vista por email habilitada.
+              Modo Administrador/Desarrollador
             </p>
             <EmailSearchForm currentEmail={trimmedEmail} />
-          </>
+          </div>
         )}
 
         {/* Authenticated identity badge */}
         {isAuthenticated && (
-          <p style={{ textAlign: 'center', color: '#6B5B4E', fontSize: '0.875rem', marginBottom: '2rem' }}>
-            Mostrando órdenes de <strong>{trimmedEmail}</strong>
-          </p>
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '2rem',
+            padding: '.5rem 1rem',
+            background: T.cream,
+            border: `1px solid ${T.border}`,
+            borderRadius: '2rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '.5rem',
+            fontSize: '0.8125rem',
+            color: T.mid,
+            position: 'relative',
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}>
+            <span style={{ fontSize: '.5rem', color: '#238636' }}>●</span>
+            Sesión activa: <strong>{trimmedEmail}</strong>
+          </div>
         )}
 
         {/* Results */}
         {!trimmedEmail && (
-          <p style={{ textAlign: 'center', color: '#9B8878', fontSize: '0.9rem' }}>
-            Inicia sesion para ver tus ordenes.
+          <p style={{ textAlign: 'center', color: T.light, fontSize: '0.9rem', marginTop:'2rem' }}>
+            Inicia sesión para poder visualizar tus invitaciones.
           </p>
         )}
 
         {trimmedEmail && !hasValidEmail && (
-          <p style={{ textAlign: 'center', color: '#C62828', fontSize: '0.875rem' }}>
-            Correo electrónico inválido. Verifica e intenta de nuevo.
+          <p style={{ textAlign: 'center', color: '#D32F2F', fontSize: '0.875rem', marginTop:'2rem' }}>
+            La dirección de correo electrónico es inválida. Verifica e intenta nuevamente.
           </p>
         )}
 
         {hasValidEmail && orders.length === 0 && (
           <div style={{
-            textAlign:'center', padding:'2.5rem 1.5rem',
-            background:'#FFFFFF', border:'1px solid #E8E2DA',
-            borderRadius:'1rem',
+            textAlign:'center', padding:'3rem 2rem',
+            background: T.white, border:`1px solid ${T.border}`,
+            borderRadius:'1.25rem',
+            boxShadow:'0 4px 20px rgba(15,12,9,0.03)',
           }}>
-            <div style={{ fontSize:'2.25rem', marginBottom:'0.875rem', lineHeight:1 }}>📬</div>
-            <p style={{ margin:'0 0 0.5rem', fontWeight:700, color:'#1A1410', fontSize:'1rem' }}>
+            <div style={{ fontSize:'2.5rem', marginBottom:'1rem', lineHeight: 1 }}>📬</div>
+            <p style={{ margin:'0 0 0.5rem', fontWeight:700, color:T.dark, fontSize:'1.125rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
               No encontramos invitaciones
             </p>
-            <p style={{ margin:'0 0 1.25rem', color:'#9B8878', fontSize:'0.875rem', lineHeight:1.55 }}>
-              No hay órdenes asociadas a <strong>{trimmedEmail}</strong>.
-              <br />Si compraste con otro correo, usa el enlace de acceso de tu email.
+            <p style={{ margin:'0 0 1.5rem', color:T.mid, fontSize:'0.875rem', lineHeight:1.6 }}>
+              No hay órdenes de compra registradas para <strong>{trimmedEmail}</strong>.
+              <br />Si compraste usando otro correo, accede a través del enlace de ese correo.
             </p>
-            <Link href="/invitaciones/precios" style={{
-              display:'inline-block', padding:'0.625rem 1.375rem',
-              background:'#1A1410', color:'#F5EDD8',
-              borderRadius:'0.5rem', fontSize:'0.875rem', fontWeight:600, textDecoration:'none',
+            <Link href="/invitaciones/precios" className="cl-btn" style={{
+              display:'inline-block', padding:'0.75rem 1.75rem',
+              background: T.dark, color:'#F5EDD8',
+              borderRadius:'0.625rem', fontSize:'0.875rem', fontWeight:700, textDecoration:'none',
             }}>
-              Ver planes →
+              Ver planes y precios →
             </Link>
           </div>
         )}
 
         {hasValidEmail && orders.length > 0 && (
           <>
-            <p style={{ color: '#6B5B4E', fontSize: '0.8125rem', marginBottom: '1rem' }}>
-              {orders.length} {orders.length === 1 ? 'orden encontrada' : 'órdenes encontradas'} para{' '}
+            <p style={{ color: T.mid, fontSize: '0.8125rem', marginBottom: '1rem', fontWeight: 600, letterSpacing: '.02em' }}>
+              {orders.length} {orders.length === 1 ? 'invitación encontrada' : 'invitaciones encontradas'} para{' '}
               <strong>{trimmedEmail}</strong>
             </p>
             {orders.map((order) => (

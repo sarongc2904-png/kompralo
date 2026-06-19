@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Reveal, Stagger, Item, HoverCard } from '@/components/public/Motion';
@@ -26,22 +27,6 @@ function PageStyles() {
   return (
     <style>{`
       /* ── Keyframes ─────────────────────────── */
-      @keyframes aw-float {
-        0%,100% { transform:translateY(0) rotate(-2deg); }
-        50%      { transform:translateY(-13px) rotate(-2deg); }
-      }
-      @keyframes aw-badge-a {
-        0%,100% { transform:translateY(0) rotate(3deg); }
-        50%      { transform:translateY(-8px) rotate(3deg); }
-      }
-      @keyframes aw-badge-b {
-        0%,100% { transform:translateY(0) rotate(-4deg); }
-        50%      { transform:translateY(-6px) rotate(-4deg); }
-      }
-      @keyframes aw-badge-c {
-        0%,100% { transform:translateY(0) rotate(2deg); }
-        50%      { transform:translateY(-10px) rotate(2deg); }
-      }
       @keyframes aw-hero-fade {
         from { opacity:0; transform:translateY(22px); }
         to   { opacity:1; transform:translateY(0); }
@@ -50,16 +35,12 @@ function PageStyles() {
         from { opacity:0; transform:translateX(-10px); }
         to   { opacity:1; transform:translateX(0); }
       }
-      @keyframes aw-phone-in {
-        from { opacity:0; transform:translateY(40px) rotate(-2deg); }
-        to   { opacity:1; transform:translateY(0) rotate(-2deg); }
-      }
 
       /* ── Reduce motion ─────────────────────── */
       @media (prefers-reduced-motion: reduce) {
-        .aw-float, .aw-badge-a, .aw-badge-b, .aw-badge-c,
-        .aw-hero-label, .aw-hero-h1, .aw-hero-body, .aw-hero-cta,
-        .aw-phone-in { animation:none !important; }
+        .aw-hero-label, .aw-hero-h1, .aw-hero-body, .aw-hero-cta {
+          animation:none !important;
+        }
       }
 
       /* ── Hero reveals ──────────────────────── */
@@ -67,13 +48,6 @@ function PageStyles() {
       .aw-hero-h1    { animation:aw-hero-fade  .75s cubic-bezier(0.65,0,.35,1) .2s both; }
       .aw-hero-body  { animation:aw-hero-fade  .7s  cubic-bezier(0.65,0,.35,1) .35s both; }
       .aw-hero-cta   { animation:aw-hero-fade  .65s cubic-bezier(0.65,0,.35,1) .5s both; }
-      .aw-phone-in   { animation:aw-phone-in   .9s  cubic-bezier(0.22,1,.36,1) .3s both; }
-
-      /* ── Phone float ───────────────────────── */
-      .aw-float   { animation:aw-float   6s ease-in-out infinite; }
-      .aw-badge-a { animation:aw-badge-a 4.5s ease-in-out infinite; }
-      .aw-badge-b { animation:aw-badge-b 5.5s 1.2s ease-in-out infinite; }
-      .aw-badge-c { animation:aw-badge-c 4s .6s ease-in-out infinite; }
 
       /* ── Hover states ──────────────────────── */
       .aw-nav-link { transition:color .2s ease; }
@@ -85,21 +59,139 @@ function PageStyles() {
       .aw-faq-plus { transition:transform .25s cubic-bezier(0.65,0,.35,1); display:inline-block; }
       details.aw-faq summary::-webkit-details-marker { display:none; }
 
+      .aw-btn-primary {
+        display: inline-block;
+        padding: .875rem 2rem;
+        background: #0F0C09;
+        color: #F5EDD8;
+        border-radius: .625rem;
+        font-size: .9375rem;
+        font-weight: 700;
+        text-decoration: none;
+        letter-spacing: .02em;
+        box-shadow: 0 4px 14px rgba(15,12,9,0.15);
+        transition: opacity 0.2s ease;
+      }
+      .aw-btn-primary:hover {
+        opacity: 0.9 !important;
+      }
+
+      .aw-btn-secondary {
+        display: inline-block;
+        padding: .875rem 2rem;
+        background: transparent;
+        color: #0F0C09;
+        border-radius: .625rem;
+        font-size: .9375rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1.5px solid #E5DDD2;
+        transition: background 0.2s ease;
+      }
+      .aw-btn-secondary:hover {
+        background: rgba(15, 12, 9, 0.03) !important;
+      }
+
+      /* ── Collage editorial ─────────────────── */
+      .aw-collage {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        height: 480px;
+        margin: 0 auto;
+      }
+      .aw-collage-img1 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 65%;
+        height: 80%;
+        border-radius: 2rem;
+        box-shadow: 0 20px 40px rgba(15,12,9,0.12);
+        object-fit: cover;
+      }
+      .aw-collage-img2 {
+        position: absolute;
+        bottom: 5%;
+        right: 0;
+        width: 52%;
+        height: 62%;
+        border-radius: 1.5rem;
+        border: 6px solid #FAF7F2;
+        box-shadow: 0 24px 48px rgba(15,12,9,0.18);
+        object-fit: cover;
+      }
+      .aw-collage-img3 {
+        position: absolute;
+        top: 8%;
+        right: 8%;
+        width: 32%;
+        height: 32%;
+        border-radius: 1rem;
+        border: 4px solid #FAF7F2;
+        box-shadow: 0 12px 24px rgba(15,12,9,0.1);
+        object-fit: cover;
+      }
+
+      /* ── Event cards ───────────────────────── */
+      .aw-event-card {
+        position: relative;
+        border-radius: 1.25rem;
+        overflow: hidden;
+        height: 340px;
+        border: 1px solid #E5DDD2;
+        box-shadow: 0 4px 12px rgba(15,12,9,0.04);
+      }
+      .aw-event-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .aw-event-card:hover .aw-event-card-img {
+        transform: scale(1.06);
+      }
+      .aw-event-card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(15,12,9,0.95) 0%, rgba(15,12,9,0.4) 50%, rgba(15,12,9,0) 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1.5rem 1.25rem;
+        text-align: left;
+      }
+
       /* ── Grids ─────────────────────────────── */
       .aw-hero-grid {
         display: grid;
-        grid-template-columns: 1.1fr .9fr;
-        gap: clamp(2rem,5vw,5rem);
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: clamp(2rem,6vw,5rem);
         align-items: center;
-        max-width: 1040px;
+        max-width: 1080px;
         margin: 0 auto;
       }
-      @media (max-width:720px) {
+      .aw-social-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: clamp(2rem,6vw,4.5rem);
+        align-items: center;
+      }
+
+      @media (max-width:768px) {
         .aw-hero-grid { grid-template-columns:1fr; text-align:center; }
         .aw-hero-trust { justify-content:center !important; }
         .aw-hero-ctas  { justify-content:center !important; }
-        .aw-visual-col { order:-1; margin-bottom:.5rem; }
-        .aw-phone-scene { margin:0 auto; }
+        .aw-visual-col { order:-1; margin-bottom:1.5rem; }
+        .aw-collage {
+          height: 320px;
+          max-width: 380px;
+        }
+        .aw-collage-img2 { border-width: 4px; }
+        .aw-collage-img3 { border-width: 3px; }
+        
+        .aw-social-grid { grid-template-columns: 1fr; }
+        .aw-social-img-container { order: 1; margin-top: 1.5rem; }
       }
 
       .aw-steps-grid {
@@ -114,15 +206,16 @@ function PageStyles() {
       .aw-events-grid {
         display: grid;
         grid-template-columns: repeat(5,1fr);
-        gap: 1rem;
+        gap: 1.25rem;
       }
-      @media (max-width:840px) { .aw-events-grid { grid-template-columns:repeat(3,1fr); } }
-      @media (max-width:520px) { .aw-events-grid { grid-template-columns:repeat(2,1fr); } }
+      @media (max-width:880px) { .aw-events-grid { grid-template-columns:repeat(3,1fr); } }
+      @media (max-width:560px) { .aw-events-grid { grid-template-columns:repeat(2,1fr); } }
+      @media (max-width:400px) { .aw-events-grid { grid-template-columns:1fr; } }
 
       .aw-benefits-grid {
         display: grid;
         grid-template-columns: repeat(3,1fr);
-        gap: 1rem;
+        gap: 1.25rem;
       }
       @media (max-width:740px) { .aw-benefits-grid { grid-template-columns:repeat(2,1fr); } }
       @media (max-width:440px) { .aw-benefits-grid { grid-template-columns:1fr; } }
@@ -144,7 +237,7 @@ function PageStyles() {
       /* ── Trust strip ───────────────────────── */
       .aw-trust-row {
         display: flex;
-        gap: clamp(.875rem,3vw,2.5rem);
+        gap: clamp(1rem,4vw,3.5rem);
         justify-content: center;
         flex-wrap: wrap;
       }
@@ -229,168 +322,46 @@ function TopNav() {
   );
 }
 
-// ─── CSS PHONE MOCKUP ─────────────────────────────────────────────────────────
-function PhoneMockup() {
+// ─── EDITORIAL COLLAGE ────────────────────────────────────────────────────────
+function EditorialCollage() {
   return (
-    <div className="aw-phone-in" style={{ position:'relative', width:'195px', flexShrink:0 }}>
-      {/* Glow behind phone */}
+    <div className="aw-collage">
+      {/* Background glow */}
       <div aria-hidden style={{
         position:'absolute', top:'10%', left:'50%', transform:'translateX(-50%)',
-        width:'160px', height:'280px',
-        background:`radial-gradient(ellipse, rgba(184,150,106,0.22) 0%, transparent 75%)`,
-        filter:'blur(20px)', zIndex:0, pointerEvents:'none',
+        width:'280px', height:'280px',
+        background:`radial-gradient(circle, rgba(184,150,106,0.15) 0%, transparent 70%)`,
+        filter:'blur(30px)', zIndex:0, pointerEvents:'none',
       }} />
 
-      {/* Phone shell */}
-      <div className="aw-float" style={{
-        position:'relative', zIndex:1,
-        width:'195px', height:'395px',
-        background:'linear-gradient(170deg, #2A1C12 0%, #141009 100%)',
-        borderRadius:'38px',
-        border:'2.5px solid rgba(184,150,106,0.55)',
-        boxShadow:`
-          0 50px 100px rgba(0,0,0,0.5),
-          0 0 0 1px rgba(184,150,106,0.08),
-          inset 0 1px 0 rgba(184,150,106,0.15),
-          inset 0 -1px 0 rgba(0,0,0,0.5)
-        `,
-        overflow:'hidden',
-      }}>
-        {/* Dynamic Island */}
-        <div style={{
-          position:'absolute', top:'10px', left:'50%', transform:'translateX(-50%)',
-          width:'72px', height:'22px', background:'#080604',
-          borderRadius:'12px', zIndex:10,
-        }} />
-
-        {/* Screen content */}
-        <div style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', paddingTop:'10px' }}>
-
-          {/* Photo header with simulated image */}
-          <div style={{
-            height:'130px', flexShrink:0, position:'relative',
-            background:`linear-gradient(170deg, #3D2615 0%, #251508 60%, #4A3020 100%)`,
-          }}>
-            {/* Linen texture simulation */}
-            <div style={{ position:'absolute', inset:0, opacity:.08,
-              backgroundImage:'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,.3) 3px, rgba(255,255,255,.3) 4px)',
-            }} />
-            {/* Photo light leak */}
-            <div style={{
-              position:'absolute', top:'-20px', right:'-10px', width:'120px', height:'120px', borderRadius:'50%',
-              background:'radial-gradient(circle, rgba(212,184,150,0.25) 0%, transparent 70%)',
-            }} />
-
-            <div style={{ position:'absolute', bottom:'14px', left:0, right:0, textAlign:'center' }}>
-              <div style={{
-                fontSize:'6.5px', letterSpacing:'.25em', textTransform:'uppercase',
-                color:'rgba(212,184,150,0.7)', marginBottom:'4px',
-                fontFamily:'var(--font-inter, system-ui, sans-serif)',
-              }}>nos casamos</div>
-              <div style={{
-                fontSize:'13px', fontWeight:600, color:'#F5EDD8', letterSpacing:'.06em',
-                fontFamily:'var(--font-playfair, Georgia, serif)',
-              }}>
-                Sofía & Alejandro
-              </div>
-            </div>
-          </div>
-
-          {/* Body */}
-          <div style={{
-            flex:1, background:'#FAF7F2', padding:'11px 14px',
-            display:'flex', flexDirection:'column', gap:'8px',
-          }}>
-            {/* Date */}
-            <div style={{
-              textAlign:'center', fontSize:'8.5px', fontWeight:700, color:T.gold,
-              letterSpacing:'.12em', textTransform:'uppercase',
-            }}>
-              14 · Febrero · 2026
-            </div>
-
-            {/* Ornamental divider */}
-            <div style={{ display:'flex', alignItems:'center', gap:'5px' }}>
-              <div style={{ flex:1, height:'1px', background:T.border }} />
-              <svg width="6" height="6" viewBox="0 0 6 6" aria-hidden>
-                <rect x="1.5" y=".5" width="4.24" height="4.24" transform="rotate(45 1.5 .5)" fill={T.gold} opacity=".6"/>
-              </svg>
-              <div style={{ flex:1, height:'1px', background:T.border }} />
-            </div>
-
-            {/* Countdown */}
-            <div style={{ display:'flex', justifyContent:'center', gap:'12px' }}>
-              {[['03','días'],['14','hrs'],['22','min']].map(([n,l]) => (
-                <div key={l} style={{ textAlign:'center' }}>
-                  <div style={{ fontSize:'14px', fontWeight:800, color:T.dark, lineHeight:1, fontFamily:'var(--font-playfair, Georgia, serif)' }}>{n}</div>
-                  <div style={{ fontSize:'6px', color:T.light, letterSpacing:'.06em', marginTop:'2px', textTransform:'uppercase' }}>{l}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* RSVP button */}
-            <div style={{
-              background:T.dark, borderRadius:'8px', padding:'5.5px', textAlign:'center',
-              boxShadow:'0 2px 8px rgba(15,12,9,0.25)',
-            }}>
-              <span style={{ fontSize:'7.5px', fontWeight:700, color:'#F5EDD8', letterSpacing:'.08em', textTransform:'uppercase' }}>Confirmar Asistencia</span>
-            </div>
-
-            {/* WhatsApp */}
-            <div style={{ background:'#22C55E', borderRadius:'8px', padding:'4.5px', textAlign:'center' }}>
-              <span style={{ fontSize:'7px', fontWeight:700, color:'#fff', letterSpacing:'.04em' }}>Compartir por WhatsApp</span>
-            </div>
-
-            {/* Info row */}
-            <div style={{ display:'flex', gap:'6px', justifyContent:'center' }}>
-              {['Itinerario','Galería','Mapa'].map((t) => (
-                <div key={t} style={{ fontSize:'6px', color:T.light, padding:'2px 5px', border:`1px solid ${T.border}`, borderRadius:'4px' }}>{t}</div>
-              ))}
-            </div>
-          </div>
-        </div>
+      {/* Main Image (Couple) */}
+      <div className="aw-collage-img1">
+        <img
+          src="/images/invitaciones/hero-wedding-editorial.webp"
+          alt="Boda editorial premium"
+          style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'2rem' }}
+          loading="eager"
+        />
       </div>
 
-      {/* Side buttons */}
-      <div style={{ position:'absolute', left:'-4px', top:'88px', width:'3px', height:'22px', background:'rgba(184,150,106,0.3)', borderRadius:'2px 0 0 2px', zIndex:2 }} />
-      <div style={{ position:'absolute', left:'-4px', top:'118px', width:'3px', height:'22px', background:'rgba(184,150,106,0.3)', borderRadius:'2px 0 0 2px', zIndex:2 }} />
-      <div style={{ position:'absolute', right:'-4px', top:'102px', width:'3px', height:'34px', background:'rgba(184,150,106,0.3)', borderRadius:'0 2px 2px 0', zIndex:2 }} />
-
-      {/* Floating event badges */}
-      <div className="aw-badge-a" style={{
-        position:'absolute', top:'8%', right:'-68px', zIndex:20,
-        background:T.white, borderRadius:'12px', padding:'8px 12px',
-        boxShadow:'0 8px 28px rgba(15,12,9,0.14), 0 1px 0 rgba(229,221,210,1)',
-        fontSize:'11.5px', fontWeight:700, color:T.dark, whiteSpace:'nowrap',
-        display:'flex', alignItems:'center', gap:'6px',
-        fontFamily:'var(--font-inter, system-ui, sans-serif)',
-        border:`1px solid ${T.border}`,
-      }}>
-        <span style={{ fontSize:'13px' }}>💍</span> Boda
+      {/* Overlapping detail (Stationery) */}
+      <div className="aw-collage-img2">
+        <img
+          src="/images/invitaciones/invitation-paper-detail.webp"
+          alt="Papelería y detalles"
+          style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'1.5rem' }}
+          loading="eager"
+        />
       </div>
 
-      <div className="aw-badge-b" style={{
-        position:'absolute', top:'44%', left:'-78px', zIndex:20,
-        background:T.white, borderRadius:'12px', padding:'8px 12px',
-        boxShadow:'0 8px 28px rgba(15,12,9,0.14), 0 1px 0 rgba(229,221,210,1)',
-        fontSize:'11.5px', fontWeight:700, color:T.dark, whiteSpace:'nowrap',
-        display:'flex', alignItems:'center', gap:'6px',
-        fontFamily:'var(--font-inter, system-ui, sans-serif)',
-        border:`1px solid ${T.border}`,
-      }}>
-        <span style={{ fontSize:'13px' }}>👑</span> XV Años
-      </div>
-
-      <div className="aw-badge-c" style={{
-        position:'absolute', bottom:'14%', right:'-80px', zIndex:20,
-        background:T.white, borderRadius:'12px', padding:'8px 12px',
-        boxShadow:'0 8px 28px rgba(15,12,9,0.14), 0 1px 0 rgba(229,221,210,1)',
-        fontSize:'11.5px', fontWeight:700, color:T.dark, whiteSpace:'nowrap',
-        display:'flex', alignItems:'center', gap:'6px',
-        fontFamily:'var(--font-inter, system-ui, sans-serif)',
-        border:`1px solid ${T.border}`,
-      }}>
-        <span style={{ fontSize:'13px' }}>🍼</span> Baby Shower
+      {/* Small detail (Flowers/Table) */}
+      <div className="aw-collage-img3">
+        <img
+          src="/images/invitaciones/wedding-details.webp"
+          alt="Detalles de mesa"
+          style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'1rem' }}
+          loading="eager"
+        />
       </div>
     </div>
   );
@@ -411,7 +382,7 @@ function HeroSection() {
       <div className="aw-hero-grid">
         {/* Text side */}
         <div>
-          {/* Label + editorial number */}
+          {/* Label + editorial line */}
           <div className="aw-hero-label" style={{ display:'flex', alignItems:'center', gap:'.875rem', marginBottom:'1.5rem' }}>
             <span style={{
               fontSize:'.6875rem', fontWeight:800, letterSpacing:'.22em',
@@ -425,7 +396,7 @@ function HeroSection() {
 
           {/* H1 editorial */}
           <h1 className="aw-hero-h1" style={{
-            fontSize:'clamp(2.375rem,6.5vw,5rem)',
+            fontSize:'clamp(2.375rem,6.5vw,4.5rem)',
             fontWeight:700, lineHeight:1.06,
             color:T.dark,
             margin:'0 0 1.375rem',
@@ -440,7 +411,7 @@ function HeroSection() {
 
           {/* Subtitle in Cormorant for elegance */}
           <p className="aw-hero-body" style={{
-            fontSize:'clamp(1rem,2vw,1.1875rem)',
+            fontSize:'clamp(1.05rem,2vw,1.25rem)',
             color:T.mid, lineHeight:1.7,
             margin:'0 0 2.25rem',
             maxWidth:'36rem',
@@ -448,39 +419,22 @@ function HeroSection() {
             fontStyle:'italic',
             fontWeight:500,
           }}>
-            &quot;Compra tu invitación, personalízala en línea y compártela por WhatsApp con todos tus invitados.&quot;
+            Compra tu invitación, personalízala en línea y compártela por WhatsApp con todos tus invitados.
           </p>
 
           {/* CTAs */}
           <div className="aw-hero-ctas aw-hero-cta" style={{ display:'flex', gap:'.875rem', flexWrap:'wrap', marginBottom:'2.25rem' }}>
-            <HoverButton
-              href="/invitaciones/precios"
-              style={{
-                display:'inline-block', padding:'.875rem 2rem',
-                background:T.dark, color:'#F5EDD8',
-                borderRadius:'.625rem', fontSize:'.9375rem', fontWeight:700,
-                textDecoration:'none', letterSpacing:'.02em',
-              }}
-            >
-              Ver planes →
-            </HoverButton>
-            <HoverButton
-              href="/sofia-y-alejandro"
-              style={{
-                display:'inline-block', padding:'.875rem 2rem',
-                background:'transparent', color:T.dark,
-                borderRadius:'.625rem', fontSize:'.9375rem', fontWeight:600,
-                textDecoration:'none',
-                border:`1.5px solid ${T.border}`,
-              }}
-            >
-              Ver demo
-            </HoverButton>
+            <Link href="/invitaciones/precios" className="aw-btn-primary">
+              Ver planes
+            </Link>
+            <Link href="/sofia-y-alejandro" className="aw-btn-secondary">
+              Ver invitación demo
+            </Link>
           </div>
 
           {/* Trust dots */}
           <div className="aw-hero-trust" style={{ display:'flex', gap:'1.375rem', flexWrap:'wrap', fontSize:'.78rem', color:T.light }}>
-            {['Editable en línea','Lista para WhatsApp','Pago seguro','Acceso en celular'].map((t, i) => (
+            {['Editable en línea','Lista para WhatsApp','Pago seguro','Diseños para cada evento'].map((t, i) => (
               <span key={t} style={{ display:'flex', alignItems:'center', gap:'.35rem' }}>
                 {i > 0 && <span style={{ color:T.border, marginRight:'.25rem' }}>·</span>}
                 <span style={{ color:T.gold, fontWeight:700, fontSize:'.65rem' }}>✓</span>
@@ -490,18 +444,13 @@ function HeroSection() {
           </div>
         </div>
 
-        {/* Visual side */}
-        <div className="aw-visual-col" style={{ display:'flex', justifyContent:'center', alignItems:'center', padding:'1rem clamp(2rem,6vw,4rem)' }}>
-          <PhoneMockup />
+        {/* Visual side - Collage */}
+        <div className="aw-visual-col" style={{ display:'flex', justifyContent:'center', alignItems:'center' }}>
+          <EditorialCollage />
         </div>
       </div>
     </section>
   );
-}
-
-// Inline link component for hero CTAs (server-renderable button wrapper)
-function HoverButton({ href, children, style }: { href: string; children: React.ReactNode; style: React.CSSProperties }) {
-  return <Link href={href} style={style}>{children}</Link>;
 }
 
 // ─── TRUST STRIP ─────────────────────────────────────────────────────────────
@@ -511,12 +460,11 @@ function TrustStrip() {
       <div className="aw-trust-row">
         {[
           '🔒 Pago seguro con Stripe',
-          '📲 Compatible con cualquier celular',
-          '✏️ Editable en línea',
-          '💬 Comparte por WhatsApp',
-          '🇲🇽 Soporte en español',
+          '📱 Acceso desde celular',
+          '💬 Link listo para WhatsApp',
+          '✏️ Edición en línea',
         ].map((t) => (
-          <span key={t} style={{ fontSize:'.78rem', color:T.mid, whiteSpace:'nowrap', fontWeight:500 }}>{t}</span>
+          <span key={t} style={{ fontSize:'.78rem', color:T.mid, whiteSpace:'nowrap', fontWeight:500, letterSpacing:'.02em' }}>{t}</span>
         ))}
       </div>
     </div>
@@ -584,34 +532,29 @@ function HowItWorks() {
 // ─── TIPOS DE EVENTO ─────────────────────────────────────────────────────────
 const EVENTS = [
   {
-    initial:'B', name:'Bodas',
-    desc:'Elegante y atemporable para el día más importante.',
-    bg:'linear-gradient(150deg,#F9F3E8 0%,#EDE3CF 100%)',
-    accent:'#B8966A', text:'#5C4A37', border:'rgba(184,150,106,0.25)',
+    name: 'Bodas',
+    desc: 'Elegancia atemporal para el día más importante.',
+    image: '/images/invitaciones/hero-wedding-editorial.webp',
   },
   {
-    initial:'Q', name:'XV Años',
-    desc:'Glamour y magia para el cumpleaños más especial.',
-    bg:'linear-gradient(150deg,#F5E4F0 0%,#E2CCDC 100%)',
-    accent:'#9B6BB5', text:'#5C3A6B', border:'rgba(155,107,181,0.2)',
+    name: 'XV Años',
+    desc: 'Glamour y magia para una celebración inolvidable.',
+    image: '/images/invitaciones/xv-event-editorial.webp',
   },
   {
-    initial:'B', name:'Bautizo',
-    desc:'Suave, puro y lleno de amor familiar.',
-    bg:'linear-gradient(150deg,#E6EFF9 0%,#CDD8ED 100%)',
-    accent:'#5B8EB5', text:'#2D5070', border:'rgba(91,142,181,0.2)',
+    name: 'Bautizos',
+    desc: 'Detalles suaves, puros y llenos de amor familiar.',
+    image: '/images/invitaciones/baptism-soft-event.webp',
   },
   {
-    initial:'B', name:'Baby Shower',
-    desc:'Dulce y tierno para recibir la nueva vida.',
-    bg:'linear-gradient(150deg,#F0F5E6 0%,#D8EDCC 100%)',
-    accent:'#6BAA72', text:'#3A6640', border:'rgba(107,170,114,0.2)',
+    name: 'Baby Shower',
+    desc: 'Diseños dulces y tiernos para recibir la nueva vida.',
+    image: '/images/invitaciones/baby-shower-pastel.webp',
   },
   {
-    initial:'C', name:'Cumpleaños',
-    desc:'Colorido y festivo para celebrar con estilo.',
-    bg:'linear-gradient(150deg,#FEF0E6 0%,#F5DCCB 100%)',
-    accent:'#D4884A', text:'#7A4020', border:'rgba(212,136,74,0.2)',
+    name: 'Cumpleaños',
+    desc: 'Estilo y festividad premium para celebrar con alegría.',
+    image: '/images/invitaciones/birthday-premium.webp',
   },
 ];
 
@@ -627,41 +570,32 @@ function EventTypes() {
         <Stagger className="aw-events-grid">
           {EVENTS.map((ev) => (
             <Item key={ev.name}>
-              <HoverCard lift={5} style={{
-                background:ev.bg,
-                border:`1px solid ${ev.border}`,
-                borderRadius:'1rem', padding:'1.5rem 1.125rem',
-                textAlign:'center', position:'relative', overflow:'hidden',
-                height:'100%',
-              }}>
-                {/* Decorative initial (low opacity) */}
-                <div aria-hidden style={{
-                  position:'absolute', bottom:'-8px', right:'-4px',
-                  fontSize:'4.5rem', fontWeight:800,
-                  color:ev.accent, opacity:.08, lineHeight:1,
-                  fontFamily:'var(--font-playfair, Georgia, serif)',
-                  userSelect:'none',
-                }}>{ev.initial}</div>
-
-                {/* Icon frame */}
-                <div style={{
-                  width:'2.875rem', height:'2.875rem', borderRadius:'50%',
-                  background:'rgba(255,255,255,0.75)',
-                  margin:'0 auto .875rem',
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                  boxShadow:'0 2px 12px rgba(0,0,0,0.08)',
-                  border:`1.5px solid ${ev.border}`,
-                  position:'relative',
-                }}>
-                  {/* Color dot inside */}
-                  <div style={{ width:'8px', height:'8px', borderRadius:'50%', background:ev.accent }} />
+              <HoverCard lift={5} style={{ height: '100%' }}>
+                <div className="aw-event-card">
+                  <img
+                    src={ev.image}
+                    alt={ev.name}
+                    className="aw-event-card-img"
+                    loading="lazy"
+                  />
+                  <div className="aw-event-card-overlay">
+                    <h3 style={{
+                      margin:'0 0 .375rem',
+                      fontSize:'1.25rem',
+                      fontWeight:700,
+                      color:'#FFFFFF',
+                      fontFamily:'var(--font-playfair, Georgia, serif)',
+                    }}>{ev.name}</h3>
+                    <p style={{
+                      margin:0,
+                      fontSize:'.8125rem',
+                      color:'#FAF7F2',
+                      lineHeight:1.4,
+                      opacity:.95,
+                      fontFamily:'var(--font-inter, system-ui, sans-serif)',
+                    }}>{ev.desc}</p>
+                  </div>
                 </div>
-
-                <h3 style={{ margin:'0 0 .375rem', fontSize:'.9375rem', fontWeight:700, color:ev.text }}>{ev.name}</h3>
-                <p style={{ margin:0, fontSize:'.75rem', color:ev.text, lineHeight:1.55, opacity:.75 }}>{ev.desc}</p>
-
-                {/* Bottom accent bar */}
-                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2.5px', background:`linear-gradient(90deg, transparent, ${ev.accent}, transparent)`, opacity:.4 }} />
               </HoverCard>
             </Item>
           ))}
@@ -727,24 +661,133 @@ function Benefits() {
   );
 }
 
+// ─── SOCIAL PROOF SECTION ─────────────────────────────────────────────────────
+function SocialProofSection() {
+  return (
+    <section style={{
+      background: T.ivory,
+      padding: 'clamp(4rem,9vw,6rem) clamp(1.25rem,5vw,3rem)',
+      borderBottom: `1px solid ${T.border}`,
+      position: 'relative',
+    }}>
+      <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
+        <div className="aw-social-grid">
+          {/* Left side: emotional image */}
+          <div className="aw-social-img-container">
+            <Reveal>
+              <div style={{
+                position: 'relative',
+                borderRadius: '2rem',
+                overflow: 'hidden',
+                boxShadow: '0 24px 48px rgba(15,12,9,0.12)',
+                aspectRatio: '4/5',
+                maxHeight: '520px',
+              }}>
+                <img
+                  src="/images/invitaciones/social-proof-event-1.webp"
+                  alt="Momentos compartidos con elegancia"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  loading="lazy"
+                />
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(15,12,9,0.3) 0%, transparent 40%)',
+                }} />
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Right side: testimonials */}
+          <div>
+            <Reveal>
+              <SectionLabel>Historias que facilitamos</SectionLabel>
+              <SectionHeading>Creada para momentos que merecen compartirse bonito</SectionHeading>
+              <p style={{
+                color: T.mid,
+                fontSize: '.9375rem',
+                lineHeight: 1.65,
+                marginBottom: '2.5rem',
+                fontFamily: 'var(--font-inter, system-ui, sans-serif)',
+              }}>
+                Diseñada para parejas, familias y anfitriones que quieren una invitación clara, elegante y fácil de compartir desde el celular.
+              </p>
+            </Reveal>
+
+            <Stagger style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              {[
+                {
+                  quote: '“Queríamos algo bonito y fácil de mandar por WhatsApp. La invitación se vio elegante y todos pudieron abrirla desde el celular sin instalar nada.”',
+                  author: 'Pareja de boda',
+                  event: 'Boda Premium',
+                },
+                {
+                  quote: '“Me gustó tener toda la información del evento en un solo link, sin mandar imagen por imagen. Se ve súper formal.”',
+                  author: 'Anfitriona de XV años',
+                  event: 'XV Años Deluxe',
+                },
+                {
+                  quote: '“La confirmación de asistencia y los mapas quedaron mucho más ordenados. Fue muy práctico para toda la familia.”',
+                  author: 'Evento familiar',
+                  event: 'Bautizo Basic',
+                },
+              ].map((t, idx) => (
+                <Item key={idx}>
+                  <div style={{
+                    borderLeft: `2px solid ${T.gold}`,
+                    paddingLeft: '1.25rem',
+                  }}>
+                    <p style={{
+                      margin: '0 0 .5rem',
+                      fontSize: '1rem',
+                      fontStyle: 'italic',
+                      color: T.dark,
+                      lineHeight: 1.6,
+                      fontFamily: 'var(--font-lora, Georgia, serif)',
+                    }}>{t.quote}</p>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '.5rem',
+                      fontSize: '.75rem',
+                      color: T.light,
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      letterSpacing: '.05em',
+                    }}>
+                      <span style={{ color: T.mid }}>{t.author}</span>
+                      <span style={{ color: T.border }}>•</span>
+                      <span style={{ color: T.gold }}>{t.event}</span>
+                    </div>
+                  </div>
+                </Item>
+              ))}
+            </Stagger>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── PRICING PREVIEW ─────────────────────────────────────────────────────────
 const PLANS = [
   {
     id:'basic', name:'Basic', price:'$499',
     ideal:'Ideal para bautizos, baby showers y cumpleaños',
-    features:['Portada con foto','Cuenta regresiva','RSVP','Botón WhatsApp','Mensaje final'],
+    features:['Invitación adaptable a celular','Datos generales, fecha y hora','Ubicación con Google Maps','Dress code y mensaje final','Link para WhatsApp y acceso al editor'],
     dark:false, badge:null,
   },
   {
     id:'premium', name:'Premium', price:'$899',
-    ideal:'El más elegido · Bodas y XV años',
-    features:['Todo lo de Basic','Galería de fotos','Música de fondo','Itinerario + Mapas','Código QR'],
-    dark:true, badge:'MÁS POPULAR',
+    ideal:'Recomendado · Bodas y XV años',
+    features:['Todo lo de Basic','Galería de fotos y protagonistas','Mesa de regalos y StoryBook','Confirmación de asistencia RSVP','Asistente inteligente de textos con IA'],
+    dark:true, badge:'MÁS ELEGIDO',
   },
   {
     id:'deluxe', name:'Deluxe', price:'$1,499',
-    ideal:'Para bodas y quinces de alto impacto',
-    features:['Todo lo de Premium','StoryBook animado','Padrinos','Hospedaje','Mesa de regalos'],
+    ideal:'Para bodas y XV años de gran impacto',
+    features:['Todo lo de Premium','Diseño y secciones avanzadas','Módulo de hospedaje','Padrinos y personas especiales','Mayor personalización y asistente completo'],
     dark:false, badge:null,
   },
 ];
@@ -757,7 +800,7 @@ function PricingPreview() {
           <SectionLabel>Planes</SectionLabel>
           <SectionHeading>Elige el plan ideal para tu evento</SectionHeading>
           <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65 }}>
-            Pago único. Sin suscripción. Sin sorpresas.
+            Pago único. Sin suscripción. Sin cargos ocultos.
           </p>
         </Reveal>
 
@@ -795,7 +838,7 @@ function PricingPreview() {
 
                   <ul style={{ listStyle:'none', padding:0, margin:'0 0 1.625rem', display:'flex', flexDirection:'column', gap:'.5rem', flex:1 }}>
                     {plan.features.map((f) => (
-                      <li key={f} style={{ display:'flex', gap:'.5rem', fontSize:'.8125rem', color: plan.dark ? '#C5B0A0' : T.mid }}>
+                      <li key={f} style={{ display:'flex', gap:'.5rem', fontSize:'.8125rem', color: plan.dark ? '#C5B0A0' : T.mid, lineHeight:1.4 }}>
                         <span style={{ color:T.gold, flexShrink:0, marginTop:'.05rem' }}>✓</span> {f}
                       </li>
                     ))}
@@ -817,7 +860,7 @@ function PricingPreview() {
 
         <Reveal delay={0.2}>
           <p style={{ textAlign:'center', marginTop:'1.75rem', fontSize:'.78rem', color:T.light }}>
-            Pago seguro con Stripe · Acceso inmediato · Soporte en español
+            Pago seguro con Stripe · Acceso inmediato para editar · Soporte en español
           </p>
         </Reveal>
       </div>
@@ -835,7 +878,7 @@ function DemoTeaser() {
           <SectionLabel>Demo</SectionLabel>
           <SectionHeading>¿Cómo se ve una invitación real?</SectionHeading>
           <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65, maxWidth:'32rem', margin:'0 auto 2rem' }}>
-            Ve la invitación de demostración de Sofía y Alejandro — la misma calidad y experiencia que recibirás.
+            Ve la invitación de demostración de Sofía y Alejandro — la misma calidad y elegancia que recibirá tu evento.
           </p>
 
           <HoverCard lift={4} style={{ display:'inline-block' }}>
@@ -866,12 +909,12 @@ function DemoTeaser() {
 
 // ─── FAQ ─────────────────────────────────────────────────────────────────────
 const FAQS = [
-  { q:'¿Cómo recibo mi invitación después de pagar?', a:'Recibirás un correo con un enlace de acceso. Al abrirlo, entrarás directo a tu editor para personalizar tu invitación desde cualquier celular.' },
-  { q:'¿Puedo editarla después de comprarla?',        a:'Sí. Puedes editar textos, fechas, fotos, itinerario y más desde el editor en línea cuando quieras.' },
-  { q:'¿Cómo se comparte con los invitados?',         a:'Una vez lista, copias el enlace de tu invitación y lo envías por WhatsApp, mensaje o donde prefieras. Sin descargas para tus invitados.' },
-  { q:'¿Tiene confirmación de asistencia (RSVP)?',    a:'Sí. Todos los planes incluyen RSVP para que tus invitados confirmen su asistencia directamente en la invitación.' },
-  { q:'¿Puedo usarla desde mi celular?',              a:'Sí, tanto el editor como la invitación están diseñados para funcionar perfectamente en cualquier celular, sin instalar apps.' },
-  { q:'¿Qué diferencia hay entre los planes?',        a:'Basic incluye lo esencial. Premium agrega galería, música, itinerario y mapa. Deluxe incluye todo lo anterior más StoryBook animado, padrinos, hospedaje y mesa de regalos.' },
+  { q:'¿Cómo recibo mi invitación después de pagar?', a:'El acceso es inmediato. Tras realizar tu pago con Stripe, recibirás un correo con un enlace de acceso para entrar a tu panel cliente y comenzar a editar tu invitación desde el celular o computadora.' },
+  { q:'¿Puedo editarla después de comprarla?',        a:'Sí, por supuesto. Puedes editar textos, fechas, fotos, música, mesa de regalos e itinerarios en cualquier momento. Los cambios se actualizan al instante en el mismo link.' },
+  { q:'¿Cómo se comparte con los invitados?',         a:'Una vez que tu invitación esté lista en el editor, puedes copiar el link personalizado de tu evento y enviarlo por WhatsApp o redes sociales a todos tus invitados. No necesitan descargar ninguna app para abrirla.' },
+  { q:'¿Tiene confirmación de asistencia (RSVP)?',    a:'Sí. Todos los planes incluyen confirmación de asistencia RSVP para que tus invitados elijan si asistirán y te dejen notas directamente desde la invitación. Puedes descargar el reporte en tiempo real.' },
+  { q:'¿Puedo usarla y editarla desde mi celular?',   a:'Sí. KOMPRALO está diseñado bajo el enfoque mobile-first. Tanto el editor de invitaciones como la visualización pública de las mismas funcionan de manera óptima en cualquier dispositivo celular.' },
+  { q:'¿Qué pasa después de pagar?',                  a:'El sistema genera tu invitación automáticamente en segundo plano. Recibes un correo con tu enlace mágico de acceso (Magic Link). Haces clic en él, entras a tu panel, editas el contenido y está lista para compartir.' },
 ];
 
 function FAQ() {
@@ -942,7 +985,7 @@ function FinalCTA() {
 
         <Reveal delay={0.18}>
           <p style={{ color:'#C5B0A0', fontSize:'clamp(.9375rem,1.8vw,1.0625rem)', lineHeight:1.7, margin:'0 0 2.5rem' }}>
-            Paga una sola vez. Edita desde tu celular. Comparte por WhatsApp.
+            Crea una invitación que tus invitados sí quieran abrir. Paga una sola vez, edita desde tu celular y comparte por WhatsApp.
             Desde <strong style={{ color:T.gold }}>$499 MXN</strong>.
           </p>
         </Reveal>
@@ -955,7 +998,7 @@ function FinalCTA() {
                 background:T.gold, color:T.dark,
                 borderRadius:'.625rem', fontSize:'1rem', fontWeight:700, textDecoration:'none',
               }}>
-                Crear mi invitación →
+                Ver planes y precios
               </Link>
             </HoverCard>
             <HoverCard lift={4} style={{ display:'inline-block' }}>
@@ -1003,7 +1046,8 @@ function Footer() {
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function InvitacionesPage() {
   return (
-    <div style={{ fontFamily:'var(--font-inter, system-ui, sans-serif)', background:T.ivory }}>
+    <div style={{ fontFamily:'var(--font-inter, system-ui, sans-serif)', background:T.ivory, position:'relative', minHeight:'100vh' }}>
+      <div className="paper-noise" />
       <PageStyles />
       <TopNav />
       <HeroSection />
@@ -1011,6 +1055,7 @@ export default function InvitacionesPage() {
       <HowItWorks />
       <EventTypes />
       <Benefits />
+      <SocialProofSection />
       <PricingPreview />
       <DemoTeaser />
       <FAQ />

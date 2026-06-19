@@ -23,7 +23,7 @@ const styles = `
   .lg2-card { animation: lg2-in .6s cubic-bezier(0.65,0,.35,1) .1s both; }
 
   .lg2-input {
-    width: 100%; padding: .6875rem 1rem;
+    width: 100%; padding: .75rem 1.125rem;
     border: 1.5px solid #E5DDD2;
     border-radius: .625rem;
     font-size: .875rem; color: #0F0C09;
@@ -34,20 +34,20 @@ const styles = `
   }
   .lg2-input:focus {
     border-color: #B8966A;
-    box-shadow: 0 0 0 3px rgba(184,150,106,0.14);
+    box-shadow: 0 0 0 3px rgba(184,150,106,0.12);
   }
   .lg2-input::placeholder { color: #C5B0A0; }
 
   .lg2-btn {
-    width: 100%; padding: .8125rem;
+    width: 100%; padding: .875rem;
     border: none; border-radius: .625rem;
     font-size: .9375rem; font-weight: 700;
     cursor: pointer; font-family: inherit;
-    transition: transform .15s ease, box-shadow .15s ease;
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
   }
   .lg2-btn:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(15,12,9,0.18);
+    box-shadow: 0 8px 24px rgba(15,12,9,0.12);
   }
   .lg2-btn:active:not(:disabled) { transform: translateY(0); }
   .lg2-btn:disabled { cursor: not-allowed; opacity: .65; }
@@ -67,9 +67,9 @@ function LoginForm() {
   const [state, formAction, pending] = useActionState(sendMagicLink, null);
 
   const errorMessages: Record<string,string> = {
-    expired_link: 'El enlace expiró. Solicita uno nuevo.',
-    invalid_link: 'Enlace inválido. Solicita uno nuevo.',
-    config:       'Error de configuración del servidor.',
+    expired_link: 'El enlace de acceso ha expirado. Solicita uno nuevo.',
+    invalid_link: 'El enlace de acceso es inválido. Solicita uno nuevo.',
+    config:       'Error de configuración del servidor de correos.',
   };
 
   if (state?.success) {
@@ -80,19 +80,19 @@ function LoginForm() {
           background:T.cream, border:`2px solid ${T.border}`,
           display:'flex', alignItems:'center', justifyContent:'center',
           fontSize:'1.625rem', margin:'0 auto 1.375rem',
-          boxShadow:'0 4px 16px rgba(15,12,9,0.07)',
+          boxShadow:'0 4px 16px rgba(15,12,9,0.05)',
         }}>
           📬
         </div>
-        <h2 style={{ fontSize:'1.1875rem', fontWeight:700, color:T.dark, margin:'0 0 .75rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+        <h2 style={{ fontSize:'1.25rem', fontWeight:700, color:T.dark, margin:'0 0 .75rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
           Revisa tu correo
         </h2>
-        <p style={{ color:T.mid, fontSize:'.875rem', lineHeight:1.7, margin:'0 0 1.125rem' }}>
-          Enviamos un enlace de acceso a tu bandeja de entrada.
-          <br />Haz clic en el enlace para continuar.
+        <p style={{ color:T.mid, fontSize:'.875rem', lineHeight:1.7, margin:'0 0 1.25rem' }}>
+          Hemos enviado un enlace de acceso (Magic Link) a tu bandeja de entrada.
+          <br />Haz clic en el enlace para ingresar directamente.
         </p>
         <div style={{ background:T.ivory, border:`1px solid ${T.border}`, borderRadius:'.625rem', padding:'.875rem 1rem', fontSize:'.78rem', color:T.light, lineHeight:1.55 }}>
-          ¿No llegó? Revisa spam o espera unos segundos e intenta de nuevo.
+          ¿No lo recibiste? Revisa tu bandeja de correo no deseado (spam) o espera unos segundos antes de intentar de nuevo.
         </div>
       </div>
     );
@@ -120,7 +120,7 @@ function LoginForm() {
           borderRadius:'.5rem', padding:'.75rem 1rem',
           color:'#991B1B', fontSize:'.8125rem', lineHeight:1.5,
         }}>
-          {state?.error ?? (errorParam ? (errorMessages[errorParam] ?? 'Ocurrió un error.') : '')}
+          {state?.error ?? (errorParam ? (errorMessages[errorParam] ?? 'Ocurrió un error al procesar el acceso.') : '')}
         </div>
       )}
 
@@ -129,7 +129,7 @@ function LoginForm() {
         className="lg2-btn"
         style={{ background: pending ? T.light : T.dark, color:'#F5EDD8' }}
       >
-        {pending ? 'Enviando enlace…' : 'Enviar enlace de acceso'}
+        {pending ? 'Enviando enlace de acceso…' : 'Enviar enlace de acceso'}
       </button>
 
       <div style={{
@@ -138,8 +138,8 @@ function LoginForm() {
         textAlign:'center',
       }}>
         <p style={{ margin:0, fontSize:'.8125rem', color:T.mid, lineHeight:1.6 }}>
-          Recibirás un correo con un enlace seguro.{' '}
-          <strong style={{ color:T.dark }}>No necesitas contraseña.</strong>
+          Te enviaremos un correo con un enlace seguro.<br />
+          <strong style={{ color:T.dark }}>No necesitas contraseña para acceder.</strong>
         </p>
       </div>
     </form>
@@ -156,6 +156,7 @@ export default function LoginPage() {
       fontFamily:'var(--font-inter, system-ui, sans-serif)',
       position:'relative',
     }}>
+      <div className="paper-noise" />
       <style>{styles}</style>
 
       {/* Decorative orbs */}
@@ -171,7 +172,7 @@ export default function LoginPage() {
       <div className="lg2-card" style={{
         width:'100%', maxWidth:'420px',
         background:T.white, borderRadius:'1.375rem', padding:'2.75rem 2.375rem',
-        boxShadow:'0 10px 48px rgba(15,12,9,0.1), 0 2px 0 rgba(229,221,210,1)',
+        boxShadow:'0 10px 48px rgba(15,12,9,0.08), 0 2px 0 rgba(229,221,210,1)',
         position:'relative',
       }}>
         {/* Gold top accent */}
@@ -187,13 +188,13 @@ export default function LoginPage() {
             KOMPRALO
           </p>
           <h1 style={{
-            fontSize:'1.5rem', fontWeight:700, color:T.dark, margin:'0 0 .5rem',
+            fontSize:'1.625rem', fontWeight:700, color:T.dark, margin:'0 0 .5rem',
             fontFamily:'var(--font-playfair, Georgia, serif)',
           }}>
             Accede a tu invitación
           </h1>
           <p style={{ color:T.mid, fontSize:'.875rem', margin:0, lineHeight:1.6 }}>
-            Usa el correo con el que realizaste tu compra.
+            Ingresa el correo con el que realizaste tu compra.
           </p>
         </div>
 
@@ -206,7 +207,7 @@ export default function LoginPage() {
           <p style={{ fontSize:'.78rem', color:T.light, margin:0 }}>
             ¿Aún no tienes una invitación?{' '}
             <Link href="/invitaciones/precios" className="lg2-secondary-link" style={{ color:T.gold, fontWeight:700, textDecoration:'none' }}>
-              Ver planes →
+              Ver planes y precios →
             </Link>
           </p>
         </div>

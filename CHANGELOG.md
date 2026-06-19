@@ -5,6 +5,44 @@
 
 ---
 
+## FASE REDESIGN-PUBLIC-PAGES-EDITORIAL-PREMIUM — Rediseño editorial premium de páginas públicas
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Elevar las páginas públicas (`/invitaciones`, `/invitaciones/precios`, `/checkout/success`, `/login`, `/cliente`) a una estética editorial de revista y eventos de lujo (tipo Awwwards), utilizando una composición de collage en el hero con imágenes reales generadas, tarjetas de eventos visuales con zoom, sección de testimonios honesta, y optimización de flujos y tipografía sin romper la lógica crítica de negocio.
+
+### Archivos creados / modificados
+
+- `src/app/invitaciones/page.tsx` — reescritura de landing page (collage editorial de imágenes reales, tarjetas visuales de eventos, sección Social Proof con testimonios y foto editorial, acordeón FAQ limpio, hover effects con CSS puro para evitar problemas de hidratación en server components).
+- `src/app/invitaciones/precios/page.tsx` — reestructuración de tarjetas con borde dorado viejo, badge "MÁS ELEGIDO" en Premium, microcopy post-compra con Stripe y WhatsApp, orbes decorativos.
+- `src/app/checkout/success/page.tsx` — rediseño de confirmación de pago recibido con check SVG, desglose de 4 pasos para Magic Link y edición, botones premium a `/login` y `/cliente` sin redirecciones directas.
+- `src/app/login/page.tsx` — rediseño de login con tarjeta warm-minimalist, fondo marfil, logo Kompralo, textos persuasivos sin contraseñas y corrección de tag HTML/JSX mismatch.
+- `src/app/cliente/page.tsx` — rediseño de tarjetas de órdenes, pills de estados con colores semánticos, empty state con llamada a la acción y preservación de seguridad por sesión Supabase.
+- `public/images/invitaciones/` — **NUEVAS IMÁGENES** generadas con IA (boda, papelería, flores, bautizo, quinceañera, baby shower, cumpleaños, social proof y textura de papel).
+
+### Cambios realizados
+
+1. **Assets generados**: Creación de 9 assets de eventos en formato `.webp` de alta calidad y colocación en `public/images/invitaciones/`.
+2. **Textura de papel**: Implementación de una textura de papel `.paper-noise` global aplicada a todas las páginas rediseñadas.
+3. **Hero sin Mockup**: Sustitución de PhoneMockup CSS en Hero por un collage de fotos reales con sombras y bordes suavizados de estilo revista.
+4. **Tipografía sofisticada**: Uso de fuentes `Playfair Display`, `Cormorant Garamond` e `Inter` para dotar de una jerarquía de tipografía premium a todos los textos comerciales.
+5. **Tarjetas de Eventos Visuales**: Tarjetas de tipos de evento que usan las imágenes generadas como fondo, con superposición oscura y efecto de zoom dinámico al pasar el cursor.
+6. **Prueba Social Editorial**: Sección de testimonios reales "Creada para momentos que merecen compartirse bonito" con alineación en dos columnas (foto editorial + citas con tipografía Lora cursiva).
+7. **Diseño de Precios**: Destacado sutil del plan Premium con color Negro Editorial (`#0F0C09`), badge dorado "MÁS ELEGIDO" y borde old-gold (`#B8966A`).
+8. **Flujos guiados**: Explicación de los próximos pasos en `/checkout/success` y `/login` de forma guiada para reducir la fricción en el Magic Link.
+9. **Compatibilidad RSC**: Corrección de error de compilación Next.js por uso de manejadores de eventos JavaScript (`onMouseEnter`/`onMouseLeave`) en componentes del servidor (RSC); reemplazado por hover en CSS puro (`.aw-btn-primary:hover` y `.aw-btn-secondary:hover`).
+10. **QA y Compilación**: Pruebas de compilación TypeScript y linter 100% exitosas.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK (0 errores)
+- `npm run build`: OK
+
+---
+
 ## FASE AWWWARDS-PUBLIC-LANDING-UPGRADE — Diseño editorial premium con Framer Motion
 
 Fecha: 2026-06-19

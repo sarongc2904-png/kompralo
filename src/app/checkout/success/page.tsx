@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
-import { Reveal } from '@/components/public/Motion';
 
 export const metadata: Metadata = { title: 'Pago exitoso — Kompralo' };
 
@@ -31,11 +30,11 @@ function PageStyles() {
       .cs2-d4    { animation-delay:.54s; }
 
       .cs2-btn {
-        transition: transform .18s ease, box-shadow .18s ease;
+        transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
       }
       .cs2-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 28px rgba(15,12,9,0.15);
+        box-shadow: 0 8px 28px rgba(15,12,9,0.12);
       }
       .cs2-btn:active { transform:translateY(0); }
     `}</style>
@@ -86,13 +85,14 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       textAlign:'center', gap:'1.5rem',
       position:'relative', overflow:'hidden',
     }}>
+      <div className="paper-noise" />
       <PageStyles />
 
-      {/* Decorative diamond */}
+      {/* Decorative label */}
       <div aria-hidden style={{
         position:'absolute', top:'2.5rem', left:'50%', transform:'translateX(-50%)',
         fontSize:'.6875rem', fontWeight:800, letterSpacing:'.22em', textTransform:'uppercase', color:T.gold,
-        opacity:.5,
+        opacity:.6,
       }}>
         Kompralo
       </div>
@@ -102,8 +102,8 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         width:'4.75rem', height:'4.75rem', borderRadius:'50%',
         background:T.dark,
         display:'flex', alignItems:'center', justifyContent:'center',
-        boxShadow:`0 16px 52px rgba(15,12,9,0.22)`,
-        border:`2px solid rgba(184,150,106,0.3)`,
+        boxShadow:`0 16px 52px rgba(15,12,9,0.18)`,
+        border:`2px solid rgba(184,150,106,0.35)`,
       }}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path d="M4 12.5L9.5 18L20 7" stroke="#B8966A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -113,20 +113,20 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       {/* Heading */}
       <div className="cs2-anim cs2-d1">
         <h1 style={{
-          fontSize:'clamp(1.625rem,4vw,2.25rem)',
+          fontSize:'clamp(1.75rem,4.5vw,2.5rem)',
           fontWeight:700, color:T.dark, margin:'0 0 .5rem',
           fontFamily:'var(--font-playfair, Georgia, serif)',
         }}>
           ¡Pago recibido!
         </h1>
         {order ? (
-          <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65, maxWidth:'26rem', margin:'0 auto' }}>
-            Plan <strong style={{ color:T.dark }}>{planLabels[order.planId] ?? order.planId}</strong> activado por{' '}
-            <strong style={{ color:T.dark }}>{formatPrice(order.amountTotal, order.currency)}</strong> MXN.
+          <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65, maxWidth:'28rem', margin:'0 auto' }}>
+            Plan <strong style={{ color:T.dark }}>{planLabels[order.planId] ?? order.planId}</strong> activado exitosamente por{' '}
+            <strong style={{ color:T.dark }}>{formatPrice(order.amountTotal, order.currency)}</strong> MXN. Tu invitación digital se está preparando.
           </p>
         ) : (
-          <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65, maxWidth:'26rem', margin:'0 auto' }}>
-            Tu pago fue procesado correctamente. Tu invitación estará lista en breve.
+          <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65, maxWidth:'28rem', margin:'0 auto' }}>
+            Tu pago fue procesado correctamente. Tu invitación se está preparando automáticamente en segundo plano.
           </p>
         )}
       </div>
@@ -134,21 +134,21 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       {/* Next steps card */}
       <div className="cs2-anim cs2-d2" style={{
         background:T.white, border:`1px solid ${T.border}`,
-        borderRadius:'1.125rem', padding:'1.5rem 1.75rem',
-        maxWidth:'26rem', width:'100%', textAlign:'left',
-        boxShadow:'0 4px 24px rgba(15,12,9,0.07)',
+        borderRadius:'1.25rem', padding:'1.75rem 2rem',
+        maxWidth:'28rem', width:'100%', textAlign:'left',
+        boxShadow:'0 4px 24px rgba(15,12,9,0.05)',
       }}>
-        <p style={{ margin:'0 0 1.125rem', fontSize:'.6875rem', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', color:T.gold }}>
-          Próximos pasos
+        <p style={{ margin:'0 0 1.25rem', fontSize:'.6875rem', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', color:T.gold }}>
+          Pasos a seguir
         </p>
 
         {[
-          { n:'1', icon:'📧', text: order?.customerEmail ? `Revisa tu correo en ${order.customerEmail}` : 'Revisa tu correo electrónico' },
-          { n:'2', icon:'🔗', text:'Haz clic en el enlace de acceso que te enviamos' },
-          { n:'3', icon:'✏️', text:'Edita tu invitación con tu nombre, fecha y fotos' },
-          { n:'4', icon:'💬', text:'Comparte el link por WhatsApp con tus invitados' },
+          { n:'1', icon:'📧', text: order?.customerEmail ? `Revisa tu correo de confirmación en ${order.customerEmail}` : 'Revisa tu bandeja de entrada' },
+          { n:'2', icon:'🔗', text:'Accede haciendo clic en el enlace mágico de acceso (Magic Link) que te enviamos' },
+          { n:'3', icon:'✏️', text:'Entra a la sección de edición para personalizar la fecha, fotos e información' },
+          { n:'4', icon:'💬', text:'Copia el link personalizado y compártelo con tus invitados por WhatsApp' },
         ].map(({ n, icon, text }) => (
-          <div key={n} style={{ display:'flex', alignItems:'flex-start', gap:'.75rem', marginBottom: n !== '4' ? '.875rem' : 0 }}>
+          <div key={n} style={{ display:'flex', alignItems:'flex-start', gap:'.875rem', marginBottom: n !== '4' ? '1rem' : 0 }}>
             <div style={{
               width:'1.75rem', height:'1.75rem', borderRadius:'50%', flexShrink:0,
               background:T.dark, display:'flex', alignItems:'center', justifyContent:'center',
@@ -156,7 +156,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
             }}>{n}</div>
             <div style={{ display:'flex', alignItems:'center', gap:'.5rem', paddingTop:'.2rem' }}>
               <span style={{ fontSize:'1rem' }}>{icon}</span>
-              <span style={{ fontSize:'.8125rem', color:T.mid, lineHeight:1.45 }}>{text}</span>
+              <span style={{ fontSize:'.875rem', color:T.mid, lineHeight:1.45 }}>{text}</span>
             </div>
           </div>
         ))}
@@ -165,14 +165,14 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       {/* CTAs */}
       <div className="cs2-anim cs2-d3" style={{ display:'flex', gap:'.75rem', flexWrap:'wrap', justifyContent:'center' }}>
         <Link href="/login" className="cs2-btn" style={{
-          display:'inline-block', padding:'.75rem 1.75rem',
+          display:'inline-block', padding:'.875rem 2rem',
           background:T.dark, color:'#F5EDD8',
           borderRadius:'.625rem', fontSize:'.875rem', fontWeight:700, textDecoration:'none',
         }}>
           Iniciar sesión →
         </Link>
         <Link href="/cliente" className="cs2-btn" style={{
-          display:'inline-block', padding:'.75rem 1.75rem',
+          display:'inline-block', padding:'.875rem 2rem',
           background:T.white, color:T.dark,
           borderRadius:'.625rem', fontSize:'.875rem', fontWeight:600,
           textDecoration:'none', border:`1px solid ${T.border}`,
@@ -181,9 +181,9 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         </Link>
       </div>
 
-      <div className="cs2-anim cs2-d4">
+      <div className="cs2-anim cs2-d4" style={{ marginTop:'.5rem' }}>
         <p style={{ fontSize:'.78rem', color:T.light, margin:0 }}>
-          ¿No llegó el correo? Revisa spam o escríbenos.
+          ¿No llegó el correo de acceso? Revisa tu bandeja de spam o escríbenos a soporte.
         </p>
       </div>
     </main>
