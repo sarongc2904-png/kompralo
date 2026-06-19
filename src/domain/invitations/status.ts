@@ -11,7 +11,7 @@ export const invitationStatuses = [
 export type InvitationStatus = (typeof invitationStatuses)[number];
 
 export function isPublicInvitationStatus(status: InvitationStatus): boolean {
-  return status === 'published' || status === 'paid';
+  return status === 'published';
 }
 
 export function isPreviewableInvitationStatus(status: InvitationStatus): boolean {

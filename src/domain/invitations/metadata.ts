@@ -14,7 +14,7 @@ export function buildInvitationMetadata(invitation: InvitationContent): Metadata
     ? [{ url: heroImage, width: 1200, height: 630, alt: title }]
     : [];
 
-  const canonicalUrl = `${APP_URL}/i/${invitation.slug}`;
+  const canonicalUrl = `${APP_URL}/${invitation.slug}`;
 
   return {
     title,

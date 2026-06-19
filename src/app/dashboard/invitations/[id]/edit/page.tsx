@@ -1,4 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
 import { invitationRepository } from '@/domain/invitations';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import EditForm from './EditForm';
@@ -88,12 +89,12 @@ export default async function EditInvitationPage({ params }: Props) {
           <p style={{ color: '#6B5B4E', fontSize: '0.9rem', marginBottom: '2rem' }}>
             Esta invitación no pertenece a tu cuenta.
           </p>
-          <a
+          <Link
             href="/cliente"
             style={{ color: '#C5A880', fontSize: '0.875rem', textDecoration: 'none' }}
           >
             ← Ver mis invitaciones
-          </a>
+          </Link>
         </div>
       );
     }
