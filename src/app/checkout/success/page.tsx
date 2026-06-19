@@ -73,12 +73,22 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
   const { session_id } = await searchParams;
   const order = await tryGetOrder(session_id);
 
-  const T = { ivory:'#FAF7F2', dark:'#0F0C09', mid:'#5C4A37', light:'#9B8165', gold:'#B8966A', border:'#E5DDD2', cream:'#F2EBD8', white:'#FFFFFF' };
+  const T = {
+    ivory:     '#E8D7B8',
+    cream:     '#F1E3C8',
+    dark:      '#0D0A07',
+    mid:       '#1A1612',
+    light:     '#6B4A35',
+    gold:      '#C4A962',
+    champagne: '#EAD7A3',
+    white:     '#F1E3C8',
+    border:    '#EAD7A3',
+  };
 
   return (
     <main style={{
       minHeight:'100dvh',
-      background:`radial-gradient(ellipse at 50% 0%, rgba(184,150,106,0.08) 0%, transparent 55%), linear-gradient(160deg, #FAF7F2 0%, #F2EBD8 100%)`,
+      background:`radial-gradient(ellipse at 50% 0%, rgba(196,169,98,0.08) 0%, transparent 55%), linear-gradient(160deg, #E8D7B8 0%, #F1E3C8 100%)`,
       display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
       padding:'3rem 1.25rem',
       fontFamily:'var(--font-inter, system-ui, sans-serif)',
@@ -103,10 +113,10 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         background:T.dark,
         display:'flex', alignItems:'center', justifyContent:'center',
         boxShadow:`0 16px 52px rgba(15,12,9,0.18)`,
-        border:`2px solid rgba(184,150,106,0.35)`,
+        border:`2px solid rgba(196,169,98,0.35)`,
       }}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path d="M4 12.5L9.5 18L20 7" stroke="#B8966A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M4 12.5L9.5 18L20 7" stroke="#C4A962" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
 
@@ -143,10 +153,10 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         </p>
 
         {[
-          { n:'1', icon:'📧', text: order?.customerEmail ? `Revisa tu correo de confirmación en ${order.customerEmail}` : 'Revisa tu bandeja de entrada' },
-          { n:'2', icon:'🔗', text:'Accede haciendo clic en el enlace mágico de acceso (Magic Link) que te enviamos' },
-          { n:'3', icon:'✏️', text:'Entra a la sección de edición para personalizar la fecha, fotos e información' },
-          { n:'4', icon:'💬', text:'Copia el link personalizado y compártelo con tus invitados por WhatsApp' },
+          { n:'1', icon:'📧', text: order?.customerEmail ? `Revisa el correo de confirmación de KOMPRALO en ${order.customerEmail}` : 'Revisa el correo de confirmación de KOMPRALO en tu bandeja' },
+          { n:'2', icon:'🔗', text:'Haz clic en "Enviar enlace de acceso" — recibirás un segundo correo con tu acceso seguro al editor' },
+          { n:'3', icon:'✏️', text:'Abre el enlace y personaliza tu invitación: fecha, fotos, textos y todo lo que necesites' },
+          { n:'4', icon:'💬', text:'Comparte el link con tus invitados por WhatsApp' },
         ].map(({ n, icon, text }) => (
           <div key={n} style={{ display:'flex', alignItems:'flex-start', gap:'.875rem', marginBottom: n !== '4' ? '1rem' : 0 }}>
             <div style={{
@@ -166,7 +176,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       <div className="cs2-anim cs2-d3" style={{ display:'flex', gap:'.75rem', flexWrap:'wrap', justifyContent:'center' }}>
         <Link href="/login" className="cs2-btn" style={{
           display:'inline-block', padding:'.875rem 2rem',
-          background:T.dark, color:'#F5EDD8',
+          background:T.dark, color:'#F1E3C8',
           borderRadius:'.625rem', fontSize:'.875rem', fontWeight:700, textDecoration:'none',
         }}>
           Iniciar sesión →

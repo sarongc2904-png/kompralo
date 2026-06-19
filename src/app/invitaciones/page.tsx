@@ -2,6 +2,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Reveal, Stagger, Item, HoverCard } from '@/components/public/Motion';
+import { CheckoutButton } from '@/components/checkout/CheckoutButton';
+import type { ProductId } from '@/domain/products';
 
 export const metadata: Metadata = {
   title: 'Invitaciones Digitales Editables — Kompralo',
@@ -11,15 +13,15 @@ export const metadata: Metadata = {
 
 // ─── Design system ────────────────────────────────────────────────────────────
 const T = {
-  ivory:     '#FAF7F2',
-  cream:     '#F2EBD8',
-  dark:      '#0F0C09',
-  mid:       '#5C4A37',
-  light:     '#9B8165',
-  gold:      '#B8966A',
-  champagne: '#D4B896',
-  white:     '#FFFFFF',
-  border:    '#E5DDD2',
+  ivory:     '#E8D7B8',
+  cream:     '#F1E3C8',
+  dark:      '#0D0A07',
+  mid:       '#1A1612',
+  light:     '#6B4A35',
+  gold:      '#C4A962',
+  champagne: '#EAD7A3',
+  white:     '#F1E3C8',
+  border:    '#EAD7A3',
 } as const;
 
 // ─── Global CSS (hover states + CSS animations for above-fold) ────────────────
@@ -59,17 +61,30 @@ function PageStyles() {
       .aw-faq-plus { transition:transform .25s cubic-bezier(0.65,0,.35,1); display:inline-block; }
       details.aw-faq summary::-webkit-details-marker { display:none; }
 
+      /* ── Plan checkout buttons ─────────────── */
+      .aw-plan-btn {
+        width:100%; padding:.8125rem; border:none; border-radius:.625rem;
+        font-size:.875rem; font-weight:700; cursor:pointer; font-family:inherit;
+        text-align:center; letter-spacing:.02em;
+        transition:opacity .15s ease;
+      }
+      .aw-plan-btn:hover:not(:disabled) { opacity:.85; }
+      .aw-plan-btn:active:not(:disabled) { opacity:.75; }
+      .aw-plan-btn:disabled { cursor:not-allowed; opacity:.6; }
+      .aw-plan-btn-dark { background:#0D0A07; color:#F1E3C8; }
+      .aw-plan-btn-gold { background:#C4A962; color:#0D0A07; }
+
       .aw-btn-primary {
         display: inline-block;
         padding: .875rem 2rem;
-        background: #0F0C09;
-        color: #F5EDD8;
+        background: #0D0A07;
+        color: #F1E3C8;
         border-radius: .625rem;
         font-size: .9375rem;
         font-weight: 700;
         text-decoration: none;
         letter-spacing: .02em;
-        box-shadow: 0 4px 14px rgba(15,12,9,0.15);
+        box-shadow: 0 4px 14px rgba(13,10,7,0.15);
         transition: opacity 0.2s ease;
       }
       .aw-btn-primary:hover {
@@ -117,7 +132,7 @@ function PageStyles() {
         width: 52%;
         height: 62%;
         border-radius: 1.5rem;
-        border: 6px solid #FAF7F2;
+        border: 6px solid #E8D7B8;
         box-shadow: 0 24px 48px rgba(15,12,9,0.18);
         object-fit: cover;
       }
@@ -128,7 +143,7 @@ function PageStyles() {
         width: 32%;
         height: 32%;
         border-radius: 1rem;
-        border: 4px solid #FAF7F2;
+        border: 4px solid #E8D7B8;
         box-shadow: 0 12px 24px rgba(15,12,9,0.1);
         object-fit: cover;
       }
@@ -319,7 +334,7 @@ function TopNav() {
         <Link href="/invitaciones/precios" style={{
           display:'inline-flex', alignItems:'center', gap:'.375rem',
           fontSize:'.8125rem', fontWeight:700,
-          background:T.dark, color:'#F5EDD8',
+          background:T.dark, color:'#F1E3C8',
           padding:'.45rem 1.125rem', borderRadius:'6rem', textDecoration:'none',
         }}>
           Ver planes
@@ -836,10 +851,10 @@ function PricingPreview() {
                   <p style={{ margin:'0 0 .25rem', fontSize:'.72rem', fontWeight:600, color: plan.dark ? T.champagne : T.light, letterSpacing:'.05em' }}>
                     {plan.ideal}
                   </p>
-                  <h3 style={{ margin:'0 0 1rem', fontSize:'1.375rem', fontWeight:700, color: plan.dark ? '#F5EDD8' : T.dark }}>{plan.name}</h3>
+                  <h3 style={{ margin:'0 0 1rem', fontSize:'1.375rem', fontWeight:700, color: plan.dark ? '#F1E3C8' : T.dark }}>{plan.name}</h3>
 
                   <div style={{ marginBottom:'1.375rem' }}>
-                    <span style={{ fontSize:'2.25rem', fontWeight:800, lineHeight:1, color: plan.dark ? '#F5EDD8' : T.dark }}>{plan.price}</span>
+                    <span style={{ fontSize:'2.25rem', fontWeight:800, lineHeight:1, color: plan.dark ? '#F1E3C8' : T.dark }}>{plan.price}</span>
                     <span style={{ fontSize:'.8rem', color: plan.dark ? '#C5B0A0' : T.light, marginLeft:'.3rem' }}>MXN · pago único</span>
                   </div>
 
@@ -851,14 +866,11 @@ function PricingPreview() {
                     ))}
                   </ul>
 
-                  <Link href="/invitaciones/precios" style={{
-                    display:'block', textAlign:'center', padding:'.8125rem',
-                    background:plan.dark ? T.gold : T.dark,
-                    color:plan.dark ? T.dark : '#F5EDD8',
-                    borderRadius:'.625rem', fontSize:'.875rem', fontWeight:700, textDecoration:'none',
-                  }}>
-                    Ver detalles y comprar
-                  </Link>
+                  <CheckoutButton
+                    productId={plan.id as ProductId}
+                    label={`Comprar ${plan.name}`}
+                    className={`aw-plan-btn ${plan.dark ? 'aw-plan-btn-gold' : 'aw-plan-btn-dark'}`}
+                  />
                 </div>
               </HoverCard>
             </Item>
@@ -892,7 +904,7 @@ function DemoTeaser() {
             <Link href="/sofia-y-alejandro" style={{
               display:'inline-flex', alignItems:'center', gap:'.75rem',
               padding:'1rem 2rem',
-              background:T.dark, color:'#F5EDD8',
+              background:T.dark, color:'#F1E3C8',
               borderRadius:'.75rem', fontSize:'.9375rem', fontWeight:700,
               textDecoration:'none',
             }}>
@@ -967,8 +979,7 @@ function FAQ() {
 function FinalCTA() {
   return (
     <section style={{
-      background:`linear-gradient(145deg, #0F0C09 0%, #1C1208 60%, #0F0C09 100%)`,
-      backgroundImage:`radial-gradient(ellipse at 50% 60%, rgba(184,150,106,0.06) 0%, transparent 65%)`,
+      background: `radial-gradient(circle at 50% 60%, rgba(196,169,98,0.12) 0%, transparent 65%), linear-gradient(145deg, #0D0A07 0%, #1A1612 60%, #0D0A07 100%)`,
       padding:'clamp(4rem,9vw,6.5rem) clamp(1.25rem,5vw,3rem)',
       textAlign:'center',
     }}>
@@ -981,7 +992,7 @@ function FinalCTA() {
         <Reveal delay={0.1}>
           <h2 style={{
             fontSize:'clamp(2rem,5.5vw,3.5rem)',
-            fontWeight:700, color:'#F5EDD8', margin:'0 0 1.125rem',
+            fontWeight:700, color:'#F1E3C8', margin:'0 0 1.125rem',
             lineHeight:1.12,
             fontFamily:'var(--font-playfair, Georgia, serif)',
             letterSpacing:'-.01em',
@@ -991,7 +1002,7 @@ function FinalCTA() {
         </Reveal>
 
         <Reveal delay={0.18}>
-          <p style={{ color:'#C5B0A0', fontSize:'clamp(.9375rem,1.8vw,1.0625rem)', lineHeight:1.7, margin:'0 0 2.5rem' }}>
+          <p style={{ color:'#D9C4A3', fontSize:'clamp(.9375rem,1.8vw,1.0625rem)', lineHeight:1.7, margin:'0 0 2.5rem' }}>
             Crea una invitación que tus invitados sí quieran abrir. Paga una sola vez, edita desde tu celular y comparte por WhatsApp.
             Desde <strong style={{ color:T.gold }}>$499 MXN</strong>.
           </p>
@@ -1011,9 +1022,9 @@ function FinalCTA() {
             <HoverCard lift={4} style={{ display:'inline-block' }}>
               <Link href="/sofia-y-alejandro" style={{
                 display:'inline-block', padding:'.9375rem 2.25rem',
-                background:'transparent', color:'#F5EDD8',
+                background:'transparent', color:'#F1E3C8',
                 borderRadius:'.625rem', fontSize:'1rem', fontWeight:600,
-                textDecoration:'none', border:'1.5px solid rgba(245,237,216,0.2)',
+                textDecoration:'none', border:'1.5px solid rgba(241,227,200,0.2)',
               }}>
                 Ver demo
               </Link>
@@ -1022,7 +1033,7 @@ function FinalCTA() {
         </Reveal>
 
         <Reveal delay={0.34}>
-          <p style={{ marginTop:'2rem', fontSize:'.78rem', color:'#6B5540' }}>
+          <p style={{ marginTop:'2rem', fontSize:'.78rem', color:'#6B4A35' }}>
             Después del pago recibirás acceso para editar tu invitación · Pago seguro con Stripe
           </p>
         </Reveal>

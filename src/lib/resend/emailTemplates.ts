@@ -70,7 +70,7 @@ export function buildOrderConfirmationEmail(params: OrderConfirmationParams): {
       : `${appUrl}${editPath}`;
     ctaUrl       = loginTarget;
     ctaLabel     = 'Enviar enlace de acceso →';
-    nextStepText = 'Para proteger tu invitación, primero te enviaremos un enlace seguro. Haz clic abajo y confirma tu correo. No necesitas contraseña.';
+    nextStepText = 'Haz clic en el botón para confirmar tu correo. Te enviaremos un enlace seguro de acceso al editor — no necesitas contraseña.';
   } else {
     ctaUrl       = `${appUrl}/checkout/success?session_id=${stripeSessionId}`;
     ctaLabel     = 'Ver mi compra →';
@@ -156,6 +156,12 @@ export function buildOrderConfirmationEmail(params: OrderConfirmationParams): {
                   </td>
                 </tr>
               </table>
+
+              <!-- Follow-up note for login flow -->
+              ${invitationId && !magicLinkUrl ? `
+              <p style="margin:0 0 16px;font-size:13px;color:#9B8878;line-height:1.6;">
+                Después de confirmar tu correo, recibirás un segundo correo con tu enlace seguro de acceso al editor.
+              </p>` : ''}
 
               <!-- Support -->
               <p style="margin:0;font-size:13px;color:#9B8878;line-height:1.6;">
