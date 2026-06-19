@@ -1,7 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { invitationRepository } from '@/domain/invitations';
+import type { IInvitationRepository } from '@/domain/invitations';
+import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
+import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
 import type {
   GalleryImageItem,
@@ -22,6 +24,105 @@ import type {
 export type UpdateInvitationResult =
   | { success: true; message: string }
   | { success: false; error: string };
+
+function isAdminMode(): boolean {
+  return process.env.ADMIN_ACCESS_ENABLED === 'true';
+}
+
+async function getAuthorizedInvitationRepository(invitationId: string): Promise<IInvitationRepository> {
+  const serviceSupabase = createServiceRoleSupabaseClient();
+  const repository = new SupabaseInvitationRepository(serviceSupabase);
+  const invitation = await repository.getById(invitationId);
+
+  if (!invitation) {
+    throw new Error('Invitación no encontrada.');
+  }
+
+  if (isAdminMode()) {
+    return repository;
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const sessionEmail = user?.email?.toLowerCase() ?? null;
+  const ownerEmail = invitation.customerEmail?.toLowerCase() ?? null;
+
+  if (!sessionEmail || !ownerEmail || sessionEmail !== ownerEmail) {
+    throw new Error('No tienes permiso para editar esta invitación.');
+  }
+
+  return repository;
+}
+
+function getServiceInvitationRepository(): IInvitationRepository {
+  return new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
+}
+
+const invitationRepository: IInvitationRepository = {
+  async list() {
+    throw new Error('Editor actions cannot list invitations.');
+  },
+  async getBySlug(slug) {
+    return getServiceInvitationRepository().getBySlug(slug);
+  },
+  async getById(id) {
+    return getServiceInvitationRepository().getById(id);
+  },
+  async getPreviewById(id) {
+    return getServiceInvitationRepository().getPreviewById(id);
+  },
+  async updateBasicInfo(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateBasicInfo(id, input));
+  },
+  async updateMediaInfo(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateMediaInfo(id, input));
+  },
+  async updateGallery(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateGallery(id, input));
+  },
+  async updateProtagonists(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateProtagonists(id, input));
+  },
+  async updateItinerary(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateItinerary(id, input));
+  },
+  async updateGiftRegistry(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateGiftRegistry(id, input));
+  },
+  async updateDressCode(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateDressCode(id, input));
+  },
+  async updatePadrinos(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updatePadrinos(id, input));
+  },
+  async updateStoryBook(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateStoryBook(id, input));
+  },
+  async updateAccommodation(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateAccommodation(id, input));
+  },
+  async updateSocial(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateSocial(id, input));
+  },
+  async updateFinalMessage(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateFinalMessage(id, input));
+  },
+  async updateTimeline(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateTimeline(id, input));
+  },
+  async updateFeatureOverrides(id, overrides) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateFeatureOverrides(id, overrides));
+  },
+  async updateThemeSelection(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateThemeSelection(id, input));
+  },
+  async activateAfterPayment() {
+    throw new Error('Editor actions cannot activate invitations after payment.');
+  },
+  async createFromPaidOrder() {
+    throw new Error('Editor actions cannot create invitations from paid orders.');
+  },
+};
 
 // =============================================================================
 // updateInvitationBasicInfo

@@ -5,6 +5,34 @@
 
 ---
 
+## FASE CLIENT-DASHBOARD-E2E-QA - Fix de guardado real del editor
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Validar login, `/cliente`, dashboard y guardado persistente real en Supabase.
+
+### Archivos modificados
+
+- `src/app/dashboard/invitations/[id]/edit/actions.ts`
+
+### Resultado
+
+- Se detecto que las Server Actions del editor usaban el repositorio global con cliente anonimo/fallback.
+- Se agrego validacion server-side de propietario por sesion Supabase contra `invitation.customerEmail`.
+- Las escrituras del editor ahora usan `SupabaseInvitationRepository` con service role solo despues de validar permiso.
+- `ADMIN_ACCESS_ENABLED=true` conserva modo admin/dev.
+- No se tocaron Stripe, webhook, orders, Resend, Theme Engine, InvitationRenderer, Pricing ni asistentes.
+
+### Validacion local
+
+- `npx.cmd --no-install tsc --noEmit`: OK
+- `npm.cmd --prefix "D:\josed\Descargas\invitacion maestra" run lint`: OK, 10 warnings preexistentes
+- `npm.cmd --prefix "D:\josed\Descargas\invitacion maestra" run build`: OK
+
+---
+
 ## FASE PRODUCTION-CONFIG-SETUP - Configuracion incompleta por falta de URL
 
 Fecha: 2026-06-18
