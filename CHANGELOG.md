@@ -5,6 +5,96 @@
 
 ---
 
+## FASE FEATURES-UI-SPACING-FIX — Espaciado y layout responsive del catálogo de features
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Mejorar el espaciado, padding y legibilidad del catálogo de features en `/dashboard/features` sin cambiar lógica ni contenido.
+
+### Archivos modificados
+
+- `src/app/dashboard/features/page.tsx`
+
+### Cambios realizados
+
+1. Padding de filas de tabla: `py-3 pr-4` → `1rem 1.5rem` por celda (16px vertical, 24px horizontal).
+2. Primera columna: ahora tiene `paddingLeft: 1.5rem` tanto en `<th>` como en `<td>`.
+3. Badges: tamaño `text-[9px]` → `0.6875rem`; padding `0.25rem 0.625rem`; gap entre badges de `4px` a `6px`.
+4. Descripciones: `lineHeight: 1.6` explícito; color `#6B5B4E` (más legible que `#9B8878`).
+5. Feature key (monospace): `text-[10px]` → `0.7rem` con margen superior explícito.
+6. Tabla en desktop: `overflowX: auto` para evitar overflow en contenedores angostos.
+7. Mobile (< 768px): tabla oculta, reemplazada por cards por feature con nombre + badges + descripción + flags.
+8. Leyenda: gap `0.625rem`, padding `1rem 1.25rem`, badges más grandes.
+9. Separación entre secciones: `mb-8` → `marginBottom: 2.5rem`.
+10. `maxWidth: 960` en el contenedor — no se estira en pantallas anchas.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK, 10 warnings preexistentes
+- `npx next build`: OK
+- Commit: `b5c2771`
+
+### Notas
+
+- No se tocaron Stripe, webhook, Supabase, Auth, Dashboard Assistant, Theme Engine ni InvitationRenderer.
+- No se cambió ninguna lógica de features ni estados.
+- Solo cambios visuales/layout.
+
+---
+
+## FASE CLIENT-DASHBOARD-REAL-SESSION-QA — Seguridad y guardado del dashboard de cliente
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+QA del flujo completo de sesión real: Magic Link → `/cliente` → dashboard → editar → guardar → persistir en Supabase. Se detectaron y corrigieron bugs de seguridad y guardado antes del push.
+
+### Bugs encontrados y corregidos
+
+1. `actions.ts` bloqueaba saves cuando `customer_email` es null en la DB.
+   - Archivo: `src/app/dashboard/invitations/[id]/edit/actions.ts`
+   - Causa: `!ownerEmail` en la condición de ownership hacía throw aunque hubiera sesión válida.
+   - Síntoma: cliente con sesión real no podía guardar cambios si su invitación no tenía `customer_email` registrado (e.g., patch SQL no aplicado aún, o invitación anterior al campo).
+   - Corrección: separada la lógica en dos condiciones: (a) sin sesión → error; (b) con ownerEmail Y mismatch → error. Si ownerEmail es null, se confía en la sesión.
+
+2. Clientes autenticados podían acceder a `/dashboard`, `/dashboard/invitations`, `/dashboard/rsvps` y `/dashboard/features` que listaban TODAS las invitaciones de todos los clientes.
+   - Archivos: `src/app/dashboard/layout.tsx`, `src/app/dashboard/page.tsx`, `src/app/dashboard/invitations/page.tsx`, `src/app/dashboard/rsvps/page.tsx`, `src/app/dashboard/features/page.tsx`
+   - Corrección: nav links divididos en `ADMIN_NAV_LINKS` y `CUSTOMER_NAV_LINKS` (clientes solo ven "← Mis invitaciones" y "← Ver sitio"). Cada página de listado tiene `if (!isAdminMode()) redirect('/cliente')` al inicio.
+
+### Archivos modificados
+
+- `src/app/dashboard/invitations/[id]/edit/actions.ts`
+- `src/app/dashboard/layout.tsx`
+- `src/app/dashboard/page.tsx`
+- `src/app/dashboard/invitations/page.tsx`
+- `src/app/dashboard/rsvps/page.tsx`
+- `src/app/dashboard/features/page.tsx`
+
+### Observaciones pendientes (acción manual)
+
+- Confirmar `NEXT_PUBLIC_APP_URL=https://kompralo.vercel.app` en Vercel.
+- Confirmar Site URL y Redirect URL en Supabase Dashboard → Authentication → URL Configuration.
+- Confirmar que la columna `customer_email` existe en la tabla `invitations` (SQL patch `supabase/auth_7b_customer_access_patch.sql`).
+- Hacer prueba real del flujo completo con un email que tenga una orden en la DB.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK, 10 warnings preexistentes
+- `npx next build`: OK
+- Commit: `4bd98ae`
+
+### Notas
+
+- No se tocaron Stripe, webhook, orders, Resend, Pricing, Theme Engine, InvitationRenderer ni Dashboard Assistant.
+- Solo se corrigieron bugs de Auth, seguridad de datos y guardado del editor.
+
+---
+
 ## FASE AV-1-QA — Auditoría completa del asistente virtual local
 
 Fecha: 2026-06-19
