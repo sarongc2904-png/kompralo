@@ -146,10 +146,17 @@ function PageStyles() {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        filter: grayscale(0);
       }
-      .aw-event-card:hover .aw-event-card-img {
-        transform: scale(1.06);
+      @media (hover: hover) and (min-width: 769px) {
+        .aw-event-card-img {
+          filter: grayscale(100%);
+        }
+        .aw-event-card:hover .aw-event-card-img {
+          filter: grayscale(0%);
+          transform: scale(1.06);
+        }
       }
       .aw-event-card-overlay {
         position: absolute;
