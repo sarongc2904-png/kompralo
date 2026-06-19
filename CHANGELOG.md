@@ -2433,3 +2433,41 @@ Fecha: 2026-06-19
 - `npm.cmd run lint`: OK con 10 warnings preexistentes y 0 errores.
 - `npm.cmd run build`: OK.
 - Prueba E2E real: pendiente de aplicar SQL, configurar secreto y desplegar.
+
+---
+
+## FASE CRO-LANDING-META-ADS-UPGRADE - Landing para tráfico frío
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Convertir `/invitaciones` de catálogo visual a landing orientada a deseo, confianza, demostración y compra, conservando Checkout, precios y lógica crítica.
+
+### Archivos modificados
+
+- `src/app/invitaciones/page.tsx`
+- `src/app/invitaciones/precios/page.tsx`
+- `src/components/public/Motion.tsx`
+
+### Cambios principales
+
+1. Hero full-bleed con posicionamiento “La forma más elegante de organizar tu evento desde un solo enlace”.
+2. Demo visual 16:9 preparada para sustituirse por video real, con flujo de seis pasos.
+3. Franja de confianza: Stripe, uso sin app, WhatsApp y edición móvil.
+4. Kompralo se presenta como centro digital del evento, no solo como invitación.
+5. Beneficios redactados alrededor de dolores reales: confirmación, ubicación, regalos, expectativa y cambios.
+6. Comparación directa entre invitación tradicional y Kompralo.
+7. Cinco tipos de evento con fotografía editorial local.
+8. Premium marcado como “Más vendido”, dominante y conectado al `CheckoutButton` original.
+9. Casos representativos sin métricas inventadas y comentario interno para sustituir por reseñas verificadas.
+10. Garantía de acompañamiento, urgencia suave para eventos próximos, FAQ de siete objeciones y CTA emocional final.
+11. `next/image` para assets locales y motion reducido cuando el sistema solicita `prefers-reduced-motion`.
+
+### Validación
+
+- `/invitaciones`: HTTP 200 local y contenido CRO principal presente.
+- `/invitaciones/precios`: HTTP 200 local.
+- `/sofia-y-alejandro`: HTTP 200; la ruta pública no se alteró.
+- Los tres planes conservan `CheckoutButton` con `productId` Basic, Premium y Deluxe.
+- Automatización visual por viewport: bloqueada por el entorno del navegador; se validaron breakpoints y contención responsive en código, sin afirmar inspección por captura.

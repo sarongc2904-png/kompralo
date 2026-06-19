@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { useRef } from 'react';
 import type { ReactNode, CSSProperties } from 'react';
 
@@ -24,14 +24,15 @@ export function Reveal({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-72px 0px' });
+  const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
       ref={ref}
       style={style}
       className={className}
-      initial={{ opacity: 0, y }}
-      animate={inView ? { opacity: 1, y: 0 } : undefined}
+      initial={reduceMotion ? false : { opacity: 0, y }}
+      animate={!reduceMotion && inView ? { opacity: 1, y: 0 } : undefined}
       transition={{ duration, ease: EASE, delay }}
     >
       {children}
@@ -55,14 +56,15 @@ export function Stagger({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-60px 0px' });
+  const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
       ref={ref}
       style={style}
       className={className}
-      initial="hidden"
-      animate={inView ? 'visible' : 'hidden'}
+      initial={reduceMotion ? false : 'hidden'}
+      animate={reduceMotion ? undefined : (inView ? 'visible' : 'hidden')}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: gap, delayChildren: delay } },
@@ -113,11 +115,13 @@ export function HoverCard({
   style?: CSSProperties;
   className?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.div
       style={{ cursor: 'default', ...style }}
       className={className}
-      whileHover={{ y: -lift, transition: { duration: 0.28, ease: EASE } }}
+      whileHover={reduceMotion ? undefined : { y: -lift, transition: { duration: 0.28, ease: EASE } }}
     >
       {children}
     </motion.div>
@@ -136,13 +140,15 @@ export function HoverButton({
   className?: string;
   onClick?: () => void;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.div
       style={style}
       className={className}
       onClick={onClick}
-      whileHover={{ y: -2, scale: 1.015, transition: { duration: 0.2, ease: EASE } }}
-      whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+      whileHover={reduceMotion ? undefined : { y: -2, scale: 1.015, transition: { duration: 0.2, ease: EASE } }}
+      whileTap={reduceMotion ? undefined : { scale: 0.98, transition: { duration: 0.1 } }}
     >
       {children}
     </motion.div>

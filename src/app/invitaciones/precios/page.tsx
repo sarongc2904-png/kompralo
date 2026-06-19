@@ -6,21 +6,21 @@ import { CheckoutButton } from '@/components/checkout/CheckoutButton';
 import { Reveal, Stagger, Item, HoverCard } from '@/components/public/Motion';
 
 export const metadata: Metadata = {
-  title: 'Planes y Precios — Kompralo',
-  description: 'Elige el plan ideal para tu invitación digital. Basic, Premium o Deluxe. Desde $499 MXN.',
+  title: 'Planes para organizar tu evento — Kompralo',
+  description: 'Elige cuánto quieres organizar desde un solo enlace. Basic $499, Premium $899 y Deluxe $1,499 MXN. Pago único.',
 };
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 const T = {
-  ivory:     '#FAF7F2',
-  cream:     '#F2EBD8',
-  dark:      '#0F0C09',
-  mid:       '#5C4A37',
-  light:     '#9B8165',
-  gold:      '#B8966A',
-  champagne: '#D4B896',
-  white:     '#FFFFFF',
-  border:    '#E5DDD2',
+  ivory:     '#E8D7B8',
+  cream:     '#F1E3C8',
+  dark:      '#0D0A07',
+  mid:       '#1A1612',
+  light:     '#6B4A35',
+  gold:      '#C4A962',
+  champagne: '#EAD7A3',
+  white:     '#F1E3C8',
+  border:    '#EAD7A3',
 } as const;
 
 // ─── CSS ─────────────────────────────────────────────────────────────────────
@@ -56,6 +56,14 @@ function PageStyles() {
         }
       }
 
+      @media (min-width:801px) {
+        .pr2-featured-card {
+          transform: scale(1.07);
+          position: relative;
+          z-index: 2;
+        }
+      }
+
       .pr2-trust-row {
         display: flex;
         flex-wrap: wrap;
@@ -76,16 +84,16 @@ function formatPrice(centavos: number, currency: string): string {
 
 const planMeta: Record<string, { ideal:string; highlight:string }> = {
   basic: {
-    ideal:     'Ideal para una invitación sencilla y elegante',
-    highlight: 'Lo esencial para una invitación bonita, rápida y funcional.',
+    ideal:     'Una invitación clara y fácil de compartir',
+    highlight: 'Para quien quiere una invitación elegante, clara y fácil de compartir.',
   },
   premium: {
-    ideal:     'El más elegido · Recomendado para Bodas y XV años',
-    highlight: 'Galería de fotos, música, mesa de regalos, itinerario y RSVP interactivo.',
+    ideal:     'Más vendido · Recomendado para Bodas y XV años',
+    highlight: 'Para organizar mejor tu evento con RSVP, galería, música, itinerario y más personalización.',
   },
   deluxe: {
-    ideal:     'La experiencia premium completa',
-    highlight: 'Diseño avanzado, StoryBook animado, sección de padrinos, hospedaje y más.',
+    ideal:     'La experiencia más completa',
+    highlight: 'Para eventos formales que necesitan una experiencia completa, StoryBook, hospedaje y más.',
   },
 };
 
@@ -108,12 +116,12 @@ function ProductCard({ product, featured }: { product:Product; featured?:boolean
   const meta = planMeta[product.id] ?? { ideal:'', highlight:'' };
 
   return (
-    <HoverCard lift={featured ? 8 : 5} style={{ height:'100%' }}>
+    <HoverCard lift={featured ? 8 : 5} style={{ height:'100%' }} className={featured ? 'pr2-featured-card' : undefined}>
       <div style={{
         position:'relative', display:'flex', flexDirection:'column', height:'100%',
         background: featured ? T.dark : T.white,
         border: featured ? `2px solid ${T.gold}` : `1px solid ${T.border}`,
-        borderRadius:'1.25rem', padding:'2.25rem 1.75rem',
+        borderRadius:'8px', padding:'2.25rem 1.75rem',
         boxShadow: featured
           ? `0 14px 56px rgba(184,150,106,0.22), 0 2px 0 rgba(184,150,106,0.25) inset`
           : '0 2px 12px rgba(15,12,9,0.04)',
@@ -123,22 +131,22 @@ function ProductCard({ product, featured }: { product:Product; featured?:boolean
           <div style={{
             position:'absolute', top:'-1px', left:'50%', transform:'translateX(-50%)',
             background:T.gold, color:T.dark,
-            fontSize:'.6875rem', fontWeight:800, letterSpacing:'.1em',
+            fontSize:'.6875rem', fontWeight:800, letterSpacing:0,
             padding:'.25rem 1.125rem', borderRadius:'0 0 .625rem .625rem', whiteSpace:'nowrap',
           }}>
-            MÁS ELEGIDO
+            MÁS VENDIDO
           </div>
         )}
 
         {/* Ideal label */}
         {meta.ideal && (
-          <p style={{ margin:'0 0 .375rem', fontSize:'.72rem', fontWeight:600, color: featured ? T.champagne : T.light, letterSpacing:'.04em' }}>
+          <p style={{ margin:'0 0 .375rem', fontSize:'.72rem', fontWeight:600, color: featured ? T.champagne : T.light, letterSpacing:0 }}>
             {meta.ideal}
           </p>
         )}
 
         {/* Plan name */}
-        <h2 style={{ margin:'0 0 .375rem', fontSize:'1.625rem', fontWeight:700, color: featured ? '#F5EDD8' : T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+        <h2 style={{ margin:'0 0 .375rem', fontSize:'1.625rem', fontWeight:700, color: featured ? '#F1E3C8' : T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
           {product.name}
         </h2>
 
@@ -149,7 +157,7 @@ function ProductCard({ product, featured }: { product:Product; featured?:boolean
 
         {/* Price */}
         <div style={{ marginBottom:'1.625rem' }}>
-          <span style={{ fontSize:'2.75rem', fontWeight:800, color: featured ? '#F5EDD8' : T.dark, lineHeight:1, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+          <span style={{ fontSize:'2.75rem', fontWeight:800, color: featured ? '#F1E3C8' : T.dark, lineHeight:1, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
             {priceStr}
           </span>
           <span style={{ fontSize:'.875rem', color: featured ? '#C5B0A0' : T.light, marginLeft:'.375rem' }}>
@@ -167,10 +175,10 @@ function ProductCard({ product, featured }: { product:Product; featured?:boolean
           productId={product.id}
           label={`Comprar ${product.name}`}
           className={[
-            'w-full py-3 rounded-xl text-sm font-bold transition-opacity cursor-pointer text-center',
+            'w-full py-3 rounded-md text-sm font-bold transition-opacity cursor-pointer text-center',
             featured
-              ? 'bg-[#B8966A] text-[#0F0C09] hover:opacity-90'
-              : 'bg-[#0F0C09] text-[#F5EDD8] hover:opacity-85',
+              ? 'bg-[#C4A962] text-[#0D0A07] hover:opacity-90'
+              : 'bg-[#0D0A07] text-[#F1E3C8] hover:opacity-85',
           ].join(' ')}
         />
       </div>
@@ -201,7 +209,7 @@ export default function PreciosPage() {
         }}>
           ← Volver
         </Link>
-        <span style={{ fontSize:'.6875rem', fontWeight:800, letterSpacing:'.22em', textTransform:'uppercase', color:T.dark }}>
+        <span style={{ fontSize:'.6875rem', fontWeight:800, letterSpacing:0, textTransform:'uppercase', color:T.dark }}>
           Kompralo
         </span>
         <Link href="/login" className="pr2-nav-link" style={{ fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500 }}>
@@ -213,18 +221,18 @@ export default function PreciosPage() {
 
         {/* Header */}
         <Reveal style={{ textAlign:'center', marginBottom:'3.5rem', maxWidth:'38rem', margin:'0 auto 3.5rem' }}>
-          <p style={{ fontSize:'.6875rem', fontWeight:700, letterSpacing:'.22em', color:T.gold, textTransform:'uppercase', margin:'0 0 .875rem', fontFamily:'var(--font-inter, system-ui, sans-serif)' }}>
+          <p style={{ fontSize:'.6875rem', fontWeight:700, letterSpacing:0, color:T.gold, textTransform:'uppercase', margin:'0 0 .875rem', fontFamily:'var(--font-inter, system-ui, sans-serif)' }}>
             Planes
           </p>
           <h1 style={{
-            fontSize:'clamp(1.875rem,5.5vw,3rem)', fontWeight:700, color:T.dark,
+            fontSize:'3rem', fontWeight:700, color:T.dark,
             margin:'0 0 1.125rem', lineHeight:1.1,
             fontFamily:'var(--font-playfair, Georgia, serif)',
           }}>
-            Tu invitación digital, sin complicaciones
+            Organiza tu evento desde un solo enlace
           </h1>
           <p style={{ color:T.mid, fontSize:'1rem', lineHeight:1.65, margin:0 }}>
-            Elige el plan que mejor se adapte a tu evento.<br />Pago único, sin suscripción ni mensualidades.
+            Elige las herramientas que necesitas para compartir, confirmar y mantener informados a tus invitados.<br />Pago único, sin suscripción ni mensualidades.
           </p>
         </Reveal>
 
