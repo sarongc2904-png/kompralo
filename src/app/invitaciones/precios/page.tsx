@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { availableProducts } from '@/domain/products';
 import type { Product } from '@/domain/products';
 import { CheckoutButton } from '@/components/checkout/CheckoutButton';
@@ -6,6 +7,23 @@ import { CheckoutButton } from '@/components/checkout/CheckoutButton';
 export const metadata: Metadata = {
   title: 'Planes y Precios — Kompralo',
   description: 'Elige el plan ideal para tu invitación digital. Basic, Premium o Deluxe.',
+};
+
+// ─── Per-plan extra copy (not in domain catalog) ─────────────────────────────
+
+const planMeta: Record<string, { ideal: string; highlight: string }> = {
+  basic: {
+    ideal: 'Ideal para bautizos, baby showers y cumpleaños',
+    highlight: 'Lo esencial para una invitación bonita y funcional.',
+  },
+  premium: {
+    ideal: 'Ideal para bodas y XV años · el más elegido',
+    highlight: 'Galería, música, itinerario y mapa incluidos.',
+  },
+  deluxe: {
+    ideal: 'Ideal para bodas y quinces de alto impacto',
+    highlight: 'La experiencia más completa con StoryBook animado.',
+  },
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -41,6 +59,7 @@ function FeatureList({ features }: { features: string[] }) {
 
 function ProductCard({ product, featured }: { product: Product; featured?: boolean }) {
   const priceStr = formatPrice(product.price, product.currency);
+  const meta = planMeta[product.id] ?? { ideal: '', highlight: '' };
 
   return (
     <div
@@ -96,6 +115,19 @@ function ProductCard({ product, featured }: { product: Product; featured?: boole
         {product.name}
       </h3>
 
+      {/* Ideal para */}
+      <p
+        style={{
+          margin:      '0 0 0.375rem',
+          fontSize:    '0.75rem',
+          fontWeight:  600,
+          color:       featured ? '#C5A880' : '#9B8878',
+          letterSpacing: '0.04em',
+        }}
+      >
+        {meta.ideal}
+      </p>
+
       {/* Description */}
       <p
         style={{
@@ -107,7 +139,7 @@ function ProductCard({ product, featured }: { product: Product; featured?: boole
           minHeight:   '2.5em',
         }}
       >
-        {product.description}
+        {meta.highlight || product.description}
       </p>
 
       {/* Price */}
@@ -158,10 +190,52 @@ export default function PreciosPage() {
       style={{
         minHeight:   '100dvh',
         background:  '#F5F0EB',
-        padding:     'clamp(2rem, 8vw, 5rem) 1rem',
         fontFamily:  'var(--font-inter, system-ui, sans-serif)',
       }}
     >
+      {/* Nav */}
+      <nav
+        style={{
+          display:        'flex',
+          alignItems:     'center',
+          justifyContent: 'space-between',
+          padding:        '0.875rem clamp(1rem, 4vw, 2rem)',
+          borderBottom:   '1px solid #E8E2DA',
+          background:     'rgba(245,240,235,0.9)',
+          backdropFilter: 'blur(8px)',
+          position:       'sticky',
+          top:            0,
+          zIndex:         100,
+        }}
+      >
+        <Link
+          href="/invitaciones"
+          style={{
+            fontSize:       '0.8125rem',
+            color:          '#6B5B4E',
+            textDecoration: 'none',
+            fontWeight:     500,
+            display:        'flex',
+            alignItems:     'center',
+            gap:            '0.375rem',
+          }}
+        >
+          ← Volver
+        </Link>
+        <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#1A1410', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+          Kompralo
+        </span>
+        <Link
+          href="/login"
+          style={{ fontSize: '0.8125rem', color: '#6B5B4E', textDecoration: 'none', fontWeight: 500 }}
+        >
+          Iniciar sesión
+        </Link>
+      </nav>
+
+      {/* Content wrapper */}
+      <div style={{ padding: 'clamp(2rem, 8vw, 4rem) 1rem' }}>
+
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '3rem', maxWidth: '36rem', margin: '0 auto 3rem' }}>
         <p
@@ -208,18 +282,48 @@ export default function PreciosPage() {
         <ProductCard product={deluxe}  />
       </div>
 
+      {/* Post-purchase microcopy */}
+      <div
+        style={{
+          maxWidth:     '960px',
+          margin:       '2rem auto 0',
+          background:   '#FDF8F2',
+          border:       '1px solid #E8E2DA',
+          borderRadius: '0.875rem',
+          padding:      '1.25rem 1.5rem',
+          display:      'flex',
+          flexWrap:     'wrap',
+          gap:          '1rem',
+          justifyContent: 'center',
+        }}
+      >
+        {[
+          { icon: '🔒', text: 'Pago seguro con Stripe' },
+          { icon: '📧', text: 'Después del pago recibirás un correo con acceso inmediato' },
+          { icon: '✏️', text: 'Edita tu invitación desde tu celular cuando quieras' },
+          { icon: '💬', text: 'Comparte el link por WhatsApp con tus invitados' },
+        ].map(({ icon, text }) => (
+          <div key={text} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8125rem', color: '#6B5B4E' }}>
+            <span>{icon}</span>
+            <span>{text}</span>
+          </div>
+        ))}
+      </div>
+
       {/* Trust footer */}
       <p
         style={{
           textAlign:   'center',
-          marginTop:   '2.5rem',
+          marginTop:   '1.5rem',
           fontSize:    '0.8125rem',
           color:       '#9B8878',
           lineHeight:  1.5,
         }}
       >
-        Pago seguro procesado por Stripe · Soporte en español · Entrega inmediata
+        Pago único sin suscripción · Sin instalar apps · Soporte en español
       </p>
+
+      </div>
     </main>
   );
 }
