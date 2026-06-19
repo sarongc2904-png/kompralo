@@ -28,7 +28,7 @@ Elevar las páginas públicas (`/invitaciones`, `/invitaciones/precios`, `/check
 2. **Textura de papel**: Implementación de una textura de papel `.paper-noise` global aplicada a todas las páginas rediseñadas.
 3. **Hero sin Mockup**: Sustitución de PhoneMockup CSS en Hero por un collage de fotos reales con sombras y bordes suavizados de estilo revista.
 4. **Tipografía sofisticada**: Uso de fuentes `Playfair Display`, `Cormorant Garamond` e `Inter` para dotar de una jerarquía de tipografía premium a todos los textos comerciales.
-5. **Tarjetas de Eventos Visuales**: Tarjetas de tipos de evento que usan las imágenes generadas como fondo, con superposición oscura y efecto de zoom dinámico al pasar el cursor.
+5. **Tarjetas de Eventos Visuales**: Tarjetas de tipos de evento que usan las imágenes generadas como fondo, con superposición oscura, efecto de zoom dinámico, filtro de blanco y negro por defecto en pantallas de escritorio (que pasa a color en hover) y color completo por defecto en dispositivos móviles.
 6. **Prueba Social Editorial**: Sección de testimonios reales "Creada para momentos que merecen compartirse bonito" con alineación en dos columnas (foto editorial + citas con tipografía Lora cursiva).
 7. **Diseño de Precios**: Destacado sutil del plan Premium con color Negro Editorial (`#0F0C09`), badge dorado "MÁS ELEGIDO" y borde old-gold (`#B8966A`).
 8. **Flujos guiados**: Explicación de los próximos pasos en `/checkout/success` y `/login` de forma guiada para reducir la fricción en el Magic Link.
