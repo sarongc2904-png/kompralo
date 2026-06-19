@@ -151,6 +151,30 @@ export async function POST(request: NextRequest) {
           break;
         }
 
+        // ── 4. Generate a Supabase magic link for direct access (non-fatal) ──
+        let magicLinkUrl: string | null = null;
+        {
+          const appUrl      = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.mx';
+          const redirectPath = finalInvitationId
+            ? `/dashboard/invitations/${finalInvitationId}/edit`
+            : '/cliente';
+          const redirectTo  = `${appUrl}/auth/callback?redirect=${encodeURIComponent(redirectPath)}`;
+          try {
+            const { data: mlData, error: mlError } = await supabase.auth.admin.generateLink({
+              type:    'magiclink',
+              email:   customerEmail,
+              options: { redirectTo },
+            });
+            if (!mlError && mlData?.properties?.action_link) {
+              magicLinkUrl = mlData.properties.action_link;
+            } else if (mlError) {
+              console.warn('[webhook/stripe] generateLink failed (session=%s): %s', session.id, mlError.message);
+            }
+          } catch (mlGenErr) {
+            console.warn('[webhook/stripe] generateLink threw (session=%s):', session.id, mlGenErr instanceof Error ? mlGenErr.message : String(mlGenErr));
+          }
+        }
+
         try {
           await sendOrderConfirmationEmail({
             to:              customerEmail,
@@ -160,6 +184,7 @@ export async function POST(request: NextRequest) {
             currency:        session.currency,
             invitationId:    finalInvitationId,
             stripeSessionId: session.id,
+            magicLinkUrl,
           });
           await orderRepo.markConfirmationEmailSent(session.id);
           console.log('[webhook/stripe] confirmation email sent to %s (session=%s)', customerEmail, session.id);

@@ -10,6 +10,8 @@ export interface SendOrderConfirmationEmailParams {
   currency?:       string | null;
   invitationId?:   string | null;
   stripeSessionId: string;
+  /** Pre-generated Supabase magic link. When present, used directly as CTA URL. */
+  magicLinkUrl?:   string | null;
 }
 
 /**
@@ -30,6 +32,7 @@ export async function sendOrderConfirmationEmail(
     currency:        params.currency,
     invitationId:    params.invitationId,
     stripeSessionId: params.stripeSessionId,
+    magicLinkUrl:    params.magicLinkUrl,
   });
 
   const { error } = await resend.emails.send({

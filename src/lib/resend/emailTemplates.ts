@@ -24,6 +24,8 @@ export interface OrderConfirmationParams {
   invitationId?:   string | null;
   stripeSessionId: string;
   appUrl?:         string;
+  /** Pre-generated Supabase magic link. When present, used directly as CTA — no login redirect needed. */
+  magicLinkUrl?:   string | null;
 }
 
 export function buildOrderConfirmationEmail(params: OrderConfirmationParams): {
@@ -40,6 +42,7 @@ export function buildOrderConfirmationEmail(params: OrderConfirmationParams): {
     invitationId,
     stripeSessionId,
     appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.mx',
+    magicLinkUrl,
   } = params;
 
   const planName   = planLabels[planId] ?? planId;
@@ -48,14 +51,31 @@ export function buildOrderConfirmationEmail(params: OrderConfirmationParams): {
     ? formatPrice(amountTotal, currency)
     : null;
 
-  const editPath = invitationId ? `/dashboard/invitations/${invitationId}/edit` : null;
-  const ctaUrl = editPath
-    ? customerEmail
-      ? `${appUrl}/login?email=${encodeURIComponent(customerEmail)}&redirect=${encodeURIComponent(editPath)}`
-      : `${appUrl}${editPath}`
-    : `${appUrl}/checkout/success?session_id=${stripeSessionId}`;
+  // CTA URL priority:
+  // 1. Magic link (direct access, no extra login step)
+  // 2. Login fallback with email + redirect pre-filled
+  // 3. Checkout success page if no invitation
+  let ctaUrl: string;
+  let ctaLabel: string;
+  let nextStepText: string;
 
-  const ctaLabel = invitationId ? 'Editar mi invitación →' : 'Ver mi compra →';
+  if (magicLinkUrl) {
+    ctaUrl       = magicLinkUrl;
+    ctaLabel     = 'Acceder a mi invitación →';
+    nextStepText = 'Haz clic en el botón para acceder directamente a tu invitación. Este enlace es seguro y personal — no necesitas contraseña.';
+  } else if (invitationId) {
+    const editPath    = `/dashboard/invitations/${invitationId}/edit`;
+    const loginTarget = customerEmail
+      ? `${appUrl}/login?email=${encodeURIComponent(customerEmail)}&redirect=${encodeURIComponent(editPath)}`
+      : `${appUrl}${editPath}`;
+    ctaUrl       = loginTarget;
+    ctaLabel     = 'Enviar enlace de acceso →';
+    nextStepText = 'Para proteger tu invitación, primero te enviaremos un enlace seguro. Haz clic abajo y confirma tu correo. No necesitas contraseña.';
+  } else {
+    ctaUrl       = `${appUrl}/checkout/success?session_id=${stripeSessionId}`;
+    ctaLabel     = 'Ver mi compra →';
+    nextStepText = 'Accede al panel para revisar tu compra y comenzar a crear tu invitación digital.';
+  }
 
   const subject = `Tu invitación digital KOMPRALO está lista — Plan ${planName}`;
 
@@ -122,10 +142,7 @@ export function buildOrderConfirmationEmail(params: OrderConfirmationParams): {
                 Siguiente paso
               </p>
               <p style="margin:0 0 24px;font-size:14px;color:#4B3A2C;line-height:1.6;">
-                ${invitationId
-                  ? 'Haz clic en el botón para comenzar a personalizar tu invitación: sube fotos, edita textos y comparte el link con tus invitados.'
-                  : 'Accede al panel para revisar tu compra y comenzar a crear tu invitación digital.'
-                }
+                ${nextStepText}
               </p>
 
               <!-- CTA button -->
@@ -174,6 +191,7 @@ export function buildOrderConfirmationEmail(params: OrderConfirmationParams): {
     priceStr ? `Total pagado: ${priceStr}` : '',
     '',
     'Siguiente paso:',
+    nextStepText,
     ctaLabel,
     ctaUrl,
     '',

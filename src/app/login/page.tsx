@@ -7,9 +7,15 @@ import { Suspense } from 'react';
 import { sendMagicLink } from './actions';
 
 const T = {
-  ivory:'#FAF7F2', cream:'#F2EBD8', dark:'#0F0C09',
-  mid:'#5C4A37', light:'#9B8165', gold:'#B8966A',
-  border:'#E5DDD2', white:'#FFFFFF',
+  ivory:     '#E8D7B8',
+  cream:     '#F1E3C8',
+  dark:      '#0D0A07',
+  mid:       '#1A1612',
+  light:     '#6B4A35',
+  gold:      '#C4A962',
+  champagne: '#EAD7A3',
+  white:     '#F1E3C8',
+  border:    '#EAD7A3',
 } as const;
 
 const styles = `
@@ -64,6 +70,9 @@ function LoginForm() {
   const redirectParam = searchParams.get('redirect') ?? '/dashboard';
   const errorParam    = searchParams.get('error');
 
+  // Detect if the user arrived from the post-payment email (redirect to editor).
+  const isPostPayment = redirectParam.includes('/dashboard/invitations') || redirectParam.includes('/edit');
+
   const [state, formAction, pending] = useActionState(sendMagicLink, null);
 
   const errorMessages: Record<string,string> = {
@@ -101,6 +110,18 @@ function LoginForm() {
   return (
     <form action={formAction} style={{ display:'flex', flexDirection:'column', gap:'1.25rem' }}>
       <input type="hidden" name="redirect" value={redirectParam} />
+
+      {isPostPayment && (
+        <div style={{
+          background:T.cream, border:`1px solid ${T.border}`,
+          borderRadius:'.625rem', padding:'.75rem 1rem',
+          fontSize:'.8125rem', color:T.mid, lineHeight:1.55,
+          display:'flex', gap:'.5rem', alignItems:'flex-start',
+        }}>
+          <span style={{ flexShrink:0 }}>✉️</span>
+          <span>Confirma tu correo y te enviaremos un enlace para editar tu invitación directamente.</span>
+        </div>
+      )}
 
       <div>
         <label htmlFor="login-email" style={{ display:'block', fontSize:'.8125rem', fontWeight:600, color:T.dark, marginBottom:'.5rem' }}>
@@ -191,10 +212,10 @@ export default function LoginPage() {
             fontSize:'1.625rem', fontWeight:700, color:T.dark, margin:'0 0 .5rem',
             fontFamily:'var(--font-playfair, Georgia, serif)',
           }}>
-            Accede a tu invitación
+            Confirma tu acceso
           </h1>
           <p style={{ color:T.mid, fontSize:'.875rem', margin:0, lineHeight:1.6 }}>
-            Ingresa el correo con el que realizaste tu compra.
+            Te enviaremos un enlace seguro a tu correo. No necesitas contraseña.
           </p>
         </div>
 
