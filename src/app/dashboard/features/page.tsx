@@ -41,52 +41,63 @@ const PLAN_BADGE: Record<string, { bg: string; text: string }> = {
 function Badge({ label, bg, text }: { label: string; bg: string; text: string }) {
   return (
     <span
-      className="inline-block text-[9px] uppercase tracking-widest px-1.5 py-0.5 rounded font-medium"
-      style={{ background: bg, color: text, whiteSpace: 'nowrap' }}
+      style={{
+        display:       'inline-block',
+        fontSize:      '0.6875rem',
+        letterSpacing: '0.06em',
+        textTransform: 'uppercase',
+        padding:       '0.25rem 0.625rem',
+        borderRadius:  '0.375rem',
+        fontWeight:    600,
+        whiteSpace:    'nowrap',
+        background:    bg,
+        color:         text,
+      }}
     >
       {label}
     </span>
   );
 }
 
+// Desktop: table row
 function FeatureRow({ feature }: { feature: FeatureDescriptor }) {
   const status = STATUS_BADGE[feature.status] ?? STATUS_BADGE.hidden;
-  const plan = feature.minimumPlan ? PLAN_BADGE[feature.minimumPlan] : null;
+  const plan   = feature.minimumPlan ? PLAN_BADGE[feature.minimumPlan] : null;
 
   return (
     <tr style={{ borderBottom: '1px solid #F0EBE4' }}>
-      {/* Label + description */}
-      <td className="py-3 pr-4" style={{ minWidth: 200 }}>
-        <p className="text-sm font-medium" style={{ color: '#1A1410' }}>
+      {/* Label + description + key */}
+      <td style={{ padding: '1rem 1.5rem 1rem 1.5rem', minWidth: 220, verticalAlign: 'top' }}>
+        <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1A1410', margin: '0 0 0.25rem' }}>
           {feature.label}
         </p>
-        <p className="text-xs mt-0.5 leading-relaxed" style={{ color: '#9B8878', maxWidth: 320 }}>
+        <p style={{ fontSize: '0.8rem', color: '#6B5B4E', lineHeight: 1.6, margin: '0 0 0.25rem', maxWidth: 300 }}>
           {feature.description}
         </p>
         {feature.planFeatureKey && (
-          <p className="text-[10px] mt-1 font-mono" style={{ color: '#C0B0A0' }}>
+          <p style={{ fontSize: '0.7rem', fontFamily: 'monospace', color: '#B0A090', margin: 0 }}>
             {feature.planFeatureKey}
           </p>
         )}
       </td>
 
       {/* Status */}
-      <td className="py-3 pr-4">
+      <td style={{ padding: '1rem 1.5rem 1rem 0', verticalAlign: 'top' }}>
         <Badge label={status.label} bg={status.bg} text={status.text} />
       </td>
 
       {/* Plan */}
-      <td className="py-3 pr-4">
+      <td style={{ padding: '1rem 1.5rem 1rem 0', verticalAlign: 'top' }}>
         {plan && feature.minimumPlan ? (
           <Badge label={feature.minimumPlan} bg={plan.bg} text={plan.text} />
         ) : (
-          <span className="text-xs" style={{ color: '#C0B0A0' }}>—</span>
+          <span style={{ fontSize: '0.875rem', color: '#C0B0A0' }}>—</span>
         )}
       </td>
 
       {/* Flags */}
-      <td className="py-3">
-        <div className="flex flex-wrap gap-1">
+      <td style={{ padding: '1rem 1.5rem 1rem 0', verticalAlign: 'top' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
           {feature.requiresPersistence && (
             <Badge label="Requiere DB" bg="#FBE9E7" text="#BF360C" />
           )}
@@ -102,43 +113,142 @@ function FeatureRow({ feature }: { feature: FeatureDescriptor }) {
   );
 }
 
-function CategorySection({ category, features }: { category: FeatureCategory; features: FeatureDescriptor[] }) {
+// Mobile: card per feature
+function FeatureCard({ feature }: { feature: FeatureDescriptor }) {
+  const status = STATUS_BADGE[feature.status] ?? STATUS_BADGE.hidden;
+  const plan   = feature.minimumPlan ? PLAN_BADGE[feature.minimumPlan] : null;
+
+  return (
+    <div
+      style={{
+        padding:      '1.25rem',
+        borderBottom: '1px solid #F0EBE4',
+      }}
+    >
+      {/* Name + badges row */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.5rem' }}>
+        <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1A1410', margin: 0, flexShrink: 0 }}>
+          {feature.label}
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+          <Badge label={status.label} bg={status.bg} text={status.text} />
+          {plan && feature.minimumPlan && (
+            <Badge label={feature.minimumPlan} bg={plan.bg} text={plan.text} />
+          )}
+        </div>
+      </div>
+
+      {/* Description */}
+      <p style={{ fontSize: '0.8rem', color: '#6B5B4E', lineHeight: 1.65, margin: '0 0 0.5rem' }}>
+        {feature.description}
+      </p>
+
+      {/* Bottom row: key + flags */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' }}>
+        {feature.planFeatureKey && (
+          <span style={{ fontSize: '0.7rem', fontFamily: 'monospace', color: '#B0A090' }}>
+            {feature.planFeatureKey}
+          </span>
+        )}
+        {feature.requiresPersistence && (
+          <Badge label="Requiere DB" bg="#FBE9E7" text="#BF360C" />
+        )}
+        {feature.editableByCustomer && (
+          <Badge label="Cliente" bg="#E8EAF6" text="#303F9F" />
+        )}
+        {feature.editableByAdmin && (
+          <Badge label="Admin" bg="#E0F2F1" text="#00695C" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CategorySection({
+  category,
+  features,
+}: {
+  category: FeatureCategory;
+  features: FeatureDescriptor[];
+}) {
   const active = features.filter((f) => f.status === 'active').length;
   const coming = features.filter((f) => f.status === 'comingSoon').length;
 
   return (
-    <section className="mb-8">
-      <div className="flex items-baseline gap-3 mb-3">
-        <h2 className="text-sm font-semibold uppercase tracking-widest" style={{ color: '#3D2B1A' }}>
+    <section style={{ marginBottom: '2.5rem' }}>
+      {/* Section header */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.875rem' }}>
+        <h2
+          style={{
+            fontSize:      '0.75rem',
+            fontWeight:    700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color:         '#3D2B1A',
+            margin:        0,
+          }}
+        >
           {CATEGORY_LABELS[category]}
         </h2>
-        <span className="text-xs" style={{ color: '#9B8878' }}>
+        <span style={{ fontSize: '0.8rem', color: '#9B8878' }}>
           {active} activa{active !== 1 ? 's' : ''}
           {coming > 0 ? ` · ${coming} próximamente` : ''}
         </span>
       </div>
 
-      <div className="rounded-xl overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}>
-        <table className="w-full">
-          <thead>
-            <tr style={{ background: '#FAFAF8', borderBottom: '1px solid #F0EBE4' }}>
-              {['Feature', 'Estado', 'Plan mínimo', 'Flags'].map((h) => (
-                <th
-                  key={h}
-                  className="py-2.5 pr-4 text-left text-[10px] uppercase tracking-widest"
-                  style={{ color: '#9B8878', paddingLeft: h === 'Feature' ? '1.25rem' : 0 }}
-                >
-                  {h}
-                </th>
+      {/* Card — wraps both table (desktop) and card list (mobile) */}
+      <div
+        style={{
+          background:   '#FFFFFF',
+          border:       '1px solid #E8E2DA',
+          borderRadius: '0.875rem',
+          overflow:     'hidden',
+        }}
+      >
+        {/* Desktop table */}
+        <div className="hidden md:block" style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: '#FAFAF8', borderBottom: '1px solid #EDE8E1' }}>
+                {[
+                  { label: 'Feature',     pl: '1.5rem' },
+                  { label: 'Estado',      pl: 0 },
+                  { label: 'Plan mínimo', pl: 0 },
+                  { label: 'Flags',       pl: 0 },
+                ].map(({ label, pl }) => (
+                  <th
+                    key={label}
+                    style={{
+                      padding:       `0.75rem ${pl ? 0 : '1.5rem'} 0.75rem ${pl || 0}`,
+                      paddingLeft:   pl || 0,
+                      textAlign:     'left',
+                      fontSize:      '0.6875rem',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      fontWeight:    600,
+                      color:         '#9B8878',
+                      whiteSpace:    'nowrap',
+                    }}
+                  >
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {features.map((f) => (
+                <FeatureRow key={f.id} feature={f} />
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {features.map((f) => (
-              <FeatureRow key={f.id} feature={f} />
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile card list */}
+        <div className="block md:hidden">
+          {features.map((f) => (
+            <FeatureCard key={f.id} feature={f} />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -161,24 +271,40 @@ export default function FeaturesPage() {
   );
 
   return (
-    <div>
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-light" style={{ color: '#1A1410' }}>
+    <div style={{ maxWidth: 960, paddingBottom: '3rem' }}>
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 300, color: '#1A1410', margin: '0 0 0.5rem' }}>
           Catálogo de Features
         </h1>
-        <p className="text-sm mt-1" style={{ color: '#9B8878' }}>
-          {totalActive} activas · {totalComingSoon} próximamente ·{' '}
-          {featureRegistry.length} en total
+        <p style={{ fontSize: '0.875rem', color: '#9B8878', margin: 0 }}>
+          {totalActive} activas · {totalComingSoon} próximamente · {featureRegistry.length} en total
         </p>
       </div>
 
-      {/* Legend */}
+      {/* ── Legend ─────────────────────────────────────────────────────────── */}
       <div
-        className="flex flex-wrap gap-3 mb-8 p-4 rounded-xl"
-        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
+        style={{
+          display:      'flex',
+          flexWrap:     'wrap',
+          alignItems:   'center',
+          gap:          '0.625rem',
+          marginBottom: '2.5rem',
+          padding:      '1rem 1.25rem',
+          background:   '#FFFFFF',
+          border:       '1px solid #E8E2DA',
+          borderRadius: '0.875rem',
+        }}
       >
-        <span className="text-[10px] uppercase tracking-widest self-center" style={{ color: '#9B8878' }}>
+        <span
+          style={{
+            fontSize:      '0.6875rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color:         '#9B8878',
+            marginRight:   '0.25rem',
+          }}
+        >
           Leyenda:
         </span>
         <Badge label="Activa"       bg="#E8F5E9" text="#388E3C" />
@@ -192,7 +318,7 @@ export default function FeaturesPage() {
         <Badge label="platinum"     bg="#EDE7F6" text="#512DA8" />
       </div>
 
-      {/* Categories */}
+      {/* ── Categories ─────────────────────────────────────────────────────── */}
       {CATEGORY_ORDER.map((cat) =>
         byCategory[cat].length > 0 ? (
           <CategorySection key={cat} category={cat} features={byCategory[cat]} />
