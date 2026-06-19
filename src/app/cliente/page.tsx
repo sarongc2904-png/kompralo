@@ -114,44 +114,56 @@ function OrderCard({ order }: { order: Order }) {
     refunded: '#7B5EA7',
   };
 
+  const statusBg: Record<string, string> = {
+    pending:  '#F5F0EB',
+    paid:     '#F0FBF0',
+    failed:   '#FEF2F2',
+    refunded: '#F5F0FB',
+  };
+
+  const isPaid = order.status === 'paid';
+
   return (
     <div
       style={{
         background:   '#FFFFFF',
-        border:       '1px solid #E8E2DA',
-        borderRadius: '0.75rem',
-        padding:      '1.5rem',
+        border:       `1px solid ${isPaid ? 'rgba(46,125,50,0.2)' : '#E8E2DA'}`,
+        borderRadius: '1rem',
+        padding:      '1.625rem 1.5rem',
         marginBottom: '1rem',
+        boxShadow:    isPaid ? '0 2px 12px rgba(46,125,50,0.07)' : '0 2px 8px rgba(26,20,16,0.05)',
+        transition:   'box-shadow .2s ease',
       }}
     >
       {/* Header row */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', flexWrap:'wrap', marginBottom:'0.875rem' }}>
         <div>
-          <p style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 700, color: '#1A1410' }}>
+          <p style={{ margin:'0 0 4px', fontSize:'1.0625rem', fontWeight:700, color:'#1A1410' }}>
             Plan {planLabels[order.planId] ?? order.planId}
           </p>
-          <p style={{ margin: 0, fontSize: '0.875rem', color: '#6B5B4E' }}>
+          <p style={{ margin:0, fontSize:'0.875rem', color:'#6B5B4E' }}>
             {formatPrice(order.amountTotal, order.currency)} · {formatDate(order.createdAt)}
           </p>
         </div>
         <span
           style={{
-            padding:      '0.25rem 0.75rem',
+            padding:      '0.3rem 0.875rem',
             borderRadius: '2rem',
             fontSize:     '0.75rem',
-            fontWeight:   600,
+            fontWeight:   700,
             color:        statusColor[order.status] ?? '#6B5B4E',
-            background:   `${statusColor[order.status] ?? '#6B5B4E'}18`,
+            background:   statusBg[order.status] ?? '#F5F0EB',
           }}
         >
           {statusLabels[order.status] ?? order.status}
         </span>
       </div>
 
-      {/* Email confirmation status */}
-      <p style={{ margin: '0 0 1rem', fontSize: '0.8rem', color: order.confirmationEmailSentAt ? '#2E7D32' : '#9B8878' }}>
+      {/* Email confirmation */}
+      <p style={{ margin:'0 0 1.125rem', fontSize:'0.8rem', color: order.confirmationEmailSentAt ? '#2E7D32' : '#9B8878', display:'flex', alignItems:'center', gap:'0.375rem' }}>
+        <span>{order.confirmationEmailSentAt ? '✓' : '○'}</span>
         {order.confirmationEmailSentAt
-          ? `Correo de confirmación enviado el ${formatDate(order.confirmationEmailSentAt)}`
+          ? `Correo enviado el ${formatDate(order.confirmationEmailSentAt)}`
           : 'Correo de confirmación pendiente'}
       </p>
 
@@ -160,17 +172,19 @@ function OrderCard({ order }: { order: Order }) {
         <Link
           href={`/dashboard/invitations/${order.invitationId}/edit`}
           style={{
-            display:        'inline-block',
-            padding:        '0.5rem 1.25rem',
+            display:        'inline-flex',
+            alignItems:     'center',
+            gap:            '0.375rem',
+            padding:        '0.5625rem 1.25rem',
             background:     '#C5A880',
             color:          '#1A1410',
             borderRadius:   '0.5rem',
-            fontSize:       '0.8125rem',
-            fontWeight:     600,
+            fontSize:       '0.875rem',
+            fontWeight:     700,
             textDecoration: 'none',
           }}
         >
-          Editar invitación →
+          ✏️ Editar invitación
         </Link>
       )}
     </div>
@@ -259,9 +273,27 @@ export default async function ClientePage({ searchParams }: Props) {
         )}
 
         {hasValidEmail && orders.length === 0 && (
-          <p style={{ textAlign: 'center', color: '#9B8878', fontSize: '0.9rem' }}>
-            No encontramos órdenes para <strong>{trimmedEmail}</strong>.
-          </p>
+          <div style={{
+            textAlign:'center', padding:'2.5rem 1.5rem',
+            background:'#FFFFFF', border:'1px solid #E8E2DA',
+            borderRadius:'1rem',
+          }}>
+            <div style={{ fontSize:'2.25rem', marginBottom:'0.875rem', lineHeight:1 }}>📬</div>
+            <p style={{ margin:'0 0 0.5rem', fontWeight:700, color:'#1A1410', fontSize:'1rem' }}>
+              No encontramos invitaciones
+            </p>
+            <p style={{ margin:'0 0 1.25rem', color:'#9B8878', fontSize:'0.875rem', lineHeight:1.55 }}>
+              No hay órdenes asociadas a <strong>{trimmedEmail}</strong>.
+              <br />Si compraste con otro correo, usa el enlace de acceso de tu email.
+            </p>
+            <Link href="/invitaciones/precios" style={{
+              display:'inline-block', padding:'0.625rem 1.375rem',
+              background:'#1A1410', color:'#F5EDD8',
+              borderRadius:'0.5rem', fontSize:'0.875rem', fontWeight:600, textDecoration:'none',
+            }}>
+              Ver planes →
+            </Link>
+          </div>
         )}
 
         {hasValidEmail && orders.length > 0 && (
