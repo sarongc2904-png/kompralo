@@ -152,23 +152,29 @@ export async function POST(request: NextRequest) {
         }
 
         // ── 4. Generate a Supabase magic link for direct access (non-fatal) ──
+        //
+        // We use `hashed_token` from generateLink to build our own callback URL
+        // instead of `action_link`. This avoids the PKCE mismatch: @supabase/ssr
+        // uses PKCE by default, but admin-generated links have no client-side
+        // code verifier. The hashed_token path uses verifyOtp (no PKCE needed).
         let magicLinkUrl: string | null = null;
         {
-          const appUrl      = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.mx';
+          const appUrl       = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.mx';
           const redirectPath = finalInvitationId
             ? `/dashboard/invitations/${finalInvitationId}/edit`
             : '/cliente';
-          const redirectTo  = `${appUrl}/auth/callback?redirect=${encodeURIComponent(redirectPath)}`;
           try {
             const { data: mlData, error: mlError } = await supabase.auth.admin.generateLink({
-              type:    'magiclink',
-              email:   customerEmail,
-              options: { redirectTo },
+              type:  'magiclink',
+              email: customerEmail,
             });
-            if (!mlError && mlData?.properties?.action_link) {
-              magicLinkUrl = mlData.properties.action_link;
+            if (!mlError && mlData?.properties?.hashed_token) {
+              const token = mlData.properties.hashed_token;
+              magicLinkUrl = `${appUrl}/auth/callback?token_hash=${encodeURIComponent(token)}&type=magiclink&redirect=${encodeURIComponent(redirectPath)}`;
             } else if (mlError) {
               console.warn('[webhook/stripe] generateLink failed (session=%s): %s', session.id, mlError.message);
+            } else {
+              console.warn('[webhook/stripe] generateLink: no hashed_token in response (session=%s)', session.id);
             }
           } catch (mlGenErr) {
             console.warn('[webhook/stripe] generateLink threw (session=%s):', session.id, mlGenErr instanceof Error ? mlGenErr.message : String(mlGenErr));
