@@ -1,6 +1,11 @@
+import { redirect } from 'next/navigation';
 import { invitationRepository } from '@/domain/invitations';
 import { rsvpRepository } from '@/domain/rsvp';
 import type { RSVPResponse } from '@/domain/rsvp';
+
+function isAdminMode(): boolean {
+  return process.env.ADMIN_ACCESS_ENABLED === 'true';
+}
 
 export const metadata = { title: 'RSVPs — Kompralo Admin' };
 
@@ -55,6 +60,8 @@ interface InvitationRSVPGroup {
 }
 
 export default async function RSVPsPage() {
+  if (!isAdminMode()) redirect('/cliente');
+
   const invitations = await invitationRepository.list();
 
   const groups: InvitationRSVPGroup[] = await Promise.all(

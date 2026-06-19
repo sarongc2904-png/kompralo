@@ -1,5 +1,10 @@
+import { redirect } from 'next/navigation';
 import { featureRegistry } from '@/domain/features';
 import type { FeatureDescriptor, FeatureCategory } from '@/domain/features';
+
+function isAdminMode(): boolean {
+  return process.env.ADMIN_ACCESS_ENABLED === 'true';
+}
 
 export const metadata = { title: 'Features — Kompralo Admin' };
 
@@ -142,6 +147,8 @@ function CategorySection({ category, features }: { category: FeatureCategory; fe
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function FeaturesPage() {
+  if (!isAdminMode()) redirect('/cliente');
+
   const totalActive     = featureRegistry.filter((f) => f.status === 'active').length;
   const totalComingSoon = featureRegistry.filter((f) => f.status === 'comingSoon').length;
 

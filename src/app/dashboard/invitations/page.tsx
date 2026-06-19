@@ -1,6 +1,11 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { invitationRepository } from '@/domain/invitations';
 import type { InvitationContent } from '@/domain/invitations';
+
+function isAdminMode(): boolean {
+  return process.env.ADMIN_ACCESS_ENABLED === 'true';
+}
 
 export const metadata = { title: 'Invitaciones — Kompralo Admin' };
 
@@ -85,6 +90,8 @@ function Row({ inv }: { inv: InvitationContent }) {
 }
 
 export default async function InvitationsPage() {
+  if (!isAdminMode()) redirect('/cliente');
+
   const invitations = await invitationRepository.list();
 
   return (

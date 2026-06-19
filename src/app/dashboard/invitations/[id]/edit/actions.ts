@@ -47,7 +47,13 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
   const sessionEmail = user?.email?.toLowerCase() ?? null;
   const ownerEmail = invitation.customerEmail?.toLowerCase() ?? null;
 
-  if (!sessionEmail || !ownerEmail || sessionEmail !== ownerEmail) {
+  // Require an authenticated session always.
+  if (!sessionEmail) {
+    throw new Error('Sesión requerida para guardar cambios.');
+  }
+  // Only deny when we know the owner and the session email doesn't match.
+  // When ownerEmail is null (customer_email not set), trust the session.
+  if (ownerEmail && ownerEmail !== sessionEmail) {
     throw new Error('No tienes permiso para editar esta invitación.');
   }
 

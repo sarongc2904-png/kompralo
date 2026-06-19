@@ -5,6 +5,218 @@
 
 ---
 
+## FASE AV-1-QA — Auditoría completa del asistente virtual local
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Auditar el asistente virtual local de KOMPRALO para confirmar que aparece solo donde debe, no rompe SSR, no causa errores de hidratación, las intenciones locales funcionan, localStorage es robusto, el apagado por variable funciona y TypeScript/lint/build siguen limpios.
+
+### Bugs encontrados y corregidos
+
+1. `'quinceañera'` como keyword no normalizada.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Causa: la función `has()` compara texto normalizado (sin ñ) contra keywords con ñ — nunca coinciden.
+   - Corrección: cambiado a `'quinceanera'` (ya normalizado).
+
+2. `'edito'` no detectado en la intención de edición.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Síntoma: "cómo edito mi invitación" caía a fallback en lugar de responder sobre el editor.
+   - Corrección: agregados `'edito'` y `'como edito'` a los keywords de edición.
+
+3. `'mensaje'` ausente de la intención de textos.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Síntoma: "dame un mensaje para boda" caía a fallback.
+   - Corrección: agregados `'mensaje para'` y `'dame un mensaje'` al intent H (textos).
+
+4. `'magic link'` en el paso 4 de "Cómo funciona" confundía tráfico frío.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Corrección: cambiado a "Haces clic en el enlace del correo para entrar."
+
+5. `'donde esta'` demasiado amplio en post-compra.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Corrección: cambiado a `'donde esta mi invitacion'` para evitar falsos positivos.
+
+6. `'boda'` duplicado en keywords de textos.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Corrección: eliminado el duplicado.
+
+7. z-index excesivo (9000/8999) en burbuja y panel.
+   - Archivos: `src/features/virtual-assistant/AssistantBubble.tsx`, `AssistantChat.tsx`
+   - Corrección: reducido a 1050 (burbuja) y 1040 (panel) — por encima de modales comunes, sin excesos.
+
+8. Copy de RSVP técnico y vago.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Corrección: reescrito con lenguaje directo y empuje comercial.
+
+9. Copy de WhatsApp sin cierre.
+   - Archivo: `src/features/virtual-assistant/assistantRules.ts`
+   - Corrección: mejorado para cerrar en beneficio (sin app, desde el celular).
+
+### Archivos modificados
+
+- `src/features/virtual-assistant/assistantRules.ts`
+- `src/features/virtual-assistant/AssistantBubble.tsx`
+- `src/features/virtual-assistant/AssistantChat.tsx`
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npx eslint src/features/virtual-assistant/`: OK, 0 warnings
+- `npx next build`: OK
+
+### Notas
+
+- No se tocaron Stripe, webhook, Supabase Auth, Theme Engine, InvitationRenderer ni MultilayerBackground.
+- No se conectó OpenAI. El asistente sigue siendo 100% local.
+- No se modificó el flujo de login/magic link.
+
+---
+
+## FASE AV-1 — Asistente virtual local para KOMPRALO
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Agregar un widget de chat flotante 100% local (sin IA externa) para visitantes de KOMPRALO. Aparece solo en rutas permitidas, se controla por variable de entorno y no toca el dashboard ni servicios externos.
+
+### Archivos creados
+
+- `src/features/virtual-assistant/types.ts`
+- `src/features/virtual-assistant/assistantConfig.ts`
+- `src/features/virtual-assistant/assistantKnowledgeBase.ts`
+- `src/features/virtual-assistant/assistantRules.ts`
+- `src/features/virtual-assistant/AssistantBubble.tsx`
+- `src/features/virtual-assistant/AssistantMessage.tsx`
+- `src/features/virtual-assistant/AssistantInput.tsx`
+- `src/features/virtual-assistant/AssistantChat.tsx`
+- `src/features/virtual-assistant/VirtualAssistantWidget.tsx`
+- `src/features/virtual-assistant/VirtualAssistantMount.tsx`
+- `src/features/virtual-assistant/index.ts`
+
+### Archivos modificados
+
+- `src/app/layout.tsx` — agrega `<VirtualAssistantMount />` antes de `</body>`
+- `.env.example` — agrega `NEXT_PUBLIC_VIRTUAL_ASSISTANT_ENABLED=false`
+
+### Variable de entorno
+
+```
+NEXT_PUBLIC_VIRTUAL_ASSISTANT_ENABLED=true   # muestra el widget
+NEXT_PUBLIC_VIRTUAL_ASSISTANT_ENABLED=false  # oculta el widget (default seguro)
+```
+
+### Rutas donde aparece el widget
+
+- `/invitaciones`
+- `/invitaciones/precios`
+- `/checkout/success`
+- `/cliente`
+
+### Intenciones implementadas (9)
+
+| Intent | Detecta | Acción |
+|--------|---------|--------|
+| A. Precios | precio, costo, cuanto cuesta, planes, paquetes... | Muestra 3 planes con precio + CTA Ver precios |
+| B. Recomendador | qué plan me conviene, cuál elijo, recomiéndame... | Explica diferencias y pregunta por categoría |
+| C. Cómo funciona | cómo funciona, proceso, pasos... | 6 pasos: elegir → pagar → correo → entrar → editar → compartir |
+| D. Post-compra | ya compré, pagué, no me llegó... | Instruye revisar spam + botón acceso login |
+| E. Edición | editar, edito, cómo edito, cambiar nombre... | Lista campos editables + botón acceso |
+| F. WhatsApp | whatsapp, compartir, link de la invitación... | Explica compartir por link sin app |
+| G. RSVP | rsvp, confirmación, asistencia... | Explica confirmación desde el enlace |
+| H. Textos | texto, frase, mensaje para, escribe... | Devuelve texto por categoría: boda/xv/baby/bautizo/cumpleaños |
+| I. Fallback | todo lo demás | Lista capacidades + quick actions |
+
+### Características técnicas
+
+- SSR-safe: `if (!widgetState.hydrated) return null` evita hidratación mismatch.
+- localStorage: `safeGetItem`/`safeSetItem` con try/catch. Claves: `kompralo_virtual_assistant_messages`, `kompralo_virtual_assistant_open`.
+- Animación: `AnimatePresence` + `motion.div` de Framer Motion.
+- Escape key cierra el panel.
+- Acciones rápidas en el mensaje inicial: Ver precios · ¿Qué plan me conviene? · ¿Cómo funciona? · Ya compré.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK
+- `npx next build`: OK
+
+### Notas
+
+- No se tocaron Stripe, webhook, Supabase Auth, Theme Engine, InvitationRenderer ni MultilayerBackground.
+- El asistente es un módulo aislado en `src/features/virtual-assistant/`. No se agrega al dashboard editor.
+- No conecta OpenAI. Toda la lógica es local en `assistantRules.ts`.
+
+---
+
+## FASE 7B — Auth Cliente / Magic Link
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Implementar Supabase Auth con magic link para proteger el dashboard y el área de cliente. Los clientes acceden a su editor via enlace mágico enviado al correo de compra. Admin bypass disponible con `ADMIN_ACCESS_ENABLED=true`.
+
+### Archivos creados
+
+- `src/app/login/page.tsx` — formulario de magic link con `useActionState`, pre-rellena email desde `?email=`, muestra estado success/error
+- `src/app/login/actions.ts` — Server Action `sendMagicLink()`, llama `supabase.auth.signInWithOtp()`
+- `src/app/auth/callback/route.ts` — GET handler, maneja flujo PKCE (`code`) y OTP (`token_hash+type`), sanitiza `redirect` contra open redirect
+- `src/middleware.ts` — inyecta header `x-pathname`, refresca sesión Supabase, matcher excluye estáticos
+- `supabase/auth_7b_customer_access_patch.sql` — `ALTER TABLE invitations ADD COLUMN IF NOT EXISTS customer_email text` + índice
+
+### Archivos modificados
+
+- `src/app/dashboard/layout.tsx` — async, lee `x-pathname` vía `headers()`, redirige a login con path exacto si no hay sesión
+- `src/app/dashboard/invitations/[id]/edit/page.tsx` — verifica sesión, verifica ownership (`invitation.customerEmail === session.user.email`), muestra "Acceso no autorizado" si no coincide
+- `src/domain/invitations/types.ts` — agrega `customerEmail?: string | null` a `InvitationContent`
+- `src/domain/invitations/supabase.repository.ts` — mapea `customer_email` del row
+- `src/app/cliente/page.tsx` — sesión toma precedencia sobre `?email=`; si no hay sesión y admin mode está apagado, redirige a login
+- `src/lib/resend/emailTemplates.ts` — CTA del correo de compra ahora apunta a `/login?email=...&redirect=.../edit` cuando hay `customerEmail`
+- `src/lib/resend/sendOrderConfirmationEmail.ts` — pasa `customerEmail: params.to`
+- `.env.example` — documenta comportamiento de `ADMIN_ACCESS_ENABLED` en producción vs desarrollo
+- `docs/AUTH_CLIENT_ACCESS.md` — documentación completa del flujo
+
+### Flujo magic link
+
+```
+Compra Stripe → webhook → Resend email con CTA →
+  /login?email=cliente@email.com&redirect=/dashboard/invitations/[id]/edit →
+    signInWithOtp() → correo con enlace →
+      /auth/callback?code=...&redirect=... →
+        exchangeCodeForSession() → cookies de sesión →
+          /dashboard/invitations/[id]/edit (con sesión válida)
+```
+
+### Seguridad implementada
+
+- Open redirect sanitizado: `startsWith('/') && !startsWith('//')`.
+- Ownership check: `customerEmail.toLowerCase() === session.user.email.toLowerCase()`.
+- `x-pathname` header para redirect exacto desde layout sin conocer la URL actual.
+- `ADMIN_ACCESS_ENABLED=false` en producción bloquea acceso sin sesión.
+
+### Bugs corregidos en QA (FASE 7B-QA)
+
+1. Open redirect en `/auth/callback` — fix: validar que el redirect sea relativo.
+2. Layout redirigía siempre a `/login?redirect=/dashboard` sin importar la ruta — fix: middleware inyecta `x-pathname`.
+3. `isAdminMode()` declarada entre imports en el edit page — fix: movida después de todos los imports.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK
+- `npx next build`: OK
+
+### Notas
+
+- No se tocaron Stripe, webhook, Theme Engine, InvitationRenderer ni MultilayerBackground.
+- Supabase Dashboard requiere: Email Provider habilitado, Site URL configurado, Redirect URL `/auth/callback` permitida.
+- SQL patch es idempotente (`IF NOT EXISTS`) — seguro de re-ejecutar.
+
+---
+
 ## FASE CLIENT-DASHBOARD-E2E-QA - Fix de guardado real del editor
 
 Fecha: 2026-06-19

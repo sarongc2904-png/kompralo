@@ -1,5 +1,11 @@
+import { redirect } from 'next/navigation';
 import { invitationRepository } from '@/domain/invitations';
 import { rsvpRepository } from '@/domain/rsvp';
+
+// Non-admin customers should go to /cliente, not the admin dashboard.
+function isAdminMode(): boolean {
+  return process.env.ADMIN_ACCESS_ENABLED === 'true';
+}
 
 export const metadata = { title: 'Dashboard — Kompralo Admin' };
 
@@ -31,6 +37,8 @@ function StatCard({ label, value, sub }: StatCardProps) {
 }
 
 export default async function DashboardPage() {
+  if (!isAdminMode()) redirect('/cliente');
+
   const invitations = await invitationRepository.list();
 
   const total = invitations.length;

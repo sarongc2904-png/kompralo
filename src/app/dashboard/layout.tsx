@@ -17,12 +17,19 @@ async function getSessionUser() {
   }
 }
 
-const NAV_LINKS = [
-  { href: '/dashboard', label: 'Inicio' },
-  { href: '/dashboard/invitations', label: 'Invitaciones' },
-  { href: '/dashboard/rsvps', label: 'RSVPs' },
-  { href: '/dashboard/features', label: 'Features' },
-  { href: '/', label: '<- Ver sitio' },
+const ADMIN_NAV_LINKS = [
+  { href: '/dashboard',              label: 'Inicio' },
+  { href: '/dashboard/invitations',  label: 'Invitaciones' },
+  { href: '/dashboard/rsvps',        label: 'RSVPs' },
+  { href: '/dashboard/features',     label: 'Features' },
+  { href: '/',                       label: '<- Ver sitio' },
+];
+
+// Customers should only access their own edit page (reached from /cliente).
+// They must not be able to list all invitations or see other customers' data.
+const CUSTOMER_NAV_LINKS = [
+  { href: '/cliente', label: '<- Mis invitaciones' },
+  { href: '/',        label: '<- Ver sitio' },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -37,8 +44,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     }
   }
 
+  const navLinks = adminMode ? ADMIN_NAV_LINKS : CUSTOMER_NAV_LINKS;
+
   return (
-    <DashboardShell adminMode={adminMode} navLinks={NAV_LINKS}>
+    <DashboardShell adminMode={adminMode} navLinks={navLinks}>
       {children}
     </DashboardShell>
   );
