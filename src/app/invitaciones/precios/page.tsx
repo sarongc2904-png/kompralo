@@ -76,7 +76,8 @@ function PageStyles() {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatPrice(centavos: number, currency: string): string {
-  return new Intl.NumberFormat('es-MX', {
+  // en-US locale with MXN outputs "MX$499" — unambiguous vs USD "$499"
+  return new Intl.NumberFormat('en-US', {
     style:'currency', currency:currency.toUpperCase(),
     minimumFractionDigits:0, maximumFractionDigits:0,
   }).format(centavos / 100);

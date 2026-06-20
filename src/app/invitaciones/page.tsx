@@ -63,7 +63,7 @@ function LandingStyles() {
       .cro-nav-links { display:flex; align-items:center; gap:1.4rem; }
       .cro-nav-link { color:${T.muted}; font-size:.82rem; font-weight:650; text-decoration:none; }
       .cro-nav-cta { padding:.58rem 1rem; color:white; background:${T.ink}; border-radius:5px; }
-      .cro-nav-acceder { padding:.52rem .9rem; font-size:.82rem; font-weight:650; color:${T.ink}; border:1.5px solid ${T.ink}; border-radius:5px; text-decoration:none; }
+      .cro-nav-acceder { padding:.52rem 1.25rem; font-size:.82rem; font-weight:650; color:${T.ink}; border:1.5px solid ${T.ink}; border-radius:5px; text-decoration:none; white-space:nowrap; }
       .cro-nav-acceder-mobile { display:none; }
       .cro-nav-acceder-desktop { display:inline; }
 
@@ -411,7 +411,8 @@ const PLAN_COPY: Record<string,string> = {
 };
 
 function formatPrice(product: Product) {
-  return new Intl.NumberFormat('es-MX',{ style:'currency', currency:product.currency.toUpperCase(), maximumFractionDigits:0 }).format(product.price / 100);
+  // en-US locale with MXN outputs "MX$499" — unambiguous vs USD "$499"
+  return new Intl.NumberFormat('en-US',{ style:'currency', currency:product.currency.toUpperCase(), maximumFractionDigits:0 }).format(product.price / 100);
 }
 
 function PlanCard({ product }: { product: Product }) {
