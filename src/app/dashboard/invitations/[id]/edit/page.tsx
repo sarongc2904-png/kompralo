@@ -111,10 +111,14 @@ export default async function EditInvitationPage({ params }: Props) {
   const assistantAllowedForPlan = isDashboardAssistantAllowedForPlan(invitation.planId);
   const assistantEventType = getDashboardAssistantEventType(invitation.category);
 
+  const previewUrl = `/preview/${invitation.id}`;
+
   return (
-    <div className="w-full min-w-0 overflow-x-hidden xl:flex xl:gap-6 xl:items-start xl:min-h-0">
+    // overflow-x-hidden must NOT be on the xl:flex container — it breaks position:sticky.
+    // Instead clip overflow on the inner editor column only.
+    <div className="w-full xl:flex xl:gap-6 xl:items-start">
       {/* ── Editor column ───────────────────────────────────────────────────── */}
-      <div className="w-full flex-1 min-w-0" style={{ maxWidth: 720 }}>
+      <div className="w-full flex-1 min-w-0 overflow-x-hidden" style={{ maxWidth: 720 }}>
       {/* Header */}
       <div className="mb-8">
         <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#C5A880' }}>
@@ -417,12 +421,24 @@ export default async function EditInvitationPage({ params }: Props) {
           initialOverrides={invitation.featureOverrides ?? {}}
         />
       </div>
+      {/* ── Mobile preview button — visible below xl ───────────────────────── */}
+      <div className="xl:hidden mt-8 mb-2">
+        <a
+          href={previewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-opacity"
+          style={{ background: '#1A1410', color: '#F5F3F0' }}
+        >
+          ↗ Ver preview en nueva pestaña
+        </a>
+      </div>
       </div>{/* end editor column */}
 
       {/* ── Preview column — sticky on desktop, hidden on narrow viewports ── */}
       <div
         className="hidden xl:flex flex-col flex-shrink-0"
-        style={{ width: 420, position: 'sticky', top: 32, height: 'calc(100vh - 80px)' }}
+        style={{ width: 420, position: 'sticky', top: 24, height: 'calc(100vh - 48px)' }}
       >
         <LivePreview invitationId={invitation.id} />
       </div>
