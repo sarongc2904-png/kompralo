@@ -5,6 +5,60 @@
 
 ---
 
+## FASE FIX-AUTH-PASSWORD-INVITE-REDIRECT — Corrección de redirect invite y errores dobles en login
+
+Fecha: 2026-06-20
+
+### Problemas corregidos
+
+1. **Callback usaba `redirect=` pero Supabase/webhook enviaban `next=`** — el link de invite llegaba a `/cliente` en vez de `/auth/update-password`.
+2. **Default de callback era `/dashboard`** — ahora es `/cliente`.
+3. **Login mostraba dos errores simultáneos** — error de enlace expirado + error de contraseña incorrecta.
+4. **`/auth/update-password` era página estática** — Next.js la prerenderizaba con `hasSession = false` y siempre mostraba "enlace expirado" aunque el usuario tuviera sesión.
+5. **Sin mensaje claro cuando el link expiró** — el action fallaba con error técnico críptico.
+
+### Cambios
+
+- `src/app/auth/callback/route.ts`:
+  - Soporta `next=` (prioritario) y `redirect=` (legacy) — `safeNextPath()` valida que sea ruta interna
+  - Default cambiado: `/dashboard` → `/cliente`
+  - Logs mejorados: `[authCallback] received`, `session exchanged`, `verifyOtp`, `failed`
+
+- `src/app/api/webhook/stripe/route.ts`:
+  - `generateLink redirectTo` ahora usa `next=/auth/update-password` (antes `redirect=`)
+
+- `src/app/login/actions.ts`:
+  - `requestPasswordReset` ahora usa `next=/auth/update-password` en redirectTo
+
+- `src/app/login/page.tsx`:
+  - Errores de enlace (`expired_link`, `invalid_link`) se muestran como aviso amber dismissable — no bloquean el formulario de contraseña
+  - El aviso se auto-descarta al enfocar el campo de email o cambiar de modo
+  - Soporte para `?mode=forgot` en URL para abrir directamente el modo de recuperación
+
+- `src/app/auth/update-password/page.tsx`:
+  - Convertido a Server Component con verificación de sesión (`createServerSupabaseClient`)
+  - Con sesión activa: muestra `UpdatePasswordForm` (client component)
+  - Sin sesión: muestra UI "Tu enlace expiró" con botón "Solicitar nuevo enlace" → `/login?mode=forgot`
+  - `export const dynamic = 'force-dynamic'` previene que Next.js la prerenderice como estática
+
+- `src/app/auth/update-password/UpdatePasswordForm.tsx` (NUEVO):
+  - Client component extraído, contiene `useActionState(updatePassword)`
+
+### Notas de configuración Supabase (ops — no código)
+
+Para que los invite/recovery links funcionen, en el Supabase Dashboard deben estar permitidos:
+- **Site URL**: `https://kompralo.vercel.app`
+- **Redirect URLs** (allowlist): `https://kompralo.vercel.app/**`
+
+### Validación
+
+- `npx tsc --noEmit`: OK
+- `npm run build`: OK — `/auth/update-password` aparece como `ƒ` (dynamic)
+- Commit: `6d994a7`
+- Push: `main → main`
+
+---
+
 ## FASE CUSTOMER-PASSWORD-LOGIN-ONE-INVITATION — Login con contraseña y una invitación por compra
 
 Fecha: 2026-06-20
