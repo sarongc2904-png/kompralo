@@ -84,7 +84,7 @@ class LocalInvitationRepository implements IInvitationRepository {
       title:    input.title,
       subtitle: input.subtitle,
       slug:     input.slug,
-      eventDate: input.eventDate,
+      eventDate: input.eventDate || existing.eventDate,
       eventTime: input.eventTime,
       location: {
         ...existing.location,

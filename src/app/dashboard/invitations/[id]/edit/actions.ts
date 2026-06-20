@@ -138,6 +138,16 @@ const invitationRepository: IInvitationRepository = {
   },
 };
 
+// ─── Date helper ─────────────────────────────────────────────────────────────
+
+/** Accepts YYYY-MM-DD or ISO full string; returns YYYY-MM-DD or '' */
+function normalizeDateForSave(value?: string | null): string {
+  if (!value) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (value.includes('T')) return value.split('T')[0];
+  return value;
+}
+
 // =============================================================================
 // updateInvitationBasicInfo
 // =============================================================================
@@ -189,12 +199,16 @@ export async function updateInvitationBasicInfo(
     }
   }
 
+  const normalizedEventDate = normalizeDateForSave(input.eventDate);
+  console.log('[eventDate/save] incoming:', input.eventDate);
+  console.log('[eventDate/save] normalized:', normalizedEventDate);
+
   try {
     await invitationRepository.updateBasicInfo(id, {
       title:              input.title.trim(),
       subtitle:           input.subtitle.trim(),
       slug:               newSlug,
-      eventDate:          input.eventDate,
+      eventDate:          normalizedEventDate,
       eventTime:          input.eventTime,
       venueName:          input.venueName.trim(),
       address:            input.address.trim(),

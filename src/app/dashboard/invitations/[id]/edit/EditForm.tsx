@@ -67,6 +67,13 @@ interface EditFormProps {
   invitation: InvitationContent;
 }
 
+function normalizeDateForInput(value?: string | null): string {
+  if (!value) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (value.includes('T')) return value.split('T')[0];
+  return '';
+}
+
 export default function EditForm({ invitation }: EditFormProps) {
   const [result, formAction, isPending] = useActionState(
     async (_prev: UpdateInvitationResult | null, formData: FormData) => {
@@ -134,7 +141,7 @@ export default function EditForm({ invitation }: EditFormProps) {
           <Field
             label="Fecha del evento"
             name="eventDate"
-            defaultValue={invitation.eventDate}
+            defaultValue={normalizeDateForInput(invitation.eventDate)}
             type="date"
           />
           <Field

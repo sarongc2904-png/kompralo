@@ -41,6 +41,17 @@ import type {
 } from '@/domain/invitations/types';
 import type { Database } from '@/lib/supabase/types';
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/** Supabase returns timestamptz as "2026-10-24T00:00:00+00:00".
+ *  <input type="date"> needs exactly "YYYY-MM-DD" — strip the time part. */
+function normalizeDateString(value: string | null | undefined): string {
+  if (!value) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (value.includes('T')) return value.split('T')[0];
+  return value;
+}
+
 // ─── Row type ────────────────────────────────────────────────────────────────
 // Until `supabase gen types` is run, rows come back as `any` from the client.
 // The adapter below narrows the shape before returning InvitationContent.
@@ -76,7 +87,7 @@ export function mapSupabaseInvitationToInvitationContent(
     themeId: row.theme_id,
     title: row.title,
     subtitle: row.subtitle,
-    eventDate: row.event_date,
+    eventDate: normalizeDateString(row.event_date),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     publishedAt: row.published_at ?? null,
@@ -157,7 +168,7 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
         title:      input.title,
         subtitle:   input.subtitle,
         slug:       input.slug,
-        event_date: input.eventDate,
+        event_date: input.eventDate || null,
         updated_at: now,
       })
       .eq('id', id);
