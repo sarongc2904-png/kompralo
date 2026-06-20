@@ -64,6 +64,8 @@ function LandingStyles() {
       .cro-nav-link { color:${T.muted}; font-size:.82rem; font-weight:650; text-decoration:none; }
       .cro-nav-cta { padding:.58rem 1rem; color:white; background:${T.ink}; border-radius:5px; }
       .cro-nav-acceder { padding:.52rem .9rem; font-size:.82rem; font-weight:650; color:${T.ink}; border:1.5px solid ${T.ink}; border-radius:5px; text-decoration:none; }
+      .cro-nav-acceder-mobile { display:none; }
+      .cro-nav-acceder-desktop { display:inline; }
 
       .cro-hero { position:relative; height:min(760px, calc(100svh - 72px)); min-height:620px; display:flex; align-items:center; isolation:isolate; color:white; }
       .cro-hero-media { object-fit:cover; object-position:center 42%; z-index:-3; }
@@ -186,6 +188,8 @@ function LandingStyles() {
         .cro-nav-link { display:none; }
         .cro-nav-cta { display:inline-flex; }
         .cro-nav-acceder { display:inline-flex; }
+        .cro-nav-acceder-mobile { display:inline; }
+        .cro-nav-acceder-desktop { display:none; }
         .cro-hero { height:calc(100svh - 64px); min-height:650px; align-items:flex-end; }
         .cro-hero-media { object-position:62% center; }
         .cro-hero::before { background:linear-gradient(0deg, rgba(10,8,6,.94) 0%, rgba(10,8,6,.58) 62%, rgba(10,8,6,.12)); }
@@ -235,7 +239,10 @@ function Header() {
         <div className="cro-nav-links">
           <Link href="#como-funciona" className="cro-nav-link">Cómo funciona</Link>
           <Link href="/sofia-y-alejandro" className="cro-nav-link">Demo real</Link>
-          <Link href="/login" className="cro-nav-acceder">Acceder</Link>
+          <Link href="/login" className="cro-nav-acceder">
+            <span className="cro-nav-acceder-desktop">Acceder</span>
+            <span className="cro-nav-acceder-mobile">Acceder a mi invitación</span>
+          </Link>
           <Link href="/invitaciones/precios" className="cro-nav-link cro-nav-cta">Ver planes</Link>
         </div>
       </div>
@@ -426,7 +433,7 @@ function AlreadyBought() {
     <div style={{ background:T.ink, padding:'1.25rem 1.75rem', borderRadius:'.75rem', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'1rem', flexWrap:'wrap', maxWidth:760, margin:'0 auto -1.5rem', position:'relative', zIndex:2 }}>
       <div>
         <p style={{ margin:0, color:'#F1E3C8', fontSize:'.82rem', fontWeight:700 }}>¿Ya compraste tu invitación?</p>
-        <p style={{ margin:'.2rem 0 0', color:'rgba(241,227,200,.65)', fontSize:'.78rem' }}>Entra a tu panel para editarla y compartirla.</p>
+        <p style={{ margin:'.2rem 0 0', color:'rgba(241,227,200,.65)', fontSize:'.78rem' }}>Accede a tu panel para seguir editando, ver tu enlace o compartir tu invitación.</p>
       </div>
       <Link href="/login" style={{ padding:'.6rem 1.25rem', background:'#C4A962', color:T.ink, borderRadius:'5px', fontSize:'.82rem', fontWeight:700, textDecoration:'none', whiteSpace:'nowrap' as const }}>
         Acceder a mi panel →

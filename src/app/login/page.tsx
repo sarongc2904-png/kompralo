@@ -142,7 +142,8 @@ function ForgotForm({ emailParam, onMode }: { emailParam: string; onMode: (m: Mo
   useEffect(() => {
     if (!state) return;
     if (state.success || state.error === 'RATE_LIMIT') {
-      setCooldown(COOLDOWN_SECS);
+      // Defer setState to avoid synchronous state update inside effect (lint rule).
+      setTimeout(() => setCooldown(COOLDOWN_SECS), 0);
       timerRef.current = setInterval(() => {
         setCooldown((s) => {
           if (s <= 1) { clearInterval(timerRef.current!); return 0; }
