@@ -58,11 +58,8 @@ function SidebarContent({
 
 export function DashboardShell({ adminMode, navLinks, children }: DashboardShellProps) {
   return (
-    // Important: do not add overflow/transform to this element or <main> below —
-    // any non-visible overflow on an ancestor of a sticky child creates a new scroll
-    // container and breaks position:sticky on the preview panel.
     <div
-      className="min-h-screen md:flex"
+      className="min-h-screen md:flex overflow-x-hidden"
       style={{ background: '#F5F3F0', fontFamily: 'system-ui, sans-serif' }}
     >
       <input id="dashboard-mobile-menu" type="checkbox" className="peer sr-only" />
@@ -128,7 +125,7 @@ export function DashboardShell({ adminMode, navLinks, children }: DashboardShell
           </aside>
         </div>
 
-      <main className="flex-1 min-w-0 w-full px-4 py-5 md:p-8">
+      <main className="flex-1 min-w-0 w-full px-4 py-5 md:p-8 overflow-x-hidden">
         {children}
       </main>
     </div>
