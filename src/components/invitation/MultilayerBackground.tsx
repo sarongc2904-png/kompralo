@@ -55,7 +55,7 @@ function FloatingHearts() {
       swayAmp: 18 + Math.random() * 28,
       swayFreq: 0.003 + Math.random() * 0.004,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      alpha: 0.12 + Math.random() * 0.30,
+      alpha: 0.06 + Math.random() * 0.14,
       rotation: Math.random() * Math.PI * 2,
       rotSpeed: (Math.random() - 0.5) * 0.008,
     }));
@@ -392,36 +392,36 @@ function buildLayerContent(
           <>
             <div className="absolute inset-0 w-full" style={{ height: '350vh' }}>
               <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '0', left: '-4vw', width: '58vw', maxWidth: '680px', mixBlendMode: 'multiply', opacity: 0.60 }} />
+                style={{ top: '0', left: '-4vw', width: '58vw', maxWidth: '680px', mixBlendMode: 'multiply', opacity: 0.35 }} />
               <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '190vh', right: '-6vw', width: '54vw', maxWidth: '640px', mixBlendMode: 'multiply', opacity: 0.50, transform: 'rotate(180deg) scaleX(-1)' }} />
+                style={{ top: '190vh', right: '-6vw', width: '54vw', maxWidth: '640px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'rotate(180deg) scaleX(-1)' }} />
             </div>
             <div className="absolute w-full" style={{ top: '350vh', height: '550vh' }}>
               <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '60vh', left: '-5vw', width: '52vw', maxWidth: '620px', mixBlendMode: 'multiply', opacity: 0.50, transform: 'scaleX(-1) rotate(15deg)' }} />
+                style={{ top: '60vh', left: '-5vw', width: '52vw', maxWidth: '620px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'scaleX(-1) rotate(15deg)' }} />
               <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '290vh', right: '-5vw', width: '50vw', maxWidth: '600px', mixBlendMode: 'multiply', opacity: 0.42, transform: 'rotate(-20deg)' }} />
+                style={{ top: '290vh', right: '-5vw', width: '50vw', maxWidth: '600px', mixBlendMode: 'multiply', opacity: 0.20, transform: 'rotate(-20deg)' }} />
             </div>
           </>
         ),
         layer2: (
           <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
             <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '40vh', right: '2vw', width: '38vw', maxWidth: '440px', mixBlendMode: 'multiply', opacity: 0.70 }} />
+              style={{ top: '40vh', right: '2vw', width: '38vw', maxWidth: '440px', mixBlendMode: 'multiply', opacity: 0.38 }} />
             <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '320vh', left: '3vw', width: '34vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.60, transform: 'scaleX(-1) rotate(-10deg)' }} />
+              style={{ top: '320vh', left: '3vw', width: '34vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.30, transform: 'scaleX(-1) rotate(-10deg)' }} />
             <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '640vh', right: '4vw', width: '36vw', maxWidth: '420px', mixBlendMode: 'multiply', opacity: 0.55, transform: 'rotate(15deg)' }} />
+              style={{ top: '640vh', right: '4vw', width: '36vw', maxWidth: '420px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'rotate(15deg)' }} />
           </div>
         ),
         layer3: (
           <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
             <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_10s_ease-in-out_infinite]"
-              style={{ top: '70vh', left: '8vw', width: '42vw', maxWidth: '500px', mixBlendMode: 'multiply', opacity: 0.50 }} />
+              style={{ top: '70vh', left: '8vw', width: '42vw', maxWidth: '500px', mixBlendMode: 'multiply', opacity: 0.26 }} />
             <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_8s_ease-in-out_infinite_1.5s]"
-              style={{ top: '380vh', right: '6vw', width: '40vw', maxWidth: '480px', mixBlendMode: 'multiply', opacity: 0.45, transform: 'scaleX(-1)' }} />
+              style={{ top: '380vh', right: '6vw', width: '40vw', maxWidth: '480px', mixBlendMode: 'multiply', opacity: 0.22, transform: 'scaleX(-1)' }} />
             <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_12s_ease-in-out_infinite_3s]"
-              style={{ top: '720vh', left: '12vw', width: '38vw', maxWidth: '460px', mixBlendMode: 'multiply', opacity: 0.40, transform: 'rotate(10deg)' }} />
+              style={{ top: '720vh', left: '12vw', width: '38vw', maxWidth: '460px', mixBlendMode: 'multiply', opacity: 0.18, transform: 'rotate(10deg)' }} />
           </div>
         ),
       };
@@ -525,7 +525,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
         <div
           className="absolute inset-0"
           style={{
-            background: `radial-gradient(ellipse 80% 60% at 50% 20%, var(--v2-color-overlay, ${theme.colors.overlay || 'rgba(255,252,242,0.55)'}) 0%, transparent 70%)`,
+            background: `radial-gradient(ellipse 80% 60% at 50% 20%, var(--v2-color-overlay, ${theme.colors.overlay || 'rgba(255,252,248,0.28)'}) 0%, transparent 70%)`,
           }}
         />
 
@@ -538,7 +538,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
               style={{
                 backgroundColor: theme.bgGlows[0],
                 filter: 'blur(110px)',
-                opacity: 0.22,
+                opacity: 0.12,
                 mixBlendMode: 'multiply',
               }}
             />
@@ -548,7 +548,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
               style={{
                 backgroundColor: theme.bgGlows[1],
                 filter: 'blur(130px)',
-                opacity: 0.18,
+                opacity: 0.10,
                 mixBlendMode: 'multiply',
               }}
             />
@@ -558,7 +558,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
               style={{
                 backgroundColor: theme.bgGlows[2],
                 filter: 'blur(120px)',
-                opacity: 0.13,
+                opacity: 0.07,
                 mixBlendMode: 'multiply',
               }}
             />
@@ -566,7 +566,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
             <div
               className="absolute top-[-5%] left-[20%] w-[60%] h-[40%] rounded-full"
               style={{
-                background: 'rgba(255, 250, 238, 0.45)',
+                background: 'rgba(255, 252, 246, 0.20)',
                 filter: 'blur(90px)',
               }}
             />
