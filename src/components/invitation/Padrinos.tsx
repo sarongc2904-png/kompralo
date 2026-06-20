@@ -70,8 +70,8 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
           </p>
         </motion.div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {/* Cards — flex wrap so 1 or 2 cards stay centred */}
+        <div className="flex flex-wrap justify-center gap-4">
           {padrinos.map((p, i) => (
             <motion.div
               key={p.id}
@@ -79,7 +79,7 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.6, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className="relative flex flex-col items-center text-center"
+              className="relative flex flex-col items-center text-center w-[140px] sm:w-[160px]"
               style={{
                 background: `var(--v2-glass-bg, rgba(255,255,255,0.78))`,
                 backdropFilter: 'blur(20px) saturate(140%)',

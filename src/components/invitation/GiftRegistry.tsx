@@ -38,14 +38,14 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
           Su presencia es nuestro mayor regalo, pero si desean tener un detalle con nosotros, les compartimos nuestras opciones:
         </p>
 
-        {/* Registry Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-12">
+        {/* Registry — flex wrap so 1 or 2 cards stay centred */}
+        <div className="flex flex-wrap justify-center gap-6 md:gap-8 mt-12">
           {items.map((item) => {
             const isRevealed = !!revealedIds[item.id];
             return (
               <div
                 key={item.id}
-                className={`relative p-8 border rounded-xl flex flex-col justify-between items-center text-center overflow-hidden transition-all duration-500 bg-white/70 hover:bg-white backdrop-blur-md shadow-sm hover:shadow-xl hover:-translate-y-1.5 group ${theme.cardBorder}`}
+                className={`relative p-8 border rounded-xl flex flex-col justify-between items-center text-center overflow-hidden transition-all duration-500 bg-white/70 hover:bg-white backdrop-blur-md shadow-sm hover:shadow-xl hover:-translate-y-1.5 group w-full sm:w-[300px] md:w-[280px] ${theme.cardBorder}`}
               >
                 {/* 1. Tactile Cotton/Linen Card Paper Texture */}
                 <div 
