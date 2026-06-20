@@ -5,6 +5,51 @@
 
 ---
 
+## FASE EDITOR-ORDER-MAP-ANIMATION-YOUTUBE-CLEANUP — Editor reordenado, mapa mejorado, YouTube duplicado eliminado
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+1. Reordenar las secciones del editor para que coincidan con el orden de la invitación pública.
+2. Mejorar la visibilidad del mapa SVG animado en la sección de Location.
+3. Eliminar el campo redundante de YouTube en MediaForm.
+
+### Causa raíz
+
+**Editor desordenado**: Las secciones en `page.tsx` no seguían el orden del renderer público (`InvitationRenderer.tsx`), haciendo poco intuitiva la edición.
+
+**Mapa oscuro**: `surfaceAltVar` resolvía a `#CDB88E` (dorado oscuro), lo que opacaba el fondo del SVG y hacía que la ruta animada fuera poco legible. El overlay inferior `from-black/35` también era demasiado intenso.
+
+**YouTube duplicado**: `MediaForm` tenía un campo `youtubeUrl` separado que se guardaba en DB pero nunca se renderizaba en la invitación pública. El campo `hero.videoUrl` ya acepta YouTube URLs via `getVideoEmbedUrl()`.
+
+### Archivos modificados
+
+- `src/app/dashboard/invitations/[id]/edit/page.tsx`:
+  - Secciones reordenadas para coincidir con el orden del renderer público
+  - Nuevo orden: Datos generales → Portada y multimedia → Protagonistas → Nuestra historia → Galería → Línea del tiempo → Itinerario → Código de vestimenta → Mesa de regalos → Padrinos → Hospedaje → Redes y hashtag → Mensaje final → Diseño y tema → Secciones activas
+  - Títulos renombrados a español natural: "StoryBook" → "Nuestra historia", "Timeline" → "Línea del tiempo", "Dress code" → "Código de vestimenta", "Hashtag y Redes" → "Redes y hashtag", "Multimedia y enlaces" → "Portada y multimedia"
+
+- `src/components/invitation/Location.tsx`:
+  - SVG background: `surfaceAltVar` (`#CDB88E`) → `#EDE4D2` (crema claro, fijo)
+  - Route glow: `strokeWidth="7" opacity={0.15}` → `strokeWidth="8" opacity={0.30}`
+  - Overlay inferior: `from-black/35` → `from-black/18`
+
+- `src/app/dashboard/invitations/[id]/edit/MediaForm.tsx`:
+  - Eliminado campo `youtubeUrl` (Video embed) — era redundante, nunca renderizado
+  - Renombrado sección label: "Hero" → "Imagen y video de portada"
+  - Renombrado campo video: "Video de fondo (URL)" → "Video personalizado de portada"
+  - Actualizado hint del campo video para explicar que acepta MP4 o YouTube
+  - Actualizado texto del botón: "Guardar multimedia" → "Guardar portada y multimedia"
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- Commit: `1ce7140`
+- Push: `main → main`
+
+---
+
 ## FASE AUDIO-BUTTON-AND-CENTERED-SECTIONS-FIX — Botón de música funcional y centrado de regalos/padrinos
 
 Fecha: 2026-06-20
