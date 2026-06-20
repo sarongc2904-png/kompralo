@@ -76,7 +76,7 @@ export async function requestPasswordReset(
   try {
     const appOrigin = new URL(rawAppUrl).origin;
     const callbackUrl = new URL('/auth/callback', appOrigin);
-    callbackUrl.searchParams.set('redirect', '/auth/update-password');
+    callbackUrl.searchParams.set('next', '/auth/update-password');
     const emailRedirectTo = callbackUrl.toString();
 
     const supabase = await createServerSupabaseClient();

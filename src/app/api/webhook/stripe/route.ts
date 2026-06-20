@@ -181,7 +181,7 @@ export async function POST(request: NextRequest) {
           let inviteUrl: string | null = null;
           try {
             const callbackUrl = new URL('/auth/callback', appUrl);
-            callbackUrl.searchParams.set('redirect', '/auth/update-password');
+            callbackUrl.searchParams.set('next', '/auth/update-password');
 
             const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
               type: 'invite',

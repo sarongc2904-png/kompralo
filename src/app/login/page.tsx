@@ -71,10 +71,11 @@ type Mode = 'password' | 'forgot' | 'magic';
 
 // ─── Password login form ──────────────────────────────────────────────────────
 
-function PasswordForm({ redirectParam, emailParam, onMode }: {
+function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
   redirectParam: string;
   emailParam: string;
   onMode: (m: Mode) => void;
+  onInteract: () => void;
 }) {
   const [state, formAction, pending] = useActionState<SignInResult | null, FormData>(
     signInWithPassword, null,
@@ -89,7 +90,8 @@ function PasswordForm({ redirectParam, emailParam, onMode }: {
           Correo electrónico
         </label>
         <input id="pw-email" name="email" type="email" defaultValue={emailParam} required autoFocus
-          placeholder="correo@ejemplo.com" className="lg2-input" />
+          placeholder="correo@ejemplo.com" className="lg2-input"
+          onFocus={onInteract} />
       </div>
 
       <div>
@@ -252,17 +254,30 @@ function LoginForm() {
   const redirectParam = searchParams.get('redirect') ?? '/cliente';
   const errorParam    = searchParams.get('error');
 
-  const [mode, setMode] = useState<Mode>('password');
+  // Support ?mode=forgot from the "Solicitar nuevo enlace" link in update-password page.
+  const modeParam = searchParams.get('mode') as Mode | null;
+  const validModes: Mode[] = ['password', 'forgot', 'magic'];
+  const initialMode: Mode = (modeParam && validModes.includes(modeParam)) ? modeParam : 'password';
 
-  const errorMessages: Record<string, string> = {
-    expired_link: 'El enlace de acceso ha expirado. Solicita uno nuevo.',
-    invalid_link: 'El enlace de acceso es inválido. Solicita uno nuevo.',
-    config:       'Error de configuración del servidor de correos.',
-  };
+  const [mode, setMode] = useState<Mode>(initialMode);
+  // Dismiss the URL-param link error when the user actively interacts (switches mode or submits).
+  const [linkErrorDismissed, setLinkErrorDismissed] = useState(false);
+
+  // Link errors (expired/invalid token) are separate from credential errors.
+  // Only show them as a soft notice — never block the password form.
+  const isLinkError = errorParam === 'expired_link' || errorParam === 'invalid_link';
+  const showLinkNotice = isLinkError && !linkErrorDismissed;
+
+  function handleSetMode(m: Mode) {
+    setLinkErrorDismissed(true);
+    setMode(m);
+  }
+
+  const configError = errorParam === 'config';
 
   const headings: Record<Mode, { title: string; sub: string }> = {
-    password: { title: 'Accede a tu panel',           sub: 'Ingresa con tu correo y contraseña.' },
-    forgot:   { title: 'Recuperar contraseña',        sub: 'Te enviaremos un enlace seguro por correo.' },
+    password: { title: 'Accede a tu panel',            sub: 'Ingresa con tu correo y contraseña.' },
+    forgot:   { title: 'Recuperar contraseña',         sub: 'Te enviaremos un enlace seguro por correo.' },
     magic:    { title: 'Acceder con enlace de correo', sub: 'Acceso sin contraseña — método alternativo.' },
   };
 
@@ -281,21 +296,51 @@ function LoginForm() {
         </p>
       </div>
 
-      {/* Error from URL param */}
-      {errorParam && (
+      {/* Soft notice for expired/invalid link — dismissable, not an error block */}
+      {showLinkNotice && (
+        <div style={{
+          background: '#FFF8E6', border: '1px solid #F5D87A',
+          borderRadius: '.5rem', padding: '.75rem 1rem',
+          fontSize: '.8125rem', color: '#7A5C00', lineHeight: 1.55,
+          marginBottom: '1.25rem',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem',
+        }}>
+          <span>
+            {errorParam === 'expired_link'
+              ? 'El enlace anterior ya expiró. Usa tu contraseña o solicita un nuevo enlace abajo.'
+              : 'El enlace de acceso no es válido. Usa tu contraseña o solicita un nuevo enlace abajo.'}
+          </span>
+          <button
+            type="button"
+            onClick={() => setLinkErrorDismissed(true)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7A5C00', fontSize: '1rem', lineHeight: 1, padding: 0, flexShrink: 0 }}
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {/* Config error (server misconfiguration — always show) */}
+      {configError && (
         <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem', marginBottom: '1.25rem' }}>
-          {errorMessages[errorParam] ?? 'Ocurrió un error al procesar el acceso.'}
+          Error de configuración del servidor. Contacta soporte.
         </div>
       )}
 
       {mode === 'password' && (
-        <PasswordForm redirectParam={redirectParam} emailParam={emailParam} onMode={setMode} />
+        <PasswordForm
+          redirectParam={redirectParam}
+          emailParam={emailParam}
+          onMode={handleSetMode}
+          onInteract={() => setLinkErrorDismissed(true)}
+        />
       )}
       {mode === 'forgot' && (
-        <ForgotForm emailParam={emailParam} onMode={setMode} />
+        <ForgotForm emailParam={emailParam} onMode={handleSetMode} />
       )}
       {mode === 'magic' && (
-        <MagicForm redirectParam={redirectParam} emailParam={emailParam} onMode={setMode} />
+        <MagicForm redirectParam={redirectParam} emailParam={emailParam} onMode={handleSetMode} />
       )}
     </div>
   );

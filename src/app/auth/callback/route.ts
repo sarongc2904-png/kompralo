@@ -3,12 +3,20 @@ import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { tryGetSupabaseEnv } from '@/lib/supabase/env';
 
-// Valid OTP types accepted by supabase.auth.verifyOtp
 type EmailOtpType = 'signup' | 'invite' | 'magiclink' | 'recovery' | 'email_change' | 'email';
 
 const VALID_OTP_TYPES = new Set<string>([
   'signup', 'invite', 'magiclink', 'recovery', 'email_change', 'email',
 ]);
+
+function safeNextPath(raw: string | null, fallback: string): string {
+  if (!raw) return fallback;
+  // Only allow internal relative paths — no protocol, no double-slash, no external hosts.
+  if (raw.startsWith('/') && !raw.startsWith('//') && !raw.includes('://')) {
+    return raw;
+  }
+  return fallback;
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -17,24 +25,22 @@ export async function GET(request: NextRequest) {
   const typeRaw   = searchParams.get('type');
   const type      = (typeRaw && VALID_OTP_TYPES.has(typeRaw) ? typeRaw : null) as EmailOtpType | null;
 
-  // Sanitize redirect: only allow relative paths to prevent open redirect attacks.
-  const rawRedirect = searchParams.get('redirect') ?? '/dashboard';
-  const redirectTo =
-    rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
-      ? rawRedirect
-      : '/dashboard';
+  // Support both `next` (Supabase standard) and `redirect` (legacy).
+  // `next` takes priority. Default to /cliente (customer panel).
+  const next = safeNextPath(
+    searchParams.get('next') ?? searchParams.get('redirect'),
+    '/cliente',
+  );
 
-  // Safe debug logging — no tokens, no codes.
-  console.log('[auth/callback] has_code=%s has_token_hash=%s type=%s redirect=%s',
-    !!code, !!tokenHash, typeRaw ?? 'none', redirectTo);
+  console.log('[authCallback] received has_code=%s has_token_hash=%s type=%s next=%s',
+    !!code, !!tokenHash, typeRaw ?? 'none', next);
 
   const env = tryGetSupabaseEnv();
   if (!env) {
     return NextResponse.redirect(new URL('/login?error=config', request.url));
   }
 
-  // Build the redirect response first so we can attach session cookies to it.
-  const response = NextResponse.redirect(new URL(redirectTo, request.url));
+  const response = NextResponse.redirect(new URL(next, request.url));
 
   const supabase = createServerClient(env.url, env.anonKey, {
     cookies: {
@@ -52,17 +58,19 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      console.warn('[auth/callback] exchangeCodeForSession failed: %s', error.message);
+      console.warn('[authCallback] exchangeCodeForSession failed: %s', error.message);
       return NextResponse.redirect(new URL('/login?error=expired_link', request.url));
     }
+    console.log('[authCallback] session exchanged successfully → %s', next);
   } else if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
     if (error) {
-      console.warn('[auth/callback] verifyOtp failed (type=%s): %s', type, error.message);
+      console.warn('[authCallback] verifyOtp failed type=%s: %s', type, error.message);
       return NextResponse.redirect(new URL('/login?error=expired_link', request.url));
     }
+    console.log('[authCallback] OTP verified type=%s → %s', type, next);
   } else {
-    console.warn('[auth/callback] no code or token_hash — has_type=%s', !!typeRaw);
+    console.warn('[authCallback] no code or token_hash has_type=%s', !!typeRaw);
     return NextResponse.redirect(new URL('/login?error=invalid_link', request.url));
   }
 
