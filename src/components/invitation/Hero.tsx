@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Theme } from '@/domain/themes/types';
 import { InvitationProtagonist } from '@/domain/invitations/types';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
@@ -34,13 +34,22 @@ export default function Hero({
 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [legacyVideoFailed, setLegacyVideoFailed] = useState(false);
   const primaryName = protagonists?.[0]?.name ?? brideName ?? '';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? '';
+
+  // Reset videoFailed whenever heroVideoUrl changes so switching videos works.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setVideoFailed(false); }, [heroVideoUrl]);
 
   // Library video takes priority; falls back to legacy videoUrl (YouTube or direct mp4).
   // videoFailed is set to true when the library video src returns an error.
   const resolvedDirectVideoUrl = !videoFailed ? (heroVideoUrl ?? null) : null;
-  const videoEmbed = resolvedDirectVideoUrl ? null : getVideoEmbedUrl(videoUrl);
+  const videoEmbed = resolvedDirectVideoUrl ? null : (!legacyVideoFailed ? getVideoEmbedUrl(videoUrl) : null);
+
+  console.log('[heroVideo/Hero] received heroVideoUrl:', heroVideoUrl);
+  console.log('[heroVideo/Hero] videoFailed:', videoFailed);
+  console.log('[heroVideo/Hero] resolvedDirectVideoUrl:', resolvedDirectVideoUrl);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -83,6 +92,7 @@ export default function Hero({
           {resolvedDirectVideoUrl ? (
             /* A — Library video (muted mp4, highest priority) */
             <video
+              key={resolvedDirectVideoUrl}
               src={resolvedDirectVideoUrl}
               autoPlay
               muted
@@ -90,7 +100,11 @@ export default function Hero({
               playsInline
               preload="metadata"
               aria-hidden="true"
-              onError={() => setVideoFailed(true)}
+              onLoadedData={() => console.log('[heroVideo/Hero] video loaded:', resolvedDirectVideoUrl)}
+              onError={(e) => {
+                console.error('[heroVideo/Hero] video error:', resolvedDirectVideoUrl, e);
+                setVideoFailed(true);
+              }}
               style={{
                 width: '100%', height: '100%',
                 objectFit: 'cover', objectPosition: 'center top',
@@ -119,12 +133,14 @@ export default function Hero({
           ) : videoEmbed?.type === 'direct' ? (
             /* C — Legacy direct mp4 URL */
             <video
+              key={videoEmbed.embedUrl}
               src={videoEmbed.embedUrl}
               autoPlay
               muted
               loop
               playsInline
               aria-hidden="true"
+              onError={() => setLegacyVideoFailed(true)}
               style={{
                 width: '100%', height: '100%',
                 objectFit: 'cover', objectPosition: 'center top',

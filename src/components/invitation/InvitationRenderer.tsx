@@ -94,20 +94,26 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showHero" features={features}>
-        <Hero
-          protagonists={protagonists}
-          eventDate={invitation.eventDate}
-          emotionalPhrase={invitation.hero?.emotionalPhrase ?? ''}
-          imageUrl={invitation.hero?.imageUrl ?? ''}
-          videoUrl={invitation.hero?.videoUrl}
-          heroVideoUrl={
-            features.showVideo && invitation.hero?.videoLibraryEnabled
-              ? (invitation.hero.videoLibraryUrl ?? null)
-              : null
-          }
-          eventLabel={invitation.hero?.eventLabel ?? ''}
-          theme={theme}
-        />
+        {(() => {
+          const heroVideoUrl = features.showVideo && invitation.hero?.videoLibraryEnabled
+            ? (invitation.hero.videoLibraryUrl ?? null)
+            : null;
+          console.log('[heroVideo/renderer] showVideo:', features.showVideo);
+          console.log('[heroVideo/renderer] videoLibraryEnabled:', invitation.hero?.videoLibraryEnabled);
+          console.log('[heroVideo/renderer] heroVideoUrl:', heroVideoUrl);
+          return (
+            <Hero
+              protagonists={protagonists}
+              eventDate={invitation.eventDate}
+              emotionalPhrase={invitation.hero?.emotionalPhrase ?? ''}
+              imageUrl={invitation.hero?.imageUrl ?? ''}
+              videoUrl={invitation.hero?.videoUrl}
+              heroVideoUrl={heroVideoUrl}
+              eventLabel={invitation.hero?.eventLabel ?? ''}
+              theme={theme}
+            />
+          );
+        })()}
       </FeatureGate>
 
       <FeatureGate feature="showCountdown" features={features}>

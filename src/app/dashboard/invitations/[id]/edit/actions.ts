@@ -386,6 +386,10 @@ export async function updateInvitationHeroVideo(
 ): Promise<UpdateInvitationResult> {
   const { id } = input;
 
+  console.log('[heroVideo/save] selectedVideoId:', input.videoId);
+  console.log('[heroVideo/save] url:', input.videoUrl);
+  console.log('[heroVideo/save] enabled:', input.videoId !== 'none' && !!input.videoUrl);
+
   try {
     const invitationRepository = await getAuthorizedInvitationRepository(id);
     const heroVideoInput: InvitationHeroVideoInput = {

@@ -8,6 +8,10 @@ import {
   buildNoIndexMetadata,
 } from '@/domain/invitations';
 
+// Never cache the preview — always re-fetch so saved changes appear immediately.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface PreviewInvitationPageProps {
   params: Promise<{
     id: string;
@@ -21,9 +25,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PreviewInvitationPage({ params }: PreviewInvitationPageProps) {
   const { id } = await params;
   const invitation = await invitationRepository.getPreviewById(id);
-  console.log('[heroVideo] enabled:', invitation?.hero?.videoLibraryEnabled);
-  console.log('[heroVideo] selectedVideoId:', invitation?.hero?.selectedVideoId);
-  console.log('[heroVideo] url:', invitation?.hero?.videoLibraryUrl);
+  console.log('[heroVideo/preview] hero:', JSON.stringify(invitation?.hero));
+  console.log('[heroVideo/preview] enabled:', invitation?.hero?.videoLibraryEnabled);
+  console.log('[heroVideo/preview] selectedVideoId:', invitation?.hero?.selectedVideoId);
+  console.log('[heroVideo/preview] url:', invitation?.hero?.videoLibraryUrl);
 
   if (!invitation || !isPreviewableInvitationStatus(invitation.status)) {
     notFound();
