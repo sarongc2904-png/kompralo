@@ -222,6 +222,28 @@ function LandingStyles() {
         .cro-value-card { min-height:0; }
         .cro-event { min-height:300px !important; }
       }
+      .cro-comptable-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      .cro-comptable { width:100%; min-width:680px; border-collapse:collapse; font-size:.84rem; }
+      .cro-comptable thead th { padding:1.1rem .9rem; text-align:center; font-size:.75rem; font-weight:800; letter-spacing:.04em; text-transform:uppercase; border-bottom:2px solid ${T.border}; }
+      .cro-comptable thead th:first-child { text-align:left; }
+      .cro-comptable thead th.cth-featured { background:${T.ink}; color:white; border-radius:8px 8px 0 0; }
+      .cro-comptable-badge { display:inline-block; margin-bottom:.35rem; padding:.22rem .6rem; border-radius:20px; background:${T.gold}; color:${T.ink}; font-size:.62rem; font-weight:900; text-transform:uppercase; }
+      .cro-comptable tbody tr { border-bottom:1px solid ${T.border}; }
+      .cro-comptable tbody tr:last-child { border-bottom:none; }
+      .cro-comptable tbody tr:hover { background:${T.ivory}; }
+      .cro-comptable td { padding:.72rem .9rem; color:${T.text}; vertical-align:middle; text-align:center; }
+      .cro-comptable td:first-child { text-align:left; color:${T.ink}; font-weight:500; }
+      .cro-comptable td.cth-featured { background:rgba(13,10,7,.04); }
+      .cro-comptable .ct-yes { color:${T.gold}; font-size:1.05rem; font-weight:800; }
+      .cro-comptable .ct-no  { color:${T.border}; font-size:.95rem; }
+      .cro-comptable-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:2rem; }
+      .cro-comptable-sum { padding:1.25rem; border-radius:8px; border:1px solid ${T.border}; background:${T.paper}; }
+      .cro-comptable-sum.cth-featured { background:${T.ink}; color:white; border-color:${T.ink}; }
+      .cro-comptable-sum h4 { margin:0 0 .4rem; font-family:var(--font-playfair,Georgia,serif); font-size:1.1rem; }
+      .cro-comptable-sum p  { margin:0; font-size:.8rem; line-height:1.55; color:${T.muted}; }
+      .cro-comptable-sum.cth-featured p { color:rgba(255,255,255,.65); }
+      @media (max-width:780px) { .cro-comptable-summary { grid-template-columns:1fr; } }
+
       @media (prefers-reduced-motion:reduce) {
         html { scroll-behavior:auto; }
         .cro-btn, .cro-event img, .cro-faq-plus { transition:none !important; }
@@ -456,6 +478,84 @@ function Pricing() {
   );
 }
 
+const COMP_ROWS: [string, boolean, boolean, boolean][] = [
+  ['Portada animada',           true,  true,  true ],
+  ['Cuenta regresiva',          true,  true,  true ],
+  ['Confirmación de asistencia',true,  true,  true ],
+  ['Botón WhatsApp RSVP',       true,  true,  true ],
+  ['Mapa / Ubicación',          true,  true,  true ],
+  ['Itinerario del evento',     true,  true,  true ],
+  ['Código de vestimenta',      true,  true,  true ],
+  ['Mensaje final',             true,  true,  true ],
+  ['Enlace para compartir',     true,  true,  true ],
+  ['Galería de fotos',          false, true,  true ],
+  ['Música de fondo',           false, true,  true ],
+  ['Video hero',                false, true,  true ],
+  ['Código QR',                 false, true,  true ],
+  ['Historia de la pareja',     false, true,  true ],
+  ['Línea del tiempo',          false, true,  true ],
+  ['Mesa de regalos',           false, true,  true ],
+  ['Padres y familia',          false, true,  true ],
+  ['Padrinos',                  false, true,  true ],
+  ['Hospedaje / Hotel',         false, true,  true ],
+  ['Hashtag social',            false, true,  true ],
+  ['Intro cinemática',          false, false, true ],
+  ['Libro de visitas',          false, false, true ],
+  ['Mensajes de invitados',     false, false, true ],
+];
+
+function PricingComparison() {
+  return (
+    <section className="cro-section" style={{ paddingTop:0 }}>
+      <div className="cro-shell">
+        <Reveal style={{ textAlign:'center', maxWidth:720, margin:'0 auto 2.5rem' }}>
+          <p className="cro-eyebrow">Compara nuestros planes</p>
+          <h2 className="cro-title">Encuentra el plan ideal para tu evento</h2>
+          <p className="cro-copy">Todos incluyen acceso al editor y link para compartir.</p>
+        </Reveal>
+        <div className="cro-comptable-wrap">
+          <table className="cro-comptable">
+            <thead>
+              <tr>
+                <th style={{ width:'44%' }}></th>
+                <th>Básico</th>
+                <th className="cth-featured">
+                  <span className="cro-comptable-badge">Más vendido</span><br/>Premium
+                </th>
+                <th>Deluxe</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMP_ROWS.map(([label, basic, gold, plat]) => (
+                <tr key={label}>
+                  <td>{label}</td>
+                  <td>{basic ? <span className="ct-yes">✓</span> : <span className="ct-no">—</span>}</td>
+                  <td className="cth-featured">{gold  ? <span className="ct-yes">✓</span> : <span className="ct-no">—</span>}</td>
+                  <td>{plat  ? <span className="ct-yes">✓</span> : <span className="ct-no">—</span>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="cro-comptable-summary">
+          <div className="cro-comptable-sum">
+            <h4>Básico</h4>
+            <p>Ideal para eventos pequeños y familiares donde lo esencial es confirmación, ubicación y un diseño bonito.</p>
+          </div>
+          <div className="cro-comptable-sum cth-featured">
+            <h4 style={{ color:'white' }}>Premium</h4>
+            <p>Ideal para bodas, XV años y eventos grandes que necesitan galería, música, historia y gestión completa.</p>
+          </div>
+          <div className="cro-comptable-sum">
+            <h4>Deluxe</h4>
+            <p>Ideal para celebraciones especiales que quieren una experiencia cinemática con libro de visitas y mensajes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // Casos representativos para composición CRO. Sustituir por reseñas verificadas antes de mostrar métricas reales.
 const TESTIMONIALS = [
   { quote:'Confirmamos invitados sin estar persiguiendo mensajes por WhatsApp.', name:'María y Daniel', meta:'Boda · Veracruz' },
@@ -525,6 +625,7 @@ export default function InvitacionesPage() {
       <EventsSection />
       <div className="cro-shell" style={{ paddingTop:'3.5rem' }}><AlreadyBought /></div>
       <Pricing />
+      <PricingComparison />
       <Testimonials />
       <Guarantee />
       <Urgency />
