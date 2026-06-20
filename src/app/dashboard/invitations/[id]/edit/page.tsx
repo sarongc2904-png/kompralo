@@ -111,7 +111,7 @@ export default async function EditInvitationPage({ params }: Props) {
   const assistantAllowedForPlan = isDashboardAssistantAllowedForPlan(invitation.planId);
   const assistantEventType = getDashboardAssistantEventType(invitation.category);
 
-  const previewUrl = `/preview/${invitation.id}`;
+  const previewUrl = `/preview/${invitation.id}?from=editor`;
 
   return (
     // position:fixed on the preview aside bypasses the overflow-x-hidden on DashboardShell
@@ -431,10 +431,10 @@ export default async function EditInvitationPage({ params }: Props) {
           href={previewUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-opacity"
-          style={{ background: '#1A1410', color: '#F5F3F0' }}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl text-base font-bold transition-transform hover:scale-[1.01]"
+          style={{ background: '#C4A962', color: '#0D0A07', padding: '1rem 1.5rem', boxShadow: '0 4px 18px rgba(196,169,98,0.35)' }}
         >
-          ↗ Ver preview en nueva pestaña
+          ✨ Previsualiza tu invitación
         </a>
       </div>
       </div>{/* end editor column */}

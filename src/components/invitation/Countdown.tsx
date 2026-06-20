@@ -29,19 +29,29 @@ function useCompactCountdown() {
   return isCompact;
 }
 
+// Normalises YYYY-MM-DD (no time part) to midnight local time before parsing,
+// so the countdown never receives NaN from a bare date string.
+function parseEventDate(raw: string): Date | null {
+  if (!raw) return null;
+  const normalized = raw.includes('T') ? raw : `${raw}T00:00:00`;
+  const d = new Date(normalized);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 function isEventPast(eventDate: string): boolean {
-  return +new Date(eventDate) - +new Date() <= 0;
+  const d = parseEventDate(eventDate);
+  if (!d) return false;
+  return d.getTime() - Date.now() <= 0;
 }
 
 function getTimeLeft(eventDate: string): TimeLeft {
-  const diff = +new Date(eventDate) - +new Date();
-  if (diff <= 0) {
-    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-  }
-
+  const d = parseEventDate(eventDate);
+  if (!d) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  const diff = d.getTime() - Date.now();
+  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
   return {
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours:   Math.floor((diff / (1000 * 60 * 60)) % 24),
     minutes: Math.floor((diff / 1000 / 60) % 60),
     seconds: Math.floor((diff / 1000) % 60),
   };
@@ -232,6 +242,7 @@ function Separator({ theme }: { theme: Theme }) {
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 export default function Countdown({ eventDate, theme }: CountdownProps) {
+  const hasValidDate = !!parseEventDate(eventDate);
   const [timeLeft,    setTimeLeft]    = useState<TimeLeft>(() => getTimeLeft(eventDate));
   const [eventPassed, setEventPassed] = useState<boolean>(() => isEventPast(eventDate));
 
@@ -272,7 +283,22 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
           <line x1="60" y1="9" x2="100" y2="9" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.7" />
         </svg>
 
-        {eventPassed ? (
+        {!hasValidDate ? (
+          /* ── NO VALID DATE STATE ────────────────────────────────────────── */
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col items-center gap-4 py-8"
+          >
+            <p
+              className={`text-base md:text-lg font-light tracking-wide ${theme.bodyFont}`}
+              style={{ color: theme.colors.textSecondary }}
+            >
+              Fecha por confirmar
+            </p>
+          </motion.div>
+        ) : eventPassed ? (
           /* ── EVENT PASSED STATE ─────────────────────────────────────────── */
           <motion.div
             initial={{ opacity: 0, y: 16 }}
