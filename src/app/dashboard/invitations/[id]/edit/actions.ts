@@ -6,6 +6,7 @@ import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repo
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
+import { normalizePlanId } from '@/domain/plans/types';
 import type {
   GalleryImageItem,
   InvitationProtagonistInput,
@@ -67,6 +68,29 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
 
 function getServiceInvitationRepository(): IInvitationRepository {
   return new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
+}
+
+// ─── Plan guard ───────────────────────────────────────────────────────────────
+
+/**
+ * Returns an error result if the invitation's plan does not satisfy the
+ * minimum required tier.  Premium features require 'premium' or 'deluxe'.
+ * Deluxe features require 'deluxe'.
+ */
+async function checkPlanAccess(
+  invitationId: string,
+  requiredTier: 'premium' | 'deluxe',
+): Promise<UpdateInvitationResult | null> {
+  const inv = await getServiceInvitationRepository().getById(invitationId);
+  if (!inv) return { success: false, error: 'Invitación no encontrada.' };
+  const plan = normalizePlanId(inv.planId);
+  if (requiredTier === 'premium' && plan === 'basic') {
+    return { success: false, error: 'Esta función requiere el plan Premium o Deluxe.' };
+  }
+  if (requiredTier === 'deluxe' && plan !== 'deluxe') {
+    return { success: false, error: 'Esta función requiere el plan Deluxe.' };
+  }
+  return null; // access granted
 }
 
 const invitationRepository: IInvitationRepository = {
@@ -320,13 +344,30 @@ export async function updateInvitationMediaInfo(
 
   const { id } = input;
 
+  // For Basic plans: preserve existing music/video — these fields are not
+  // visible in the editor for Basic, so incoming values are empty strings.
+  const plan = normalizePlanId(
+    (await getServiceInvitationRepository().getById(id))?.planId,
+  );
+  let heroVideoUrl = input.heroVideoUrl.trim();
+  let musicUrl     = input.musicUrl.trim();
+  let musicTitle   = input.musicTitle.trim();
+  let youtubeUrl   = input.youtubeUrl.trim();
+  if (plan === 'basic') {
+    const current = await getServiceInvitationRepository().getById(id);
+    heroVideoUrl = current?.hero?.videoUrl   ?? '';
+    musicUrl     = current?.music?.audioUrl   ?? '';
+    musicTitle   = current?.music?.title     ?? '';
+    youtubeUrl   = current?.hero?.youtubeUrl ?? '';
+  }
+
   try {
     await invitationRepository.updateMediaInfo(id, {
       heroImageUrl:  input.heroImageUrl.trim(),
-      heroVideoUrl:  input.heroVideoUrl.trim(),
-      musicUrl:      input.musicUrl.trim(),
-      musicTitle:    input.musicTitle.trim(),
-      youtubeUrl:    input.youtubeUrl.trim(),
+      heroVideoUrl,
+      musicUrl,
+      musicTitle,
+      youtubeUrl,
       googleMapsUrl: input.googleMapsUrl.trim(),
       wazeUrl:       input.wazeUrl.trim(),
     });
@@ -358,6 +399,9 @@ export interface UpdateMusicTrackInput {
 export async function updateInvitationMusicTrack(
   input: UpdateMusicTrackInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'premium');
+  if (planError) return planError;
+
   const { id } = input;
 
   const isNone = input.trackId === '' || input.trackId === 'none';
@@ -414,6 +458,9 @@ export interface UpdateHeroVideoInput {
 export async function updateInvitationHeroVideo(
   input: UpdateHeroVideoInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'premium');
+  if (planError) return planError;
+
   const { id } = input;
 
   console.log('[heroVideo/save] selectedVideoId:', input.videoId);
@@ -454,6 +501,9 @@ export interface UpdateInvitationGalleryInput {
 export async function updateInvitationGallery(
   input: UpdateInvitationGalleryInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'premium');
+  if (planError) return planError;
+
   // Validate: no empty URLs, all must be valid absolute URLs.
   for (let i = 0; i < input.items.length; i++) {
     const item = input.items[i];
@@ -609,6 +659,9 @@ export interface UpdateInvitationGiftRegistryInput {
 export async function updateInvitationGiftRegistry(
   input: UpdateInvitationGiftRegistryInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'deluxe');
+  if (planError) return planError;
+
   for (let i = 0; i < input.items.length; i++) {
     const item = input.items[i];
     if (!item.provider.trim()) {
@@ -721,6 +774,9 @@ export interface UpdateInvitationPadrinosInput {
 export async function updateInvitationPadrinos(
   input: UpdateInvitationPadrinosInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'deluxe');
+  if (planError) return planError;
+
   if (input.padrinos.length === 0) {
     return { success: false, error: 'Debe haber al menos una categoría de padrinos.' };
   }
@@ -781,6 +837,9 @@ export interface UpdateInvitationStoryBookInput {
 export async function updateStoryBook(
   input: UpdateInvitationStoryBookInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'deluxe');
+  if (planError) return planError;
+
   if (input.slides.length === 0) {
     return { success: false, error: 'El StoryBook debe tener al menos un slide.' };
   }
@@ -845,6 +904,9 @@ export interface UpdateInvitationAccommodationInput {
 export async function updateAccommodation(
   input: UpdateInvitationAccommodationInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'deluxe');
+  if (planError) return planError;
+
   for (let i = 0; i < input.hotels.length; i++) {
     const h = input.hotels[i];
     if (!h.name.trim()) {
@@ -911,6 +973,9 @@ function stripAt(handle: string): string {
 export async function updateSocial(
   input: UpdateInvitationSocialInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'deluxe');
+  if (planError) return planError;
+
   const s = input.social;
 
   if (!s.hashtag.trim()) {
@@ -1005,6 +1070,9 @@ export interface UpdateInvitationTimelineInput {
 export async function updateTimeline(
   input: UpdateInvitationTimelineInput,
 ): Promise<UpdateInvitationResult> {
+  const planError = await checkPlanAccess(input.id, 'deluxe');
+  if (planError) return planError;
+
   for (let i = 0; i < input.events.length; i++) {
     const e = input.events[i];
     if (!e.year.trim()) {

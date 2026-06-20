@@ -120,9 +120,12 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 interface MediaFormProps {
   invitation: InvitationContent;
+  /** Normalized plan id — controls which sub-sections are visible. */
+  plan?: 'basic' | 'premium' | 'deluxe';
 }
 
-export default function MediaForm({ invitation }: MediaFormProps) {
+export default function MediaForm({ invitation, plan = 'premium' }: MediaFormProps) {
+  const isBasic = plan === 'basic';
   const [heroImageUrl, setHeroImageUrl] = useState(invitation.hero?.imageUrl ?? '');
   const [result, formAction, isPending] = useActionState(
     async (_prev: UpdateInvitationResult | null, formData: FormData) => {
@@ -196,25 +199,31 @@ export default function MediaForm({ invitation }: MediaFormProps) {
                 URL directa a la imagen de portada. Formatos: jpg, webp, png.
               </p>
             </div>
-            <Field
-              label="Video personalizado de portada"
-              name="heroVideoUrl"
-              defaultValue={invitation.hero?.videoUrl ?? ''}
-              hint="MP4 directo o enlace de YouTube. Opcional — tiene prioridad sobre la imagen. Si se usa también un video sugerido, este tiene mayor prioridad."
-              placeholder="https://..."
-            />
+            {!isBasic && (
+              <Field
+                label="Video personalizado de portada"
+                name="heroVideoUrl"
+                defaultValue={invitation.hero?.videoUrl ?? ''}
+                hint="MP4 directo o enlace de YouTube. Opcional — tiene prioridad sobre la imagen."
+                placeholder="https://..."
+              />
+            )}
           </div>
         </div>
 
-        {/* Video de portada */}
-        <div>
-          <HeroVideoSelector invitation={invitation} />
-        </div>
+        {/* Video de portada — Premium+ */}
+        {!isBasic && (
+          <div>
+            <HeroVideoSelector invitation={invitation} />
+          </div>
+        )}
 
-        {/* Música */}
-        <div>
-          <MusicLibrarySelector invitation={invitation} />
-        </div>
+        {/* Música — Premium+ */}
+        {!isBasic && (
+          <div>
+            <MusicLibrarySelector invitation={invitation} />
+          </div>
+        )}
 
         {/* Navegación */}
         <div>

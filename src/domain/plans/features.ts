@@ -1,29 +1,31 @@
 import type { FeatureOverrides, InvitationFeatures } from '@/domain/plans/types';
 
 export const disabledFeatures: InvitationFeatures = {
-  showIntro: false,
-  showHero: false,
-  showCountdown: false,
-  showRSVP: false,
-  showWhatsApp: false,
-  showMaps: false,
-  showQRCode: false,
-  showGallery: false,
-  showMusic: false,
-  showItinerary: false,
-  showDressCode: false,
-  showGiftRegistry: false,
-  showStoryBook: false,
-  showTimeline: false,
-  showParents: false,
-  showPadrinos: false,
+  showIntro:         false,
+  showHero:          false,
+  showCountdown:     false,
+  showRSVP:          false,
+  showWhatsApp:      false,
+  showMaps:          false,
+  showQRCode:        false,
+  showGallery:       false,
+  showMusic:         false,
+  showItinerary:     false,
+  showDressCode:     false,
+  showGiftRegistry:  false,
+  showStoryBook:     false,
+  showTimeline:      false,
+  showParents:       false,
+  showPadrinos:      false,
   showAccommodation: false,
-  showHashtag: false,
-  showFinalMessage: false,
-  showGuestbook: false,
-  showMessages: false,
-  showVideo: false,
+  showHashtag:       false,
+  showFinalMessage:  false,
+  showGuestbook:     false,
+  showMessages:      false,
+  showVideo:         false,
 };
+
+// ─── Basic ────────────────────────────────────────────────────────────────────
 
 export const basicFeatures: InvitationFeatures = {
   ...disabledFeatures,
@@ -31,39 +33,46 @@ export const basicFeatures: InvitationFeatures = {
   showCountdown:    true,
   showRSVP:         true,
   showWhatsApp:     true,
-  showMaps:         true,   // location / Google Maps link
-  showItinerary:    true,   // basic event schedule
-  showDressCode:    true,   // dress code / attire guide
+  showMaps:         true,
+  showItinerary:    true,
+  showDressCode:    true,
   showFinalMessage: true,
 };
 
-export const goldFeatures: InvitationFeatures = {
+// ─── Premium ──────────────────────────────────────────────────────────────────
+
+export const premiumFeatures: InvitationFeatures = {
   ...basicFeatures,
-  // Core Gold
-  showMaps: true,
-  showQRCode: true,
+  showMusic:   true,
   showGallery: true,
-  showMusic: true,
-  showVideo: true,
-  showItinerary: true,
-  showDressCode: true,
-  // Advanced — all editor-visible sections render for Gold
-  showTimeline: true,
-  showStoryBook: true,
-  showGiftRegistry: true,
+  showVideo:   true,
+  showQRCode:  true,
   showParents: true,
-  showPadrinos: true,
-  showAccommodation: true,
-  showHashtag: true,
 };
 
-export const platinumFeatures: InvitationFeatures = {
-  ...goldFeatures,
-  // Platinum-exclusive: cinematic intro, guestbook, messages
-  showIntro: true,
-  showGuestbook: true,
-  showMessages: true,
+// ─── Deluxe ───────────────────────────────────────────────────────────────────
+
+export const deluxeFeatures: InvitationFeatures = {
+  ...premiumFeatures,
+  showStoryBook:     true,
+  showTimeline:      true,
+  showPadrinos:      true,
+  showGiftRegistry:  true,
+  showAccommodation: true,
+  showHashtag:       true,
+  showIntro:         true,
+  showGuestbook:     true,
+  showMessages:      true,
 };
+
+// ─── Legacy aliases ───────────────────────────────────────────────────────────
+// gold → Premium, platinum → Deluxe.
+// These keep old invitations working correctly.
+
+export const goldFeatures     = premiumFeatures;
+export const platinumFeatures = deluxeFeatures;
+
+// ─── Merge helper ─────────────────────────────────────────────────────────────
 
 export function mergePlanFeatures(
   planFeatures: InvitationFeatures,

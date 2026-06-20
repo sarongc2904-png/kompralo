@@ -1,25 +1,46 @@
-import { basicFeatures, goldFeatures, mergePlanFeatures, platinumFeatures } from '@/domain/plans/features';
+import {
+  basicFeatures,
+  deluxeFeatures,
+  goldFeatures,
+  mergePlanFeatures,
+  platinumFeatures,
+  premiumFeatures,
+} from '@/domain/plans/features';
 import type { FeatureOverrides, InvitationFeatures, InvitationPlan, PlanId } from '@/domain/plans/types';
+import { normalizePlanId } from '@/domain/plans/types';
 
-export const defaultPlanId: PlanId = 'platinum';
+export const defaultPlanId: PlanId = 'premium';
 
 export const plansById: Record<PlanId, InvitationPlan> = {
   basic: {
     id: 'basic',
     name: 'Basic',
-    description: 'Core invitation: hero, countdown, RSVP, WhatsApp, maps, itinerary, dress code and final message.',
+    description: 'Portada, cuenta regresiva, RSVP, WhatsApp, mapa, itinerario, vestimenta y mensaje final.',
     features: basicFeatures,
   },
+  premium: {
+    id: 'premium',
+    name: 'Premium',
+    description: 'Todo Basic más música, galería, video de portada y código QR.',
+    features: premiumFeatures,
+  },
+  deluxe: {
+    id: 'deluxe',
+    name: 'Deluxe',
+    description: 'Experiencia completa: StoryBook, línea del tiempo, padrinos, mesa de regalos, hospedaje e intro cinemática.',
+    features: deluxeFeatures,
+  },
+  // Legacy aliases — keep existing invitations working.
   gold: {
     id: 'gold',
-    name: 'Gold',
-    description: 'Basic invitation plus maps, QR, gallery, music, itinerary and dress code.',
+    name: 'Premium',
+    description: 'Todo Basic más música, galería, video de portada y código QR.',
     features: goldFeatures,
   },
   platinum: {
     id: 'platinum',
-    name: 'Platinum',
-    description: 'Complete premium invitation experience.',
+    name: 'Deluxe',
+    description: 'Experiencia completa: StoryBook, línea del tiempo, padrinos, mesa de regalos, hospedaje e intro cinemática.',
     features: platinumFeatures,
   },
 };
@@ -36,5 +57,7 @@ export function getFeaturesForPlan(
   const plan = getPlanById(planId);
   return mergePlanFeatures(plan.features, overrides);
 }
+
+export { normalizePlanId };
 
 export const availablePlans = Object.values(plansById);

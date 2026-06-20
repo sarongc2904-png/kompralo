@@ -21,7 +21,9 @@ const T = {
 
 const planLabels: Record<string, string> = {
   basic:    'Basic',
+  premium:  'Premium',
   gold:     'Premium',
+  deluxe:   'Deluxe',
   platinum: 'Deluxe',
 };
 
