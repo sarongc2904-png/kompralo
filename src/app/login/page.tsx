@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import { sendMagicLink } from './actions';
+import { signInWithPassword, requestPasswordReset, sendMagicLink } from './actions';
+import type { SignInResult, ResetPasswordResult, SendMagicLinkResult } from './actions';
 
 const T = {
   ivory:     '#E8D7B8',
@@ -58,176 +59,286 @@ const styles = `
   .lg2-btn:active:not(:disabled) { transform: translateY(0); }
   .lg2-btn:disabled { cursor: not-allowed; opacity: .65; }
 
-  .lg2-secondary-link {
+  .lg2-link {
+    background: none; border: none; cursor: pointer;
+    font-family: inherit; padding: 0;
     transition: color .18s ease;
   }
-  .lg2-secondary-link:hover { color: #B8966A !important; }
+  .lg2-link:hover { color: #B8966A !important; }
 `;
 
-function LoginForm() {
-  const searchParams  = useSearchParams();
-  const emailParam    = searchParams.get('email') ?? '';
-  const redirectParam = searchParams.get('redirect') ?? '/dashboard';
-  const errorParam    = searchParams.get('error');
+type Mode = 'password' | 'forgot' | 'magic';
 
-  // Detect if the user arrived from the post-payment email (redirect to editor).
-  const isPostPayment = redirectParam.includes('/dashboard/invitations') || redirectParam.includes('/edit');
+// ─── Password login form ──────────────────────────────────────────────────────
 
-  const [state, formAction, pending] = useActionState(sendMagicLink, null);
-
-  const errorMessages: Record<string,string> = {
-    expired_link: 'El enlace de acceso ha expirado. Solicita uno nuevo.',
-    invalid_link: 'El enlace de acceso es inválido. Solicita uno nuevo.',
-    config:       'Error de configuración del servidor de correos.',
-  };
-
-  if (state?.success) {
-    return (
-      <div style={{ textAlign:'center', padding:'1rem 0' }}>
-        <div style={{
-          width:'3.75rem', height:'3.75rem', borderRadius:'50%',
-          background:T.cream, border:`2px solid ${T.border}`,
-          display:'flex', alignItems:'center', justifyContent:'center',
-          fontSize:'1.625rem', margin:'0 auto 1.375rem',
-          boxShadow:'0 4px 16px rgba(15,12,9,0.05)',
-        }}>
-          📬
-        </div>
-        <h2 style={{ fontSize:'1.25rem', fontWeight:700, color:T.dark, margin:'0 0 .75rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
-          Revisa tu correo
-        </h2>
-        <p style={{ color:T.mid, fontSize:'.875rem', lineHeight:1.7, margin:'0 0 1.25rem' }}>
-          Hemos enviado un enlace de acceso (Magic Link) a tu bandeja de entrada.
-          <br />Haz clic en el enlace para ingresar directamente.
-        </p>
-        <div style={{ background:T.ivory, border:`1px solid ${T.border}`, borderRadius:'.625rem', padding:'.875rem 1rem', fontSize:'.78rem', color:T.light, lineHeight:1.55 }}>
-          ¿No lo recibiste? Revisa tu bandeja de correo no deseado (spam) o espera unos segundos antes de intentar de nuevo.
-        </div>
-      </div>
-    );
-  }
+function PasswordForm({ redirectParam, emailParam, onMode }: {
+  redirectParam: string;
+  emailParam: string;
+  onMode: (m: Mode) => void;
+}) {
+  const [state, formAction, pending] = useActionState<SignInResult | null, FormData>(
+    signInWithPassword, null,
+  );
 
   return (
-    <form action={formAction} style={{ display:'flex', flexDirection:'column', gap:'1.25rem' }}>
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <input type="hidden" name="redirect" value={redirectParam} />
 
-      {isPostPayment && (
-        <div style={{
-          background:T.cream, border:`1px solid ${T.border}`,
-          borderRadius:'.625rem', padding:'.75rem 1rem',
-          fontSize:'.8125rem', color:T.mid, lineHeight:1.55,
-          display:'flex', gap:'.5rem', alignItems:'flex-start',
-        }}>
-          <span style={{ flexShrink:0 }}>✉️</span>
-          <span>Confirma tu correo y te enviaremos un enlace para editar tu invitación directamente.</span>
-        </div>
-      )}
-
       <div>
-        <label htmlFor="login-email" style={{ display:'block', fontSize:'.8125rem', fontWeight:600, color:T.dark, marginBottom:'.5rem' }}>
+        <label htmlFor="pw-email" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
           Correo electrónico
         </label>
-        <input
-          id="login-email" name="email" type="email"
-          defaultValue={emailParam} required autoFocus
-          placeholder="correo@ejemplo.com"
-          className="lg2-input"
-        />
+        <input id="pw-email" name="email" type="email" defaultValue={emailParam} required autoFocus
+          placeholder="correo@ejemplo.com" className="lg2-input" />
       </div>
 
-      {(state?.error || errorParam) && (
-        <div style={{
-          background:'#FEF2F2', border:'1px solid #FECACA',
-          borderRadius:'.5rem', padding:'.75rem 1rem',
-          color:'#991B1B', fontSize:'.8125rem', lineHeight:1.5,
-        }}>
-          {state?.error ?? (errorParam ? (errorMessages[errorParam] ?? 'Ocurrió un error al procesar el acceso.') : '')}
+      <div>
+        <label htmlFor="pw-password" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
+          Contraseña
+        </label>
+        <input id="pw-password" name="password" type="password" required
+          placeholder="Tu contraseña" className="lg2-input" />
+      </div>
+
+      {state?.error && (
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem' }}>
+          {state.error}
         </div>
       )}
 
-      <button
-        type="submit" disabled={pending}
-        className="lg2-btn"
-        style={{ background: pending ? T.light : T.dark, color:'#F1E3C8' }}
-      >
-        {pending ? 'Enviando enlace de acceso…' : 'Enviar enlace de acceso'}
+      <button type="submit" disabled={pending} className="lg2-btn"
+        style={{ background: pending ? T.light : T.dark, color: '#F1E3C8' }}>
+        {pending ? 'Entrando…' : 'Entrar'}
       </button>
 
-      <div style={{
-        background:T.ivory, border:`1px solid ${T.border}`,
-        borderRadius:'.625rem', padding:'.875rem 1rem',
-        textAlign:'center',
-      }}>
-        <p style={{ margin:0, fontSize:'.8125rem', color:T.mid, lineHeight:1.6 }}>
-          Te enviaremos un correo con un enlace seguro.<br />
-          <strong style={{ color:T.dark }}>No necesitas contraseña para acceder.</strong>
-        </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem', alignItems: 'center' }}>
+        <button type="button" className="lg2-link" onClick={() => onMode('forgot')}
+          style={{ fontSize: '.8125rem', color: T.light }}>
+          ¿Olvidé mi contraseña?
+        </button>
+        <button type="button" className="lg2-link" onClick={() => onMode('magic')}
+          style={{ fontSize: '.8125rem', color: T.light }}>
+          Ya compré y no tengo contraseña — acceder con enlace de correo
+        </button>
       </div>
     </form>
   );
 }
 
+// ─── Forgot password form ─────────────────────────────────────────────────────
+
+function ForgotForm({ emailParam, onMode }: { emailParam: string; onMode: (m: Mode) => void }) {
+  const [state, formAction, pending] = useActionState<ResetPasswordResult | null, FormData>(
+    requestPasswordReset, null,
+  );
+
+  if (state?.success) {
+    return (
+      <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📬</div>
+        <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: T.dark, margin: '0 0 .75rem' }}>
+          Revisa tu correo
+        </h2>
+        <p style={{ color: T.mid, fontSize: '.875rem', lineHeight: 1.7, margin: '0 0 1.25rem' }}>
+          Te enviamos un enlace para crear una nueva contraseña. El enlace es válido por 1 hora.
+        </p>
+        <button type="button" className="lg2-link" onClick={() => onMode('password')}
+          style={{ fontSize: '.8125rem', color: T.gold, fontWeight: 700 }}>
+          ← Volver al inicio de sesión
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <p style={{ margin: 0, fontSize: '.875rem', color: T.mid, lineHeight: 1.6 }}>
+        Ingresa tu correo y te enviaremos un enlace para crear una nueva contraseña.
+      </p>
+      <div>
+        <label htmlFor="fr-email" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
+          Correo electrónico
+        </label>
+        <input id="fr-email" name="email" type="email" defaultValue={emailParam} required autoFocus
+          placeholder="correo@ejemplo.com" className="lg2-input" />
+      </div>
+
+      {state?.error && (
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem' }}>
+          {state.error}
+        </div>
+      )}
+
+      <button type="submit" disabled={pending} className="lg2-btn"
+        style={{ background: pending ? T.light : T.dark, color: '#F1E3C8' }}>
+        {pending ? 'Enviando…' : 'Enviar enlace de recuperación'}
+      </button>
+
+      <button type="button" className="lg2-link" onClick={() => onMode('password')}
+        style={{ textAlign: 'center', fontSize: '.8125rem', color: T.light }}>
+        ← Volver al inicio de sesión
+      </button>
+    </form>
+  );
+}
+
+// ─── Magic link form (fallback) ───────────────────────────────────────────────
+
+function MagicForm({ redirectParam, emailParam, onMode }: {
+  redirectParam: string;
+  emailParam: string;
+  onMode: (m: Mode) => void;
+}) {
+  const [state, formAction, pending] = useActionState<SendMagicLinkResult | null, FormData>(
+    sendMagicLink, null,
+  );
+
+  if (state?.success) {
+    return (
+      <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📬</div>
+        <h2 style={{ fontSize: '1.125rem', fontWeight: 700, color: T.dark, margin: '0 0 .75rem' }}>
+          Revisa tu correo
+        </h2>
+        <p style={{ color: T.mid, fontSize: '.875rem', lineHeight: 1.7, margin: '0 0 1.25rem' }}>
+          Hemos enviado un enlace de acceso a tu bandeja. Haz clic en el enlace para ingresar.
+        </p>
+        <button type="button" className="lg2-link" onClick={() => onMode('password')}
+          style={{ fontSize: '.8125rem', color: T.gold, fontWeight: 700 }}>
+          ← Volver al inicio de sesión
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <input type="hidden" name="redirect" value={redirectParam} />
+      <div style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.625rem', padding: '.75rem 1rem', fontSize: '.8125rem', color: T.mid, lineHeight: 1.55 }}>
+        Te enviaremos un enlace seguro por correo. No necesitas contraseña para acceder con este método.
+      </div>
+      <div>
+        <label htmlFor="ml-email" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
+          Correo electrónico
+        </label>
+        <input id="ml-email" name="email" type="email" defaultValue={emailParam} required autoFocus
+          placeholder="correo@ejemplo.com" className="lg2-input" />
+      </div>
+
+      {state?.error && (
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem' }}>
+          {state.error}
+        </div>
+      )}
+
+      <button type="submit" disabled={pending} className="lg2-btn"
+        style={{ background: pending ? T.light : T.dark, color: '#F1E3C8' }}>
+        {pending ? 'Enviando enlace…' : 'Enviar enlace de acceso'}
+      </button>
+
+      <button type="button" className="lg2-link" onClick={() => onMode('password')}
+        style={{ textAlign: 'center', fontSize: '.8125rem', color: T.light }}>
+        ← Volver al inicio de sesión
+      </button>
+    </form>
+  );
+}
+
+// ─── Main form with mode switching ───────────────────────────────────────────
+
+function LoginForm() {
+  const searchParams  = useSearchParams();
+  const emailParam    = searchParams.get('email') ?? '';
+  const redirectParam = searchParams.get('redirect') ?? '/cliente';
+  const errorParam    = searchParams.get('error');
+
+  const [mode, setMode] = useState<Mode>('password');
+
+  const errorMessages: Record<string, string> = {
+    expired_link: 'El enlace de acceso ha expirado. Solicita uno nuevo.',
+    invalid_link: 'El enlace de acceso es inválido. Solicita uno nuevo.',
+    config:       'Error de configuración del servidor de correos.',
+  };
+
+  const headings: Record<Mode, { title: string; sub: string }> = {
+    password: { title: 'Accede a tu panel',           sub: 'Ingresa con tu correo y contraseña.' },
+    forgot:   { title: 'Recuperar contraseña',        sub: 'Te enviaremos un enlace seguro por correo.' },
+    magic:    { title: 'Acceder con enlace de correo', sub: 'Acceso sin contraseña — método alternativo.' },
+  };
+
+  return (
+    <div>
+      {/* Title */}
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <p style={{ fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.25em', textTransform: 'uppercase', color: T.gold, margin: '0 0 1.125rem' }}>
+          KOMPRALO
+        </p>
+        <h1 style={{ fontSize: '1.625rem', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+          {headings[mode].title}
+        </h1>
+        <p style={{ color: T.mid, fontSize: '.875rem', margin: 0, lineHeight: 1.6 }}>
+          {headings[mode].sub}
+        </p>
+      </div>
+
+      {/* Error from URL param */}
+      {errorParam && (
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem', marginBottom: '1.25rem' }}>
+          {errorMessages[errorParam] ?? 'Ocurrió un error al procesar el acceso.'}
+        </div>
+      )}
+
+      {mode === 'password' && (
+        <PasswordForm redirectParam={redirectParam} emailParam={emailParam} onMode={setMode} />
+      )}
+      {mode === 'forgot' && (
+        <ForgotForm emailParam={emailParam} onMode={setMode} />
+      )}
+      {mode === 'magic' && (
+        <MagicForm redirectParam={redirectParam} emailParam={emailParam} onMode={setMode} />
+      )}
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function LoginPage() {
   return (
     <main style={{
-      minHeight:'100dvh',
-      background:`radial-gradient(ellipse at 30% 20%, rgba(196,169,98,0.09) 0%, transparent 55%), linear-gradient(160deg, #E8D7B8 0%, #F1E3C8 100%)`,
-      display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
-      padding:'2rem 1.25rem',
-      fontFamily:'var(--font-inter, system-ui, sans-serif)',
-      position:'relative',
+      minHeight: '100dvh',
+      background: `radial-gradient(ellipse at 30% 20%, rgba(196,169,98,0.09) 0%, transparent 55%), linear-gradient(160deg, #E8D7B8 0%, #F1E3C8 100%)`,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      padding: '2rem 1.25rem',
+      fontFamily: 'var(--font-inter, system-ui, sans-serif)',
+      position: 'relative',
     }}>
       <div className="paper-noise" />
       <style>{styles}</style>
 
-      {/* Decorative orbs */}
-      <div aria-hidden style={{ position:'absolute', top:'-80px', right:'-80px', width:'280px', height:'280px', borderRadius:'50%', background:'radial-gradient(circle, rgba(196,169,98,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
-      <div aria-hidden style={{ position:'absolute', bottom:'-60px', left:'-60px', width:'220px', height:'220px', borderRadius:'50%', background:'radial-gradient(circle, rgba(196,169,98,0.07) 0%, transparent 70%)', pointerEvents:'none' }} />
+      <div aria-hidden style={{ position: 'absolute', top: '-80px', right: '-80px', width: '280px', height: '280px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(196,169,98,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div aria-hidden style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '220px', height: '220px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(196,169,98,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      {/* Back link */}
-      <Link href="/invitaciones" style={{ position:'absolute', top:'1.25rem', left:'1.25rem', fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500 }}>
+      <Link href="/invitaciones" style={{ position: 'absolute', top: '1.25rem', left: '1.25rem', fontSize: '.8125rem', color: T.light, textDecoration: 'none', fontWeight: 500 }}>
         ← Volver
       </Link>
 
-      {/* Card */}
       <div className="lg2-card" style={{
-        width:'100%', maxWidth:'420px',
-        background:T.white, borderRadius:'1.375rem', padding:'2.75rem 2.375rem',
-        boxShadow:'0 10px 48px rgba(15,12,9,0.08), 0 2px 0 rgba(229,221,210,1)',
-        position:'relative',
+        width: '100%', maxWidth: '420px',
+        background: T.white, borderRadius: '1.375rem', padding: '2.75rem 2.375rem',
+        boxShadow: '0 10px 48px rgba(15,12,9,0.08), 0 2px 0 rgba(229,221,210,1)',
+        position: 'relative',
       }}>
-        {/* Gold top accent */}
-        <div style={{
-          position:'absolute', top:0, left:'50%', transform:'translateX(-50%)',
-          width:'3rem', height:'3px', background:T.gold,
-          borderRadius:'0 0 3px 3px',
-        }} />
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '3rem', height: '3px', background: T.gold, borderRadius: '0 0 3px 3px' }} />
 
-        {/* Logo + heading */}
-        <div style={{ textAlign:'center', marginBottom:'2rem' }}>
-          <p style={{ fontSize:'.6875rem', fontWeight:800, letterSpacing:'.25em', textTransform:'uppercase', color:T.gold, margin:'0 0 1.125rem' }}>
-            KOMPRALO
-          </p>
-          <h1 style={{
-            fontSize:'1.625rem', fontWeight:700, color:T.dark, margin:'0 0 .5rem',
-            fontFamily:'var(--font-playfair, Georgia, serif)',
-          }}>
-            Confirma tu acceso
-          </h1>
-          <p style={{ color:T.mid, fontSize:'.875rem', margin:0, lineHeight:1.6 }}>
-            Te enviaremos un enlace seguro a tu correo. No necesitas contraseña.
-          </p>
-        </div>
-
-        <Suspense fallback={<p style={{ textAlign:'center', color:T.light, fontSize:'.875rem' }}>Cargando...</p>}>
+        <Suspense fallback={<p style={{ textAlign: 'center', color: T.light, fontSize: '.875rem' }}>Cargando...</p>}>
           <LoginForm />
         </Suspense>
 
-        {/* Bottom link */}
-        <div style={{ marginTop:'1.75rem', paddingTop:'1.375rem', borderTop:`1px solid ${T.border}`, textAlign:'center' }}>
-          <p style={{ fontSize:'.78rem', color:T.light, margin:0 }}>
+        <div style={{ marginTop: '1.75rem', paddingTop: '1.375rem', borderTop: `1px solid ${T.border}`, textAlign: 'center' }}>
+          <p style={{ fontSize: '.78rem', color: T.light, margin: 0 }}>
             ¿Aún no tienes una invitación?{' '}
-            <Link href="/invitaciones/precios" className="lg2-secondary-link" style={{ color:T.gold, fontWeight:700, textDecoration:'none' }}>
+            <Link href="/invitaciones/precios" style={{ color: T.gold, fontWeight: 700, textDecoration: 'none' }}>
               Ver planes y precios →
             </Link>
           </p>

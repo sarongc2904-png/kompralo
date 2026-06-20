@@ -207,27 +207,22 @@ function OrderCard({ order }: { order: Order }) {
           : 'Preparando correo de confirmación'}
       </p>
 
-      {/* Action */}
+      {/* Actions */}
       {order.invitationId && isPaid && (
-        <Link
-          href={`/dashboard/invitations/${order.invitationId}/edit`}
-          className="cl-btn"
-          style={{
-            display:        'inline-flex',
-            alignItems:     'center',
-            gap:            '0.375rem',
-            padding:        '0.625rem 1.5rem',
-            background:     T.gold,
-            color:          T.dark,
-            borderRadius:   '0.625rem',
-            fontSize:       '0.875rem',
-            fontWeight:     700,
-            textDecoration: 'none',
-            boxShadow:      '0 4px 12px rgba(184,150,106,0.2)',
-          }}
-        >
-          ✏️ Editar invitación
-        </Link>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <Link
+            href={`/dashboard/invitations/${order.invitationId}/edit`}
+            className="cl-btn"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.375rem',
+              padding: '0.625rem 1.5rem', background: T.gold, color: T.dark,
+              borderRadius: '0.625rem', fontSize: '0.875rem', fontWeight: 700,
+              textDecoration: 'none', boxShadow: '0 4px 12px rgba(184,150,106,0.2)',
+            }}
+          >
+            ✏️ Editar invitación
+          </Link>
+        </div>
       )}
     </div>
   );
@@ -401,6 +396,24 @@ export default async function ClientePage({ searchParams }: Props) {
             {orders.map((order) => (
               <OrderCard key={order.id} order={order} />
             ))}
+
+            {/* Buy another CTA — no free creation allowed */}
+            <div style={{
+              marginTop: '1.5rem', padding: '1.25rem 1.5rem',
+              background: T.cream, border: `1px solid ${T.border}`,
+              borderRadius: '1rem', textAlign: 'center',
+            }}>
+              <p style={{ margin: '0 0 .75rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.6 }}>
+                ¿Necesitas otra invitación para un nuevo evento?
+              </p>
+              <Link href="/invitaciones/precios" className="cl-btn" style={{
+                display: 'inline-block', padding: '0.625rem 1.5rem',
+                background: T.dark, color: '#F5EDD8',
+                borderRadius: '0.625rem', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none',
+              }}>
+                Comprar otra invitación →
+              </Link>
+            </div>
           </>
         )}
       </div>

@@ -166,6 +166,7 @@ export async function POST(request: NextRequest) {
             throw new Error('NEXT_PUBLIC_APP_URL must use HTTPS in production.');
           }
 
+          // ── 3a. Generate access-token link (fallback, 7-day cookie) ─────────
           const { rawToken } = await createInvitationAccessToken({
             invitationId: finalInvitationId,
             orderId: freshOrder.id,
@@ -174,13 +175,41 @@ export async function POST(request: NextRequest) {
           const accessUrl = new URL('/access/consume', appUrl);
           accessUrl.searchParams.set('token', rawToken);
 
+          // ── 3b. Create/invite Supabase Auth user and get password-setup link ─
+          // The invite link lets the customer create a password once and then use
+          // email+password to log in on subsequent visits.
+          let inviteUrl: string | null = null;
+          try {
+            const callbackUrl = new URL('/auth/callback', appUrl);
+            callbackUrl.searchParams.set('redirect', '/auth/update-password');
+
+            const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+              type: 'invite',
+              email: customerEmail,
+              options: { redirectTo: callbackUrl.toString() },
+            });
+
+            if (linkError) {
+              console.warn('[webhook/stripe] generateLink failed (non-fatal, session=%s):', session.id, linkError.message);
+            } else {
+              inviteUrl = linkData?.properties?.action_link ?? null;
+              console.log('[webhook/stripe] invite link generated for %s', customerEmail);
+            }
+          } catch (inviteErr) {
+            console.warn('[webhook/stripe] generateLink threw (non-fatal, session=%s):', session.id, inviteErr);
+          }
+
+          const loginUrl = new URL('/login', appUrl).toString();
+
           await sendOrderConfirmationEmail({
-            to:              customerEmail,
+            to:           customerEmail,
             customerName,
             planId,
-            amountTotal:     session.amount_total,
-            currency:        session.currency,
-            accessUrl:       accessUrl.toString(),
+            amountTotal:  session.amount_total,
+            currency:     session.currency,
+            accessUrl:    accessUrl.toString(),
+            inviteUrl,
+            loginUrl,
           });
           await orderRepo.markConfirmationEmailSent(session.id);
           console.log('[webhook/stripe] confirmation email sent to %s (session=%s)', customerEmail, session.id);
