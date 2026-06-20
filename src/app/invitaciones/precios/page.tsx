@@ -75,12 +75,10 @@ function PageStyles() {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-function formatPrice(centavos: number, currency: string): string {
-  // en-US locale with MXN outputs "MX$499" — unambiguous vs USD "$499"
-  return new Intl.NumberFormat('en-US', {
-    style:'currency', currency:currency.toUpperCase(),
-    minimumFractionDigits:0, maximumFractionDigits:0,
-  }).format(centavos / 100);
+function formatPrice(centavos: number, _currency: string): string {
+  // Manual format: "$1,499" — avoids locale-dependent "MX$" prefix
+  const amount = centavos / 100;
+  return '$' + amount.toLocaleString('es-MX', { maximumFractionDigits: 0 });
 }
 
 const planMeta: Record<string, { ideal:string; highlight:string }> = {
@@ -176,7 +174,7 @@ function ProductCard({ product, featured }: { product:Product; featured?:boolean
           productId={product.id}
           label={`Comprar ${product.name}`}
           className={[
-            'w-full py-3 rounded-md text-sm font-bold transition-opacity cursor-pointer text-center',
+            'w-full py-3 px-6 rounded-md text-sm font-bold transition-opacity cursor-pointer text-center whitespace-nowrap',
             featured
               ? 'bg-[#C4A962] text-[#0D0A07] hover:opacity-90'
               : 'bg-[#0D0A07] text-[#F1E3C8] hover:opacity-85',
