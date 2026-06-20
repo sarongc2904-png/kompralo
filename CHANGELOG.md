@@ -5,6 +5,58 @@
 
 ---
 
+## FASE FIX-RESET-PASSWORD-COMPLETE-FLOW — Reset password completo y login funcional
+
+Fecha: 2026-06-20
+
+### Causa raíz
+
+En Next.js 15, `redirect()` de `next/navigation` lanza un objeto especial que **NO es `instanceof Error`**. Los try-catch en `signInWithPassword` y `updatePassword` lo capturaban y devolvían `{ success: false, error: 'Error al iniciar sesión.' }` en vez de propagar el redirect. Resultado: login con contraseña y actualización de contraseña nunca redirigían.
+
+### Cambios
+
+- `src/app/login/actions.ts`:
+  - `signInWithPassword`: `redirect()` movido fuera del try-catch — se propaga correctamente después de login exitoso
+  - `updatePassword`: eliminado `redirect()` — ahora devuelve `{ success: true }` y el cliente maneja el redirect
+  - `updatePassword`: agrega `getUser()` primero — devuelve sentinel `NO_SESSION` si no hay sesión
+  - `updatePassword`: mensaje de error mejorado en fallo de `updateUser`
+
+- `src/app/auth/update-password/UpdatePasswordForm.tsx`:
+  - `useEffect` observa `state.success` → `router.push('/cliente')` + `router.refresh()`
+  - Maneja `NO_SESSION`: muestra "Tu enlace expiró" inline sin round-trip al servidor
+  - Título actualizado: "Crea tu nueva contraseña"
+  - Subtítulo: "Esta contraseña te servirá para entrar a tu panel cuando quieras."
+  - Botón: "Guardar contraseña"
+  - Muestra estado de éxito mientras redirige
+
+- `src/app/login/page.tsx`:
+  - Mensaje de éxito en modo forgot actualizado al especificado
+
+### Flujo final verificado
+
+```
+/login?mode=forgot
+→ escribir email
+→ requestPasswordReset → resetPasswordForEmail con redirectTo='/auth/callback?next=/auth/update-password'
+→ email de Supabase
+→ click en email → /auth/callback?next=/auth/update-password&code=xxx
+→ exchangeCodeForSession → cookies de sesión
+→ redirect /auth/update-password (server component, hasSession=true → muestra form)
+→ updatePassword() → { success: true }
+→ router.push('/cliente') + router.refresh()
+→ /cliente muestra invitaciones del usuario
+→ login posterior: /login → email+contraseña → signInWithPassword → redirect('/cliente')
+```
+
+### Validación
+
+- `npx tsc --noEmit`: OK
+- `npm run build`: OK — `/auth/update-password` es `ƒ` (dynamic)
+- Commit: `079ac4d`
+- Push: `main → main`
+
+---
+
 ## FASE FIX-AUTH-PASSWORD-INVITE-REDIRECT — Corrección de redirect invite y errores dobles en login
 
 Fecha: 2026-06-20
