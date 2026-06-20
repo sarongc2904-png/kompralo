@@ -270,6 +270,7 @@ export interface InvitationMusic {
   audioUrl: string;
   title?: string;
   selectedTrackId?: string;
+  enabled?: boolean;
 }
 
 export interface InvitationFinalMessage {

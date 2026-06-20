@@ -313,8 +313,8 @@ export async function updateInvitationMediaInfo(
 export interface UpdateMusicTrackInput {
   id: string;
   slug: string;
-  trackId: string;   // '' means "Sin música"
-  audioUrl: string;
+  trackId: string;   // 'none' or '' means "Sin música"
+  audioUrl: string | null;
   title: string;
 }
 
@@ -330,7 +330,7 @@ export async function updateInvitationMusicTrack(
     await invitationRepository.updateMediaInfo(id, {
       heroImageUrl:   '',
       heroVideoUrl:   '',
-      musicUrl:       isNone ? '' : input.audioUrl,
+      musicUrl:       isNone ? '' : (input.audioUrl ?? ''),
       musicTitle:     isNone ? '' : input.title,
       musicTrackId:   isNone ? 'none' : input.trackId,
       clearMusicUrl:  isNone,

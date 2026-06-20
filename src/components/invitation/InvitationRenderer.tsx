@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { InvitationContent } from '@/domain/invitations/types';
 import type { InvitationFeatures, InvitationPlan } from '@/domain/plans/types';
 import { createThemeCssVariables, type Theme } from '@/domain/themes/types';
@@ -18,7 +18,7 @@ import Hospedaje from '@/components/invitation/Hospedaje';
 import Itinerary from '@/components/invitation/Itinerary';
 import Location from '@/components/invitation/Location';
 import MultilayerBackground from '@/components/invitation/MultilayerBackground';
-import MusicController from '@/components/invitation/MusicController';
+import BackgroundMusicPlayer from '@/components/invitation/BackgroundMusicPlayer';
 import Padrinos from '@/components/invitation/Padrinos';
 import Parents from '@/components/invitation/Parents';
 import RSVPForm from '@/components/invitation/RSVPForm';
@@ -42,7 +42,6 @@ export default function InvitationRenderer({
   features,
   mode = 'public',
 }: InvitationRendererProps) {
-  const [musicTrigger, setMusicTrigger] = useState(false);
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
   const themeVariables = createThemeCssVariables(theme);
@@ -52,7 +51,7 @@ export default function InvitationRenderer({
   const themeV2 = resolveTheme(invitation.themeId);
 
   const handleEnterInvitation = () => {
-    setMusicTrigger(true);
+    // Platinum: CinematicIntro calls this when user taps "Entrar"
   };
 
   // Temporary diagnostic logs — safe to remove after confirming sections render
@@ -91,11 +90,7 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showMusic" features={features}>
-        <MusicController
-          audioUrl={invitation.music.audioUrl}
-          theme={theme}
-          autoPlayTrigger={musicTrigger || !features.showIntro}
-        />
+        <BackgroundMusicPlayer music={invitation.music} />
       </FeatureGate>
 
       <FeatureGate feature="showHero" features={features}>

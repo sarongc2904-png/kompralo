@@ -120,6 +120,7 @@ class LocalInvitationRepository implements IInvitationRepository {
         audioUrl:        input.clearMusicUrl ? '' : (input.musicUrl || existing.music?.audioUrl || ''),
         title:           input.clearMusicUrl ? undefined : (input.musicTitle || undefined),
         selectedTrackId: input.clearMusicUrl ? 'none' : (input.musicTrackId ?? existing.music?.selectedTrackId),
+        enabled:         input.clearMusicUrl ? false : (input.musicUrl ? true : existing.music?.enabled),
       },
       location: {
         ...existing.location,
