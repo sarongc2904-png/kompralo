@@ -169,7 +169,7 @@ export default function EditForm({ invitation }: EditFormProps) {
           label="WhatsApp RSVP"
           name="rsvpWhatsAppNumber"
           defaultValue={invitation.rsvpWhatsAppNumber ?? ''}
-          hint="Solo dígitos, sin espacios ni +. Ej: 5215512345678"
+          hint="10 a 15 dígitos. Acepta +52, espacios o guiones. Ej: +52 961 234 5678"
           type="tel"
         />
 

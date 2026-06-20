@@ -148,6 +148,17 @@ function normalizeDateForSave(value?: string | null): string {
   return value;
 }
 
+// ─── Phone helper ─────────────────────────────────────────────────────────────
+
+/**
+ * Strips all non-digit characters (spaces, +, -, parens) so that common formats
+ * like "+52 961 234 5678" or "961-234-5678" are accepted and normalized.
+ * Returns empty string if nothing is left.
+ */
+function normalizePhone(raw: string): string {
+  return raw.replace(/\D/g, '');
+}
+
 // =============================================================================
 // updateInvitationBasicInfo
 // =============================================================================
@@ -172,8 +183,13 @@ function validateBasicFormat(input: UpdateInvitationBasicInfoInput): string | nu
   if (!/^[a-z0-9-]+$/.test(input.slug.trim())) {
     return 'El slug solo puede contener letras minúsculas, números y guiones.';
   }
-  if (input.rsvpWhatsAppNumber && !/^\d{10,15}$/.test(input.rsvpWhatsAppNumber.trim())) {
-    return 'El número de WhatsApp debe tener entre 10 y 15 dígitos.';
+  // Normalize phone before validating so "+52 961 234 5678" is accepted.
+  if (input.rsvpWhatsAppNumber) {
+    const digits = normalizePhone(input.rsvpWhatsAppNumber);
+    if (!digits) return 'Escribe un número de WhatsApp válido (mínimo 10 dígitos).';
+    if (digits.length < 10 || digits.length > 15) {
+      return 'El número de WhatsApp debe tener entre 10 y 15 dígitos.';
+    }
   }
   return null;
 }
@@ -203,6 +219,9 @@ export async function updateInvitationBasicInfo(
   console.log('[eventDate/save] incoming:', input.eventDate);
   console.log('[eventDate/save] normalized:', normalizedEventDate);
 
+  // Normalize phone: strip spaces, +, dashes — accept "+52 961 234 5678" etc.
+  const normalizedPhone = normalizePhone(input.rsvpWhatsAppNumber);
+
   try {
     await invitationRepository.updateBasicInfo(id, {
       title:              input.title.trim(),
@@ -212,7 +231,7 @@ export async function updateInvitationBasicInfo(
       eventTime:          input.eventTime,
       venueName:          input.venueName.trim(),
       address:            input.address.trim(),
-      rsvpWhatsAppNumber: input.rsvpWhatsAppNumber.trim(),
+      rsvpWhatsAppNumber: normalizedPhone,   // normalized digits only, '' if empty
       finalMessageQuote:  input.finalMessageQuote.trim(),
     });
   } catch (err) {
@@ -344,17 +363,28 @@ export async function updateInvitationMusicTrack(
   const isNone = input.trackId === '' || input.trackId === 'none';
 
   try {
-    const invitationRepository = await getAuthorizedInvitationRepository(id);
-    await invitationRepository.updateMediaInfo(id, {
-      heroImageUrl:   '',
-      heroVideoUrl:   '',
+    const repo = await getAuthorizedInvitationRepository(id);
+
+    // Read current state so we don't accidentally clear hero video / YouTube /
+    // maps URLs that belong to other form sections. Passing '' to updateMediaInfo
+    // for heroVideoUrl or youtubeUrl would set them to null in the repository.
+    const current = await repo.getById(id);
+    const existingHeroVideoUrl  = current?.hero?.videoUrl        ?? '';
+    const existingYoutubeUrl    = current?.hero?.youtubeUrl      ?? '';
+    const existingHeroImageUrl  = current?.hero?.imageUrl        ?? '';
+    const existingGoogleMapsUrl = current?.location?.googleMapsLink ?? '';
+    const existingWazeUrl       = current?.location?.wazeLink    ?? '';
+
+    await repo.updateMediaInfo(id, {
+      heroImageUrl:   existingHeroImageUrl,
+      heroVideoUrl:   existingHeroVideoUrl,
       musicUrl:       isNone ? '' : (input.audioUrl ?? ''),
       musicTitle:     isNone ? '' : input.title,
       musicTrackId:   isNone ? 'none' : input.trackId,
       clearMusicUrl:  isNone,
-      youtubeUrl:     '',
-      googleMapsUrl:  '',
-      wazeUrl:        '',
+      youtubeUrl:     existingYoutubeUrl,
+      googleMapsUrl:  existingGoogleMapsUrl,
+      wazeUrl:        existingWazeUrl,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
