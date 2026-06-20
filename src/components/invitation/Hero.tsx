@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import { Theme } from '@/domain/themes/types';
 import { InvitationProtagonist } from '@/domain/invitations/types';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { getVideoEmbedUrl } from '@/lib/video/getVideoEmbedUrl';
 
 interface HeroProps {
   protagonists?: InvitationProtagonist[];
@@ -31,6 +32,8 @@ export default function Hero({
   const sectionRef = useRef<HTMLElement>(null);
   const primaryName = protagonists?.[0]?.name ?? brideName ?? '';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? '';
+
+  const videoEmbed = getVideoEmbedUrl(videoUrl);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -70,9 +73,27 @@ export default function Hero({
       >
         {/* Media is 130% height so there is room for the parallax shift */}
         <div style={{ position: 'absolute', top: '-15%', left: 0, right: 0, bottom: '-15%' }}>
-          {videoUrl ? (
+          {videoEmbed?.type === 'youtube' ? (
+            <iframe
+              src={videoEmbed.embedUrl + '?autoplay=1&mute=1&loop=1&controls=0&playsinline=1&rel=0&modestbranding=1'}
+              title={`${primaryName} & ${secondaryName} — video`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+              aria-hidden="true"
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover',
+                filter: 'brightness(0.78) saturate(1.08)',
+                border: 'none',
+                pointerEvents: 'none',
+                // Scale up to hide YouTube controls bar at bottom
+                transform: 'scale(1.08)',
+              }}
+            />
+          ) : videoEmbed?.type === 'direct' ? (
             <video
-              src={videoUrl}
+              src={videoEmbed.embedUrl}
               autoPlay
               muted
               loop
@@ -107,13 +128,13 @@ export default function Hero({
         style={{
           y: gradientY,
           position: 'absolute', inset: 0,
-          background: `linear-gradient(
+          background: `radial-gradient(circle at 50% 50%, rgba(196,169,98,0.10) 0%, transparent 60%), linear-gradient(
             180deg,
-            rgba(20,12,4,0.18) 0%,
-            rgba(20,12,4,0.08) 30%,
-            rgba(20,12,4,0.12) 55%,
-            rgba(10,6,2,0.60) 82%,
-            rgba(8,4,0,0.80) 100%
+            rgba(13,10,7,0.22) 0%,
+            rgba(13,10,7,0.12) 30%,
+            rgba(13,10,7,0.16) 55%,
+            rgba(13,10,7,0.65) 82%,
+            rgba(13,10,7,0.90) 100%
           )`,
           willChange: 'transform',
         }}
@@ -139,8 +160,8 @@ export default function Hero({
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 0.80, y: 0 }}
           transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`text-white text-[10px] md:text-xs uppercase tracking-[0.28em] mb-5 text-center max-w-xs px-6 ${theme.bodyFont}`}
-          style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}
+          className={`text-[10px] md:text-xs uppercase tracking-[0.28em] mb-5 text-center max-w-xs px-6 ${theme.bodyFont}`}
+          style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)', color: 'var(--v2-color-text-over-video, #F1E3C8)' }}
         >
           {emotionalPhrase}
         </motion.p>
@@ -166,12 +187,13 @@ export default function Hero({
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            className="font-calligraphy block text-white glow-pulse"
+            className="font-calligraphy block glow-pulse"
             style={{
               fontSize: 'clamp(3rem, 9vw, 5.5rem)',
               fontFamily: 'var(--v2-font-heading, inherit)',
-              textShadow: '0 2px 24px rgba(0,0,0,0.45), 0 0 40px rgba(197,168,128,0.2)',
+              textShadow: '0 2px 24px rgba(0,0,0,0.45), 0 0 40px rgba(196,169,98,0.3)',
               overflow: 'visible',
+              color: 'var(--v2-color-text-over-video, #F1E3C8)',
             }}
           >
             {primaryName}
@@ -182,7 +204,7 @@ export default function Hero({
             animate={{ opacity: 0.9, scale: 1 }}
             transition={{ duration: 0.8, delay: 1.3, ease: [0.34, 1.56, 0.64, 1] }}
             className="block my-1"
-            style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', letterSpacing: '0.12em', color: 'var(--v2-color-accent, #E8D5A8)' }}
+            style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', letterSpacing: '0.12em', color: 'var(--v2-color-accent, #C4A962)' }}
           >
             ♡
           </motion.span>
@@ -191,12 +213,13 @@ export default function Hero({
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, delay: 1.5, ease: [0.16, 1, 0.3, 1] }}
-            className="font-calligraphy block text-white glow-pulse"
+            className="font-calligraphy block glow-pulse"
             style={{
               fontSize: 'clamp(3rem, 9vw, 5.5rem)',
               fontFamily: 'var(--v2-font-heading, inherit)',
-              textShadow: '0 2px 24px rgba(0,0,0,0.45), 0 0 40px rgba(197,168,128,0.2)',
+              textShadow: '0 2px 24px rgba(0,0,0,0.45), 0 0 40px rgba(196,169,98,0.3)',
               overflow: 'visible',
+              color: 'var(--v2-color-text-over-video, #F1E3C8)',
             }}
           >
             {secondaryName}
@@ -211,13 +234,14 @@ export default function Hero({
           className="mt-6 text-center"
         >
           <p
-            className={`text-[9px] md:text-[10px] uppercase tracking-[0.32em] text-white/60 mb-1 ${theme.bodyFont}`}
+            className={`text-[9px] md:text-[10px] uppercase tracking-[0.32em] mb-1 ${theme.bodyFont}`}
+            style={{ color: 'var(--v2-color-text-over-video, #F1E3C8)', opacity: 0.6 }}
           >
             {eventLabel}
           </p>
           <p
-            className={`text-[11px] md:text-xs tracking-[0.18em] text-white/85 ${theme.bodyFont}`}
-            style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
+            className={`text-[11px] md:text-xs tracking-[0.18em] ${theme.bodyFont}`}
+            style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)', color: 'var(--v2-color-text-over-video, #F1E3C8)', opacity: 0.85 }}
           >
             {formattedDate}
           </p>
@@ -235,7 +259,7 @@ export default function Hero({
             transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
             style={{
               width: 1, height: 36,
-              background: 'linear-gradient(180deg, transparent 0%, var(--v2-color-accent, rgba(232,213,168,0.7)) 100%)',
+              background: 'linear-gradient(180deg, transparent 0%, var(--v2-color-accent, rgba(196,169,98,0.7)) 100%)',
             }}
           />
         </motion.div>
