@@ -11,22 +11,16 @@ interface ImageUploadButtonProps {
   label?: string;
 }
 
-/**
- * Small inline button that opens a file picker, uploads to Supabase Storage,
- * and calls `onUpload(url)` on success.
- *
- * Drop this next to any image-URL text input in the dashboard forms.
- * Requires ThemeProviderV2 NOT to be present — it's a pure admin component.
- */
 export function ImageUploadButton({
   folder,
   invitationId,
   onUpload,
-  label = 'Subir',
+  label = 'Subir imagen',
 }: ImageUploadButtonProps) {
-  const inputRef  = useRef<HTMLInputElement>(null);
-  const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading]   = useState(false);
+  const [success, setSuccess]   = useState(false);
+  const [error,   setError]     = useState<string | null>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -34,21 +28,24 @@ export function ImageUploadButton({
 
     setLoading(true);
     setError(null);
+    setSuccess(false);
 
     try {
       const { url } = await uploadInvitationAsset(file, folder, invitationId);
       onUpload(url);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al subir');
+      setError('No pudimos subir la imagen. Intenta de nuevo.');
+      console.error('[ImageUploadButton]', err);
     } finally {
       setLoading(false);
-      // Reset so the same file can be re-selected if needed
       if (inputRef.current) inputRef.current.value = '';
     }
   }
 
   return (
-    <span className="inline-flex flex-col gap-0.5">
+    <span className="inline-flex flex-col gap-1">
       <input
         ref={inputRef}
         type="file"
@@ -60,29 +57,30 @@ export function ImageUploadButton({
         type="button"
         onClick={() => { setError(null); inputRef.current?.click(); }}
         disabled={loading}
-        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-opacity"
+        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
         style={{
-          background: '#F0EBE4',
-          color:      '#3D2B1A',
-          border:     '1px solid #D4C5B0',
-          opacity:    loading ? 0.6 : 1,
-          whiteSpace: 'nowrap',
+          background:  success ? '#E8F5E9' : '#F0EBE4',
+          color:       success ? '#2E7D32' : '#2B1A0E',
+          border:      `1px solid ${success ? '#A5D6A7' : '#C5A880'}`,
+          whiteSpace:  'nowrap',
         }}
       >
         {loading ? (
           <>
             <span
-              className="inline-block w-3 h-3 rounded-full border-2 border-current border-t-transparent animate-spin"
+              className="inline-block h-4 w-4 rounded-full border-2 border-current border-t-transparent animate-spin"
               aria-hidden="true"
             />
             Subiendo…
           </>
+        ) : success ? (
+          <>✓ Imagen cargada</>
         ) : (
           <>↑ {label}</>
         )}
       </button>
       {error && (
-        <span className="text-[10px] leading-tight" style={{ color: '#C62828' }}>
+        <span className="text-xs leading-tight font-medium" style={{ color: '#C62828' }}>
           {error}
         </span>
       )}

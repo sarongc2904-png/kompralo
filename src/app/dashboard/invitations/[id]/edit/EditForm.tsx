@@ -211,12 +211,12 @@ export default function EditForm({ invitation }: EditFormProps) {
         </button>
 
         <Link
-          href={`/preview/${invitation.id}`}
+          href={`/preview/${invitation.id}?from=editor`}
           target="_blank"
-          className="px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
-          style={{ background: '#F0EBE4', color: '#3D2B1A' }}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
+          style={{ background: '#C4A962', color: '#0D0A07' }}
         >
-          Ver preview
+          ✨ Previsualiza tu invitación
         </Link>
 
         <Link

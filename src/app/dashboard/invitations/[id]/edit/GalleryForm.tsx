@@ -138,11 +138,10 @@ function ImageRow({
         <button
           type="button"
           onClick={onDelete}
-          title="Eliminar"
-          className="px-2 py-1 rounded text-xs transition-colors"
-          style={{ background: '#FFEBEE', color: '#C62828' }}
+          title="Eliminar imagen"
+          className="inline-flex min-h-[36px] items-center justify-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100"
         >
-          ✕
+          ✕ Eliminar
         </button>
       </div>
     </div>
