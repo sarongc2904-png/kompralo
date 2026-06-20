@@ -5,6 +5,59 @@
 
 ---
 
+## FASE STORAGE-BUCKET-MISMATCH-FIX — Diagnóstico y corrección de "Bucket not found"
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+Detectar por qué el editor de producción lanzaba `Error al subir imagen: Bucket not found` aunque el bucket `invitation-assets` existe en Supabase Storage marcado como Public.
+
+### Causa raíz
+
+Los tres helpers de Storage usaban `'invitations'` como nombre de bucket hardcodeado, pero el bucket real en Supabase se llama `'invitation-assets'`. El nombre nunca había coincidido.
+
+| Archivo | Bucket antes | Bucket ahora |
+|---|---|---|
+| `src/lib/storage/uploadImage.ts` | `invitations` | `invitation-assets` |
+| `src/lib/storage/getPublicUrl.ts` | `invitations` | `invitation-assets` |
+| `src/lib/storage/deleteImage.ts` | `invitations` | `invitation-assets` |
+
+### Archivos modificados
+
+- `src/lib/storage/uploadImage.ts` — nombre de bucket corregido + logs de diagnóstico + mensaje de error mejorado
+- `src/lib/storage/getPublicUrl.ts` — nombre de bucket corregido
+- `src/lib/storage/deleteImage.ts` — nombre de bucket corregido + `extractPath` compatible con URLs antiguas `invitations/` y nuevas `invitation-assets/`
+
+### Cambios realizados
+
+1. `BUCKET = 'invitations'` → `BUCKET = 'invitation-assets'` en los tres archivos.
+2. Logs seguros antes del upload en `uploadImage.ts`:
+   - `[upload] supabaseUrl` — confirma proyecto Supabase conectado
+   - `[upload] bucket` — confirma nombre de bucket usado
+   - `[upload] folder` y `[upload] filePath`
+   - `[upload] buckets` — lista de buckets via `listBuckets()` (si la anon key lo permite)
+   - `[upload] bucketsError` — loguea si `listBuckets` no está permitido, sin bloquear el upload
+3. Mensaje mejorado cuando `error.message` incluye "Bucket not found":
+   > "No encontramos el bucket invitation-assets en el proyecto Supabase conectado. Revisa que NEXT_PUBLIC_SUPABASE_URL apunte al mismo proyecto donde creaste el bucket."
+4. `extractPath` en `deleteImage.ts` ahora detecta automáticamente si la URL contiene `/invitations/` o `/invitation-assets/` para soportar imágenes subidas antes del cambio.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK (10 warnings preexistentes, 0 errores)
+- `npm run build`: OK
+- Commit: `8b6e54a`
+- Push: `main → main`
+
+### Notas
+
+- No se tocaron Stripe, webhook, Auth, Theme Engine, InvitationRenderer ni Dashboard Assistant.
+- Si después del deploy los logs muestran que `NEXT_PUBLIC_SUPABASE_URL` apunta a un proyecto diferente al que tiene el bucket, el problema es de variables de entorno en Vercel y no de código.
+- Los logs de `listBuckets` en consola del navegador confirmarán qué buckets son visibles desde la anon key del proyecto conectado.
+
+---
+
 ## FASE EDITOR-UX-FINAL-FIX — Mejoras UX del editor
 
 Fecha: 2026-06-19
