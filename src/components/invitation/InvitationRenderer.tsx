@@ -55,6 +55,13 @@ export default function InvitationRenderer({
     setMusicTrigger(true);
   };
 
+  // Temporary diagnostic logs — safe to remove after confirming Timeline renders
+  if (typeof window !== 'undefined') {
+    console.log('[timeline] plan:', plan.id);
+    console.log('[timeline] showTimeline:', features.showTimeline);
+    console.log('[timeline] timelineItems:', invitation.timeline?.length ?? 0);
+  }
+
   return (
     <div
       className={`min-h-screen relative min-w-0 overflow-x-hidden transition-colors duration-1000 ${theme.bodyText}`}

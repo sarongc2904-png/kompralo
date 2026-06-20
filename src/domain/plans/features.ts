@@ -41,6 +41,7 @@ export const goldFeatures: InvitationFeatures = {
   showMusic: true,
   showItinerary: true,
   showDressCode: true,
+  showTimeline: true,
 };
 
 export const platinumFeatures: InvitationFeatures = {
