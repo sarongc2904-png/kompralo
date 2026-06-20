@@ -114,11 +114,12 @@ export default async function EditInvitationPage({ params }: Props) {
   const previewUrl = `/preview/${invitation.id}`;
 
   return (
-    // overflow-x-hidden must NOT be on the xl:flex container — it breaks position:sticky.
-    // Instead clip overflow on the inner editor column only.
-    <div className="w-full xl:flex xl:gap-6 xl:items-start">
+    // position:fixed on the preview aside bypasses the overflow-x-hidden on DashboardShell
+    // ancestors (which would break position:sticky). The editor column gets xl:pr-[500px]
+    // so content never slides under the fixed panel.
+    <div className="relative">
       {/* ── Editor column ───────────────────────────────────────────────────── */}
-      <div className="w-full flex-1 min-w-0 overflow-x-hidden" style={{ maxWidth: 720 }}>
+      <div className="w-full xl:pr-[500px] overflow-x-hidden">
       {/* Header */}
       <div className="mb-8">
         <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#C5A880' }}>
@@ -435,13 +436,13 @@ export default async function EditInvitationPage({ params }: Props) {
       </div>
       </div>{/* end editor column */}
 
-      {/* ── Preview column — sticky on desktop, hidden on narrow viewports ── */}
-      <div
-        className="hidden xl:flex flex-col flex-shrink-0"
-        style={{ width: 420, position: 'sticky', top: 24, height: 'calc(100vh - 48px)' }}
-      >
-        <LivePreview invitationId={invitation.id} />
-      </div>
+      {/* ── Preview panel — fixed on desktop, hidden on narrow viewports ── */}
+      {/* Fixed positioning is unaffected by overflow on any ancestor element. */}
+      <aside className="hidden xl:block fixed right-8 top-6 z-30 h-[calc(100vh-48px)] w-[460px]">
+        <div className="h-full overflow-hidden rounded-[28px] border border-[#e7dccb] bg-white shadow-2xl">
+          <LivePreview invitationId={invitation.id} />
+        </div>
+      </aside>
 
       <DashboardAssistantMount
         enabledByEnv={assistantEnabledByEnv}
