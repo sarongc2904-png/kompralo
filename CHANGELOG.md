@@ -5,6 +5,75 @@
 
 ---
 
+## FASE AUDIO-BUTTON-AND-CENTERED-SECTIONS-FIX — Botón de música funcional y centrado de regalos/padrinos
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+1. Corregir el botón de música para que sea visible, interactivo y muestre texto claro al usuario.
+2. Centrar dinámicamente las secciones Mesa de Regalos y Padrinos igual que el Itinerario.
+
+### Causa raíz
+
+**Botón de música**: El componente `MusicController` renderizaba un botón solo con icono (sin texto) y sin guard para `audioUrl` vacío. Para el plan Gold (`showIntro=false`), `autoPlayTrigger = true` desde el primer render, lo que causaba un intento de autoplay silencioso bloqueado por el navegador. El usuario veía el icono `VolumeX` pero no tenía indicación de que podía taparlo para activar la música. Además, si `audioUrl = ''`, el componente renderizaba igual con un `Audio` sin fuente.
+
+**GiftRegistry**: `grid grid-cols-1 md:grid-cols-3` — sin items suficientes para 3 columnas, las cards quedaban alineadas a la izquierda.
+
+**Padrinos**: `grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5` — con pocas categorías no se centraban.
+
+### Archivos modificados
+
+- `src/components/invitation/MusicController.tsx`:
+  - Guard `if (!audioUrl?.trim()) return null` — no renderiza si no hay URL de audio
+  - Botón ahora tiene texto visible: **"Activar música"** / **"Música activa"** / **"Toca para reintentar"**
+  - Botón tiene forma de pill (`rounded-full pl-3 pr-4`) en lugar de círculo solo
+  - El autoplay para Gold sigue fallando silenciosamente (browser policy) — el botón funciona al primer tap
+  - `playError` state para feedback visual si `play()` falla tras interacción manual
+  - Reducido a un solo componente (eliminada la arquitectura inner/outer innecesaria)
+
+- `src/components/invitation/GiftRegistry.tsx`:
+  - `grid grid-cols-1 md:grid-cols-3` → `flex flex-wrap justify-center`
+  - Cards con `w-full sm:w-[300px] md:w-[280px]` para centrado con 1, 2 o 3+ items
+
+- `src/components/invitation/Padrinos.tsx`:
+  - `grid grid-cols-2 ... lg:grid-cols-5` → `flex flex-wrap justify-center`
+  - Cards con `w-[140px] sm:w-[160px]` — tamaño fijo apropiado para el diseño compacto de padrinos
+
+### Campo correcto para audio
+
+`invitation.music.audioUrl` — el renderer lee correctamente `invitation.music.audioUrl` y el repositorio Supabase lo mapea desde `c.music.audioUrl`. No había mismatch de campo. El problema era solo de UX y guard de vacío.
+
+### Comportamiento por caso
+
+| Caso | Antes | Después |
+|---|---|---|
+| `audioUrl` vacío | Botón visible pero inactivo | Botón oculto (return null) |
+| `audioUrl` mp3 válido | Solo icono, sin label | "Activar música" → tap → "Música activa" |
+| YouTube en hero + mp3 separado | Funciona igual | Sin cambios (independientes) |
+| Mesa de Regalos 1 item | Alineado izq | Centrado |
+| Mesa de Regalos 2 items | Alineados izq | Par centrado |
+| Mesa de Regalos 3+ | Grid rígido | Wrap centrado |
+| Padrinos 1 categoría | Alineada izq | Centrada |
+| Padrinos 2 categorías | Alineadas izq | Par centrado |
+| Padrinos 3+ | Grid rígido | Wrap centrado responsive |
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK (8 warnings preexistentes — 1 menos que antes por limpieza de MusicController)
+- `npm run build`: OK
+- Commit: `070ce0d`
+- Push: `main → main`
+
+### Notas
+
+- No se tocaron Stripe, webhook, Auth, upload, video fix, itinerary fix ni planes.
+- Regla de navegadores: el autoplay con sonido requiere gesto del usuario. Para Platinum el botón "Entrar" actúa como ese gesto. Para Gold el usuario debe tocar el botón de música.
+- Si el campo `audioUrl` está vacío en la invitación, el botón no aparece y no hay elementos audio en el DOM.
+
+---
+
 ## FASE GOLD-DELUXE-PREVIEW-PARITY-FIX — Gold renderiza todo lo que puede editar
 
 Fecha: 2026-06-20
