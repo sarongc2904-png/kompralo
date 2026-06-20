@@ -21,7 +21,8 @@ export type InvitationFeatureKey =
   | 'showHashtag'
   | 'showFinalMessage'
   | 'showGuestbook'
-  | 'showMessages';
+  | 'showMessages'
+  | 'showVideo';
 
 export type InvitationFeatures = Record<InvitationFeatureKey, boolean>;
 

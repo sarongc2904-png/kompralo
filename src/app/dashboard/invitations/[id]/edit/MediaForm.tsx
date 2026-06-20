@@ -7,6 +7,7 @@ import { ImageUploadButton } from '@/components/dashboard/ImageUploadButton';
 import type { UpdateInvitationResult } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
 import { MusicLibrarySelector } from './MusicLibrarySelector';
+import { HeroVideoSelector } from './HeroVideoSelector';
 
 const INITIAL_STATE: UpdateInvitationResult | null = null;
 
@@ -203,6 +204,11 @@ export default function MediaForm({ invitation }: MediaFormProps) {
               placeholder="https://..."
             />
           </div>
+        </div>
+
+        {/* Video de portada */}
+        <div>
+          <HeroVideoSelector invitation={invitation} />
         </div>
 
         {/* Música */}

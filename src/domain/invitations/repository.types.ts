@@ -3,6 +3,7 @@ import type {
   InvitationContent,
   InvitationBasicInfoInput,
   InvitationMediaInput,
+  InvitationHeroVideoInput,
   InvitationGalleryInput,
   InvitationProtagonistsInput,
   InvitationItineraryInput,
@@ -43,6 +44,7 @@ export interface IInvitationRepository {
   getPreviewById(id: string): Promise<InvitationContent | null>;
   updateBasicInfo(id: string, input: InvitationBasicInfoInput): Promise<InvitationContent>;
   updateMediaInfo(id: string, input: InvitationMediaInput): Promise<InvitationContent>;
+  updateHeroVideo(id: string, input: InvitationHeroVideoInput): Promise<InvitationContent>;
   updateGallery(id: string, input: InvitationGalleryInput): Promise<InvitationContent>;
   updateProtagonists(id: string, input: InvitationProtagonistsInput): Promise<InvitationContent>;
   updateItinerary(id: string, input: InvitationItineraryInput): Promise<InvitationContent>;

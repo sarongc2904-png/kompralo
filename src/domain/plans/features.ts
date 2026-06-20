@@ -22,6 +22,7 @@ export const disabledFeatures: InvitationFeatures = {
   showFinalMessage: false,
   showGuestbook: false,
   showMessages: false,
+  showVideo: false,
 };
 
 export const basicFeatures: InvitationFeatures = {
@@ -40,6 +41,7 @@ export const goldFeatures: InvitationFeatures = {
   showQRCode: true,
   showGallery: true,
   showMusic: true,
+  showVideo: true,
   showItinerary: true,
   showDressCode: true,
   // Advanced — all editor-visible sections render for Gold

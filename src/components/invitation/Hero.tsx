@@ -14,6 +14,8 @@ interface HeroProps {
   emotionalPhrase: string;
   imageUrl: string;
   videoUrl?: string;
+  /** Library video URL — takes priority over videoUrl when provided (plan-gated by renderer) */
+  heroVideoUrl?: string | null;
   eventLabel?: string;
   theme: Theme;
 }
@@ -26,6 +28,7 @@ export default function Hero({
   emotionalPhrase,
   imageUrl,
   videoUrl,
+  heroVideoUrl,
   eventLabel = 'Nuestra Boda',
   theme,
 }: HeroProps) {
@@ -33,7 +36,9 @@ export default function Hero({
   const primaryName = protagonists?.[0]?.name ?? brideName ?? '';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? '';
 
-  const videoEmbed = getVideoEmbedUrl(videoUrl);
+  // Library video takes priority; falls back to legacy videoUrl (YouTube or direct mp4)
+  const resolvedDirectVideoUrl = heroVideoUrl ?? null;
+  const videoEmbed = resolvedDirectVideoUrl ? null : getVideoEmbedUrl(videoUrl);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -73,7 +78,24 @@ export default function Hero({
       >
         {/* Media is 130% height so there is room for the parallax shift */}
         <div style={{ position: 'absolute', top: '-15%', left: 0, right: 0, bottom: '-15%' }}>
-          {videoEmbed?.type === 'youtube' ? (
+          {resolvedDirectVideoUrl ? (
+            /* A — Library video (muted mp4, highest priority) */
+            <video
+              src={resolvedDirectVideoUrl}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden="true"
+              style={{
+                width: '100%', height: '100%',
+                objectFit: 'cover', objectPosition: 'center top',
+                filter: 'brightness(0.78) saturate(1.08)',
+                userSelect: 'none', pointerEvents: 'none',
+              }}
+            />
+          ) : videoEmbed?.type === 'youtube' ? (
+            /* B — Legacy YouTube embed */
             <iframe
               src={videoEmbed.embedUrl + '?autoplay=1&mute=1&loop=1&controls=0&playsinline=1&rel=0&modestbranding=1'}
               title={`${primaryName} & ${secondaryName} — video`}
@@ -87,11 +109,11 @@ export default function Hero({
                 filter: 'brightness(0.78) saturate(1.08)',
                 border: 'none',
                 pointerEvents: 'none',
-                // Scale up to hide YouTube controls bar at bottom
                 transform: 'scale(1.08)',
               }}
             />
           ) : videoEmbed?.type === 'direct' ? (
+            /* C — Legacy direct mp4 URL */
             <video
               src={videoEmbed.embedUrl}
               autoPlay
@@ -107,6 +129,7 @@ export default function Hero({
               }}
             />
           ) : (
+            /* D — Image fallback — never empty */
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={imageUrl}

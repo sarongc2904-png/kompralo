@@ -100,6 +100,11 @@ export default function InvitationRenderer({
           emotionalPhrase={invitation.hero.emotionalPhrase}
           imageUrl={invitation.hero.imageUrl}
           videoUrl={invitation.hero.videoUrl}
+          heroVideoUrl={
+            features.showVideo && invitation.hero.videoLibraryEnabled
+              ? (invitation.hero.videoLibraryUrl ?? null)
+              : null
+          }
           eventLabel={invitation.hero.eventLabel}
           theme={theme}
         />

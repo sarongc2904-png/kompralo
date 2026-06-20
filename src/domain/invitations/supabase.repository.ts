@@ -292,6 +292,51 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
     return updated;
   }
 
+  async updateHeroVideo(id: string, input: import('@/domain/invitations/types').InvitationHeroVideoInput): Promise<InvitationContent> {
+    const now = new Date().toISOString();
+    const isNone = input.videoId === 'none' || !input.videoUrl;
+
+    // Read current hero JSONB to merge non-video fields.
+    const { data: current, error: readError } = await this.supabase
+      .from('invitation_content')
+      .select('hero')
+      .eq('invitation_id', id)
+      .single();
+
+    if (readError || !current) {
+      throw new Error(`[Supabase] updateHeroVideo read failed: ${readError?.message ?? 'not found'}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existingHero = (current.hero as Record<string, any>) ?? {};
+
+    const mergedHero = {
+      ...existingHero,
+      selectedVideoId:    isNone ? 'none'         : input.videoId,
+      videoLibraryUrl:    isNone ? null            : input.videoUrl,
+      videoLibraryEnabled: !isNone,
+      videoLibraryTitle:  isNone ? null            : input.videoTitle,
+    };
+
+    const { error: updateError } = await this.supabase
+      .from('invitation_content')
+      .update({ hero: mergedHero, updated_at: now })
+      .eq('invitation_id', id);
+
+    if (updateError) {
+      throw new Error(`[Supabase] updateHeroVideo update failed: ${updateError.message}`);
+    }
+
+    await this.supabase
+      .from('invitations')
+      .update({ updated_at: now })
+      .eq('id', id);
+
+    const updated = await this.getById(id);
+    if (!updated) throw new Error(`[Supabase] updateHeroVideo: could not re-fetch "${id}" after update`);
+    return updated;
+  }
+
   async updateGallery(id: string, input: InvitationGalleryInput): Promise<InvitationContent> {
     const now = new Date().toISOString();
 

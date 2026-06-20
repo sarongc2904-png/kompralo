@@ -19,6 +19,7 @@ import type {
   InvitationFinalMessageInput,
   InvitationTimelineEventInput,
 } from '@/domain/invitations';
+import type { InvitationHeroVideoInput } from '@/domain/invitations/types';
 
 // ─── Shared result type ───────────────────────────────────────────────────────
 
@@ -125,6 +126,9 @@ const invitationRepository: IInvitationRepository = {
   },
   async updateThemeSelection(id, input) {
     return getAuthorizedInvitationRepository(id).then((repository) => repository.updateThemeSelection(id, input));
+  },
+  async updateHeroVideo(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateHeroVideo(id, input));
   },
   async activateAfterPayment() {
     throw new Error('Editor actions cannot activate invitations after payment.');
@@ -349,6 +353,44 @@ export async function updateInvitationMusicTrack(
   revalidatePath(`/dashboard/invitations/${id}/edit`);
 
   return { success: true, message: 'Música actualizada correctamente.' };
+}
+
+// =============================================================================
+// updateInvitationHeroVideo
+// =============================================================================
+
+export interface UpdateHeroVideoInput {
+  id: string;
+  slug: string;
+  videoId: string;         // 'none' to disable
+  videoUrl: string | null;
+  videoTitle: string;
+}
+
+export async function updateInvitationHeroVideo(
+  input: UpdateHeroVideoInput,
+): Promise<UpdateInvitationResult> {
+  const { id } = input;
+
+  try {
+    const invitationRepository = await getAuthorizedInvitationRepository(id);
+    const heroVideoInput: InvitationHeroVideoInput = {
+      videoId:    input.videoId,
+      videoUrl:   input.videoUrl,
+      videoTitle: input.videoTitle,
+    };
+    await invitationRepository.updateHeroVideo(id, heroVideoInput);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[Editor] updateInvitationHeroVideo error:', message);
+    return { success: false, error: `Error al guardar video: ${message}` };
+  }
+
+  revalidatePath(`/i/${input.slug}`);
+  revalidatePath(`/preview/${id}`);
+  revalidatePath(`/dashboard/invitations/${id}/edit`);
+
+  return { success: true, message: 'Video actualizado correctamente.' };
 }
 
 // =============================================================================

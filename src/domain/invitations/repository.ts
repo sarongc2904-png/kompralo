@@ -9,6 +9,7 @@ import type {
   InvitationContent,
   InvitationBasicInfoInput,
   InvitationMediaInput,
+  InvitationHeroVideoInput,
   InvitationGalleryInput,
   InvitationProtagonistsInput,
   InvitationItineraryInput,
@@ -132,6 +133,29 @@ class LocalInvitationRepository implements IInvitationRepository {
 
     localInvitations[idx] = updated;
     console.log('[Local] updateMediaInfo(%s) — updated in memory (not persisted)', id);
+    return updated;
+  }
+
+  async updateHeroVideo(id: string, input: InvitationHeroVideoInput): Promise<InvitationContent> {
+    const idx = localInvitations.findIndex((inv) => inv.id === id);
+    if (idx === -1) throw new Error(`[Local] updateHeroVideo: invitation "${id}" not found`);
+
+    const existing = localInvitations[idx];
+    const isNone = input.videoId === 'none' || !input.videoUrl;
+    const updated: InvitationContent = {
+      ...existing,
+      hero: {
+        ...existing.hero,
+        selectedVideoId:     isNone ? 'none' : input.videoId,
+        videoLibraryUrl:     isNone ? null   : input.videoUrl,
+        videoLibraryEnabled: !isNone,
+        videoLibraryTitle:   isNone ? undefined : input.videoTitle,
+      },
+      updatedAt: new Date().toISOString(),
+    };
+
+    localInvitations[idx] = updated;
+    console.log('[Local] updateHeroVideo(%s) — updated in memory (not persisted)', id);
     return updated;
   }
 
@@ -570,6 +594,17 @@ class FallbackInvitationRepository implements IInvitationRepository {
     } catch (err) {
       console.warn('[Fallback Local] invitations.updateMediaInfo(%s) — Supabase error:', id, err);
       return this.fallback.updateMediaInfo(id, input);
+    }
+  }
+
+  async updateHeroVideo(id: string, input: InvitationHeroVideoInput): Promise<InvitationContent> {
+    try {
+      const result = await this.primary.updateHeroVideo(id, input);
+      console.log('[Supabase] invitations.updateHeroVideo(%s) OK', id);
+      return result;
+    } catch (err) {
+      console.warn('[Fallback Local] invitations.updateHeroVideo(%s) — Supabase error:', id, err);
+      return this.fallback.updateHeroVideo(id, input);
     }
   }
 

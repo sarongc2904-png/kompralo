@@ -220,6 +220,17 @@ export interface InvitationHero {
   videoUrl?: string;
   youtubeUrl?: string;
   eventLabel: string;
+  // Library video fields (stored alongside hero in the same JSONB column)
+  selectedVideoId?: string;
+  videoLibraryUrl?: string | null;
+  videoLibraryEnabled?: boolean;
+  videoLibraryTitle?: string;
+}
+
+export interface InvitationHeroVideoInput {
+  videoId: string;         // 'none' disables
+  videoUrl: string | null;
+  videoTitle: string;
 }
 
 export interface InvitationStory {
