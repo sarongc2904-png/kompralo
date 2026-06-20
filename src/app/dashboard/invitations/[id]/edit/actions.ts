@@ -307,6 +307,51 @@ export async function updateInvitationMediaInfo(
 }
 
 // =============================================================================
+// updateInvitationMusicTrack
+// =============================================================================
+
+export interface UpdateMusicTrackInput {
+  id: string;
+  slug: string;
+  trackId: string;   // '' means "Sin música"
+  audioUrl: string;
+  title: string;
+}
+
+export async function updateInvitationMusicTrack(
+  input: UpdateMusicTrackInput,
+): Promise<UpdateInvitationResult> {
+  const { id } = input;
+
+  const isNone = input.trackId === '' || input.trackId === 'none';
+
+  try {
+    const invitationRepository = await getAuthorizedInvitationRepository(id);
+    await invitationRepository.updateMediaInfo(id, {
+      heroImageUrl:   '',
+      heroVideoUrl:   '',
+      musicUrl:       isNone ? '' : input.audioUrl,
+      musicTitle:     isNone ? '' : input.title,
+      musicTrackId:   isNone ? 'none' : input.trackId,
+      clearMusicUrl:  isNone,
+      youtubeUrl:     '',
+      googleMapsUrl:  '',
+      wazeUrl:        '',
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[Editor] updateInvitationMusicTrack error:', message);
+    return { success: false, error: `Error al guardar música: ${message}` };
+  }
+
+  revalidatePath(`/i/${input.slug}`);
+  revalidatePath(`/preview/${id}`);
+  revalidatePath(`/dashboard/invitations/${id}/edit`);
+
+  return { success: true, message: 'Música actualizada correctamente.' };
+}
+
+// =============================================================================
 // updateInvitationGallery
 // =============================================================================
 

@@ -117,8 +117,9 @@ class LocalInvitationRepository implements IInvitationRepository {
         youtubeUrl: input.youtubeUrl    || undefined,
       },
       music: {
-        audioUrl: input.musicUrl  || existing.music?.audioUrl || '',
-        title:    input.musicTitle || undefined,
+        audioUrl:        input.clearMusicUrl ? '' : (input.musicUrl || existing.music?.audioUrl || ''),
+        title:           input.clearMusicUrl ? undefined : (input.musicTitle || undefined),
+        selectedTrackId: input.clearMusicUrl ? 'none' : (input.musicTrackId ?? existing.music?.selectedTrackId),
       },
       location: {
         ...existing.location,

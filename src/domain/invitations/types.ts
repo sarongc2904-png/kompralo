@@ -269,6 +269,7 @@ export interface InvitationGiftRegistry {
 export interface InvitationMusic {
   audioUrl: string;
   title?: string;
+  selectedTrackId?: string;
 }
 
 export interface InvitationFinalMessage {
@@ -306,6 +307,8 @@ export interface InvitationMediaInput {
   heroVideoUrl: string;
   musicUrl: string;
   musicTitle: string;
+  musicTrackId?: string;
+  clearMusicUrl?: boolean;
   youtubeUrl: string;
   googleMapsUrl: string;
   wazeUrl: string;

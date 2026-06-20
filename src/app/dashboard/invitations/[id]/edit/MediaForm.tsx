@@ -6,6 +6,7 @@ import { updateInvitationMediaInfo } from './actions';
 import { ImageUploadButton } from '@/components/dashboard/ImageUploadButton';
 import type { UpdateInvitationResult } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
+import { MusicLibrarySelector } from './MusicLibrarySelector';
 
 const INITIAL_STATE: UpdateInvitationResult | null = null;
 
@@ -206,23 +207,7 @@ export default function MediaForm({ invitation }: MediaFormProps) {
 
         {/* Música */}
         <div>
-          <SectionLabel>Música</SectionLabel>
-          <div className="grid grid-cols-2 gap-4">
-            <Field
-              label="Audio URL"
-              name="musicUrl"
-              defaultValue={invitation.music?.audioUrl ?? ''}
-              hint="URL directa al archivo de audio (mp3, ogg, m4a)."
-              placeholder="https://..."
-            />
-            <TextField
-              label="Título de la canción"
-              name="musicTitle"
-              defaultValue={invitation.music?.title ?? ''}
-              hint="Se muestra en el reproductor. Opcional."
-              placeholder="Ej: Can't Help Falling in Love"
-            />
-          </div>
+          <MusicLibrarySelector invitation={invitation} />
         </div>
 
         {/* Video embed */}

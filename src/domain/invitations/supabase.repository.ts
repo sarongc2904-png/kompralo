@@ -250,8 +250,13 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
 
     const mergedMusic = {
       ...existingMusic,
-      ...(input.musicUrl   ? { audioUrl: input.musicUrl }   : {}),
-      ...(input.musicTitle ? { title: input.musicTitle }    : { title: null }),
+      ...(input.clearMusicUrl
+        ? { audioUrl: '', selectedTrackId: 'none', title: null }
+        : {
+            ...(input.musicUrl   ? { audioUrl: input.musicUrl }            : {}),
+            ...(input.musicTitle ? { title: input.musicTitle }             : { title: null }),
+            ...(input.musicTrackId !== undefined ? { selectedTrackId: input.musicTrackId } : {}),
+          }),
     };
 
     const mergedLocation = {
