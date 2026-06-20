@@ -11,8 +11,9 @@ interface MusicLibrarySelectorProps {
   invitation: InvitationContent;
 }
 
+// ─── Plan gate ────────────────────────────────────────────────────────────────
+
 export function MusicLibrarySelector({ invitation }: MusicLibrarySelectorProps) {
-  // Basic plan cannot use music
   if (invitation.planId === 'basic') {
     return (
       <div>
@@ -34,50 +35,43 @@ export function MusicLibrarySelector({ invitation }: MusicLibrarySelectorProps) 
   return <MusicSelectorInner invitation={invitation} />;
 }
 
+// ─── Inner selector (Gold / Platinum) ────────────────────────────────────────
+
 function MusicSelectorInner({ invitation }: MusicLibrarySelectorProps) {
-  const currentTrackId = invitation.music?.selectedTrackId ?? (invitation.music?.enabled === false ? 'none' : 'none');
-  const [selectedId, setSelectedId] = useState<string>(
-    currentTrackId === 'none' || !currentTrackId ? 'none' : currentTrackId
-  );
-  const [previewingId, setPreviewingId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+  const savedTrackId = invitation.music?.selectedTrackId;
+  const initialId    = savedTrackId && savedTrackId !== 'none' ? savedTrackId : 'none';
+
+  // Which row the user has selected (saved to DB)
+  const [selectedId,      setSelectedId]      = useState<string>(initialId);
+  // Which track is currently being previewed (not necessarily selected)
+  const [previewTrackId,  setPreviewTrackId]  = useState<string | null>(null);
+  const [saving,          setSaving]          = useState(false);
+  const [result,          setResult]          = useState<{ success: boolean; message: string } | null>(null);
+
+  // Single audio element — the ONLY source of playback in this component.
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // ── Pause and reset the shared audio element ──────────────────────────────
   const stopPreview = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
     }
-    setPreviewingId(null);
+    setPreviewTrackId(null);
   };
 
-  const togglePreview = (trackId: string) => {
-    if (previewingId === trackId) {
-      stopPreview();
-      return;
-    }
-    stopPreview();
-    const track = getMusicTrackById(trackId);
-    if (!track || !track.url) return;
-    const audio = new Audio(track.url);
-    audio.volume = 0.5;
-    audio.play().catch((err) => {
-      console.warn('[MusicLibrary] preview error:', err);
-    });
-    audio.addEventListener('ended', () => setPreviewingId(null));
-    audioRef.current = audio;
-    setPreviewingId(trackId);
-  };
-
+  // ── Row click: save selection — NEVER calls play() ───────────────────────
   const handleSelect = async (trackId: string) => {
+    if (trackId === selectedId || saving) return;
+
+    // Stop any running preview when selection changes.
     stopPreview();
-    if (trackId === selectedId) return;
     setSelectedId(trackId);
     setSaving(true);
     setResult(null);
 
-    const track = getMusicTrackById(trackId);
+    const track  = getMusicTrackById(trackId);
     const isNone = track.id === 'none' || !track.url;
 
     const res = await updateInvitationMusicTrack({
@@ -98,6 +92,32 @@ function MusicSelectorInner({ invitation }: MusicLibrarySelectorProps) {
     setTimeout(() => setResult(null), 3000);
   };
 
+  // ── "Probar" button: the ONLY place that calls play() ────────────────────
+  // Works on any track regardless of whether it is selected.
+  const handleTogglePreview = (trackId: string) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // If this track is already previewing, stop it.
+    if (previewTrackId === trackId) {
+      stopPreview();
+      return;
+    }
+
+    const track = getMusicTrackById(trackId);
+    if (!track || !track.url) return;
+
+    // Pause whatever was playing before and load the new track.
+    audio.pause();
+    audio.src         = track.url;
+    audio.currentTime = 0;
+    audio.volume      = 0.5;
+
+    audio.play()
+      .then(() => setPreviewTrackId(trackId))
+      .catch((err) => console.warn('[MusicSelector] preview error:', err));
+  };
+
   return (
     <div>
       <p className="text-[10px] uppercase tracking-[0.2em] mb-3 pb-2"
@@ -105,8 +125,16 @@ function MusicSelectorInner({ invitation }: MusicLibrarySelectorProps) {
         Música de fondo
       </p>
       <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
-        Elige una pista de la librería. Usa el botón <strong>Probar</strong> para escucharla antes de seleccionarla.
+        Elige una pista y pulsa <strong>Guardar</strong>. Usa <strong>Probar</strong> para escucharla — seleccionar no reproduce.
       </p>
+
+      {/* Single hidden audio element — controls all preview playback */}
+      <audio
+        ref={audioRef}
+        preload="none"
+        onEnded={() => setPreviewTrackId(null)}
+        style={{ display: 'none' }}
+      />
 
       {/* Feedback */}
       {result && (
@@ -122,9 +150,9 @@ function MusicSelectorInner({ invitation }: MusicLibrarySelectorProps) {
 
       <div className="flex flex-col gap-2">
         {MUSIC_LIBRARY.map((track) => {
-          const isSelected = selectedId === track.id;
-          const isPreviewing = previewingId === track.id;
-          const isNoneTrack = track.id === 'none';
+          const isSelected   = selectedId   === track.id;
+          const isPreviewing = previewTrackId === track.id;
+          const isNoneTrack  = track.id      === 'none';
 
           return (
             <div
@@ -132,8 +160,8 @@ function MusicSelectorInner({ invitation }: MusicLibrarySelectorProps) {
               className="flex items-center gap-3 px-3 py-3 rounded-lg transition-all cursor-pointer select-none"
               style={{
                 background: isSelected ? '#FBF6EF' : '#FAFAF8',
-                border: `1px solid ${isSelected ? '#C5A880' : '#E8E2DA'}`,
-                opacity: saving ? 0.7 : 1,
+                border:     `1px solid ${isSelected ? '#C5A880' : '#E8E2DA'}`,
+                opacity:    saving ? 0.7 : 1,
               }}
               onClick={() => !saving && handleSelect(track.id)}
             >
@@ -148,7 +176,7 @@ function MusicSelectorInner({ invitation }: MusicLibrarySelectorProps) {
                 {isSelected && <Check className="w-3 h-3" style={{ color: '#FFF' }} strokeWidth={2.5} />}
               </div>
 
-              {/* Icon */}
+              {/* Note icon */}
               {!isNoneTrack ? (
                 <Music className="flex-shrink-0 w-4 h-4" style={{ color: '#C5A880', opacity: 0.7 }} strokeWidth={1.5} />
               ) : (
@@ -163,11 +191,14 @@ function MusicSelectorInner({ invitation }: MusicLibrarySelectorProps) {
                 )}
               </div>
 
-              {/* Preview button — only for real tracks */}
+              {/* Preview button — only on real tracks, fires independently of selection */}
               {!isNoneTrack && (
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); togglePreview(track.id); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTogglePreview(track.id);
+                  }}
                   className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                   style={{
                     background: isPreviewing ? '#1A1410' : 'transparent',
