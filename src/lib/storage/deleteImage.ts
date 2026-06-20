@@ -2,7 +2,7 @@
 
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
 
-const BUCKET = 'invitations';
+const BUCKET = 'invitation-assets';
 
 /**
  * Extracts the bucket-relative path from a Supabase public URL.
@@ -17,7 +17,10 @@ const BUCKET = 'invitations';
 function extractPath(pathOrUrl: string): string | null {
   if (!pathOrUrl) return null;
   if (!pathOrUrl.startsWith('http')) return pathOrUrl;
-  const marker = `/object/public/${BUCKET}/`;
+  // Support both old "invitations" URLs and new "invitation-assets" URLs
+  const marker = pathOrUrl.includes('/object/public/invitations/')
+    ? `/object/public/invitations/`
+    : `/object/public/${BUCKET}/`;
   const idx = pathOrUrl.indexOf(marker);
   if (idx === -1) return null;
   return pathOrUrl.slice(idx + marker.length);

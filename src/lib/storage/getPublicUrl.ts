@@ -2,7 +2,7 @@
 
 import { createBrowserSupabaseClient } from '@/lib/supabase/client';
 
-const BUCKET = 'invitations';
+const BUCKET = 'invitation-assets';
 
 /**
  * Returns the Supabase Storage public URL for a given path inside the

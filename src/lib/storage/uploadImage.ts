@@ -33,7 +33,7 @@ export interface UploadResult {
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const BUCKET = 'invitations';
+const BUCKET = 'invitation-assets';
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = new Set([
   'image/jpeg',
@@ -85,12 +85,25 @@ export async function uploadInvitationAsset(
 
   const supabase = createBrowserSupabaseClient();
 
+  console.log('[upload] supabaseUrl:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+  console.log('[upload] bucket:', BUCKET);
+  console.log('[upload] folder:', folder);
+  console.log('[upload] filePath:', path);
+
+  // Diagnóstico: listar buckets para confirmar proyecto conectado
+  const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+  console.log('[upload] buckets:', buckets?.map((b) => b.name));
+  if (bucketsError) console.log('[upload] bucketsError:', bucketsError.message);
+
   const { error } = await supabase.storage
     .from(BUCKET)
     .upload(path, file, { cacheControl: '31536000', upsert: false });
 
   if (error) {
-    throw new Error(`Error al subir imagen: ${error.message}`);
+    const msg = error.message.includes('Bucket not found')
+      ? `No encontramos el bucket ${BUCKET} en el proyecto Supabase conectado. Revisa que NEXT_PUBLIC_SUPABASE_URL apunte al mismo proyecto donde creaste el bucket.`
+      : `Error al subir imagen: ${error.message}`;
+    throw new Error(msg);
   }
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
