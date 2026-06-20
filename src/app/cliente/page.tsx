@@ -8,15 +8,15 @@ import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/l
 export const metadata: Metadata = { title: 'Mis invitaciones — Kompralo' };
 
 const T = {
-  ivory:     '#FAF7F2',
-  cream:     '#F2EBD8',
-  dark:      '#0F0C09',
-  mid:       '#5C4A37',
-  light:     '#9B8165',
-  gold:      '#B8966A',
-  champagne: '#D4B896',
-  white:     '#FFFFFF',
-  border:    '#E5DDD2',
+  ivory:     '#E8D7B8',
+  cream:     '#F1E3C8',
+  dark:      '#0D0A07',
+  mid:       '#1A1612',
+  light:     '#6B4A35',
+  gold:      '#C4A962',
+  champagne: '#EAD7A3',
+  white:     '#F1E3C8',
+  border:    '#EAD7A3',
 } as const;
 
 const planLabels: Record<string, string> = {

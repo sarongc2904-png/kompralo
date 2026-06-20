@@ -7,30 +7,30 @@ import { Theme } from './types';
 export const champagneTheme: Theme = {
   id: 'champagne',
   name: 'Champagne Editorial',
-  bodyBg: 'bg-gradient-to-br from-[#FDF9F2] via-[#F8F2E6] to-[#EDE4D3]',
-  bodyText: 'text-[#3D2B1A]',
+  bodyBg: 'bg-gradient-to-br from-[#F1E3C8] via-[#E8D7B8] to-[#D9C4A3]',
+  bodyText: 'text-[#1A1612]',
   headingFont: 'font-editorial font-light tracking-wide',   // Cormorant Garamond — refined luxury
   bodyFont: 'font-sans',
 
-  accentBg: 'bg-[#C5A880] hover:bg-[#B4966E]',
-  accentText: 'text-[#A8865A]',
-  accentBorder: 'border-[#E3D9C6]',
+  accentBg: 'bg-[#C4A962] hover:bg-[#CDB88E]',
+  accentText: 'text-[#6B4A35]',
+  accentBorder: 'border-[#EAD7A3]',
 
-  cardBg: 'bg-white/70 backdrop-blur-md',
-  cardBorder: 'border-[#EDE8DF]',
-  cardText: 'text-[#3D2B1A]',
+  cardBg: 'bg-[#F1E3C8]/75 backdrop-blur-md',
+  cardBorder: 'border-[#EAD7A3]',
+  cardText: 'text-[#1A1612]',
 
   paperTexture: true,
-  dividerColor: 'bg-[#C5A880]',
+  dividerColor: 'bg-[#C4A962]',
 
-  countdownBg: 'bg-[#F3EFE9]',
-  rsvpInputBg: 'bg-[#FAF8F5]',
-  storyLeftBg: 'bg-[#F5F1E9]',
-  storyRightBg: 'bg-white',
+  countdownBg: 'bg-[#CDB88E]/20',
+  rsvpInputBg: 'bg-[#F1E3C8]',
+  storyLeftBg: 'bg-[#E8D7B8]',
+  storyRightBg: 'bg-[#F1E3C8]',
 
-  dressCodeSwatches: ['#FAF8F5', '#EFEAE2', '#D8CEBA', '#C5A880', '#8D7D64'],
+  dressCodeSwatches: ['#CDB88E', '#C4A962', '#EAD7A3', '#D9C4A3', '#D8B6A4', '#8A8F6A', '#6B4A35'],
 
-  bgSolid: '#F8F2E6',
-  bgGlows: ['#E8C87A', '#C5A55A', '#D4A86A'],
-  heroOverlay: 'from-[#FAF8F5]/30 via-transparent to-[#FAF8F5]',
+  bgSolid: '#E8D7B8',
+  bgGlows: ['#C4A962', '#EAD7A3', '#CDB88E'],
+  heroOverlay: 'from-[#0D0A07]/30 via-transparent to-[#E8D7B8]',
 };

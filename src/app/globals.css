@@ -123,10 +123,10 @@
 
 @keyframes softGlow {
   0% {
-    text-shadow: 0 0 4px rgba(197, 168, 128, 0.05);
+    text-shadow: 0 0 4px rgba(196, 169, 98, 0.05);
   }
   100% {
-    text-shadow: 0 0 16px rgba(197, 168, 128, 0.45);
+    text-shadow: 0 0 16px rgba(196, 169, 98, 0.45);
   }
 }
 

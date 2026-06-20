@@ -148,7 +148,7 @@ function LoginForm() {
       <button
         type="submit" disabled={pending}
         className="lg2-btn"
-        style={{ background: pending ? T.light : T.dark, color:'#F5EDD8' }}
+        style={{ background: pending ? T.light : T.dark, color:'#F1E3C8' }}
       >
         {pending ? 'Enviando enlace de acceso…' : 'Enviar enlace de acceso'}
       </button>
@@ -171,7 +171,7 @@ export default function LoginPage() {
   return (
     <main style={{
       minHeight:'100dvh',
-      background:`radial-gradient(ellipse at 30% 20%, rgba(184,150,106,0.09) 0%, transparent 55%), linear-gradient(160deg, #FAF7F2 0%, #F2EBD8 100%)`,
+      background:`radial-gradient(ellipse at 30% 20%, rgba(196,169,98,0.09) 0%, transparent 55%), linear-gradient(160deg, #E8D7B8 0%, #F1E3C8 100%)`,
       display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
       padding:'2rem 1.25rem',
       fontFamily:'var(--font-inter, system-ui, sans-serif)',
@@ -181,8 +181,8 @@ export default function LoginPage() {
       <style>{styles}</style>
 
       {/* Decorative orbs */}
-      <div aria-hidden style={{ position:'absolute', top:'-80px', right:'-80px', width:'280px', height:'280px', borderRadius:'50%', background:'radial-gradient(circle, rgba(184,150,106,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
-      <div aria-hidden style={{ position:'absolute', bottom:'-60px', left:'-60px', width:'220px', height:'220px', borderRadius:'50%', background:'radial-gradient(circle, rgba(184,150,106,0.07) 0%, transparent 70%)', pointerEvents:'none' }} />
+      <div aria-hidden style={{ position:'absolute', top:'-80px', right:'-80px', width:'280px', height:'280px', borderRadius:'50%', background:'radial-gradient(circle, rgba(196,169,98,0.1) 0%, transparent 70%)', pointerEvents:'none' }} />
+      <div aria-hidden style={{ position:'absolute', bottom:'-60px', left:'-60px', width:'220px', height:'220px', borderRadius:'50%', background:'radial-gradient(circle, rgba(196,169,98,0.07) 0%, transparent 70%)', pointerEvents:'none' }} />
 
       {/* Back link */}
       <Link href="/invitaciones" style={{ position:'absolute', top:'1.25rem', left:'1.25rem', fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500 }}>

@@ -41,7 +41,7 @@ export const sofiaAlejandroWeddingInvitation: InvitationContent = {
     eventLabel: 'Nuestra Boda',
   },
   music: {
-    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+    audioUrl: '/audio/wedding-background.mp3',
   },
   story: {
     slides: [
