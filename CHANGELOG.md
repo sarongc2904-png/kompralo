@@ -5,6 +5,75 @@
 
 ---
 
+## FASE GOLD-DELUXE-PREVIEW-PARITY-FIX — Gold renderiza todo lo que puede editar
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+Alinear los permisos de edición del editor con los permisos de renderizado. El editor mostraba todas las secciones a Gold, pero el renderer las bloqueaba en preview y público.
+
+### Causa raíz
+
+`goldFeatures` en `src/domain/plans/features.ts` solo tenía habilitadas 7 features. El editor de invitación (`EditInvitationPage`) muestra **todas las secciones** a todos los planes sin chequear features. Por eso Gold podía editar StoryBook, GiftRegistry, Padrinos, Hospedaje y Hashtag/Redes, pero el `FeatureGate` en `InvitationRenderer` las bloqueaba porque `features.showXxx === false` para Gold.
+
+### Features que faltaban en Gold
+
+| Feature | Antes | Después |
+|---|---|---|
+| `showStoryBook` | `false` | `true` |
+| `showGiftRegistry` | `false` | `true` |
+| `showParents` | `false` | `true` |
+| `showPadrinos` | `false` | `true` |
+| `showAccommodation` | `false` | `true` |
+| `showHashtag` | `false` | `true` |
+
+### Arquitectura de planes tras el fix
+
+```
+basicFeatures    → hero, countdown, RSVP, WhatsApp, finalMessage
+goldFeatures     → basic + maps, QR, gallery, music, itinerary, dressCode,
+                   timeline, storyBook, giftRegistry, parents, padrinos,
+                   accommodation, hashtag
+platinumFeatures → gold + showIntro, showGuestbook, showMessages
+```
+
+Platinum-exclusivo: `showIntro` (intro cinemática), `showGuestbook`, `showMessages`.
+
+### Archivos modificados
+
+- `src/domain/plans/features.ts` — `goldFeatures` extendido con 6 features; `platinumFeatures` simplificado a solo sus exclusivos
+- `src/components/invitation/Hashtag.tsx` — guard `if (!hasSocialContent) return null` antes del render: si hashtag, instagramHandle, tiktokHandle, facebookUrl y youtubeUrl están todos vacíos, la sección no se muestra
+- `src/components/invitation/InvitationRenderer.tsx` — logs de diagnóstico expandidos a showStoryBook, showPadrinos, showHashtag, showAccommodation, showGiftRegistry
+
+### Comportamiento por caso
+
+| Caso | Antes | Después |
+|---|---|---|
+| Gold + StoryBook con slides | ❌ Oculto | ✅ Visible |
+| Gold + GiftRegistry | ❌ Oculto | ✅ Visible |
+| Gold + Padrinos | ❌ Oculto | ✅ Visible |
+| Gold + Hospedaje | ❌ Oculto | ✅ Visible |
+| Gold + Hashtag con datos | ❌ Oculto | ✅ Visible |
+| Cualquier plan + Redes vacías | Mostraba vacío | ✅ Sección oculta |
+| Platinum + Intro cinemática | ✅ Visible | ✅ Visible (exclusivo) |
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK (9 warnings preexistentes, 0 errores)
+- `npm run build`: OK
+- Commit: `54ccfc0`
+- Push: `main → main`
+
+### Notas
+
+- No se tocaron Stripe, webhook, Auth, Supabase orders, upload de imágenes, video fix ni itinerary fix.
+- Aplica en `/preview/[id]`, `/i/[slug]`, `/invitacion/[slug]` y rutas públicas equivalentes.
+- Los logs de `[features]` en consola del navegador confirmarán qué features están activas por plan en producción.
+
+---
+
 ## FASE RENDERER-VIDEO-ITINERARY-FIX — Video embebido y centrado dinámico del itinerario
 
 Fecha: 2026-06-20
