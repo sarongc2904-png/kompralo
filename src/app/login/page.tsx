@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -129,10 +129,33 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
 
 // ─── Forgot password form ─────────────────────────────────────────────────────
 
+const COOLDOWN_SECS = 60;
+
 function ForgotForm({ emailParam, onMode }: { emailParam: string; onMode: (m: Mode) => void }) {
   const [state, formAction, pending] = useActionState<ResetPasswordResult | null, FormData>(
     requestPasswordReset, null,
   );
+  const [cooldown, setCooldown] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Start cooldown after any submission (success or rate-limit).
+  useEffect(() => {
+    if (!state) return;
+    if (state.success || state.error === 'RATE_LIMIT') {
+      setCooldown(COOLDOWN_SECS);
+      timerRef.current = setInterval(() => {
+        setCooldown((s) => {
+          if (s <= 1) { clearInterval(timerRef.current!); return 0; }
+          return s - 1;
+        });
+      }, 1000);
+    }
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [state]);
+
+  const isRateLimit = state?.error === 'RATE_LIMIT';
+  const visibleError = state?.error && !isRateLimit ? state.error : null;
+  const buttonDisabled = pending || cooldown > 0;
 
   if (state?.success) {
     return (
@@ -142,7 +165,7 @@ function ForgotForm({ emailParam, onMode }: { emailParam: string; onMode: (m: Mo
           Revisa tu correo
         </h2>
         <p style={{ color: T.mid, fontSize: '.875rem', lineHeight: 1.7, margin: '0 0 1.25rem' }}>
-          Te enviamos un enlace para crear o recuperar tu contraseña si encontramos una cuenta asociada a ese correo.
+          Si encontramos una cuenta asociada a este correo, te enviaremos un enlace para crear o recuperar tu contraseña.
         </p>
         <button type="button" className="lg2-link" onClick={() => onMode('password')}
           style={{ fontSize: '.8125rem', color: T.gold, fontWeight: 700 }}>
@@ -155,7 +178,7 @@ function ForgotForm({ emailParam, onMode }: { emailParam: string; onMode: (m: Mo
   return (
     <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <p style={{ margin: 0, fontSize: '.875rem', color: T.mid, lineHeight: 1.6 }}>
-        Ingresa tu correo y te enviaremos un enlace para crear una nueva contraseña.
+        Ingresa tu correo y te enviaremos un enlace para crear o recuperar tu contraseña.
       </p>
       <div>
         <label htmlFor="fr-email" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
@@ -165,15 +188,24 @@ function ForgotForm({ emailParam, onMode }: { emailParam: string; onMode: (m: Mo
           placeholder="correo@ejemplo.com" className="lg2-input" />
       </div>
 
-      {state?.error && (
-        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem' }}>
-          {state.error}
+      {/* Rate limit — amber notice, not red error */}
+      {isRateLimit && (
+        <div style={{ background: '#FFF8E6', border: '1px solid #F5D87A', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#7A5C00', fontSize: '.8125rem', lineHeight: 1.55 }}>
+          Por seguridad, ya enviamos varios enlaces recientemente. Espera unos minutos antes de solicitar otro.
+          {cooldown > 0 && <span style={{ display: 'block', marginTop: '.35rem', fontWeight: 600 }}>Podrás intentar de nuevo en {cooldown}s.</span>}
         </div>
       )}
 
-      <button type="submit" disabled={pending} className="lg2-btn"
-        style={{ background: pending ? T.light : T.dark, color: '#F1E3C8' }}>
-        {pending ? 'Enviando…' : 'Enviar enlace de recuperación'}
+      {/* Other unexpected errors */}
+      {visibleError && (
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem' }}>
+          {visibleError}
+        </div>
+      )}
+
+      <button type="submit" disabled={buttonDisabled} className="lg2-btn"
+        style={{ background: buttonDisabled ? T.light : T.dark, color: '#F1E3C8' }}>
+        {pending ? 'Enviando…' : cooldown > 0 ? `Espera ${cooldown}s…` : 'Enviar enlace de recuperación'}
       </button>
 
       <button type="button" className="lg2-link" onClick={() => onMode('password')}

@@ -84,7 +84,17 @@ export async function requestPasswordReset(
 
     const supabase = await createServerSupabaseClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: emailRedirectTo });
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      const raw = error.message.toLowerCase();
+      const isRateLimit =
+        raw.includes('rate limit') ||
+        raw.includes('too many requests') ||
+        raw.includes('over_email_send_rate_limit');
+      const friendly = isRateLimit
+        ? 'RATE_LIMIT'
+        : error.message;
+      return { success: false, error: friendly };
+    }
     return { success: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Error al enviar el correo.';
