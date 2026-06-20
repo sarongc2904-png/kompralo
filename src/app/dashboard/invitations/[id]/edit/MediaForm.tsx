@@ -163,7 +163,7 @@ export default function MediaForm({ invitation }: MediaFormProps) {
 
         {/* Hero */}
         <div>
-          <SectionLabel>Hero</SectionLabel>
+          <SectionLabel>Imagen y video de portada</SectionLabel>
           <div className="grid grid-cols-1 gap-4">
             <div>
               <label
@@ -197,10 +197,10 @@ export default function MediaForm({ invitation }: MediaFormProps) {
               </p>
             </div>
             <Field
-              label="Video de fondo (URL)"
+              label="Video personalizado de portada"
               name="heroVideoUrl"
               defaultValue={invitation.hero?.videoUrl ?? ''}
-              hint="URL directa a archivo mp4. Opcional — sobreescribe la imagen si se proporciona."
+              hint="MP4 directo o enlace de YouTube. Opcional — tiene prioridad sobre la imagen. Si se usa también un video sugerido, este tiene mayor prioridad."
               placeholder="https://..."
             />
           </div>
@@ -214,18 +214,6 @@ export default function MediaForm({ invitation }: MediaFormProps) {
         {/* Música */}
         <div>
           <MusicLibrarySelector invitation={invitation} />
-        </div>
-
-        {/* Video embed */}
-        <div>
-          <SectionLabel>Video</SectionLabel>
-          <Field
-            label="YouTube URL"
-            name="youtubeUrl"
-            defaultValue={invitation.hero?.youtubeUrl ?? ''}
-            hint="Enlace de youtube.com o youtu.be. Se embebe como video del evento."
-            placeholder="https://www.youtube.com/watch?v=..."
-          />
         </div>
 
         {/* Navegación */}
@@ -258,7 +246,7 @@ export default function MediaForm({ invitation }: MediaFormProps) {
           className="px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity"
           style={{ background: '#1A1410', color: '#F5F3F0', opacity: isPending ? 0.6 : 1 }}
         >
-          {isPending ? 'Guardando…' : 'Guardar multimedia'}
+          {isPending ? 'Guardando…' : 'Guardar portada y multimedia'}
         </button>
       </div>
     </form>

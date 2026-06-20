@@ -112,7 +112,7 @@ export default function Location({ location, theme }: LocationProps) {
               <div className="w-full h-full relative z-10">
                 <svg
                   className="w-full h-full select-none"
-                  style={{ background: surfaceAltVar }}
+                  style={{ background: '#EDE4D2' }}
                   viewBox="0 0 400 300"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -164,10 +164,10 @@ export default function Location({ location, theme }: LocationProps) {
                   <path
                     d={ROUTE_D}
                     stroke={accentVar}
-                    strokeWidth="7"
+                    strokeWidth="8"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    opacity={0.15}
+                    opacity={0.30}
                     clipPath="url(#route-clip)"
                   />
 
@@ -240,7 +240,7 @@ export default function Location({ location, theme }: LocationProps) {
               </div>
 
               {/* Overlay label */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent flex items-end p-8 z-10 pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-transparent flex items-end p-8 z-10 pointer-events-none">
                 <span className="text-white text-[10px] uppercase tracking-[0.25em] font-medium flex items-center gap-2">
                   <MapPin className="w-4 h-4 animate-bounce" />
                   Ruta al Evento

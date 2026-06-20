@@ -133,7 +133,7 @@ export default async function EditInvitationPage({ params }: Props) {
         </p>
       </div>
 
-      {/* ── Datos generales ──────────────────────────────────────────────────── */}
+      {/* ── 1. Datos generales ───────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3" style={{ color: '#3D2B1A' }}>
         Datos generales
       </h2>
@@ -144,98 +144,41 @@ export default async function EditInvitationPage({ params }: Props) {
         <EditForm invitation={invitation} />
       </div>
 
-      {/* ── Multimedia y enlaces ─────────────────────────────────────────────── */}
-      <h2 className="text-xs uppercase tracking-widest mb-3" style={{ color: '#3D2B1A' }}>
-        Multimedia y enlaces
+      {/* ── 2. Portada y multimedia ──────────────────────────────────────────── */}
+      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
+        Portada y multimedia
       </h2>
       <div
         className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
+        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
+          Imagen principal, video de portada, música de fondo y links de navegación al venue.
+        </p>
         <MediaForm invitation={invitation} />
       </div>
 
-      {/* ── Galería ──────────────────────────────────────────────────────────── */}
-      <h2 className="text-xs uppercase tracking-widest mb-3" style={{ color: '#3D2B1A' }}>
-        Galería de fotos
+      {/* ── 3. Protagonistas ─────────────────────────────────────────────────── */}
+      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
+        Protagonistas
       </h2>
       <div
         className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
         <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
-          Las imágenes se muestran en el carrusel de la invitación en el orden definido aquí.
-          La primera imagen también se usa como imagen de respaldo en el mensaje final.
-        </p>
-        <GalleryForm invitation={invitation} />
-      </div>
-
-      {/* ── Protagonistas ────────────────────────────────────────────────────── */}
-      <h2 className="text-xs uppercase tracking-widest mb-3" style={{ color: '#3D2B1A' }}>
-        Protagonistas
-      </h2>
-      <div
-        className="rounded-xl p-6"
-        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
-      >
-        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
-          Los protagonistas aparecen en la intro cinemática, el hero y el mensaje final.
+          Los protagonistas aparecen en el hero, la intro cinemática y el mensaje final.
           Bodas: dos protagonistas. Bautizos y cumpleaños: uno.
         </p>
         <ProtagonistsForm invitation={invitation} />
       </div>
 
-      {/* ── Itinerario ───────────────────────────────────────────────────────── */}
+      {/* ── 4. Nuestra historia ──────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        Itinerario del evento
+        Nuestra historia
       </h2>
       <div
-        className="rounded-xl p-6"
-        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
-      >
-        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
-          Define los momentos clave del día en orden cronológico.
-          Solo se muestra si la feature <span className="font-mono">showItinerary</span> está activa en el plan.
-        </p>
-        <ItineraryForm invitation={invitation} />
-      </div>
-
-      {/* ── Mesa de Regalos ──────────────────────────────────────────────────── */}
-      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        Mesa de regalos
-      </h2>
-      <div
-        className="rounded-xl p-6"
-        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
-      >
-        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
-          Agrega tiendas en línea o datos bancarios. Solo se muestra si la feature{' '}
-          <span className="font-mono">showGiftRegistry</span> está activa en el plan.
-        </p>
-        <GiftRegistryForm invitation={invitation} />
-      </div>
-
-      {/* ── Dress Code ───────────────────────────────────────────────────────── */}
-      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        Dress code
-      </h2>
-      <div
-        className="rounded-xl p-6"
-        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
-      >
-        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
-          Define la etiqueta, descripción y colores sugeridos. Solo se muestra si la feature{' '}
-          <span className="font-mono">showDressCode</span> está activa en el plan.
-        </p>
-        <DressCodeForm invitation={invitation} />
-      </div>
-
-      {/* ── StoryBook ────────────────────────────────────────────────────────── */}
-      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        StoryBook
-      </h2>
-      <div
-        className="rounded-xl p-6"
+        className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
         <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
@@ -256,16 +199,31 @@ export default async function EditInvitationPage({ params }: Props) {
         />
       </div>
 
-      {/* ── Timeline ─────────────────────────────────────────────────────────── */}
+      {/* ── 5. Galería ───────────────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        Timeline
+        Galería de fotos
       </h2>
       <div
-        className="rounded-xl p-6"
+        className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
         <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
-          Línea de tiempo con los momentos clave de la historia del evento.
+          Las imágenes se muestran en el carrusel de la invitación en el orden definido aquí.
+          La primera imagen también se usa como imagen de respaldo en el mensaje final.
+        </p>
+        <GalleryForm invitation={invitation} />
+      </div>
+
+      {/* ── 6. Línea del tiempo ──────────────────────────────────────────────── */}
+      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
+        Línea del tiempo
+      </h2>
+      <div
+        className="rounded-xl p-6 mb-8"
+        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
+      >
+        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
+          Momentos clave de la historia del evento en orden cronológico.
           Solo se muestra si la feature <span className="font-mono">showTimeline</span> está activa en el plan.
         </p>
         <TimelineForm
@@ -281,12 +239,57 @@ export default async function EditInvitationPage({ params }: Props) {
         />
       </div>
 
-      {/* ── Padrinos ─────────────────────────────────────────────────────────── */}
+      {/* ── 7. Itinerario del evento ─────────────────────────────────────────── */}
+      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
+        Itinerario del evento
+      </h2>
+      <div
+        className="rounded-xl p-6 mb-8"
+        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
+      >
+        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
+          Define los momentos clave del día en orden cronológico.
+          Solo se muestra si la feature <span className="font-mono">showItinerary</span> está activa en el plan.
+        </p>
+        <ItineraryForm invitation={invitation} />
+      </div>
+
+      {/* ── 8. Código de vestimenta ──────────────────────────────────────────── */}
+      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
+        Código de vestimenta
+      </h2>
+      <div
+        className="rounded-xl p-6 mb-8"
+        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
+      >
+        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
+          Define la etiqueta, descripción y colores sugeridos. Solo se muestra si la feature{' '}
+          <span className="font-mono">showDressCode</span> está activa en el plan.
+        </p>
+        <DressCodeForm invitation={invitation} />
+      </div>
+
+      {/* ── 9. Mesa de regalos ───────────────────────────────────────────────── */}
+      <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
+        Mesa de regalos
+      </h2>
+      <div
+        className="rounded-xl p-6 mb-8"
+        style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
+      >
+        <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
+          Agrega tiendas en línea o datos bancarios. Solo se muestra si la feature{' '}
+          <span className="font-mono">showGiftRegistry</span> está activa en el plan.
+        </p>
+        <GiftRegistryForm invitation={invitation} />
+      </div>
+
+      {/* ── 10. Padrinos ──────────────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
         Padrinos
       </h2>
       <div
-        className="rounded-xl p-6"
+        className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
         <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
@@ -305,12 +308,12 @@ export default async function EditInvitationPage({ params }: Props) {
         />
       </div>
 
-      {/* ── Hospedaje ─────────────────────────────────────────────────────────── */}
+      {/* ── 11. Hospedaje ─────────────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
         Hospedaje
       </h2>
       <div
-        className="rounded-xl p-6"
+        className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
         <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
@@ -335,12 +338,12 @@ export default async function EditInvitationPage({ params }: Props) {
         />
       </div>
 
-      {/* ── Hashtag y Redes ───────────────────────────────────────────────────── */}
+      {/* ── 12. Redes y hashtag ───────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        Hashtag y Redes
+        Redes y hashtag
       </h2>
       <div
-        className="rounded-xl p-6"
+        className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
         <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
@@ -360,12 +363,12 @@ export default async function EditInvitationPage({ params }: Props) {
         />
       </div>
 
-      {/* ── Mensaje Final ─────────────────────────────────────────────────────── */}
+      {/* ── 13. Mensaje final ─────────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        Mensaje Final
+        Mensaje final
       </h2>
       <div
-        className="rounded-xl p-6"
+        className="rounded-xl p-6 mb-8"
         style={{ background: '#FFFFFF', border: '1px solid #E8E2DA' }}
       >
         <p className="text-xs mb-4" style={{ color: '#9B8878' }}>
@@ -384,9 +387,9 @@ export default async function EditInvitationPage({ params }: Props) {
         />
       </div>
 
-      {/* ── Diseño y Tema ─────────────────────────────────────────────────────── */}
+      {/* ── 14. Diseño y tema ─────────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
-        Diseño y Tema
+        Diseño y tema
       </h2>
       <div
         className="rounded-xl p-6 mb-8"
@@ -403,7 +406,7 @@ export default async function EditInvitationPage({ params }: Props) {
         />
       </div>
 
-      {/* ── Secciones activas ─────────────────────────────────────────────────── */}
+      {/* ── 15. Secciones activas ─────────────────────────────────────────────── */}
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
         Secciones activas
       </h2>
