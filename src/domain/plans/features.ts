@@ -27,10 +27,13 @@ export const disabledFeatures: InvitationFeatures = {
 
 export const basicFeatures: InvitationFeatures = {
   ...disabledFeatures,
-  showHero: true,
-  showCountdown: true,
-  showRSVP: true,
-  showWhatsApp: true,
+  showHero:         true,
+  showCountdown:    true,
+  showRSVP:         true,
+  showWhatsApp:     true,
+  showMaps:         true,   // location / Google Maps link
+  showItinerary:    true,   // basic event schedule
+  showDressCode:    true,   // dress code / attire guide
   showFinalMessage: true,
 };
 

@@ -7,7 +7,7 @@ export const plansById: Record<PlanId, InvitationPlan> = {
   basic: {
     id: 'basic',
     name: 'Basic',
-    description: 'Core invitation with hero, countdown, RSVP, WhatsApp and final message.',
+    description: 'Core invitation: hero, countdown, RSVP, WhatsApp, maps, itinerary, dress code and final message.',
     features: basicFeatures,
   },
   gold: {
