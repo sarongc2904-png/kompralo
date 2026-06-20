@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { InvitationTimelineEventInput } from '@/domain/invitations';
+import { ImageUploadButton } from '@/components/dashboard/ImageUploadButton';
 import { updateTimeline } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
 
@@ -159,16 +160,24 @@ export function TimelineForm({ invitationId, slug, initialEvents }: Props) {
               />
             </div>
 
-            {/* Image URL + preview */}
+            {/* Image URL + upload + preview */}
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Imagen <span className="text-gray-400">(opcional)</span>
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-medium text-gray-600">
+                  Imagen <span className="text-gray-400">(opcional)</span>
+                </label>
+                <ImageUploadButton
+                  folder="timeline"
+                  invitationId={invitationId}
+                  onUpload={(url) => updateEvent(i, { imageUrl: url })}
+                  label="Subir foto"
+                />
+              </div>
               <input
                 type="url"
                 value={event.imageUrl}
                 onChange={(e) => updateEvent(i, { imageUrl: e.target.value })}
-                placeholder="https://…"
+                placeholder="https://… o sube una foto arriba"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
               {event.imageUrl && (() => { try { new URL(event.imageUrl); return true; } catch { return false; } })() && (

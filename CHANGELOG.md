@@ -5,6 +5,85 @@
 
 ---
 
+## FASE EDITOR-UX-FINAL-FIX — Mejoras UX del editor
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Corregir error de upload ("Missing environment variable: NEXT_PUBLIC_SUPABASE_URL"), agregar botón de upload de imagen al Timeline, hacer opcionales las redes sociales en SocialForm.
+
+### Archivos modificados
+
+- `src/lib/supabase/client.ts` — usa `tryGetSupabaseEnv()` (non-throwing) en lugar de `getSupabaseEnv()` (throwing); error user-friendly en español
+- `src/lib/storage/uploadImage.ts` — agrega `'timeline'` al tipo `StorageFolder`
+- `src/app/dashboard/invitations/[id]/edit/TimelineForm.tsx` — agrega `ImageUploadButton` en cada evento de la línea de tiempo
+- `src/app/dashboard/invitations/[id]/edit/SocialForm.tsx` — hashtag ya no marcado como required; agrega botón "✕ Quitar" en campos opcionales con valor
+
+### Cambios
+
+**Upload fix**: `createBrowserSupabaseClient()` llamaba `getSupabaseEnv()` que lanza `Error('Missing environment variable: NEXT_PUBLIC_SUPABASE_URL...')` si la variable falta en Vercel. Ahora usa `tryGetSupabaseEnv()` y lanza un mensaje en español amigable para el usuario.
+
+**Timeline upload**: El `TimelineForm` solo tenía campo de URL de texto. Se agregó `ImageUploadButton` (folder: `'timeline'`) encima del campo URL en cada evento, para subir directamente a Supabase Storage.
+
+**Social opcional**: El campo `hashtag` estaba marcado visualmente como requerido (`required` prop). Se removió. Se agregó botón "✕ Quitar" que aparece solo cuando el campo tiene valor (Instagram, TikTok, Facebook, YouTube). El botón limpia el valor del campo.
+
+### Estado
+
+✅ `tsc --noEmit` sin errores
+
+---
+
+## FASE LOGIN-FALLBACK-INVALID-PATH-FIX — Corregir "Invalid path specified in request URL"
+
+Fecha: 2026-06-19
+
+### Objetivo
+
+Corregir el error "Invalid path specified in request URL" que aparecía en `/login` al intentar enviar un enlace de acceso (Magic Link de Supabase fallback).
+
+### Archivos modificados
+
+- `src/app/login/actions.ts` — corrección de `emailRedirectTo` malformado
+
+### Causa exacta
+
+`sendMagicLink` construía:
+```ts
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
+emailRedirectTo: `${appUrl}/auth/callback?redirect=...`
+```
+
+Dos escenarios de falla:
+1. `NEXT_PUBLIC_APP_URL` con trailing slash → `https://kompralo.vercel.app//auth/callback` (doble slash, Supabase GoTrue rechaza con "Invalid path").
+2. `NEXT_PUBLIC_APP_URL` vacío → URL relativa `/auth/callback` → Supabase rechaza por no ser absoluta.
+
+### Cambios realizados
+
+1. `new URL(rawAppUrl).origin` — extrae solo `https://kompralo.vercel.app` sin trailing slash ni path, independiente del formato de `NEXT_PUBLIC_APP_URL`.
+2. Validación temprana: si `NEXT_PUBLIC_APP_URL` no está configurado o es inválido, retorna error descriptivo al usuario y loguea el problema.
+3. Sanitización de `redirectTo`: solo acepta rutas internas (`/` pero no `//`) antes de incrustar en `emailRedirectTo`, previniendo open redirect.
+4. Logging seguro (solo `error.message` y contexto, sin tokens).
+
+### No había `.from("public.X")` — se revisaron todos los `.from()` del proyecto y usan tabla sin prefijo de schema. La causa fue exclusivamente la URL malformada.
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK
+- `npm run build`: OK
+- Commit: `15679e7`
+
+### Notas para producción
+
+Verificar en Supabase Dashboard → Authentication → URL Configuration:
+- **Site URL**: `https://kompralo.vercel.app`
+- **Allowed redirect URLs**: `https://kompralo.vercel.app/**`
+
+Sin este wildcard, Supabase rechaza el `emailRedirectTo` independientemente del formato de URL.
+
+---
+
 ## FASE REDESIGN-PUBLIC-PAGES-EDITORIAL-PREMIUM — Rediseño editorial premium de páginas públicas
 
 Fecha: 2026-06-19

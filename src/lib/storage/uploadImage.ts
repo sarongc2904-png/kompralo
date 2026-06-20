@@ -19,6 +19,7 @@ export type StorageFolder =
   | 'hero'
   | 'gallery'
   | 'storybook'
+  | 'timeline'
   | 'protagonists'
   | 'hotels'
   | 'final-message';

@@ -19,30 +19,38 @@ function Field({
   label,
   hint,
   prefix,
-  required,
   type = 'text',
   value,
   placeholder,
   onChange,
+  onClear,
 }: {
   label: string;
   hint?: string;
   prefix?: string;
-  required?: boolean;
   type?: string;
   value: string;
   placeholder: string;
   onChange: (v: string) => void;
+  onClear?: () => void;
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
-        {label}{' '}
-        {required
-          ? <span className="text-red-500">*</span>
-          : <span className="text-gray-400">(opcional)</span>}
-      </label>
-      <div className={`flex rounded-md border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-400 focus-within:border-transparent`}>
+      <div className="flex items-center justify-between mb-1">
+        <label className="block text-xs font-medium text-gray-600">
+          {label} <span className="text-gray-400">(opcional)</span>
+        </label>
+        {onClear && value && (
+          <button
+            type="button"
+            onClick={onClear}
+            className="text-xs text-gray-400 hover:text-red-500 transition-colors"
+          >
+            ✕ Quitar
+          </button>
+        )}
+      </div>
+      <div className="flex rounded-md border border-gray-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-400 focus-within:border-transparent">
         {prefix && (
           <span className="flex items-center px-3 text-sm text-gray-500 bg-gray-50 border-r border-gray-300 select-none">
             {prefix}
@@ -89,7 +97,6 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
       {/* Hashtag */}
       <Field
         label="Hashtag"
-        required
         prefix="#"
         value={form.hashtag}
         placeholder="NuestraBoda2025"
@@ -106,6 +113,7 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
           placeholder="usuario"
           hint="Solo el nombre de usuario, sin @."
           onChange={(v) => patch('instagramHandle', v.replace(/^@/, ''))}
+          onClear={() => patch('instagramHandle', '')}
         />
         <Field
           label="TikTok"
@@ -114,6 +122,7 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
           placeholder="usuario"
           hint="Solo el nombre de usuario, sin @."
           onChange={(v) => patch('tiktokHandle', v.replace(/^@/, ''))}
+          onClear={() => patch('tiktokHandle', '')}
         />
       </div>
 
@@ -125,6 +134,7 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
           value={form.facebookUrl}
           placeholder="https://facebook.com/…"
           onChange={(v) => patch('facebookUrl', v)}
+          onClear={() => patch('facebookUrl', '')}
         />
         <Field
           label="YouTube"
@@ -132,6 +142,7 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
           value={form.youtubeUrl}
           placeholder="https://youtube.com/…"
           onChange={(v) => patch('youtubeUrl', v)}
+          onClear={() => patch('youtubeUrl', '')}
         />
       </div>
 
