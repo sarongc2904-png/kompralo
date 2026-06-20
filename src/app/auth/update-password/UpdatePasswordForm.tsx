@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { updatePassword } from '@/app/login/actions';
 import type { UpdatePasswordResult } from '@/app/login/actions';
@@ -35,9 +36,46 @@ const styles = `
 `;
 
 export default function UpdatePasswordForm() {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState<UpdatePasswordResult | null, FormData>(
     updatePassword, null,
   );
+
+  // Redirect to /cliente after successful password update.
+  useEffect(() => {
+    if (state?.success) {
+      router.push('/cliente');
+      router.refresh();
+    }
+  }, [state?.success, router]);
+
+  // Session lost while on this page — show expired message instead of the form.
+  if (state?.error === 'NO_SESSION') {
+    return (
+      <>
+        <style>{styles}</style>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔗</div>
+          <p style={{ fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.25em', textTransform: 'uppercase', color: T.gold, margin: '0 0 1.125rem' }}>
+            KOMPRALO
+          </p>
+          <h1 style={{ fontSize: '1.375rem', fontWeight: 700, color: T.dark, margin: '0 0 .75rem', fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+            Tu enlace expiró
+          </h1>
+          <p style={{ color: T.mid, fontSize: '.875rem', lineHeight: 1.65, margin: '0 0 1.75rem' }}>
+            La sesión ya no es válida. Solicita un nuevo enlace para crear tu contraseña.
+          </p>
+          <Link href="/login?mode=forgot" style={{
+            display: 'inline-block', padding: '.75rem 1.75rem',
+            background: T.dark, color: '#F5EDD8',
+            borderRadius: '.625rem', fontSize: '.875rem', fontWeight: 700, textDecoration: 'none',
+          }}>
+            Solicitar nuevo enlace
+          </Link>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -47,10 +85,10 @@ export default function UpdatePasswordForm() {
           KOMPRALO
         </p>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-          Crea tu contraseña
+          Crea tu nueva contraseña
         </h1>
         <p style={{ color: T.mid, fontSize: '.875rem', margin: 0, lineHeight: 1.6 }}>
-          Crea una contraseña para acceder a tu invitación cuando lo necesites.
+          Esta contraseña te servirá para entrar a tu panel cuando quieras.
         </p>
       </div>
 
@@ -71,15 +109,21 @@ export default function UpdatePasswordForm() {
             minLength={8} placeholder="Repite tu contraseña" className="up-input" />
         </div>
 
-        {state?.error && (
+        {state?.error && state.error !== 'NO_SESSION' && (
           <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem' }}>
             {state.error}
           </div>
         )}
 
-        <button type="submit" disabled={pending} className="up-btn"
-          style={{ background: pending ? T.light : T.dark, color: '#F1E3C8' }}>
-          {pending ? 'Guardando…' : 'Guardar contraseña y entrar'}
+        {state?.success && (
+          <div style={{ background: '#E6F4EA', border: '1px solid #C8E6C9', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#388E3C', fontSize: '.8125rem' }}>
+            Contraseña guardada. Redirigiendo a tu panel…
+          </div>
+        )}
+
+        <button type="submit" disabled={pending || !!state?.success} className="up-btn"
+          style={{ background: pending || state?.success ? T.light : T.dark, color: '#F1E3C8' }}>
+          {pending ? 'Guardando…' : state?.success ? 'Redirigiendo…' : 'Guardar contraseña'}
         </button>
       </form>
 

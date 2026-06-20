@@ -142,7 +142,7 @@ function ForgotForm({ emailParam, onMode }: { emailParam: string; onMode: (m: Mo
           Revisa tu correo
         </h2>
         <p style={{ color: T.mid, fontSize: '.875rem', lineHeight: 1.7, margin: '0 0 1.25rem' }}>
-          Te enviamos un enlace para crear una nueva contraseña. El enlace es válido por 1 hora.
+          Te enviamos un enlace para crear o recuperar tu contraseña si encontramos una cuenta asociada a ese correo.
         </p>
         <button type="button" className="lg2-link" onClick={() => onMode('password')}
           style={{ fontSize: '.8125rem', color: T.gold, fontWeight: 700 }}>

@@ -43,6 +43,9 @@ export async function signInWithPassword(
   if (!email)    return { success: false, error: 'El correo es requerido.' };
   if (!password) return { success: false, error: 'La contraseña es requerida.' };
 
+  // Keep redirect() outside the try-catch.
+  // In Next.js 15 redirect() throws a special object that is NOT instanceof Error,
+  // so catching it and re-throwing via message check is unreliable.
   try {
     const supabase = await createServerSupabaseClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -52,13 +55,13 @@ export async function signInWithPassword(
         : error.message;
       return { success: false, error: msg };
     }
-    redirect(safeRedirect);
   } catch (err: unknown) {
-    // redirect() throws a NEXT_REDIRECT — let it propagate.
-    if (err instanceof Error && err.message === 'NEXT_REDIRECT') throw err;
     const msg = err instanceof Error ? err.message : 'Error al iniciar sesión.';
     return { success: false, error: msg };
   }
+
+  // Only reached on successful sign-in — redirect outside try-catch.
+  redirect(safeRedirect);
 }
 
 // ─── Request password reset ───────────────────────────────────────────────────
@@ -105,11 +108,17 @@ export async function updatePassword(
 
   try {
     const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: 'NO_SESSION' };
+
     const { error } = await supabase.auth.updateUser({ password });
-    if (error) return { success: false, error: error.message };
-    redirect('/cliente');
+    if (error) {
+      console.error('[updatePassword] updateUser failed:', error.message);
+      return { success: false, error: 'No pudimos actualizar tu contraseña. Solicita un nuevo enlace.' };
+    }
+    console.log('[updatePassword] password updated for user=%s', user.id);
+    return { success: true };
   } catch (err: unknown) {
-    if (err instanceof Error && err.message === 'NEXT_REDIRECT') throw err;
     const msg = err instanceof Error ? err.message : 'Error al actualizar la contraseña.';
     return { success: false, error: msg };
   }
