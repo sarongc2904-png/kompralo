@@ -13,32 +13,45 @@ export async function sendMagicLink(
 ): Promise<SendMagicLinkResult> {
   const email = (formData.get('email') as string | null)?.trim() ?? '';
 
-  // Sanitize redirect — only allow relative internal paths.
-  const rawRedirect = (formData.get('redirect') as string | null) ?? '/dashboard';
-  const redirectTo =
-    rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
+  // Sanitize redirect: must be a relative internal path, no protocol, no double-slash.
+  const rawRedirect = (formData.get('redirect') as string | null) ?? '/cliente';
+  const safeRedirectTo =
+    rawRedirect.startsWith('/') &&
+    !rawRedirect.startsWith('//') &&
+    !rawRedirect.includes('http://')  &&
+    !rawRedirect.includes('https://')
       ? rawRedirect
-      : '/dashboard';
+      : '/cliente';
 
   if (!email) return { success: false, error: 'El correo es requerido.' };
 
-  // Validate APP_URL before building the redirect URL.
-  // Use .origin to strip any trailing slash or path, preventing double-slash paths
-  // that Supabase rejects with "Invalid path specified in request URL".
-  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() ?? '';
+  // ── Build emailRedirectTo using URL API (never string concatenation) ──────────
+  const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+  // Safe diagnostic log — no tokens or secrets.
+  console.log('[login] rawAppUrl:', rawAppUrl ?? '(not set)');
+  console.log('[login] safeRedirectTo:', safeRedirectTo);
+  console.log('[login] NODE_ENV:', process.env.NODE_ENV);
+
   if (!rawAppUrl) {
-    console.error('[login/sendMagicLink] NEXT_PUBLIC_APP_URL is not set');
-    return { success: false, error: 'Error de configuración del servidor. Contacta a soporte.' };
+    console.error('[login] NEXT_PUBLIC_APP_URL is not configured');
+    return { success: false, error: 'NEXT_PUBLIC_APP_URL no está configurada.' };
   }
 
-  let emailRedirectTo: string;
+  let appOrigin: string;
   try {
-    const appUrl = new URL(rawAppUrl);
-    emailRedirectTo = `${appUrl.origin}/auth/callback?redirect=${encodeURIComponent(redirectTo)}`;
+    appOrigin = new URL(rawAppUrl).origin;
   } catch {
-    console.error('[login/sendMagicLink] NEXT_PUBLIC_APP_URL is not a valid URL: %s', rawAppUrl);
-    return { success: false, error: 'Error de configuración del servidor. Contacta a soporte.' };
+    console.error('[login] NEXT_PUBLIC_APP_URL is not a valid URL:', rawAppUrl);
+    return { success: false, error: 'NEXT_PUBLIC_APP_URL inválida.' };
   }
+
+  // Build callback URL with URL API — no string concatenation, no double-slash risk.
+  const callbackUrl = new URL('/auth/callback', appOrigin);
+  callbackUrl.searchParams.set('redirect', safeRedirectTo);
+  const emailRedirectTo = callbackUrl.toString();
+
+  console.log('[login] emailRedirectTo:', emailRedirectTo);
 
   try {
     const supabase = await createServerSupabaseClient();
@@ -52,12 +65,15 @@ export async function sendMagicLink(
     });
 
     if (error) {
-      console.error('[login/sendMagicLink] signInWithOtp error: %s', error.message);
+      console.error('[login] signInWithOtp error:', error.message);
       return { success: false, error: error.message };
     }
+
+    console.log('[login] magic link sent successfully');
     return { success: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Error al enviar el correo.';
+    console.error('[login] unexpected error:', msg);
     return { success: false, error: msg };
   }
 }
