@@ -35,25 +35,27 @@ export const basicFeatures: InvitationFeatures = {
 
 export const goldFeatures: InvitationFeatures = {
   ...basicFeatures,
+  // Core Gold
   showMaps: true,
   showQRCode: true,
   showGallery: true,
   showMusic: true,
   showItinerary: true,
   showDressCode: true,
+  // Advanced — all editor-visible sections render for Gold
   showTimeline: true,
-};
-
-export const platinumFeatures: InvitationFeatures = {
-  ...goldFeatures,
-  showIntro: true,
   showStoryBook: true,
-  showTimeline: true,
   showGiftRegistry: true,
   showParents: true,
   showPadrinos: true,
   showAccommodation: true,
   showHashtag: true,
+};
+
+export const platinumFeatures: InvitationFeatures = {
+  ...goldFeatures,
+  // Platinum-exclusive: cinematic intro, guestbook, messages
+  showIntro: true,
   showGuestbook: true,
   showMessages: true,
 };

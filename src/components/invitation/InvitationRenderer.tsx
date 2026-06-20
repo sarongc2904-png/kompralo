@@ -55,11 +55,15 @@ export default function InvitationRenderer({
     setMusicTrigger(true);
   };
 
-  // Temporary diagnostic logs — safe to remove after confirming Timeline renders
+  // Temporary diagnostic logs — safe to remove after confirming sections render
   if (typeof window !== 'undefined') {
-    console.log('[timeline] plan:', plan.id);
-    console.log('[timeline] showTimeline:', features.showTimeline);
-    console.log('[timeline] timelineItems:', invitation.timeline?.length ?? 0);
+    console.log('[features] plan:', plan.id);
+    console.log('[features] showTimeline:', features.showTimeline, '| items:', invitation.timeline?.length ?? 0);
+    console.log('[features] showStoryBook:', features.showStoryBook, '| slides:', invitation.story?.slides?.length ?? 0);
+    console.log('[features] showPadrinos:', features.showPadrinos, '| groups:', invitation.padrinos?.length ?? 0);
+    console.log('[features] showHashtag:', features.showHashtag);
+    console.log('[features] showAccommodation:', features.showAccommodation, '| hotels:', invitation.hotels?.length ?? 0);
+    console.log('[features] showGiftRegistry:', features.showGiftRegistry);
   }
 
   return (

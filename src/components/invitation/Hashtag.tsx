@@ -57,6 +57,14 @@ function HeartBurst({ show }: { show: boolean }) {
 }
 
 export default function Hashtag({ social, imageUrl, theme }: HashtagProps) {
+  // Hide section when all social fields are empty
+  const hasSocialContent =
+    social.hashtag ||
+    social.instagramHandle ||
+    social.tiktokHandle ||
+    social.facebookUrl ||
+    social.youtubeUrl;
+
   const [copied, setCopied]       = useState(false);
   const [liked, setLiked]         = useState(false);
   const [saved, setSaved]         = useState(false);
@@ -110,6 +118,8 @@ export default function Hashtag({ social, imageUrl, theme }: HashtagProps) {
   }, []);
 
   const photoUrl = imageUrl || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800';
+
+  if (!hasSocialContent) return null;
 
   return (
     <section className="py-20 md:py-24 px-6 md:px-8 bg-transparent select-none">
