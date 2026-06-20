@@ -5,6 +5,101 @@
 
 ---
 
+## FASE CUSTOMER-PASSWORD-LOGIN-ONE-INVITATION — Login con contraseña y una invitación por compra
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+1. Cliente puede crear contraseña después de la compra y entrar con email+contraseña en visitas posteriores.
+2. Magic link queda como fallback/recuperación, no como acceso principal.
+3. Cada compra pagada vinculada a una sola invitación. No se puede crear invitación extra desde /cliente.
+4. Editor y server actions ya protegidos por email del propietario (preexistente).
+
+### Flujo implementado
+
+**Post-compra (usuario nuevo):**
+1. Webhook crea order + invitation (flujo preexistente).
+2. Webhook llama `supabase.auth.admin.generateLink({ type: 'invite', email, options: { redirectTo: '/auth/callback?redirect=/auth/update-password' } })`.
+3. Si tiene éxito: envía email "Crea tu contraseña" con botón → invite link.
+4. Invite link → `/auth/callback` → establece sesión → redirige `/auth/update-password`.
+5. Cliente crea contraseña → redirige `/cliente`.
+6. Visitas siguientes: `/login` → email+contraseña → `/cliente`.
+
+**Fallback si generateLink falla (non-fatal):**
+- Envía email clásico con access token (cookie de 7 días, flujo preexistente).
+
+**Flujo olvidé contraseña:**
+- `/login` → modo "forgot" → `resetPasswordForEmail` → email de recuperación.
+- Enlace → `/auth/callback?redirect=/auth/update-password` → setear nueva contraseña.
+
+### Archivos creados/modificados
+
+- `src/app/login/actions.ts`:
+  - `signInWithPassword(formData)` — nueva acción, usa `supabase.auth.signInWithPassword`, redirige a `/cliente`
+  - `requestPasswordReset(formData)` — nueva acción, `resetPasswordForEmail` con redirectTo a `/auth/update-password`
+  - `updatePassword(formData)` — nueva acción, `supabase.auth.updateUser({ password })`, redirige a `/cliente`
+  - `sendMagicLink` — conservado como fallback
+
+- `src/app/login/page.tsx`:
+  - Rediseñado con 3 modos intercambiables: `password` (principal), `forgot`, `magic` (fallback)
+  - Modo `password`: email + contraseña + botones para cambiar a otros modos
+  - Modo `forgot`: email → enviar enlace de recuperación
+  - Modo `magic`: email → enviar magic link (fallback para usuarios sin contraseña)
+
+- `src/app/auth/update-password/page.tsx` (NUEVO):
+  - Formulario: nueva contraseña + confirmar contraseña
+  - Usa server action `updatePassword`
+  - Destino post-compra y post-recovery
+  - Link a `/login` si ya tiene contraseña
+
+- `src/app/api/webhook/stripe/route.ts`:
+  - Paso 3b: genera invite link con `supabase.auth.admin.generateLink`
+  - Non-fatal: si falla, continúa con email de access-token
+  - Pasa `inviteUrl` y `loginUrl` a `sendOrderConfirmationEmail`
+
+- `src/lib/resend/emailTemplates.ts`:
+  - Nueva función `buildPasswordSetupEmail` con plantilla "Crea tu contraseña"
+  - CTA: invite link → `/auth/update-password`
+  - Incluye link a `/login` para usuarios que ya tienen contraseña
+
+- `src/lib/resend/sendOrderConfirmationEmail.ts`:
+  - Nuevos params opcionales: `inviteUrl`, `loginUrl`
+  - Auto-selecciona plantilla: `buildPasswordSetupEmail` si `inviteUrl` presente, `buildOrderConfirmationEmail` si no
+
+- `src/app/cliente/page.tsx`:
+  - CTA "Comprar otra invitación" → `/invitaciones/precios` después de la lista
+  - No existe ni existirá botón "crear invitación" aquí
+
+### Protección de editor (preexistente, confirmado funcional)
+
+`src/app/dashboard/invitations/[id]/edit/actions.ts` → `getAuthorizedInvitationRepository()`:
+- Verifica `sessionEmail === invitation.customerEmail` (login con contraseña lo satisface automáticamente)
+- También acepta cookie `kompralo_access` (access-token flow, fallback)
+- Admin mode: `ADMIN_ACCESS_ENABLED=true`
+
+### Tablas / schema (sin cambios)
+
+- `invitations.customer_email` — ya existía (patch 7Y-6)
+- `invitations.user_id` — nullable, ya existía, no se usa en este flujo (el email-match es suficiente)
+- No se agregaron migraciones SQL en esta fase
+
+### TODO (event lock, parte 8)
+
+Bloquear reutilización del mismo slot para eventos completamente diferentes quedó pendiente:
+- Opción: después de publicar por primera vez, bloquear `event_type`, nombres principales, `event_date`
+- No implementado en esta fase — MVP solo bloquea creación de invitaciones extra
+
+### Validación técnica
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK (9 warnings preexistentes, 0 errores nuevos)
+- `npm run build`: OK — `/auth/update-password` aparece en ruta estática
+- Commit: `0cbb2a3`
+- Push: `main → main`
+
+---
+
 ## FASE EDITOR-ORDER-MAP-ANIMATION-YOUTUBE-CLEANUP — Editor reordenado, mapa mejorado, YouTube duplicado eliminado
 
 Fecha: 2026-06-20
