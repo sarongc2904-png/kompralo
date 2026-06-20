@@ -97,15 +97,15 @@ export default function InvitationRenderer({
         <Hero
           protagonists={protagonists}
           eventDate={invitation.eventDate}
-          emotionalPhrase={invitation.hero.emotionalPhrase}
-          imageUrl={invitation.hero.imageUrl}
-          videoUrl={invitation.hero.videoUrl}
+          emotionalPhrase={invitation.hero?.emotionalPhrase ?? ''}
+          imageUrl={invitation.hero?.imageUrl ?? ''}
+          videoUrl={invitation.hero?.videoUrl}
           heroVideoUrl={
-            features.showVideo && invitation.hero.videoLibraryEnabled
+            features.showVideo && invitation.hero?.videoLibraryEnabled
               ? (invitation.hero.videoLibraryUrl ?? null)
               : null
           }
-          eventLabel={invitation.hero.eventLabel}
+          eventLabel={invitation.hero?.eventLabel ?? ''}
           theme={theme}
         />
       </FeatureGate>

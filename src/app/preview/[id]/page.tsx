@@ -21,6 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PreviewInvitationPage({ params }: PreviewInvitationPageProps) {
   const { id } = await params;
   const invitation = await invitationRepository.getPreviewById(id);
+  console.log('[heroVideo] enabled:', invitation?.hero?.videoLibraryEnabled);
+  console.log('[heroVideo] selectedVideoId:', invitation?.hero?.selectedVideoId);
+  console.log('[heroVideo] url:', invitation?.hero?.videoLibraryUrl);
 
   if (!invitation || !isPreviewableInvitationStatus(invitation.status)) {
     notFound();

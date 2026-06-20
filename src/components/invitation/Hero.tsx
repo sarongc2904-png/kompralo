@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Theme } from '@/domain/themes/types';
 import { InvitationProtagonist } from '@/domain/invitations/types';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
@@ -33,11 +33,13 @@ export default function Hero({
   theme,
 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const [videoFailed, setVideoFailed] = useState(false);
   const primaryName = protagonists?.[0]?.name ?? brideName ?? '';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? '';
 
-  // Library video takes priority; falls back to legacy videoUrl (YouTube or direct mp4)
-  const resolvedDirectVideoUrl = heroVideoUrl ?? null;
+  // Library video takes priority; falls back to legacy videoUrl (YouTube or direct mp4).
+  // videoFailed is set to true when the library video src returns an error.
+  const resolvedDirectVideoUrl = !videoFailed ? (heroVideoUrl ?? null) : null;
   const videoEmbed = resolvedDirectVideoUrl ? null : getVideoEmbedUrl(videoUrl);
 
   const { scrollYProgress } = useScroll({
@@ -86,7 +88,9 @@ export default function Hero({
               muted
               loop
               playsInline
+              preload="metadata"
               aria-hidden="true"
+              onError={() => setVideoFailed(true)}
               style={{
                 width: '100%', height: '100%',
                 objectFit: 'cover', objectPosition: 'center top',
