@@ -5,6 +5,71 @@
 
 ---
 
+## FASE RENDERER-VIDEO-ITINERARY-FIX — Video embebido y centrado dinámico del itinerario
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+1. Corregir que al ingresar un link de YouTube en el editor, el Hero quedara en blanco (la imagen desaparecía pero el video no se mostraba).
+2. Corregir el itinerario para que con 1 o 2 eventos quede centrado, no alineado a la izquierda.
+
+### Causa raíz
+
+**Video**: `Hero.tsx` usaba `<video src={videoUrl}>` directamente. Las URLs de YouTube (`youtu.be/...`, `youtube.com/watch?v=...`) no funcionan como `src` de `<video>` — requieren `<iframe>` con URL de embed. Como `videoUrl` era truthy, la imagen quedaba oculta y el video no cargaba.
+
+**Itinerario**: El grid `grid-cols-1 md:grid-cols-2 lg:grid-cols-4` alinea los items a la izquierda cuando hay menos items que columnas (1 o 2 cards no se centraban).
+
+### Archivos creados
+
+- `src/lib/video/getVideoEmbedUrl.ts` — helper que detecta tipo de URL y devuelve embed seguro:
+  - YouTube (youtu.be, youtube.com/watch, youtube.com/embed, /shorts, m.youtube.com) → `youtube.com/embed/ID`
+  - Directo (.mp4, .webm, .ogg) → URL original
+  - Inválido/vacío → `null`
+
+### Archivos modificados
+
+- `src/components/invitation/Hero.tsx` — usa `getVideoEmbedUrl()`:
+  - YouTube → `<iframe>` con `autoplay=1&mute=1&loop=1&controls=0` + `allow` completo + `scale(1.08)` para ocultar barra inferior
+  - MP4/WebM → `<video autoPlay muted loop playsInline>`
+  - URL inválida o vacía → `<img>` (imagen principal) — nunca queda vacío el Hero
+- `src/components/invitation\Itinerary.tsx` — grid → `flex flex-wrap justify-center`:
+  - Cards: `w-full sm:w-[280px] md:w-[300px]`
+  - 1 item: centrado solo
+  - 2 items: par centrado
+  - 3+ items: wrap centrado responsive
+  - Filtro de items válidos: solo muestra eventos con al menos título, hora o lugar
+  - Removido import `LucideIcon` unused
+
+### Comportamiento por caso
+
+| Caso | Antes | Después |
+|---|---|---|
+| `videoUrl` vacío + `imageUrl` lleno | Imagen | Imagen |
+| `videoUrl` = youtu.be/... | ❌ Blanco | ✅ iframe YouTube |
+| `videoUrl` inválido + `imageUrl` lleno | ❌ Blanco | ✅ Imagen fallback |
+| `videoUrl` .mp4 | Video HTML5 | Video HTML5 |
+| Itinerario 1 item | Alineado izq | Centrado |
+| Itinerario 2 items | Alineados izq | Par centrado |
+| Itinerario 3+ items | Grid rígido | Wrap centrado responsive |
+
+### Validación final
+
+- `npx tsc --noEmit`: OK
+- `npm run lint`: OK (9 warnings preexistentes, 0 errores — 1 menos que antes por LucideIcon removido)
+- `npm run build`: OK
+- Commit: `187537f`
+- Push: `main → main`
+
+### Notas
+
+- No se tocaron Stripe, webhook, Auth, Supabase orders, upload de imágenes, precios ni checkout.
+- El iframe de YouTube tiene `pointerEvents: none` para evitar interacciones accidentales en el hero.
+- El helper `getVideoEmbedUrl` es puro (sin side effects), testeable en aislamiento.
+- Aplica en `/preview/[id]` y en la ruta pública (`/[slug]`, `/i/[slug]`) porque ambas usan `InvitationRenderer`.
+
+---
+
 ## FASE STORAGE-BUCKET-MISMATCH-FIX — Diagnóstico y corrección de "Bucket not found"
 
 Fecha: 2026-06-20
