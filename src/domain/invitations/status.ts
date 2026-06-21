@@ -11,7 +11,9 @@ export const invitationStatuses = [
 export type InvitationStatus = (typeof invitationStatuses)[number];
 
 export function isPublicInvitationStatus(status: InvitationStatus): boolean {
-  return status === 'published';
+  // 'paid' = payment confirmed, invitation active — should be publicly accessible.
+  // 'published' = explicitly published (same as paid in practice; no separate publish step in UI).
+  return status === 'published' || status === 'paid';
 }
 
 export function isPreviewableInvitationStatus(status: InvitationStatus): boolean {
