@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { ThemeDivider } from '@/components/theme-v2';
 import InkRevealText from './InkRevealText';
+import ElegantInvitationCard from './ElegantInvitationCard';
 
 interface DressCodeProps {
 
@@ -38,8 +39,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
 
 
         {/* Info Card */}
-        <div className="p-6 md:p-12 overflow-hidden shadow-sm"
-          style={{ border: `1px solid var(--v2-color-border, ${theme.colors.border})`, background: `var(--v2-color-surface, ${theme.colors.surface})`, borderRadius: `var(--v2-radius-lg, 16px)`, boxShadow: `var(--v2-shadow-card, 0 4px 16px rgba(0,0,0,0.08))` }}>
+        <ElegantInvitationCard animateFrom="bottom" animateDelay={0.1} className="p-6 md:p-12">
           <div className="inline-block p-3 rounded-full mb-6" style={{ background: `var(--v2-color-accent-soft, rgba(197,168,128,0.10))` }}>
             <Sparkles className={`w-5 h-5 ${theme.accentText}`} />
           </div>
@@ -98,7 +98,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
               * {dressCode.suggestions}
             </p>
           )}
-        </div>
+        </ElegantInvitationCard>
 
       </div>
     </section>

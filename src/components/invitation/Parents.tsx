@@ -4,6 +4,7 @@ import React from 'react';
 import { Theme } from '@/domain/themes/types';
 import { ParentCouple } from '@/domain/invitations/types';
 import { motion } from 'framer-motion';
+import ElegantInvitationCard from './ElegantInvitationCard';
 
 interface ParentsProps {
   parents: ParentCouple[];
@@ -36,41 +37,15 @@ function FamilyCard({
   index: number;
 }) {
   const cardTitle = couple.side === 'bride' ? 'Padres de la Novia' : 'Padres del Novio';
-  const fromLeft = index % 2 === 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: fromLeft ? -32 : 32 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: index * 0.12 }}
-      className="relative"
-      style={{
-        background: `var(--v2-glass-bg, rgba(255,255,255,0.80))`,
-        backdropFilter: 'blur(22px) saturate(150%)',
-        WebkitBackdropFilter: 'blur(22px) saturate(150%)',
-        border: `1px solid var(--v2-color-border, rgba(255,255,255,0.92))`,
-        borderBottom: `1px solid var(--v2-color-border, rgba(197,168,128,0.22))`,
-        borderRight: `1px solid var(--v2-color-border, rgba(197,168,128,0.15))`,
-        borderRadius: `var(--v2-radius-lg, 22px)`,
-        padding: '32px 28px 28px',
-        boxShadow: `var(--v2-shadow-card, 0 4px 24px rgba(197,168,128,0.10)), 0 1px 4px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.95)`,
-        overflow: 'hidden',
-      }}
+    <ElegantInvitationCard
+      animateFrom={index % 2 === 0 ? 'left' : 'right'}
+      animateDelay={index * 0.12}
+      style={{ padding: '32px 28px 28px' }}
     >
-      {/* Top gloss */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute', top: 0, left: 0, right: 0, height: '45%',
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.30) 0%, transparent 100%)',
-          borderRadius: '22px 22px 0 0',
-          pointerEvents: 'none',
-        }}
-      />
-
       {/* Whose side label */}
-      <div className="text-center mb-5">
+      <div className="relative z-10 text-center mb-5">
         <span
           className="text-[9px] uppercase tracking-[0.28em] font-semibold"
           style={{ color: `var(--v2-color-accent, #C5A880)` }}
@@ -83,7 +58,7 @@ function FamilyCard({
       </div>
 
       {/* Parents */}
-      <div className="flex flex-col gap-5">
+      <div className="relative z-10 flex flex-col gap-5">
         {/* Father */}
         <div className="flex items-center gap-4">
           <div
@@ -150,7 +125,7 @@ function FamilyCard({
           </div>
         </div>
       </div>
-    </motion.div>
+    </ElegantInvitationCard>
   );
 }
 

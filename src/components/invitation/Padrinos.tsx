@@ -4,6 +4,7 @@ import React from 'react';
 import { Theme } from '@/domain/themes/types';
 import { Padrino } from '@/domain/invitations/types';
 import { motion } from 'framer-motion';
+import ElegantInvitationCard from './ElegantInvitationCard';
 
 interface PadrinosProps {
   padrinos: Padrino[];
@@ -73,32 +74,13 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
         {/* Cards — flex wrap so 1 or 2 cards stay centred */}
         <div className="flex flex-wrap justify-center gap-4">
           {padrinos.map((p, i) => (
-            <motion.div
+            <ElegantInvitationCard
               key={p.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.6, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-              className="relative flex flex-col items-center text-center w-[140px] sm:w-[160px]"
-              style={{
-                background: `var(--v2-glass-bg, rgba(255,255,255,0.78))`,
-                backdropFilter: 'blur(20px) saturate(140%)',
-                WebkitBackdropFilter: 'blur(20px) saturate(140%)',
-                border: `1px solid var(--v2-color-border, rgba(255,255,255,0.90))`,
-                borderBottom: `1px solid var(--v2-color-border, rgba(197,168,128,0.20))`,
-                borderRadius: `var(--v2-radius-lg, 18px)`,
-                padding: '22px 14px 18px',
-                boxShadow: `var(--v2-shadow-card, 0 2px 16px rgba(197,168,128,0.09)), inset 0 1px 0 rgba(255,255,255,0.95)`,
-                overflow: 'hidden',
-              }}
+              animateFrom="bottom"
+              animateDelay={i * 0.06}
+              className="flex flex-col items-center text-center w-[140px] sm:w-[160px]"
+              style={{ padding: '22px 14px 18px' }}
             >
-              {/* Top gloss */}
-              <div aria-hidden="true" style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: '40%',
-                background: 'linear-gradient(180deg,rgba(255,255,255,0.28) 0%,transparent 100%)',
-                borderRadius: '18px 18px 0 0', pointerEvents: 'none',
-              }}/>
-
               {/* Icon medallion */}
               <div style={{
                 width: 48, height: 48, borderRadius: '50%',
@@ -125,7 +107,7 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
                   {name}
                 </p>
               ))}
-            </motion.div>
+            </ElegantInvitationCard>
           ))}
         </div>
 

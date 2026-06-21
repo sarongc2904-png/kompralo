@@ -6,6 +6,7 @@ import { Hotel } from '@/domain/invitations/types';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Star } from 'lucide-react';
 import SectionShell from './SectionShell';
+import ElegantInvitationCard from './ElegantInvitationCard';
 
 interface HospedajeProps {
   hotels: Hotel[];
@@ -70,31 +71,11 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
         {/* Hotel cards */}
         <div className="flex flex-col gap-4">
           {hotels.map((hotel, i) => (
-            <motion.div
+            <ElegantInvitationCard
               key={hotel.id}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -24 : 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.75, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                background: `var(--v2-glass-bg, rgba(255,255,255,0.80))`,
-                backdropFilter: 'blur(22px) saturate(150%)',
-                WebkitBackdropFilter: 'blur(22px) saturate(150%)',
-                border: `1px solid var(--v2-color-border, rgba(255,255,255,0.92))`,
-                borderBottom: `1px solid var(--v2-color-border, rgba(197,168,128,0.22))`,
-                borderRadius: `var(--v2-radius-lg, 20px)`,
-                overflow: 'hidden',
-                boxShadow: `var(--v2-shadow-card, 0 4px 20px rgba(197,168,128,0.09)), inset 0 1px 0 rgba(255,255,255,0.95)`,
-                position: 'relative',
-              }}
+              animateFrom={i % 2 === 0 ? 'left' : 'right'}
+              animateDelay={i * 0.1}
             >
-              {/* Top gloss */}
-              <div aria-hidden="true" style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: '40%',
-                background: 'linear-gradient(180deg,rgba(255,255,255,0.28) 0%,transparent 100%)',
-                borderRadius: '20px 20px 0 0', pointerEvents: 'none',
-              }}/>
-
               {/* Gold left accent bar */}
               <div style={{
                 position: 'absolute', left: 0, top: 0, bottom: 0, width: 3,
@@ -158,7 +139,7 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
                   </a>
                 )}
               </div>
-            </motion.div>
+            </ElegantInvitationCard>
           ))}
         </div>
 

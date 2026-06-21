@@ -67,8 +67,17 @@ export default function Itinerary({ items, theme }: ItineraryProps) {
               <motion.div
                 key={item.id}
                 variants={itemVariants}
-                className="relative p-8 flex flex-col items-center text-center group rounded-[24px] liquid-glass w-full sm:w-[280px] md:w-[300px]"
-                style={{ isolation: 'isolate' }}
+                className="relative p-8 flex flex-col items-center text-center group w-full sm:w-[280px] md:w-[300px]"
+                style={{
+                  isolation: 'isolate',
+                  background: 'var(--v2-glass-bg, rgba(255, 250, 238, 0.88))',
+                  backdropFilter: 'blur(22px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(22px) saturate(150%)',
+                  border: '1px solid var(--v2-card-border, rgba(212, 175, 95, 0.30))',
+                  borderRadius: 'var(--v2-radius-lg, 24px)',
+                  boxShadow: '0 8px 36px rgba(120, 88, 40, 0.11), 0 1px 4px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.92)',
+                  overflow: 'hidden',
+                }}
               >
                 {/* Gold top-edge accent line */}
                 <div className="absolute top-0 left-8 right-8 h-px rounded-full z-10 pointer-events-none"

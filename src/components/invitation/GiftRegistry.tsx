@@ -40,12 +40,27 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
 
         {/* Registry — flex wrap so 1 or 2 cards stay centred */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 mt-12">
-          {items.map((item) => {
+          {items.map((item, idx) => {
             const isRevealed = !!revealedIds[item.id];
             return (
-              <div
+              <motion.div
                 key={item.id}
-                className={`relative p-8 border rounded-xl flex flex-col justify-between items-center text-center overflow-hidden transition-all duration-500 bg-white/70 hover:bg-white backdrop-blur-md shadow-sm hover:shadow-xl hover:-translate-y-1.5 group w-full sm:w-[300px] md:w-[280px] ${theme.cardBorder}`}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -6 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.65, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                className="relative flex flex-col justify-between items-center text-center group w-full sm:w-[300px] md:w-[280px]"
+                style={{
+                  background: 'var(--v2-glass-bg, rgba(255, 250, 238, 0.88))',
+                  backdropFilter: 'blur(22px) saturate(150%)',
+                  WebkitBackdropFilter: 'blur(22px) saturate(150%)',
+                  border: '1px solid var(--v2-card-border, rgba(212, 175, 95, 0.30))',
+                  borderRadius: 'var(--v2-radius-lg, 24px)',
+                  boxShadow: '0 8px 36px rgba(120, 88, 40, 0.11), 0 1px 4px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.92)',
+                  overflow: 'hidden',
+                  padding: '32px',
+                }}
               >
                 {/* 1. Tactile Cotton/Linen Card Paper Texture */}
                 <div 
@@ -186,7 +201,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                     </a>
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
