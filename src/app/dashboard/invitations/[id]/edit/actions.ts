@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { IInvitationRepository } from '@/domain/invitations';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { isAdminUser } from '@/lib/admin';
 import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
@@ -46,10 +47,12 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
   }
 
   let sessionEmail: string | null = null;
+  let sessionUserId: string | null = null;
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     sessionEmail = user?.email?.toLowerCase() ?? null;
+    sessionUserId = user?.id ?? null;
   } catch {
     sessionEmail = null;
   }
@@ -60,7 +63,11 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
     throw new Error('Sesión requerida para guardar cambios.');
   }
   if (!hasScopedAccess && ownerEmail && ownerEmail !== sessionEmail) {
-    throw new Error('No tienes permiso para editar esta invitación.');
+    // Admin users can save changes to any invitation
+    const adminCheck = sessionUserId ? await isAdminUser(sessionUserId) : false;
+    if (!adminCheck) {
+      throw new Error('No tienes permiso para editar esta invitación.');
+    }
   }
 
   return repository;

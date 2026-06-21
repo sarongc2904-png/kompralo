@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { isAdminUser } from '@/lib/admin';
 import type { RSVPResponse } from '@/domain/rsvp/types';
 import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
@@ -290,6 +291,11 @@ export default async function InvitationDashboard({ params }: Props) {
   console.log('[Client Dashboard] access:', hasAccess ? 'granted' : 'denied');
 
   if (!hasAccess) {
+    // Admin users are redirected to the admin panel instead of getting a 404
+    const adminCheck = await isAdminUser(userId);
+    if (adminCheck) {
+      redirect(`/admin/invitations/${id}`);
+    }
     notFound();
   }
 

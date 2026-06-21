@@ -12,8 +12,10 @@ function err(msg: string, status = 400) {
   return NextResponse.json({ error: msg }, { status });
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const VALID_CATEGORIES = new Set(['wedding', 'baptism', 'baby-shower', 'birthday']);
 const VALID_STATUSES   = new Set(['draft', 'paid', 'published']);
+const PLAN_AMOUNTS: Record<string, number> = { basic: 49900, premium: 89900, deluxe: 149900 };
 
 export async function POST(request: NextRequest) {
   const admin = await getAdminUserForApiRoute();
@@ -25,7 +27,11 @@ export async function POST(request: NextRequest) {
   const customerEmail  = typeof body.customer_email  === 'string' ? body.customer_email.trim()  : '';
   const customerName   = typeof body.customer_name   === 'string' ? body.customer_name.trim()   : null;
   const category       = typeof body.category        === 'string' ? body.category               : 'wedding';
-  const ownerUserId    = typeof body.owner_user_id   === 'string' && body.owner_user_id.trim() ? body.owner_user_id.trim() : null;
+  const ownerUserIdRaw = typeof body.owner_user_id === 'string' ? body.owner_user_id.trim() : '';
+  if (ownerUserIdRaw && !UUID_RE.test(ownerUserIdRaw)) {
+    return err('owner_user_id debe ser un UUID válido de Supabase Auth o estar vacío.');
+  }
+  let ownerUserId: string | null = ownerUserIdRaw || null;
   const requestedSlug  = typeof body.slug            === 'string' ? body.slug.trim()            : '';
   const createOrder    = body.create_order !== false;
 
@@ -51,6 +57,31 @@ export async function POST(request: NextRequest) {
 
   const svc = createServiceRoleSupabaseClient();
   const now = new Date().toISOString();
+
+  // Auto-resolve user_id from email when owner_user_id not provided
+  if (!ownerUserId) {
+    const { data: invMatch } = await svc
+      .from('invitations')
+      .select('user_id')
+      .ilike('customer_email', customerEmail)
+      .not('user_id', 'is', null)
+      .limit(1)
+      .maybeSingle();
+    if (invMatch?.user_id) {
+      ownerUserId = invMatch.user_id as string;
+    } else {
+      const { data: orderMatch } = await svc
+        .from('orders')
+        .select('owner_user_id')
+        .ilike('customer_email', customerEmail)
+        .not('owner_user_id', 'is', null)
+        .limit(1)
+        .maybeSingle();
+      if (orderMatch?.owner_user_id) {
+        ownerUserId = orderMatch.owner_user_id as string;
+      }
+    }
+  }
 
   // 1. Insert invitation
   const { data: invRow, error: invErr } = await svc
@@ -109,7 +140,7 @@ export async function POST(request: NextRequest) {
       stripe_session_id: fakeSessionId,
       product_id:        planId,
       plan_id:           planId,
-      amount_total:      0,
+      amount_total:      PLAN_AMOUNTS[planId] ?? 0,
       currency:          'mxn',
       status:            'paid',
       invitation_id:     invitationId,

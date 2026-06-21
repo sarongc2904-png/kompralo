@@ -4,6 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 const PLANS = ['basic', 'premium', 'deluxe'] as const;
+
+function isValidUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
 const CATEGORIES = ['wedding', 'baptism', 'baby-shower', 'birthday'] as const;
 const STATUSES = ['paid', 'draft', 'published'] as const;
 
@@ -43,6 +47,13 @@ export default function AdminNewInvitationPage() {
     e.preventDefault();
     setError('');
     setResult(null);
+
+    const trimmedUuid = form.owner_user_id.trim();
+    if (trimmedUuid && !isValidUuid(trimmedUuid)) {
+      setError('Owner User ID debe ser un UUID válido de Supabase Auth o dejarse vacío.');
+      return;
+    }
+
     setLoading(true);
 
     const res = await fetch('/api/admin/invitations', {
@@ -135,7 +146,7 @@ export default function AdminNewInvitationPage() {
             </Field>
           </div>
 
-          <Field label="Owner User ID (opcional)" hint="UUID del usuario en Supabase Auth. Déjalo vacío si no existe aún.">
+          <Field label="Owner User ID (opcional)" hint="Déjalo vacío para asignar por email si el usuario existe. Si deseas asignarlo manualmente, usa el UUID real de Supabase Auth (ej. 4f3a1b2c-...).">
             <input value={form.owner_user_id} onChange={e => setForm(p => ({ ...p, owner_user_id: e.target.value }))}
               placeholder="UUID de auth.users" style={{ ...inputStyle, fontFamily: 'monospace', fontSize: '.8rem' }} />
           </Field>

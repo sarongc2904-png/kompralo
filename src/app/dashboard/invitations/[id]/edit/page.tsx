@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { invitationRepository } from '@/domain/invitations';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { isAdminUser } from '@/lib/admin';
 import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import { normalizePlanId } from '@/domain/plans/types';
 import EditForm from './EditForm';
@@ -135,27 +136,32 @@ export default async function EditInvitationPage({ params }: Props) {
     }
 
     const ownerEmail = invitation.customerEmail ?? null;
-    if (
+    const emailMismatch =
       !hasScopedAccess &&
       ownerEmail &&
-      ownerEmail.toLowerCase() !== (sessionUser?.email ?? '').toLowerCase()
-    ) {
-      return (
-        <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
-          <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#C62828', marginBottom: '0.5rem' }}>
-            Acceso no autorizado
-          </p>
-          <p style={{ color: '#6B5B4E', fontSize: '0.9rem', marginBottom: '2rem' }}>
-            Esta invitación no pertenece a tu cuenta.
-          </p>
-          <Link
-            href="/cliente"
-            style={{ color: '#C5A880', fontSize: '0.875rem', textDecoration: 'none' }}
-          >
-            ← Ver mis invitaciones
-          </Link>
-        </div>
-      );
+      ownerEmail.toLowerCase() !== (sessionUser?.email ?? '').toLowerCase();
+
+    if (emailMismatch) {
+      // Admin users can edit any invitation — check before showing error
+      const adminCheck = sessionUser?.id ? await isAdminUser(sessionUser.id) : false;
+      if (!adminCheck) {
+        return (
+          <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
+            <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#C62828', marginBottom: '0.5rem' }}>
+              Acceso no autorizado
+            </p>
+            <p style={{ color: '#6B5B4E', fontSize: '0.9rem', marginBottom: '2rem' }}>
+              Esta invitación no pertenece a tu cuenta.
+            </p>
+            <Link
+              href="/cliente"
+              style={{ color: '#C5A880', fontSize: '0.875rem', textDecoration: 'none' }}
+            >
+              ← Ver mis invitaciones
+            </Link>
+          </div>
+        );
+      }
     }
   }
 
