@@ -5,6 +5,7 @@ import type { InvitationContent } from '@/domain/invitations/types';
 import type { InvitationFeatures, InvitationPlan } from '@/domain/plans/types';
 import { createThemeCssVariables, type Theme } from '@/domain/themes/types';
 import { resolveTheme, ThemeProviderV2 } from '@/domain/themes-v2';
+import { ivoryEditorialThemeV1 } from '@/domain/themes-v2/themes/ivory-editorial';
 import CinematicIntro from '@/components/invitation/CinematicIntro';
 import Countdown from '@/components/invitation/Countdown';
 import DressCode from '@/components/invitation/DressCode';
@@ -102,7 +103,10 @@ export default function InvitationRenderer({
 }: InvitationRendererProps) {
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
-  const themeVariables = createThemeCssVariables(theme);
+
+  // When a preview theme is active, swap the V1 theme so all components pick up the new palette.
+  const effectiveTheme = themePreviewId === 'ivory-editorial' ? ivoryEditorialThemeV1 : theme;
+  const themeVariables = createThemeCssVariables(effectiveTheme);
 
   // V2 theme — resolved from the preview override (if any) or the invitation's saved themeId.
   const themeV2 = resolveTheme(themePreviewId ?? invitation.themeId);
@@ -124,16 +128,16 @@ export default function InvitationRenderer({
 
   return (
     <div
-      className={`min-h-screen relative min-w-0 overflow-x-hidden transition-colors duration-1000 ${theme.bodyText}`}
+      className={`min-h-screen relative min-w-0 overflow-x-hidden transition-colors duration-1000 ${effectiveTheme.bodyText}`}
       data-render-mode={mode}
       data-plan-id={plan.id}
       data-theme-v2={themeV2.id}
       style={{ ...themeVariables, ...(themeV2.cssVariables as React.CSSProperties) }}
     >
     <ThemeProviderV2 theme={themeV2} injectCssVariables={false}>
-      <MultilayerBackground theme={theme} />
+      <MultilayerBackground theme={effectiveTheme} />
 
-      {(theme.paperTexture || themeV2.effects.paperTexture) && <div className="paper-noise" />}
+      {(effectiveTheme.paperTexture || themeV2.effects.paperTexture) && <div className="paper-noise" />}
 
       <FeatureGate feature="showIntro" features={features}>
         <CinematicIntro
@@ -141,7 +145,7 @@ export default function InvitationRenderer({
           title={invitation.title}
           subtitle={invitation.subtitle}
           eventDate={invitation.eventDate}
-          theme={theme}
+          theme={effectiveTheme}
           onEnter={handleEnterInvitation}
         />
       </FeatureGate>
@@ -167,38 +171,38 @@ export default function InvitationRenderer({
               videoUrl={invitation.hero?.videoUrl}
               heroVideoUrl={heroVideoUrl}
               eventLabel={invitation.hero?.eventLabel ?? ''}
-              theme={theme}
+              theme={effectiveTheme}
             />
           );
         })()}
       </FeatureGate>
 
       <FeatureGate feature="showCountdown" features={features}>
-        <Countdown eventDate={invitation.eventDate} theme={theme} />
+        <Countdown eventDate={invitation.eventDate} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showParents" features={features}>
-        <Parents parents={invitation.parents} theme={theme} />
+        <Parents parents={invitation.parents} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showStoryBook" features={features}>
-        <StoryBook slides={invitation.story.slides} theme={theme} protagonists={protagonists} />
+        <StoryBook slides={invitation.story.slides} theme={effectiveTheme} protagonists={protagonists} />
       </FeatureGate>
 
       <FeatureGate feature="showGallery" features={features}>
-        <HorizontalGallery images={galleryImages} theme={theme} />
+        <HorizontalGallery images={galleryImages} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showTimeline" features={features}>
-        <Timeline events={invitation.timeline} theme={theme} />
+        <Timeline events={invitation.timeline} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showItinerary" features={features}>
-        <Itinerary items={invitation.itinerary} theme={theme} />
+        <Itinerary items={invitation.itinerary} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showMaps" features={features}>
-        <Location location={invitation.location} theme={theme} />
+        <Location location={invitation.location} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showQRCode" features={features}>
@@ -206,37 +210,37 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showDressCode" features={features}>
-        <DressCode dressCode={invitation.dressCode} theme={theme} />
+        <DressCode dressCode={invitation.dressCode} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showGiftRegistry" features={features}>
-        <GiftRegistry items={invitation.giftRegistry.items} theme={theme} />
+        <GiftRegistry items={invitation.giftRegistry.items} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showPadrinos" features={features}>
-        <Padrinos padrinos={invitation.padrinos} theme={theme} />
+        <Padrinos padrinos={invitation.padrinos} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showAccommodation" features={features}>
-        <Hospedaje hotels={invitation.hotels} theme={theme} />
+        <Hospedaje hotels={invitation.hotels} theme={effectiveTheme} />
       </FeatureGate>
 
       <FeatureGate feature="showHashtag" features={features}>
         <Hashtag
           social={invitation.social}
           imageUrl={galleryImages[1] || galleryImages[0]}
-          theme={theme}
+          theme={effectiveTheme}
         />
       </FeatureGate>
 
       <FeatureGate feature="showRSVP" features={features}>
         {invitation.rsvpMode === 'passes_only' ? (
-          <PassesOnlyNotice theme={theme} />
+          <PassesOnlyNotice theme={effectiveTheme} />
         ) : (
           <RSVPForm
             invitationId={invitation.id}
             rsvpWhatsAppNumber={invitation.rsvpWhatsAppNumber}
-            theme={theme}
+            theme={effectiveTheme}
             eventTitle={invitation.title}
             eventDate={invitation.eventDate}
           />
@@ -260,7 +264,7 @@ export default function InvitationRenderer({
           protagonists={protagonists}
           imageUrl={invitation.finalMessage.imageUrl ?? galleryImages[0]}
           quote={invitation.finalMessage.quote}
-          theme={theme}
+          theme={effectiveTheme}
         />
       </FeatureGate>
     </ThemeProviderV2>
