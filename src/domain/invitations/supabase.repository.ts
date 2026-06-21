@@ -290,8 +290,8 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
 
     const mergedLocation = {
       ...existingLocation,
-      ...(input.googleMapsUrl ? { googleMapsLink: input.googleMapsUrl } : {}),
-      ...(input.wazeUrl       ? { wazeLink: input.wazeUrl }             : {}),
+      googleMapsLink: input.googleMapsUrl,
+      wazeLink:       input.wazeUrl,
     };
 
     const { error: updateError } = await this.supabase

@@ -48,8 +48,18 @@ const svgStyles = `
   }
 `;
 
+function isValidNavUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  const t = url.trim();
+  if (!t || t === '#' || t === '/' || t === 'undefined' || t === 'null') return false;
+  return /^https?:\/\//i.test(t);
+}
+
 export default function Location({ location, theme }: LocationProps) {
   if (!location) return null;
+
+  const hasGoogleMaps = isValidNavUrl(location.googleMapsLink);
+  const hasWaze       = isValidNavUrl(location.wazeLink);
 
   // V2 CSS var with v1 fallback — resolves to correct accent for each theme
   const accentVar = `var(--v2-color-accent, ${theme.colors.accent})`;
@@ -76,32 +86,38 @@ export default function Location({ location, theme }: LocationProps) {
               {location.address}
             </p>
 
-            <div className="flex flex-col gap-2 w-full max-w-xs mx-auto md:mx-0">
-              <a
-                href={location.googleMapsLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center justify-center gap-3 w-full py-4 px-6 border backdrop-blur-sm transition-all duration-300 group ${theme.bodyFont}`}
-                style={{ borderRadius: `var(--v2-radius-sm, 6px)`, borderColor: borderVar, background: surfaceVar }}
-              >
-                <MapPin className="w-4 h-4 transition-colors duration-300 flex-shrink-0" style={{ color: textSecondaryVar }} />
-                <span className="text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300" style={{ color: textPrimaryVar }}>
-                  Google Maps
-                </span>
-              </a>
-              <a
-                href={location.wazeLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center justify-center gap-3 w-full py-4 px-6 border backdrop-blur-sm transition-all duration-300 group ${theme.bodyFont}`}
-                style={{ borderRadius: `var(--v2-radius-sm, 6px)`, borderColor: borderVar, background: surfaceVar }}
-              >
-                <Navigation className="w-4 h-4 transition-colors duration-300 flex-shrink-0" style={{ color: textSecondaryVar }} />
-                <span className="text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300" style={{ color: textPrimaryVar }}>
-                  Waze GPS
-                </span>
-              </a>
-            </div>
+            {(hasGoogleMaps || hasWaze) && (
+              <div className="flex flex-col gap-2 w-full max-w-xs mx-auto md:mx-0">
+                {hasGoogleMaps && (
+                  <a
+                    href={location.googleMapsLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center justify-center gap-3 w-full py-4 px-6 border backdrop-blur-sm transition-all duration-300 group ${theme.bodyFont}`}
+                    style={{ borderRadius: `var(--v2-radius-sm, 6px)`, borderColor: borderVar, background: surfaceVar }}
+                  >
+                    <MapPin className="w-4 h-4 transition-colors duration-300 flex-shrink-0" style={{ color: textSecondaryVar }} />
+                    <span className="text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300" style={{ color: textPrimaryVar }}>
+                      Google Maps
+                    </span>
+                  </a>
+                )}
+                {hasWaze && (
+                  <a
+                    href={location.wazeLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center justify-center gap-3 w-full py-4 px-6 border backdrop-blur-sm transition-all duration-300 group ${theme.bodyFont}`}
+                    style={{ borderRadius: `var(--v2-radius-sm, 6px)`, borderColor: borderVar, background: surfaceVar }}
+                  >
+                    <Navigation className="w-4 h-4 transition-colors duration-300 flex-shrink-0" style={{ color: textSecondaryVar }} />
+                    <span className="text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300" style={{ color: textPrimaryVar }}>
+                      Waze GPS
+                    </span>
+                  </a>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Animated SVG Map */}

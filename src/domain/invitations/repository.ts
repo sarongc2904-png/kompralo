@@ -125,8 +125,8 @@ class LocalInvitationRepository implements IInvitationRepository {
       },
       location: {
         ...existing.location,
-        googleMapsLink: input.googleMapsUrl || existing.location?.googleMapsLink || '',
-        wazeLink:       input.wazeUrl       || existing.location?.wazeLink       || '',
+        googleMapsLink: input.googleMapsUrl,
+        wazeLink:       input.wazeUrl,
       },
       updatedAt: new Date().toISOString(),
     };
