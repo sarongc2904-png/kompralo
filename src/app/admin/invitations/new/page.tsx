@@ -1,0 +1,185 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+
+const PLANS = ['basic', 'premium', 'deluxe'] as const;
+const CATEGORIES = ['wedding', 'baptism', 'baby-shower', 'birthday'] as const;
+const STATUSES = ['paid', 'draft', 'published'] as const;
+
+interface CreatedResult {
+  invitationId: string;
+  slug: string;
+  orderId: string | null;
+  publicLink: string;
+  editorLink: string;
+  clientDashboardLink: string;
+}
+
+export default function AdminNewInvitationPage() {
+  const [form, setForm] = useState({
+    customer_name: '',
+    customer_email: '',
+    plan_id: 'premium' as typeof PLANS[number],
+    category: 'wedding' as typeof CATEGORIES[number],
+    status: 'paid' as typeof STATUSES[number],
+    owner_user_id: '',
+    slug: '',
+    create_order: true,
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError]   = useState('');
+  const [result, setResult] = useState<CreatedResult | null>(null);
+  const [copied, setCopied] = useState('');
+
+  const copy = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(key);
+    setTimeout(() => setCopied(''), 1500);
+  };
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setResult(null);
+    setLoading(true);
+
+    const res = await fetch('/api/admin/invitations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok) {
+      setError(data.error ?? 'Error desconocido');
+      return;
+    }
+    setResult(data);
+  }
+
+  return (
+    <div style={{ maxWidth: 680 }}>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <Link href="/admin/invitations" style={{ fontSize: '.8rem', color: '#8a8580', textDecoration: 'none' }}>← Invitaciones</Link>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1a1610', margin: '.5rem 0 .25rem' }}>Crear invitación</h1>
+        <p style={{ fontSize: '.8125rem', color: '#8a8580', margin: 0 }}>Crear una invitación manualmente sin pasar por Stripe.</p>
+      </div>
+
+      {result ? (
+        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12, padding: '1.5rem' }}>
+          <p style={{ fontSize: '1rem', fontWeight: 700, color: '#16a34a', margin: '0 0 1rem' }}>✓ Invitación creada</p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
+            {[
+              { label: 'Link público (invitados)', url: result.publicLink, key: 'pub' },
+              { label: 'Editor',                  url: result.editorLink, key: 'edit' },
+              { label: 'Panel cliente',            url: result.clientDashboardLink, key: 'dash' },
+            ].map(({ label, url, key }) => (
+              <div key={key} style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 8, padding: '.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+                <div>
+                  <p style={{ margin: 0, fontSize: '.7rem', color: '#8a8580', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>{label}</p>
+                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '.8rem', color: '#2563eb', wordBreak: 'break-all' }}>{url}</a>
+                </div>
+                <button onClick={() => copy(url, key)} style={{ padding: '.375rem .875rem', background: copied === key ? '#16a34a' : '#1a1610', color: '#fff', border: 'none', borderRadius: 8, fontSize: '.75rem', cursor: 'pointer', whiteSpace: 'nowrap', fontWeight: 600 }}>
+                  {copied === key ? '✓ Copiado' : 'Copiar'}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: '1rem', display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
+            <Link href={`/admin/invitations/${result.invitationId}`} style={{ padding: '.625rem 1.25rem', background: '#1a1610', color: '#f1e3c8', borderRadius: 8, fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
+              Ver detalle
+            </Link>
+            <a href={result.editorLink} target="_blank" rel="noopener noreferrer" style={{ padding: '.625rem 1.25rem', background: '#f0ede8', color: '#4a4742', borderRadius: 8, fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
+              Abrir editor
+            </a>
+            <button onClick={() => setResult(null)} style={{ padding: '.625rem 1.25rem', background: '#f0ede8', color: '#4a4742', border: 'none', borderRadius: 8, fontSize: '.875rem', cursor: 'pointer', fontWeight: 600 }}>
+              Crear otra
+            </button>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <Field label="Nombre del cliente">
+              <input value={form.customer_name} onChange={e => setForm(p => ({ ...p, customer_name: e.target.value }))}
+                placeholder="Ej. Sofía García" style={inputStyle} />
+            </Field>
+            <Field label="Email del cliente *" required>
+              <input type="email" value={form.customer_email} onChange={e => setForm(p => ({ ...p, customer_email: e.target.value }))}
+                placeholder="cliente@email.com" required style={inputStyle} />
+            </Field>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+            <Field label="Plan *">
+              <select value={form.plan_id} onChange={e => setForm(p => ({ ...p, plan_id: e.target.value as typeof PLANS[number] }))} style={inputStyle} required>
+                {PLANS.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </Field>
+            <Field label="Categoría *">
+              <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value as typeof CATEGORIES[number] }))} style={inputStyle} required>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </Field>
+            <Field label="Status inicial">
+              <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value as typeof STATUSES[number] }))} style={inputStyle}>
+                {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </Field>
+          </div>
+
+          <Field label="Owner User ID (opcional)" hint="UUID del usuario en Supabase Auth. Déjalo vacío si no existe aún.">
+            <input value={form.owner_user_id} onChange={e => setForm(p => ({ ...p, owner_user_id: e.target.value }))}
+              placeholder="UUID de auth.users" style={{ ...inputStyle, fontFamily: 'monospace', fontSize: '.8rem' }} />
+          </Field>
+
+          <Field label="Slug personalizado (opcional)" hint="Se generará automáticamente si lo dejas vacío. No incluir /. No usar palabras reservadas.">
+            <input value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') }))}
+              placeholder="mi-slug-personalizado" style={{ ...inputStyle, fontFamily: 'monospace' }} />
+          </Field>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: '.75rem', fontSize: '.875rem', color: '#1a1610', cursor: 'pointer' }}>
+            <input type="checkbox" checked={form.create_order} onChange={e => setForm(p => ({ ...p, create_order: e.target.checked }))} />
+            <div>
+              <span style={{ fontWeight: 600 }}>Crear orden manual</span>
+              <p style={{ margin: '2px 0 0', fontSize: '.75rem', color: '#8a8580' }}>
+                Registra una orden con source: admin_manual_creation. No genera ningún cobro en Stripe.
+              </p>
+            </div>
+          </label>
+
+          {error && (
+            <div style={{ padding: '.75rem 1rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: '.875rem', color: '#dc2626' }}>
+              {error}
+            </div>
+          )}
+
+          <button type="submit" disabled={loading} style={{ padding: '.875rem 2rem', background: loading ? '#8a8580' : '#1a1610', color: '#f1e3c8', border: 'none', borderRadius: 10, fontSize: '.9375rem', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
+            {loading ? 'Creando...' : 'Crear invitación'}
+          </button>
+        </form>
+      )}
+    </div>
+  );
+}
+
+function Field({ label, hint, required, children }: { label: string; hint?: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '.375rem' }}>
+      <label style={{ fontSize: '.75rem', fontWeight: 700, color: '#4a4742', textTransform: 'uppercase', letterSpacing: '.08em' }}>
+        {label}{required && <span style={{ color: '#dc2626' }}>*</span>}
+      </label>
+      {children}
+      {hint && <p style={{ margin: 0, fontSize: '.7rem', color: '#8a8580', lineHeight: 1.4 }}>{hint}</p>}
+    </div>
+  );
+}
+
+const inputStyle: React.CSSProperties = { padding: '.625rem .875rem', border: '1px solid #e5e2dc', borderRadius: 8, fontSize: '.875rem', color: '#1a1610', background: '#fafaf8', width: '100%', boxSizing: 'border-box' };
