@@ -343,16 +343,6 @@ export default async function InvitationDashboard({ params }: Props) {
       <div className="paper-noise" />
       <PageStyles />
 
-      {/* ── DEBUG BANNER — remove after visual confirmation ── */}
-      <div style={{
-        position: 'fixed', bottom: 12, right: 12, zIndex: 9999,
-        background: '#D32F2F', color: '#fff',
-        padding: '10px 16px', fontWeight: 800, fontSize: '.8rem',
-        borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-        pointerEvents: 'none', letterSpacing: '.04em',
-      }}>
-        DASHBOARD NUEVO ACTIVO — v2
-      </div>
 
       {/* Nav */}
       <nav style={{
