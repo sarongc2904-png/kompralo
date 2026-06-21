@@ -21,7 +21,13 @@ export async function generatePublicInvitationMetadata(slug: string): Promise<Me
   return buildInvitationMetadata(invitation);
 }
 
-export async function PublicInvitationRoute({ slug }: { slug: string }) {
+interface PublicInvitationRouteProps {
+  slug: string;
+  /** When present, overrides the saved theme for preview purposes only. */
+  themePreviewId?: string;
+}
+
+export async function PublicInvitationRoute({ slug, themePreviewId }: PublicInvitationRouteProps) {
   const invitation = await getPublicInvitation(slug);
   if (!invitation) notFound();
 
@@ -34,6 +40,7 @@ export async function PublicInvitationRoute({ slug }: { slug: string }) {
       plan={plan}
       features={features}
       mode="public"
+      themePreviewId={themePreviewId}
     />
   );
 }

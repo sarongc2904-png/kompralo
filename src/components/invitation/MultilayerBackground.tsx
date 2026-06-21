@@ -330,6 +330,7 @@ function buildLayerContent(
         ),
       };
 
+    case 'ivory-editorial':
     case 'editorial':
     default:
       // Warm ivory/champagne — multiply blend for elegant paper layering

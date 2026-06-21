@@ -88,6 +88,8 @@ interface InvitationRendererProps {
   plan: InvitationPlan;
   features: InvitationFeatures;
   mode?: InvitationRenderMode;
+  /** When set, overrides the saved theme for visual preview. Does not persist. */
+  themePreviewId?: string;
 }
 
 export default function InvitationRenderer({
@@ -96,14 +98,14 @@ export default function InvitationRenderer({
   plan,
   features,
   mode = 'public',
+  themePreviewId,
 }: InvitationRendererProps) {
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
   const themeVariables = createThemeCssVariables(theme);
 
-  // V2 theme — resolved from the invitation's themeId.
-  // CSS vars are merged onto the root div; context is available via useThemeV2().
-  const themeV2 = resolveTheme(invitation.themeId);
+  // V2 theme — resolved from the preview override (if any) or the invitation's saved themeId.
+  const themeV2 = resolveTheme(themePreviewId ?? invitation.themeId);
 
   const handleEnterInvitation = () => {
     // Platinum: CinematicIntro calls this when user taps "Entrar"
@@ -131,7 +133,7 @@ export default function InvitationRenderer({
     <ThemeProviderV2 theme={themeV2} injectCssVariables={false}>
       <MultilayerBackground theme={theme} />
 
-      {theme.paperTexture && <div className="paper-noise" />}
+      {(theme.paperTexture || themeV2.effects.paperTexture) && <div className="paper-noise" />}
 
       <FeatureGate feature="showIntro" features={features}>
         <CinematicIntro

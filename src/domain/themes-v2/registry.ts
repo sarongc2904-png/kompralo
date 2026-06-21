@@ -1,16 +1,18 @@
 import type { InvitationThemeV2, ThemeIdV2 } from '@/domain/themes-v2/types';
-import { luxuryGoldTheme } from '@/domain/themes-v2/themes/luxury-gold';
-import { editorialTheme } from '@/domain/themes-v2/themes/editorial';
-import { floralTheme } from '@/domain/themes-v2/themes/floral';
-import { modernDarkTheme } from '@/domain/themes-v2/themes/modern-dark';
+import { luxuryGoldTheme }      from '@/domain/themes-v2/themes/luxury-gold';
+import { editorialTheme }       from '@/domain/themes-v2/themes/editorial';
+import { floralTheme }          from '@/domain/themes-v2/themes/floral';
+import { modernDarkTheme }      from '@/domain/themes-v2/themes/modern-dark';
+import { ivoryEditorialTheme }  from '@/domain/themes-v2/themes/ivory-editorial';
 
 export const defaultThemeIdV2: ThemeIdV2 = 'editorial';
 
 export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = {
-  'luxury-gold': luxuryGoldTheme,
-  'editorial':   editorialTheme,
-  'floral':      floralTheme,
-  'modern-dark': modernDarkTheme,
+  'luxury-gold':     luxuryGoldTheme,
+  'editorial':       editorialTheme,
+  'floral':          floralTheme,
+  'modern-dark':     modernDarkTheme,
+  'ivory-editorial': ivoryEditorialTheme,
 };
 
 /**

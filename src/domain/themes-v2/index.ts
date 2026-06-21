@@ -35,7 +35,8 @@ export { resolveThemeBackgroundAssets } from '@/domain/themes-v2/resolveThemeBac
 export type { ThemeBackgroundAssets } from '@/domain/themes-v2/resolveThemeBackgroundAssets';
 
 // Individual themes (for direct import when needed)
-export { luxuryGoldTheme } from '@/domain/themes-v2/themes/luxury-gold';
-export { editorialTheme } from '@/domain/themes-v2/themes/editorial';
-export { floralTheme } from '@/domain/themes-v2/themes/floral';
-export { modernDarkTheme } from '@/domain/themes-v2/themes/modern-dark';
+export { luxuryGoldTheme }     from '@/domain/themes-v2/themes/luxury-gold';
+export { editorialTheme }      from '@/domain/themes-v2/themes/editorial';
+export { floralTheme }         from '@/domain/themes-v2/themes/floral';
+export { modernDarkTheme }     from '@/domain/themes-v2/themes/modern-dark';
+export { ivoryEditorialTheme } from '@/domain/themes-v2/themes/ivory-editorial';
