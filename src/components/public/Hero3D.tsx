@@ -111,17 +111,20 @@ export default function Hero3D() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: 'easeOut' }}
           >
-            <p className="cro-eyebrow" style={{ textShadow: '0 2px 10px rgba(166,123,91,0.3)' }}>Centro inteligente para eventos</p>
-            <h1 className="cro-title-mega" style={{ fontSize: 'clamp(2.5rem, 8vw, 5rem)', textShadow: '0 10px 30px rgba(0,0,0,0.8)' }}>La forma más elegante<br/>de organizar tu evento.</h1>
+            <p className="cro-eyebrow" style={{ textShadow: '0 2px 10px rgba(166,123,91,0.3)' }}>Sin perseguir invitados por WhatsApp</p>
+            <h1 className="cro-title-mega" style={{ fontSize: 'clamp(1.9rem, 5.5vw, 4rem)', textShadow: '0 10px 30px rgba(0,0,0,0.8)' }}>Organiza tu evento sin perseguir invitados<br/>por WhatsApp.</h1>
             <p className="cro-copy" style={{ maxWidth: 700, margin: '2rem auto 0', textShadow: '0 2px 5px rgba(0,0,0,0.8)' }}>
-              Crea una invitación premium, confirma asistentes automáticamente y comparte toda la información desde un solo enlace.
+              Invitación digital premium. RSVP automático. Toda la información de tu evento en un solo enlace elegante.
             </p>
             <div className="cro-hero-actions" style={{ justifyContent: 'center' }}>
-              <Link href="#planes" className="cro-btn cro-btn-cyan">Ver planes</Link>
-              <Link href="/sofia-y-alejandro" className="cro-btn cro-btn-outline" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <Link href="#planes" className="cro-btn cro-btn-cyan" data-cta="hero-primary">Comenzar ahora</Link>
+              <Link href="/sofia-y-alejandro" className="cro-btn cro-btn-outline" style={{ background: 'rgba(255,255,255,0.05)' }} data-cta="hero-demo">
                 <Play size={16} fill="currentColor" /> Ver demo real
               </Link>
             </div>
+            <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', marginTop: '1.5rem', letterSpacing: '0.12em' }}>
+              Sin mensualidades · Listo en minutos · Comparte por WhatsApp
+            </p>
           </motion.div>
         </Reveal>
 
