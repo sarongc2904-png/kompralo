@@ -51,9 +51,16 @@ export class SupabaseRSVPRepository implements IRSVPRepository {
   constructor(private readonly supabase: SupabaseClient<Database>) {}
 
   async submit(input: RSVPSubmissionInput): Promise<RSVPSubmissionResult> {
-    const { data, error } = await this.supabase
+    // Pre-generate the id so we can return it without a subsequent SELECT.
+    // A SELECT after INSERT with the anon key is blocked by rsvp_select_owner
+    // (which requires auth.uid() = invitation owner).
+    const id = crypto.randomUUID();
+    const now = new Date().toISOString();
+
+    const { error } = await this.supabase
       .from('rsvp_responses')
       .insert({
+        id,
         invitation_id: input.invitationId,
         name: input.name,
         phone: input.phone ?? null,
@@ -61,18 +68,30 @@ export class SupabaseRSVPRepository implements IRSVPRepository {
         guest_count: input.guestCount,
         message: input.message ?? null,
         status: 'pending',
-      })
-      .select()
-      .single();
+      });
 
-    if (error || !data) {
+    if (error) {
       return {
         success: false,
-        error: error?.message ?? 'Error al guardar la respuesta.',
+        error: error.message,
       };
     }
 
-    return { success: true, response: mapRSVPRowToRSVPResponse(data) };
+    return {
+      success: true,
+      response: {
+        id,
+        invitationId: input.invitationId,
+        name: input.name,
+        phone: input.phone,
+        attendance: input.attendance,
+        guestCount: input.guestCount,
+        message: input.message,
+        status: 'pending',
+        createdAt: now,
+        updatedAt: now,
+      },
+    };
   }
 
   async listByInvitationId(invitationId: string): Promise<RSVPResponse[]> {

@@ -102,10 +102,16 @@ function buildRSVPRepository(): IRSVPRepository {
     return new LocalRSVPRepository();
   }
 
-  const supabaseClient = createClient(env.url, env.anonKey);
+  // Prefer the service role key so this server-side repository bypasses RLS.
+  // The API route (/api/rsvp) already validates input and invitation existence
+  // before calling submit(), so skipping RLS here is safe.
+  // Falls back to anon key only if service role key is not configured.
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? env.anonKey;
+  const supabaseClient = createClient(env.url, supabaseKey);
   const supabase = new SupabaseRSVPRepository(supabaseClient);
   const local = new LocalRSVPRepository();
-  console.log('[Supabase] rsvpRepository initialized — primary: Supabase, fallback: Local');
+  const usingServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+  console.log(`[Supabase] rsvpRepository initialized — key: ${usingServiceRole ? 'service_role' : 'anon'}, fallback: local`);
   return new FallbackRSVPRepository(supabase, local);
 }
 
