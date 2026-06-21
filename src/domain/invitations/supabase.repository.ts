@@ -23,6 +23,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { IInvitationRepository, ActivateAfterPaymentInput, CreateFromPaidOrderInput, CreateFromPaidOrderResult } from '@/domain/invitations/repository.types';
 import type { FeatureOverrides } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
+import { buildDefaultInvitationContentForSupabase } from '@/domain/invitations/defaultContent';
 import type {
   InvitationContent,
   InvitationBasicInfoInput,
@@ -897,7 +898,7 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
         template_id:    'kompralo-master-wedding-v1',
         plan_id:        normalizePlanId(input.planId),
         status:         'paid',
-        theme_id:       'champagne',
+        theme_id:       'ivory-editorial',
         title:          'Mi invitación digital',
         subtitle:       '',
         customer_email: input.customerEmail,
@@ -914,29 +915,10 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
     const invitationId: string = invRow.id;
 
     // ── 2. Insert into invitation_content ────────────────────────────────────
+    const defaultContent = buildDefaultInvitationContentForSupabase(invitationId);
     const { error: contentError } = await this.supabase
       .from('invitation_content')
-      .insert({
-        invitation_id:        invitationId,
-        protagonists:         [],
-        event_time:           '',
-        location:             { venueName: '', address: '', googleMapsLink: '', wazeLink: '' },
-        hero:                 { emotionalPhrase: '', imageUrl: '', eventLabel: '' },
-        story:                { slides: [] },
-        gallery:              { images: [] },
-        timeline:             [],
-        itinerary:            [],
-        dress_code:           { type: '', description: '', suggestions: '' },
-        gift_registry:        { items: [] },
-        music:                { audioUrl: '' },
-        final_message:        { quote: '¡Los esperamos!' },
-        parents:              [],
-        padrinos:             [],
-        hotels:               [],
-        social:               { hashtag: '' },
-        rsvp_whatsapp_number: '',
-        updated_at:           now,
-      });
+      .insert(defaultContent);
 
     if (contentError) {
       throw new Error(`[Supabase] createFromPaidOrder: invitation_content insert failed — ${contentError.message}`);

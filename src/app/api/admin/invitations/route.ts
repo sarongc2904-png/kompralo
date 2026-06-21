@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminUserForApiRoute, createAdminAuditLog, generateUniqueSlug, isReservedSlug, publicUrl, editorUrl, clientDashboardUrl } from '@/lib/admin';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { buildDefaultInvitationContentForSupabase } from '@/domain/invitations/defaultContent';
 import { normalizePlanId } from '@/domain/plans/types';
 
 function err(msg: string, status = 400) {
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
       template_id:    'kompralo-master-wedding-v1',
       plan_id:        planId,
       status:         statusInput,
-      theme_id:       'champagne',
+      theme_id:       'ivory-editorial',
       title:          'Mi invitación digital',
       subtitle:       '',
       customer_email: customerEmail,
@@ -132,28 +133,9 @@ export async function POST(request: NextRequest) {
   if (invErr || !invRow) return err(`DB error (invitation): ${invErr?.message ?? 'no data'}`, 500);
   const invitationId: string = invRow.id;
 
-  // 2. Insert invitation_content
-  const { error: contentErr } = await svc.from('invitation_content').insert({
-    invitation_id:        invitationId,
-    protagonists:         [],
-    event_time:           '',
-    location:             { venueName: '', address: '', googleMapsLink: '', wazeLink: '' },
-    hero:                 { emotionalPhrase: '', imageUrl: '', eventLabel: '' },
-    story:                { slides: [] },
-    gallery:              { images: [] },
-    timeline:             [],
-    itinerary:            [],
-    dress_code:           { type: '', description: '', suggestions: '' },
-    gift_registry:        { items: [] },
-    music:                { audioUrl: '' },
-    final_message:        { quote: '¡Los esperamos!' },
-    parents:              [],
-    padrinos:             [],
-    hotels:               [],
-    social:               { hashtag: '' },
-    rsvp_whatsapp_number: '',
-    updated_at:           now,
-  });
+  // 2. Insert invitation_content with default content from final approved template
+  const defaultContent = buildDefaultInvitationContentForSupabase(invitationId);
+  const { error: contentErr } = await svc.from('invitation_content').insert(defaultContent);
 
   if (contentErr) return err(`DB error (content): ${contentErr.message}`, 500);
 

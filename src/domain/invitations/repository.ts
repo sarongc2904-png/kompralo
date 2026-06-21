@@ -5,6 +5,7 @@ import {
   baptismDemoInvitation,
 } from '@/domain/invitations/fixtures';
 import { normalizeInvitation } from '@/domain/invitations/adapters';
+import { buildDefaultInvitationContent } from '@/domain/invitations/defaultContent';
 import type {
   InvitationContent,
   InvitationBasicInfoInput,
@@ -498,45 +499,47 @@ class LocalInvitationRepository implements IInvitationRepository {
   }
 
   async createFromPaidOrder(input: CreateFromPaidOrderInput): Promise<CreateFromPaidOrderResult> {
-    const now = new Date().toISOString();
     const randomPart = Math.random().toString(36).slice(2, 8);
     const id = `auto-${Date.now().toString(36)}-${randomPart}`;
     const slug = `invitacion-${id}`;
 
+    // Build default content from the final approved template fixture
+    const defaultContent = buildDefaultInvitationContent();
+
     const invitation: InvitationContent = {
       id,
       slug,
-      category:    'wedding',
-      variant:     'couple',
-      templateId:  'kompralo-master-wedding-v1',
+      category:    defaultContent.category,
+      variant:     defaultContent.variant,
+      templateId:  defaultContent.templateId,
       planId:      input.planId,
       status:      'paid',
-      themeId:     'champagne',
-      featureOverrides: {},
-      title:       'Mi invitación digital',
-      subtitle:    '',
-      protagonists: [],
-      eventDate:   '',
-      eventTime:   '',
-      location:    { venueName: '', address: '', googleMapsLink: '', wazeLink: '' },
-      hero:        { emotionalPhrase: '', imageUrl: '', eventLabel: '' },
-      story:       { slides: [] },
-      gallery:     { images: [] },
-      timeline:    [],
-      itinerary:   [],
-      dressCode:   { type: '', description: '', suggestions: '' },
-      giftRegistry: { items: [] },
-      music:       { audioUrl: '' },
-      finalMessage: { quote: '¡Los esperamos!' },
-      parents:     [],
-      padrinos:    [],
-      hotels:      [],
-      social:      { hashtag: '' },
-      rsvpWhatsAppNumber: '',
-      createdAt:   now,
-      updatedAt:   now,
-      publishedAt: null,
-      rsvpMode:    'open',
+      themeId:     defaultContent.themeId, // ivory-editorial
+      featureOverrides: defaultContent.featureOverrides,
+      title:       defaultContent.title,
+      subtitle:    defaultContent.subtitle,
+      protagonists: defaultContent.protagonists,
+      eventDate:   defaultContent.eventDate,
+      eventTime:   defaultContent.eventTime,
+      location:    defaultContent.location,
+      hero:        defaultContent.hero,
+      story:       defaultContent.story,
+      gallery:     defaultContent.gallery,
+      timeline:    defaultContent.timeline,
+      itinerary:   defaultContent.itinerary,
+      dressCode:   defaultContent.dressCode,
+      giftRegistry: defaultContent.giftRegistry,
+      music:       defaultContent.music,
+      finalMessage: defaultContent.finalMessage,
+      parents:     defaultContent.parents,
+      padrinos:    defaultContent.padrinos,
+      hotels:      defaultContent.hotels,
+      social:      defaultContent.social,
+      rsvpWhatsAppNumber: defaultContent.rsvpWhatsAppNumber,
+      createdAt:   defaultContent.createdAt,
+      updatedAt:   defaultContent.updatedAt,
+      publishedAt: defaultContent.publishedAt,
+      rsvpMode:    defaultContent.rsvpMode,
     };
 
     localInvitations.push(invitation);
