@@ -3,6 +3,7 @@ import { rsvpRepository } from '@/domain/rsvp';
 import type { RSVPSubmissionInput } from '@/domain/rsvp';
 import { invitationRepository } from '@/domain/invitations';
 import { createRateLimiter } from '@/lib/rate-limit/in-memory';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 const rsvpRateLimit = createRateLimiter({ limit: 10, windowMs: 60_000 });
 
@@ -73,6 +74,28 @@ export async function POST(request: NextRequest) {
     return errorResponse('Invitación no encontrada.', 404);
   }
 
+  // Optional: host-assigned guest pass token validation
+  const guestPassToken = typeof data.guestPassToken === 'string' ? data.guestPassToken.trim() || undefined : undefined;
+  let guestPassRow: { id: string; allowed_guests: number } | null = null;
+
+  if (guestPassToken) {
+    const svc = createServiceRoleSupabaseClient();
+    const { data: gp } = await svc
+      .from('guest_passes')
+      .select('id, allowed_guests, invitation_id')
+      .eq('pass_token', guestPassToken)
+      .single();
+
+    if (!gp || gp.invitation_id !== invitationId) {
+      return errorResponse('Pase de invitado no válido.', 422);
+    }
+    // guestCount = companions; total = guestCount + 1. Must not exceed allowed_guests.
+    if (guestCount + 1 > gp.allowed_guests) {
+      return errorResponse(`Este pase permite un máximo de ${gp.allowed_guests} persona(s).`, 422);
+    }
+    guestPassRow = gp;
+  }
+
   const input: RSVPSubmissionInput = {
     invitationId,
     name,
@@ -86,6 +109,16 @@ export async function POST(request: NextRequest) {
 
   if (!result.success) {
     return errorResponse(result.error, 500);
+  }
+
+  // Link the RSVP response to the guest pass and update its status
+  if (guestPassRow && result.response?.id) {
+    const svc = createServiceRoleSupabaseClient();
+    const newStatus = attendance === 'no' ? 'declined' : 'confirmed';
+    await svc
+      .from('guest_passes')
+      .update({ rsvp_response_id: result.response.id, status: newStatus, updated_at: new Date().toISOString() })
+      .eq('id', guestPassRow.id);
   }
 
   const passToken = result.response.passToken;

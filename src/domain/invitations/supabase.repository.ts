@@ -59,6 +59,22 @@ function normalizeDateString(value: string | null | undefined): string {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseInvitationRow = Record<string, any>;
 
+// ─── Normalizers ─────────────────────────────────────────────────────────────
+
+// Handles both camelCase (imageUrl) and legacy snake_case (image_url) JSONB slide data.
+function normalizeStory(raw: Record<string, unknown> | null | undefined): { slides: { id: string; imageUrl: string; title: string; text: string; subtitle?: string; date?: string }[] } {
+  if (!raw || !Array.isArray((raw as Record<string, unknown>).slides)) return { slides: [] };
+  const slides = ((raw as Record<string, unknown>).slides as Record<string, unknown>[]).map((s) => ({
+    id:       String(s.id ?? crypto.randomUUID()),
+    title:    String(s.title ?? ''),
+    text:     String(s.text ?? ''),
+    imageUrl: String(s.imageUrl ?? s.image_url ?? ''),
+    ...(s.subtitle !== undefined ? { subtitle: String(s.subtitle) } : {}),
+    ...(s.date     !== undefined ? { date:     String(s.date) }     : {}),
+  }));
+  return { slides };
+}
+
 // ─── Adapter ─────────────────────────────────────────────────────────────────
 
 // PostgREST embedded join selector — fetches invitations + invitation_content in one round trip.
@@ -98,7 +114,7 @@ export function mapSupabaseInvitationToInvitationContent(
     eventTime: c.event_time ?? '',
     location: c.location,
     hero: c.hero,
-    story: c.story ?? { slides: [] },
+    story: normalizeStory(c.story),
     gallery: c.gallery ?? { images: [] },
     timeline: c.timeline ?? [],
     itinerary: c.itinerary ?? [],

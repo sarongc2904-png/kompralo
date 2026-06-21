@@ -3,9 +3,12 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import type { RSVPResponse } from '@/domain/rsvp/types';
+import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
 import ShareButtons from './ShareButtons';
 
+export const dynamic  = 'force-dynamic';
+export const revalidate = 0;
 export const metadata: Metadata = { title: 'Dashboard de invitación — Kompralo' };
 
 const T = {
@@ -103,7 +106,7 @@ function PageStyles() {
       }
 
       /* Desktop table */
-      .rsvp-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+      .rsvp-table { width: 100%; border-collapse: collapse; font-size: .875rem; table-layout: auto; }
       .rsvp-table th {
         padding: .75rem 1rem; text-align: left;
         font-size: .75rem; font-weight: 700;
@@ -118,6 +121,14 @@ function PageStyles() {
       .rsvp-table tr:last-child td { border-bottom: none; }
       .rsvp-table tr:hover td { background: rgba(234,215,163,0.12); }
 
+      /* Column width rules — applied to both th and td via class */
+      .rsvp-table .col-name  { min-width: 160px; max-width: 260px; white-space: normal; word-break: break-word; }
+      .rsvp-table .col-badge { white-space: nowrap; }
+      .rsvp-table .col-num   { width: 54px; text-align: center; white-space: nowrap; }
+      .rsvp-table .col-phone { white-space: nowrap; min-width: 100px; }
+      .rsvp-table .col-msg   { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .rsvp-table .col-pass  { white-space: nowrap; }
+
       @media (max-width: 767px) {
         .rsvp-table-wrap { display: none; }
         .rsvp-cards-wrap { display: block; }
@@ -125,6 +136,11 @@ function PageStyles() {
       @media (min-width: 768px) {
         .rsvp-table-wrap { display: block; }
         .rsvp-cards-wrap { display: none; }
+      }
+
+      /* Sticky sidebar — stays in view as the left column scrolls */
+      @media (min-width: 768px) {
+        .db-sidebar { position: sticky; top: 5rem; align-self: start; }
       }
     `}</style>
   );
@@ -312,6 +328,17 @@ export default async function InvitationDashboard({ params }: Props) {
       <div className="paper-noise" />
       <PageStyles />
 
+      {/* ── DEBUG BANNER — remove after visual confirmation ── */}
+      <div style={{
+        position: 'fixed', bottom: 12, right: 12, zIndex: 9999,
+        background: '#D32F2F', color: '#fff',
+        padding: '10px 16px', fontWeight: 800, fontSize: '.8rem',
+        borderRadius: '12px', boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+        pointerEvents: 'none', letterSpacing: '.04em',
+      }}>
+        DASHBOARD NUEVO ACTIVO — v2
+      </div>
+
       {/* Nav */}
       <nav style={{
         position: 'absolute', top: 0, left: 0, right: 0,
@@ -329,7 +356,7 @@ export default async function InvitationDashboard({ params }: Props) {
         </Link>
       </nav>
 
-      <div style={{ maxWidth: '900px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
+      <div style={{ maxWidth: '1100px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
 
         {/* ── Header ── */}
         <div style={{ marginBottom: '2rem' }}>
@@ -422,14 +449,13 @@ export default async function InvitationDashboard({ params }: Props) {
                   <table className="rsvp-table">
                     <thead>
                       <tr>
-                        <th>Nombre</th>
-                        <th>Asistencia</th>
-                        <th>Acomp.</th>
-                        <th>Personas</th>
-                        <th>Teléfono</th>
-                        <th>Mensaje</th>
-                        <th>Fecha</th>
-                        <th>Pase</th>
+                        <th className="col-name">Nombre</th>
+                        <th className="col-badge">Asistencia</th>
+                        <th className="col-num">Acomp.</th>
+                        <th className="col-num">Personas</th>
+                        <th className="col-phone">Teléfono</th>
+                        <th className="col-msg">Mensaje</th>
+                        <th className="col-pass">Pase</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -439,8 +465,8 @@ export default async function InvitationDashboard({ params }: Props) {
                         const ppl   = isAttending(r) ? vComp + 1 : 0;
                         return (
                           <tr key={r.id}>
-                            <td style={{ fontWeight: 600, color: T.dark }}>{r.name}</td>
-                            <td>
+                            <td className="col-name" style={{ fontWeight: 600, color: T.dark }}>{r.name}</td>
+                            <td className="col-badge">
                               <span style={{
                                 padding: '.2rem .625rem', borderRadius: '2rem',
                                 fontSize: '.75rem', fontWeight: 700,
@@ -451,18 +477,15 @@ export default async function InvitationDashboard({ params }: Props) {
                                 {attendanceLabels[r.attendance] ?? r.attendance}
                               </span>
                             </td>
-                            <td style={{ textAlign: 'center' }}>{vComp}</td>
-                            <td style={{ textAlign: 'center', fontWeight: 600, color: isAttending(r) ? '#238636' : T.light }}>
+                            <td className="col-num">{vComp}</td>
+                            <td className="col-num" style={{ fontWeight: 600, color: isAttending(r) ? '#238636' : T.light }}>
                               {ppl > 0 ? ppl : '—'}
                             </td>
-                            <td>{r.phone ?? '—'}</td>
-                            <td style={{ maxWidth: '180px', fontSize: '.8125rem', fontStyle: r.message ? 'italic' : 'normal', color: T.mid }}>
+                            <td className="col-phone">{r.phone ?? '—'}</td>
+                            <td className="col-msg" style={{ fontSize: '.8125rem', fontStyle: r.message ? 'italic' : 'normal', color: T.mid }}>
                               {r.message ? `"${r.message}"` : '—'}
                             </td>
-                            <td style={{ fontSize: '.75rem', whiteSpace: 'nowrap', color: T.light }}>
-                              {formatDateTime(r.createdAt)}
-                            </td>
-                            <td>
+                            <td className="col-pass">
                               {r.passToken ? (
                                 <a
                                   href={`${appUrl}/pass/${r.passToken}`}
@@ -497,10 +520,12 @@ export default async function InvitationDashboard({ params }: Props) {
                 </div>
               </>
             )}
+            {/* Guest passes section — inside left column so it scrolls with RSVP */}
+            <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} />
           </div>
 
           {/* Right sidebar: QR + share */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="db-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
 
             <div style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.25rem' }}>
