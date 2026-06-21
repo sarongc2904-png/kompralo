@@ -70,8 +70,11 @@ export async function GET(request: NextRequest) {
     }
     console.log('[authCallback] OTP verified type=%s → %s', type, next);
   } else {
-    console.warn('[authCallback] no code or token_hash has_type=%s', !!typeRaw);
-    return NextResponse.redirect(new URL('/login?error=invalid_link', request.url));
+    // No server-readable auth params — may be implicit flow (tokens in URL hash).
+    // The browser never sends hash fragments to the server, so we hand off to the
+    // client-side /auth/set-password page which reads window.location.hash.
+    console.warn('[authCallback] no code or token_hash — redirecting to set-password for client-side handling. has_type=%s', !!typeRaw);
+    return NextResponse.redirect(new URL('/auth/set-password', request.url));
   }
 
   return response;

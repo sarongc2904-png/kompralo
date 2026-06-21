@@ -135,7 +135,7 @@ export default function RsvpModeSelector({ invitationId, initialMode, publicUrl,
       {mode === 'passes_only' && (
         <div style={{ marginTop: '.875rem', padding: '.75rem 1rem', background: '#FCF8E3', border: '1px solid #EAD7A3', borderRadius: '.875rem' }}>
           <p style={{ margin: 0, fontSize: '.8125rem', color: T.mid, lineHeight: 1.55 }}>
-            <strong>Modo pases activo.</strong> La invitación pública no mostrará el formulario RSVP. Tus invitados confirmarán desde su pase personal. Crea los pases en la sección <strong>"Pases de entrada"</strong> debajo.
+            <strong>Modo pases activo.</strong> La invitación pública no mostrará el formulario RSVP. Tus invitados confirmarán desde su pase personal. Crea los pases en la sección <strong>&quot;Pases de entrada&quot;</strong> debajo.
           </p>
         </div>
       )}

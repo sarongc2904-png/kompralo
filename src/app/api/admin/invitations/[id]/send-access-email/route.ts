@@ -66,12 +66,11 @@ export async function POST(_req: NextRequest, { params }: RouteContext) {
     // Attempt to generate a Supabase invite link (non-fatal)
     let inviteUrl: string | null = null;
     try {
-      const callbackUrl = new URL('/auth/callback', appUrlObj);
-      callbackUrl.searchParams.set('next', '/auth/update-password');
+      const setPasswordUrl = new URL('/auth/set-password', appUrlObj);
       const { data: linkData } = await svc.auth.admin.generateLink({
         type: 'invite',
         email: emailTo,
-        options: { redirectTo: callbackUrl.toString() },
+        options: { redirectTo: setPasswordUrl.toString() },
       });
       inviteUrl = linkData?.properties?.action_link ?? null;
     } catch { /* non-fatal */ }

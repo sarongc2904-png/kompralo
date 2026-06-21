@@ -98,7 +98,25 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
     }
   }, [invitationId]);
 
-  useEffect(() => { fetchPasses(); }, [fetchPasses]);
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await fetch(`/api/invitations/${invitationId}/guest-passes`);
+        if (!res.ok) throw new Error('Error al cargar pases');
+        const json = await res.json() as { passes?: GuestPass[] };
+        if (!cancelled) setPasses(json.passes ?? []);
+      } catch {
+        if (!cancelled) setError('No se pudieron cargar los pases.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    void load();
+    return () => { cancelled = true; };
+  }, [invitationId]);
 
   // ESC to close modals
   useEffect(() => {

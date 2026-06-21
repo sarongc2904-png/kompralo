@@ -215,13 +215,12 @@ export async function POST(request: NextRequest) {
           // email+password to log in on subsequent visits.
           let inviteUrl: string | null = null;
           try {
-            const callbackUrl = new URL('/auth/callback', appUrl);
-            callbackUrl.searchParams.set('next', '/auth/update-password');
+            const setPasswordUrl = new URL('/auth/set-password', appUrl);
 
             const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
               type: 'invite',
               email: emailRecipient,
-              options: { redirectTo: callbackUrl.toString() },
+              options: { redirectTo: setPasswordUrl.toString() },
             });
 
             if (linkError) {
