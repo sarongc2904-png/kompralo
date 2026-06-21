@@ -204,8 +204,12 @@ export default async function EditInvitationPage({ params }: Props) {
 
         {/* ── 3. Protagonistas ────────────────────────────────────────────── */}
         <Section
-          title="Protagonistas"
-          hint="Los protagonistas aparecen en el hero, la intro cinemática y el mensaje final. Bodas: dos protagonistas. Bautizos y cumpleaños: uno."
+          title={invitation.category === 'wedding' ? 'Novios / Protagonistas' : 'Protagonistas'}
+          hint={
+            invitation.category === 'wedding'
+              ? 'Agrega los nombres de los novios. Estos datos aparecerán en la portada, la introducción y los mensajes principales de la invitación.'
+              : 'Agrega a la persona o personas principales del evento. Estos datos aparecerán en la portada, la introducción y los mensajes principales de la invitación.'
+          }
         >
           <ProtagonistsForm invitation={invitation} />
         </Section>

@@ -1,12 +1,70 @@
 'use client';
 
 import { useState } from 'react';
-import type { InvitationContent } from '@/domain/invitations';
+import type { InvitationContent, EventCategory } from '@/domain/invitations';
 import type { InvitationProtagonistInput } from '@/domain/invitations';
 import { updateInvitationProtagonists } from './actions';
 import { ImageUploadButton } from '@/components/dashboard/ImageUploadButton';
 import type { UpdateInvitationResult } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
+
+// ─── Context helpers ──────────────────────────────────────────────────────────
+
+function isWedding(category: EventCategory) {
+  return category === 'wedding';
+}
+
+function getCardLabel(category: EventCategory, index: number): string {
+  if (isWedding(category)) {
+    if (index === 0) return 'Novia';
+    if (index === 1) return 'Novio';
+    return 'Protagonista adicional';
+  }
+  if (index === 0) return 'Protagonista principal';
+  if (index === 1) return 'Protagonista 2';
+  return 'Protagonista adicional';
+}
+
+function getNamePlaceholder(index: number): string {
+  if (index === 0) return 'Ej: Sofía';
+  if (index === 1) return 'Ej: Alejandro';
+  return 'Ej: Nombre del protagonista';
+}
+
+function getRolePlaceholder(category: EventCategory, index: number): string {
+  if (isWedding(category)) {
+    if (index === 0) return 'Ej: Novia';
+    if (index === 1) return 'Ej: Novio';
+    return 'Ej: Familiar, Padrino, Madrina';
+  }
+  switch (category) {
+    case 'baptism':     return 'Ej: Bautizado, Madrina, Padrino';
+    case 'birthday':    return 'Ej: Festejado';
+    case 'baby-shower': return 'Ej: Mamá, Bebé, Familia';
+    default:            return 'Ej: Homenajeado, Festejado, Invitado especial';
+  }
+}
+
+function getFamilyLabelPlaceholder(category: EventCategory, index: number): string {
+  if (isWedding(category)) {
+    if (index === 0) return 'Ej: hija de la familia García';
+    if (index === 1) return 'Ej: hijo de la familia López';
+    return 'Ej: familiar o invitado especial';
+  }
+  return 'Ej: familia, papás o persona relacionada';
+}
+
+function getQuotePlaceholder(category: EventCategory): string {
+  if (isWedding(category)) return 'Ej: Juntos comienza nuestra historia.';
+  return 'Ej: Un día especial para celebrar juntos.';
+}
+
+function getAddButtonLabel(category: EventCategory, count: number): string {
+  if (isWedding(category)) {
+    return count < 2 ? '+ Agregar novio/novia' : '+ Agregar protagonista adicional';
+  }
+  return '+ Agregar protagonista';
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -80,6 +138,7 @@ function ProtagonistCard({
   protagonist,
   index,
   total,
+  category,
   invitationId,
   onChange,
   onMoveUp,
@@ -89,6 +148,7 @@ function ProtagonistCard({
   protagonist: InvitationProtagonistInput;
   index: number;
   total: number;
+  category: EventCategory;
   invitationId: string;
   onChange: (field: keyof InvitationProtagonistInput, value: string) => void;
   onMoveUp: () => void;
@@ -102,12 +162,18 @@ function ProtagonistCard({
     try { new URL(protagonist.imageUrl); return true; } catch { return false; }
   })();
 
+  const cardLabel       = getCardLabel(category, index);
+  const namePlaceholder = getNamePlaceholder(index);
+  const rolePlaceholder = getRolePlaceholder(category, index);
+  const familyPlaceholder = getFamilyLabelPlaceholder(category, index);
+  const quotePlaceholder  = getQuotePlaceholder(category);
+
   return (
     <div
       className="rounded-xl p-4"
       style={{ background: '#FAFAF8', border: '1px solid #E8E2DA' }}
     >
-      {/* Header row: avatar + number + controls */}
+      {/* Header row: avatar + label + controls */}
       <div className="flex items-center gap-3 mb-4">
         {/* Avatar preview */}
         <div
@@ -118,7 +184,7 @@ function ProtagonistCard({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={protagonist.imageUrl}
-              alt={protagonist.name || `Protagonista ${index + 1}`}
+              alt={protagonist.name || cardLabel}
               className="w-full h-full object-cover"
               onError={() => setImgError(true)}
             />
@@ -130,7 +196,7 @@ function ProtagonistCard({
         </div>
 
         <p className="flex-1 text-sm font-medium" style={{ color: '#1A1410' }}>
-          {protagonist.name || `Protagonista ${index + 1}`}
+          {protagonist.name || cardLabel}
         </p>
 
         {/* Order + delete controls */}
@@ -174,7 +240,7 @@ function ProtagonistCard({
           <InlineInput
             value={protagonist.name}
             onChange={(v) => { setImgError(false); onChange('name', v); }}
-            placeholder="Ej: Sofía"
+            placeholder={namePlaceholder}
           />
         </div>
         <div>
@@ -182,7 +248,7 @@ function ProtagonistCard({
           <InlineInput
             value={protagonist.role}
             onChange={(v) => onChange('role', v)}
-            placeholder="Ej: Novia, Homenajeada"
+            placeholder={rolePlaceholder}
           />
         </div>
         <div>
@@ -190,7 +256,7 @@ function ProtagonistCard({
           <InlineInput
             value={protagonist.familyLabel}
             onChange={(v) => onChange('familyLabel', v)}
-            placeholder="Ej: hija de…"
+            placeholder={familyPlaceholder}
           />
         </div>
         <div>
@@ -216,7 +282,7 @@ function ProtagonistCard({
           <InlineInput
             value={protagonist.quote}
             onChange={(v) => onChange('quote', v)}
-            placeholder={'Ej: “El amor es la respuesta.”'}
+            placeholder={quotePlaceholder}
           />
         </div>
       </div>
@@ -231,6 +297,8 @@ interface ProtagonistsFormProps {
 }
 
 export default function ProtagonistsForm({ invitation }: ProtagonistsFormProps) {
+  const category = invitation.category;
+
   const [protagonists, setProtagonists] = useState<InvitationProtagonistInput[]>(
     () => buildInitialProtagonists(invitation.protagonists),
   );
@@ -319,6 +387,7 @@ export default function ProtagonistsForm({ invitation }: ProtagonistsFormProps) 
             protagonist={p}
             index={i}
             total={protagonists.length}
+            category={category}
             invitationId={invitation.id}
             onChange={(field, value) => handleChange(i, field, value)}
             onMoveUp={() => handleMoveUp(i)}
@@ -336,7 +405,7 @@ export default function ProtagonistsForm({ invitation }: ProtagonistsFormProps) 
           className="px-4 py-2 rounded-lg text-sm transition-colors"
           style={{ background: '#F0EBE4', color: '#3D2B1A', border: '1px dashed #C5A880' }}
         >
-          + Agregar protagonista
+          {getAddButtonLabel(category, protagonists.length)}
         </button>
         <button
           type="submit"
@@ -344,7 +413,7 @@ export default function ProtagonistsForm({ invitation }: ProtagonistsFormProps) 
           className="px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity"
           style={{ background: '#1A1410', color: '#F5F3F0', opacity: isPending ? 0.6 : 1 }}
         >
-          {isPending ? 'Guardando…' : `Guardar protagonistas (${protagonists.length})`}
+          {isPending ? 'Guardando…' : `Guardar (${protagonists.length})`}
         </button>
       </div>
     </form>
