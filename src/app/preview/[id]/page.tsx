@@ -1,20 +1,21 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import InvitationRouteRenderer from '@/components/invitation/InvitationRouteRenderer';
+import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import {
-  invitationRepository,
   resolveInvitationContext,
   isPreviewableInvitationStatus,
   buildNoIndexMetadata,
 } from '@/domain/invitations';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 // Never cache the preview — always re-fetch so saved changes appear immediately.
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 interface PreviewInvitationPageProps {
-  params:       Promise<{ id: string }>;
-  searchParams: Promise<{ from?: string }>;
+  params:      Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string; themePreview?: string }>;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,15 +23,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PreviewInvitationPage({ params, searchParams }: PreviewInvitationPageProps) {
-  const { id }   = await params;
-  const { from } = await searchParams;
-  const isFromEditor = from === 'editor';
+  const { id }                    = await params;
+  const { from, themePreview }    = await searchParams;
+  const isFromEditor              = from === 'editor';
 
-  const invitation = await invitationRepository.getPreviewById(id);
-  console.log('[heroVideo/preview] hero:', JSON.stringify(invitation?.hero));
-  console.log('[heroVideo/preview] enabled:', invitation?.hero?.videoLibraryEnabled);
-  console.log('[heroVideo/preview] selectedVideoId:', invitation?.hero?.selectedVideoId);
-  console.log('[heroVideo/preview] url:', invitation?.hero?.videoLibraryUrl);
+  // Use service role so RLS does not block preview reads (editor-only route).
+  const repo       = new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
+  const invitation = await repo.getPreviewById(id);
+
+  console.log('[PreviewPage] id=%s found=%s status=%s',
+    id, !!invitation, invitation?.status ?? 'n/a');
 
   if (!invitation || !isPreviewableInvitationStatus(invitation.status)) {
     notFound();
@@ -40,7 +42,7 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
 
   return (
     <>
-      {/* Back-to-editor button — only when opened from the editor, never on public links */}
+      {/* Back-to-editor button — only when opened from the editor */}
       {isFromEditor && (
         <a
           href={`/dashboard/invitations/${invitation.id}/edit`}
@@ -64,6 +66,7 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
         features={features}
         mode="preview"
         showPreviewBadge={isFromEditor}
+        themePreviewId={themePreview}
       />
     </>
   );

@@ -2,16 +2,37 @@ import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import InvitationRouteRenderer from '@/components/invitation/InvitationRouteRenderer';
+import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import {
-  invitationRepository,
   resolveInvitationContext,
   isPublicInvitationStatus,
   buildInvitationMetadata,
 } from '@/domain/invitations';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+
+/**
+ * Service-role backed repository for public invitation reads.
+ * This is a Server Component file — the service role key never reaches the browser.
+ * Using service role bypasses RLS so public (paid/published) invitations are
+ * readable without requiring the anon role to have SELECT policies.
+ * Access control is enforced here: only paid/published + not-deleted are served.
+ */
+function createPublicRepo() {
+  return new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
+}
 
 export const getPublicInvitation = cache(async (slug: string) => {
-  const invitation = await invitationRepository.getBySlug(slug);
-  if (!invitation || !isPublicInvitationStatus(invitation.status)) return null;
+  const repo = createPublicRepo();
+  const invitation = await repo.getBySlug(slug);
+
+  console.log('[PublicInvitationRoute] slug=%s found=%s status=%s',
+    slug, !!invitation, invitation?.status ?? 'n/a');
+
+  if (!invitation) return null;
+  if (!isPublicInvitationStatus(invitation.status)) {
+    console.log('[PublicInvitationRoute] blocked — non-public status: %s', invitation.status);
+    return null;
+  }
   return invitation;
 });
 
