@@ -3052,3 +3052,171 @@ Convertir `/invitaciones` de catálogo visual a landing orientada a deseo, confi
 - `/sofia-y-alejandro`: HTTP 200; la ruta pública no se alteró.
 - Los tres planes conservan `CheckoutButton` con `productId` Basic, Premium y Deluxe.
 - Automatización visual por viewport: bloqueada por el entorno del navegador; se validaron breakpoints y contención responsive en código, sin afirmar inspección por captura.
+
+---
+
+## FASE EVENT-DASHBOARD-V2 — Dashboard de evento con passes y tabla RSVP
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+Refactorizar el dashboard del cliente para mostrar: listado de invitados con estado RSVP, sistema de pases de entrada con QR, StoryBook mejorado.
+
+### Archivos modificados
+
+- `src/app/cliente/invitaciones/[id]/page.tsx` — lógica de dashboard
+- `src/components/invitation/GuestPassSection.tsx` — QR pass
+- `src/components/invitation/StoryBook.tsx` — layout StoryBook
+
+### Cambios principales
+
+1. Guest passes: cada confirmación RSVP genera un pase con QR único para entrada al evento.
+2. Tabla RSVP muestra todos los confirmados con estado y fecha.
+3. StoryBook: fotos contenidas, sin sangrado al área de texto, layout responsive.
+4. QR modal: reemplaza sidebar siempre visible por modal contextual.
+5. Dashboard grid responsive: tarjeta QR no cubre la lista RSVP en móvil.
+
+### Validación
+
+- `npx tsc --noEmit`: OK
+- `npm run build`: OK
+- Commits: `82ea07e`, `c57d57b`, `f7785d8`, `f386b6c`, `841c883`, `c6357bd`, `e7d64b0`
+
+---
+
+## FASE RSVP-MODE-SELECTOR — Selector de modo RSVP por invitación
+
+Fecha: 2026-06-20
+
+### Objetivo
+
+Permitir al organizador elegir entre modo RSVP abierto (cualquiera puede confirmar) o solo-pases (acceso por pase previo). El modo se guarda en `InvitationContent.rsvpMode` y condiciona la UI de confirmación.
+
+### Archivos modificados
+
+- `src/domain/invitation/types.ts` — `rsvpMode: 'open' | 'passes_only'` en `InvitationContent`
+- `src/components/editor/RsvpModeSelector.tsx` (NUEVO) — control en el editor
+- `src/components/invitation/RsvpSection.tsx` — respeta `rsvpMode`
+- `src/lib/fixtures/*.ts` y `src/domain/invitations/repository.ts` — `rsvpMode: 'open'` añadido a todos los fixtures
+
+### Cambios principales
+
+1. `rsvpMode: 'open'` es el default para todas las invitaciones existentes.
+2. En modo `passes_only`, el formulario RSVP público se oculta; solo se puede confirmar con un pase válido.
+3. El editor muestra `RsvpModeSelector` dentro de las opciones del módulo RSVP.
+4. TypeScript: error por propiedad faltante en 4 fixtures + mock del repository corregido.
+
+### Validación
+
+- `npx tsc --noEmit`: OK
+- `npm run build`: OK
+- Commit: `e2fa8ee`
+
+---
+
+## FASE VISUAL-FIXES-MOBILE-CONTRAST — Timeline móvil, DressCode overflow, Modern Dark contrast
+
+Fecha: 2026-06-20
+
+### Problemas corregidos
+
+1. **Timeline móvil — línea conectora invisible**: div estático con `opacity: 0.35` casi invisible sobre fondo champagne.
+2. **DressCode — 7 swatches desbordan en móvil 360px**: `w-10 gap-4` = 376px mínimo, supera el viewport.
+3. **Modern Dark — texto invisible**: `theme.bodyText` era `text-[#1A1612]` (oscuro sobre oscuro), `textMuted` era `#555555` (demasiado oscuro), accent era blanco.
+
+### Archivos modificados
+
+- `src/components/invitation/Timeline.tsx`
+- `src/components/invitation/DressCode.tsx`
+- `src/domain/themes-v2/themes/modern-dark.ts`
+
+### Cambios principales
+
+**Timeline.tsx**
+- Línea conectora: `motion.div` animado con `scaleY: 0→1` en viewport, gradiente `var(--v2-color-accent)` → transparente, `opacity: 0.65`.
+- `h4` y `p` usan `color: var(--v2-color-text-primary/secondary, inherit)` en lugar de clases Tailwind del tema.
+- Mismo patrón aplicado a `DesktopItem`.
+
+**DressCode.tsx**
+- `flex-wrap gap-3` en el contenedor de swatches (antes `gap-4` sin wrap).
+- Swatches: `w-9 h-9 flex-shrink-0` (antes `w-10`).
+- Card: `overflow-hidden` para contener cualquier desbordamiento residual.
+- `h4` y `p` usan CSS vars en lugar de `theme.cardText`.
+
+**modern-dark.ts**
+- `textPrimary`: `#F8F4EA` (antes `#F5F5F5`)
+- `textSecondary`: `#D6D0C4` (antes `#A0A0A0`)
+- `textMuted`: `#BEB6A8` (antes `#555555` — demasiado oscuro)
+- `accent`: `#D8B76A` oro (antes `#F5F5F5` — blanco sin contraste sobre dark)
+- `accentSoft`, `border`, botones y CSS variables actualizados en consonancia.
+- `dressCodeSwatches`: paleta oscura + dorado + champagne.
+
+### Validación
+
+- `npx tsc --noEmit`: OK
+- `npm run build`: OK
+- Commit: `e57dd48`
+
+---
+
+## FASE SECURITY-PURCHASE-OWNERSHIP — Aislamiento de compras por usuario autenticado
+
+Fecha: 2026-06-20
+
+### Problema crítico
+
+Un usuario podía ver invitaciones de otro correo en `/cliente` porque el dashboard filtraba solo por `customer_email` de la sesión Auth, y el webhook nunca vinculaba `owner_user_id` porque checkout nunca enviaba el userId a Stripe.
+
+### Archivos modificados
+
+- `src/lib/stripe/createCheckoutSession.ts`
+- `src/app/api/checkout/route.ts`
+- `src/app/api/webhook/stripe/route.ts`
+- `src/domain/orders/types.ts`
+- `src/domain/orders/repository.types.ts`
+- `src/domain/orders/supabase.repository.ts`
+- `src/domain/invitations/repository.types.ts`
+- `src/domain/invitations/supabase.repository.ts`
+- `src/app/cliente/page.tsx`
+- `src/app/cliente/invitaciones/[id]/page.tsx`
+- `src/domain/invitations/repository.ts`
+- `src/app/api/admin/recover-purchase/route.ts` (NUEVO)
+
+### Cambios principales
+
+1. **Checkout**: lee `supabase.auth.getUser()` antes de crear la sesión Stripe; embebe `ownerUserId` y `ownerEmail` en `session.metadata`.
+2. **Webhook**: extrae `ownerUserId`/`ownerEmail` de metadata; usa `emailRecipient = ownerEmail ?? customerEmail` para todos los emails; pasa `ownerUserId` a `CreateOrderInput` y `createFromPaidOrder`.
+3. **Orders**: nueva columna `owner_user_id` en DB; `findByOwnerUserId(userId)` en repo y interfaz.
+4. **Invitations**: `createFromPaidOrder` escribe `user_id: ownerUserId ?? null`.
+5. **Dashboard `/cliente`**: busca órdenes por `owner_user_id` Y por `customer_email` en paralelo, deduplica por `order.id`.
+6. **Dashboard `/cliente/invitaciones/[id]`**: valida acceso por `inv.user_id === userId` OR `inv.customer_email === email` (ambos casos). Sin pre-filtro por email en query.
+7. **FallbackInvitationRepository**: deshabilitado en producción — evita que `getById` retorne demo data en prod.
+8. **Recovery endpoint** `POST /api/admin/recover-purchase`: requiere `x-admin-secret`; recibe `stripe_session_id`; crea orden + invitación si faltan; reenvía email con token de acceso e invite link.
+
+### Migraciones SQL aplicadas
+
+```sql
+-- Columna owner_user_id en orders
+ALTER TABLE orders ADD COLUMN owner_user_id UUID REFERENCES auth.users(id);
+
+-- FK de invitations.user_id migrada de public.users a auth.users
+ALTER TABLE invitations DROP CONSTRAINT invitations_user_id_fkey;
+ALTER TABLE invitations ADD CONSTRAINT invitations_user_id_fkey
+  FOREIGN KEY (user_id) REFERENCES auth.users(id);
+
+-- Backfill: 16 órdenes y 16 invitaciones vinculadas
+UPDATE orders SET owner_user_id = ... WHERE customer_email = 'sarongc2904@gmail.com';
+UPDATE invitations SET user_id = ... WHERE customer_email = 'sarongc2904@gmail.com';
+```
+
+### Contexto adicional
+
+- 3 órdenes anteriores (Jun 20, 00:20–01:02) no tienen email enviado — tabla `invitation_access_tokens` no existía aún. Recovery endpoint creado para re-procesar esas sesiones.
+- IDs de sesiones a recuperar: `cs_test_a1hR2UZw...`, `cs_test_a1p5MU...`, `cs_test_a1BJnMc...`.
+
+### Validación
+
+- `npx tsc --noEmit`: OK
+- `npm run build`: OK
+- Commit: `3dd4092`
