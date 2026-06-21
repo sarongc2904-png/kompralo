@@ -1,9 +1,9 @@
 const PLAN_ALIASES: Record<string, string> = {
   basic: 'basic',
-  premium: 'gold',
-  gold: 'gold',
-  deluxe: 'platinum',
-  platinum: 'platinum',
+  premium: 'premium',
+  gold: 'premium',
+  deluxe: 'deluxe',
+  platinum: 'deluxe',
 };
 
 function normalizePlanId(planId: string): string {

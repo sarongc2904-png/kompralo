@@ -22,6 +22,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { IInvitationRepository, ActivateAfterPaymentInput, CreateFromPaidOrderInput, CreateFromPaidOrderResult } from '@/domain/invitations/repository.types';
 import type { FeatureOverrides } from '@/domain/plans/types';
+import { normalizePlanId } from '@/domain/plans/types';
 import type {
   InvitationContent,
   InvitationBasicInfoInput,
@@ -98,7 +99,7 @@ export function mapSupabaseInvitationToInvitationContent(
     category: row.category,
     variant: row.variant,
     templateId: row.template_id,
-    planId: row.plan_id,
+    planId: normalizePlanId(row.plan_id),
     status: row.status,
     themeId: row.theme_id,
     title: row.title,
@@ -828,7 +829,7 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
     const { error: updateError } = await this.supabase
       .from('invitations')
       .update({
-        plan_id:    input.planId,
+        plan_id:    normalizePlanId(input.planId),
         status:     newStatus,
         updated_at: now,
       })
@@ -862,7 +863,7 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
         category:       'wedding',
         variant:        'couple',
         template_id:    'kompralo-master-wedding-v1',
-        plan_id:        input.planId,
+        plan_id:        normalizePlanId(input.planId),
         status:         'paid',
         theme_id:       'champagne',
         title:          'Mi invitación digital',

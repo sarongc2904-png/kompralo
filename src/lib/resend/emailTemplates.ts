@@ -1,10 +1,11 @@
 // Plain-HTML email templates — no Tailwind, no React, inline styles only.
 // Compatible with all major email clients (Gmail, Outlook, Apple Mail).
+import type { PlanId } from '@/domain/plans/types';
 
-const planLabels: Record<string, string> = {
+const planLabels: Record<PlanId, string> = {
   basic:    'Basic',
-  gold:     'Premium',
-  platinum: 'Deluxe',
+  premium:  'Premium',
+  deluxe:   'Deluxe',
 };
 
 function formatPrice(centavos: number, currency: string): string {
@@ -17,7 +18,7 @@ function formatPrice(centavos: number, currency: string): string {
 
 export interface OrderConfirmationParams {
   customerName?:   string | null;
-  planId:          string;
+  planId:          PlanId;
   amountTotal?:    number | null;
   currency?:       string | null;
   accessUrl:       string;
@@ -27,7 +28,7 @@ export interface OrderConfirmationParams {
 
 export interface PasswordSetupEmailParams {
   customerName?:  string | null;
-  planId:         string;
+  planId:         PlanId;
   amountTotal?:   number | null;
   currency?:      string | null;
   inviteUrl:      string;

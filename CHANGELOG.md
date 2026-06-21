@@ -5,6 +5,43 @@
 
 ---
 
+## FASE CANONICAL-PLAN-IDS-AUDIT — Basic, Premium y Deluxe como únicos planes persistidos
+
+Fecha: 2026-06-21
+
+### Objetivo
+
+Eliminar `gold` y `platinum` del dominio persistible, mantener compatibilidad de lectura con compras/invitaciones antiguas y evitar que un pago se pierda cuando Stripe no incluye metadata de plan válida.
+
+### Cambios
+
+- `PlanId` ahora acepta únicamente `basic`, `premium` y `deluxe`.
+- Los aliases heredados se normalizan solo al entrar al sistema: `gold → premium` y `platinum → deluxe`.
+- Checkout escribe metadata canónica `product_id` y `plan_id`; conserva temporalmente las claves camelCase con valores canónicos para despliegues escalonados.
+- Webhook y `recover-purchase` leen metadata nueva o heredada, normalizan aliases e infieren el plan por `amount_total` cuando el plan falta o es desconocido:
+  - `49900 → basic`
+  - `89900 → premium`
+  - `149900 → deluxe`
+- Si metadata y monto son irreconocibles, la compra se conserva como Basic para no otorgar permisos excesivos ni perder el pago; se registra un error explícito para revisión manual.
+- Catálogos, fixtures, permisos de features, emails, confirmación de compra y configuración del asistente usan los tres IDs canónicos.
+- La matriz de permisos del registro de features se alineó con los planes actuales; `showVideo` quedó registrado como feature Premium.
+- `supabase/canonical_plan_ids_migration.sql` convierte datos existentes, conserva evidencia de planes desconocidos en metadata de orders y reemplaza constraints para aceptar solo los tres IDs canónicos.
+- `schema.sql`, `orders.sql`, seeds y documentación activa fueron actualizados al catálogo actual.
+
+### Validación
+
+- `npx.cmd --no-install tsc --noEmit --incremental false`: OK.
+- ESLint dirigido a todos los archivos TypeScript modificados: OK.
+- `npm.cmd run build`: OK.
+- Resolución de planes: 7 casos verificados (aliases, tres montos, metadata desconocida y fallback seguro).
+- `npm.cmd run lint`: ejecutado; el lint global conserva 3 errores preexistentes en `GuestPassSection.tsx` y `RsvpModeSelector.tsx`, archivos no modificados por esta fase y fuera del alcance solicitado.
+
+### Requisito operativo
+
+Aplicar `supabase/canonical_plan_ids_migration.sql` en Supabase antes o junto con el despliegue de esta versión.
+
+---
+
 ## FASE FIX-RESET-PASSWORD-COMPLETE-FLOW — Reset password completo y login funcional
 
 Fecha: 2026-06-20

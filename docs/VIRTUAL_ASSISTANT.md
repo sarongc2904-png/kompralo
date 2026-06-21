@@ -49,7 +49,7 @@ DASHBOARD_ASSISTANT_ALLOWED_PLANS=premium,deluxe
 DASHBOARD_ASSISTANT_ALLOWED_PLANS=deluxe
 ```
 
-Compatibilidad actual: el dominio interno todavia usa `basic`, `gold` y `platinum`; el helper acepta tambien `premium` como alias de `gold` y `deluxe` como alias de `platinum`.
+El dominio interno usa exclusivamente `basic`, `premium` y `deluxe`. Los valores heredados `gold` y `platinum` solo se aceptan en fronteras de lectura y se normalizan a `premium` y `deluxe`; nunca se persisten.
 
 La decision real no usa email, tokens ni datos del cliente en el navegador. La ruta del dashboard lee el `planId` de la invitacion y pasa al componente cliente solo un boolean seguro: `enabledForPlan`.
 

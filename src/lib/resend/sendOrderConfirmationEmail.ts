@@ -1,10 +1,11 @@
 import { getResendClient, getFromEmail } from './resend';
 import { buildOrderConfirmationEmail, buildPasswordSetupEmail } from './emailTemplates';
+import type { PlanId } from '@/domain/plans/types';
 
 export interface SendOrderConfirmationEmailParams {
   to:              string;
   customerName?:   string | null;
-  planId:          string;
+  planId:          PlanId;
   planName?:       string | null;
   amountTotal?:    number | null;
   currency?:       string | null;

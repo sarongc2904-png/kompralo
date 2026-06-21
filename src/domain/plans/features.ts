@@ -66,11 +66,7 @@ export const deluxeFeatures: InvitationFeatures = {
 };
 
 // ─── Legacy aliases ───────────────────────────────────────────────────────────
-// gold → Premium, platinum → Deluxe.
-// These keep old invitations working correctly.
 
-export const goldFeatures     = premiumFeatures;
-export const platinumFeatures = deluxeFeatures;
 
 // ─── Merge helper ─────────────────────────────────────────────────────────────
 

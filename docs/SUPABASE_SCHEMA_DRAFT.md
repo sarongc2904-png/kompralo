@@ -55,7 +55,7 @@ create table invitations (
   category     text not null check (category in ('wedding','baptism','baby-shower','birthday')),
   variant      text not null default 'neutral',
   template_id  text not null,
-  plan_id      text not null check (plan_id in ('basic','gold','platinum')),
+  plan_id      text not null check (plan_id in ('basic','premium','deluxe')),
   status       text not null default 'draft'
                check (status in ('draft','preview','pending_payment','paid','published','archived','deleted')),
   theme_id     text not null default 'champagne',

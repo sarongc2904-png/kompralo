@@ -72,10 +72,10 @@ Esto inserta:
 
 | Slug | Categoría | Tema | Plan |
 |------|-----------|------|------|
-| `sofia-y-alejandro` | wedding | champagne | platinum |
-| `baby-shower-demo` | baby-shower | floral | platinum |
-| `birthday-demo` | birthday | azure | gold |
-| `baptism-demo` | baptism | azure | gold |
+| `sofia-y-alejandro` | wedding | champagne | deluxe |
+| `baby-shower-demo` | baby-shower | floral | deluxe |
+| `birthday-demo` | birthday | azure | premium |
+| `baptism-demo` | baptism | azure | premium |
 
 El seed es idempotente: si se corre más de una vez, `ON CONFLICT DO NOTHING` lo hace seguro.
 

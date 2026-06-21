@@ -1,5 +1,6 @@
 export type {
   PlanId,
+  LegacyPlanId,
   InvitationFeatureKey,
   InvitationFeatures,
   FeatureOverrides,
@@ -9,8 +10,8 @@ export type {
 export {
   disabledFeatures,
   basicFeatures,
-  goldFeatures,
-  platinumFeatures,
+  premiumFeatures,
+  deluxeFeatures,
   mergePlanFeatures,
 } from '@/domain/plans/features';
 
@@ -20,4 +21,11 @@ export {
   getPlanById,
   getFeaturesForPlan,
   availablePlans,
+  normalizePlanId,
 } from '@/domain/plans/registry';
+
+export {
+  parsePlanId,
+  inferPlanIdFromAmount,
+  resolvePurchasedPlanId,
+} from '@/domain/plans/types';

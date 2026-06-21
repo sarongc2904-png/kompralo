@@ -29,17 +29,22 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { IOrderRepository } from './repository.types';
 import type { Order, CreateOrderInput, OrderStatus } from './types';
 import type { Database } from '@/lib/supabase/types';
+import { parsePlanId, resolvePurchasedPlanId } from '@/domain/plans/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type OrderRow = Record<string, any>;
 
 function mapRow(row: OrderRow): Order {
+  const planResolution = resolvePurchasedPlanId(row.plan_id, row.amount_total);
+  if (planResolution.error) {
+    console.error('[Supabase] orders row %s has invalid plan data: %s', row.id, planResolution.error);
+  }
   return {
     id:                      row.id,
     stripeSessionId:         row.stripe_session_id,
     stripePaymentIntentId:   row.stripe_payment_intent_id ?? null,
     productId:               row.product_id,
-    planId:                  row.plan_id,
+    planId:                  planResolution.planId,
     amountTotal:             row.amount_total,
     currency:                row.currency,
     status:                  row.status,
@@ -58,13 +63,26 @@ export class SupabaseOrderRepository implements IOrderRepository {
   constructor(private readonly supabase: SupabaseClient<Database>) {}
 
   async create(input: CreateOrderInput): Promise<Order> {
+    const planId = parsePlanId(input.planId);
+    const productId = parsePlanId(input.productId);
+    if (!planId || !productId) {
+      throw new Error(
+        `[Supabase] orders.create rejected unknown plan/product: plan=${input.planId} product=${input.productId}`,
+      );
+    }
+    if (planId !== productId) {
+      throw new Error(
+        `[Supabase] orders.create rejected mismatched plan/product: plan=${planId} product=${productId}`,
+      );
+    }
+
     const { data, error } = await this.supabase
       .from('orders')
       .insert({
         stripe_session_id:        input.stripeSessionId,
         stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
-        product_id:               input.productId,
-        plan_id:                  input.planId,
+        product_id:               productId,
+        plan_id:                  planId,
         amount_total:             input.amountTotal,
         currency:                 input.currency,
         status:                   input.status,

@@ -14,8 +14,7 @@ import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repo
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { sendOrderConfirmationEmail } from '@/lib/resend';
 import { createInvitationAccessToken } from '@/lib/access/createInvitationAccessToken';
-import type { PlanId } from '@/domain/plans/types';
-import type { ProductId } from '@/domain/products/types';
+import { resolvePurchasedPlanId } from '@/domain/plans/types';
 
 function err(msg: string, status = 400) {
   return NextResponse.json({ success: false, error: msg }, { status });
@@ -56,13 +55,23 @@ export async function POST(request: NextRequest) {
 
   const customerEmail = session.customer_details?.email ?? null;
   const customerName  = session.customer_details?.name  ?? null;
-  const planId        = session.metadata?.planId as PlanId | undefined;
+  const rawPlanId     = session.metadata?.plan_id ?? session.metadata?.planId;
+  const planResolution = resolvePurchasedPlanId(rawPlanId, session.amount_total);
+  const planId        = planResolution.planId;
   const ownerUserId   = session.metadata?.ownerUserId ?? null;
   const ownerEmail    = session.metadata?.ownerEmail ?? customerEmail;
   const emailTo       = ownerEmail ?? customerEmail;
 
-  if (!planId)   return err('metadata.planId missing from Stripe session');
   if (!emailTo)  return err('No recipient email found in Stripe session');
+
+  if (planResolution.error) {
+    console.error(
+      '[recover-purchase] plan resolution warning — session=%s source=%s: %s',
+      stripeSessionId,
+      planResolution.source,
+      planResolution.error,
+    );
+  }
 
   // 2. Get or create order
   let order = await orderRepo.getBySessionId(stripeSessionId);
@@ -70,7 +79,7 @@ export async function POST(request: NextRequest) {
     order = await orderRepo.create({
       stripeSessionId,
       stripePaymentIntentId: typeof session.payment_intent === 'string' ? session.payment_intent : null,
-      productId: (session.metadata?.productId ?? 'unknown') as ProductId,
+      productId: planId,
       planId,
       amountTotal: session.amount_total ?? 0,
       currency: session.currency ?? 'mxn',

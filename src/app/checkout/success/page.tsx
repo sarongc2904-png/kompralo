@@ -64,7 +64,7 @@ function formatPrice(centavos:number, currency:string) {
   return new Intl.NumberFormat('es-MX',{ style:'currency', currency:currency.toUpperCase(), minimumFractionDigits:0 }).format(centavos/100);
 }
 
-const planLabels: Record<string,string> = { basic:'Basic', gold:'Premium', platinum:'Deluxe' };
+const planLabels: Record<string,string> = { basic:'Basic', premium:'Premium', deluxe:'Deluxe' };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 interface Props { searchParams: Promise<{ session_id?:string }>; }

@@ -6,7 +6,7 @@ export const baptismDemoInvitation: InvitationContent = {
   category: 'baptism',
   variant: 'girl',
   templateId: 'kompralo-master-baptism-v1',
-  planId: 'gold',
+  planId: 'premium',
   status: 'published',
   themeId: 'azure',
   featureOverrides: {

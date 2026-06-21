@@ -6,7 +6,7 @@ export const birthdayDemoInvitation: InvitationContent = {
   category: 'birthday',
   variant: 'woman',
   templateId: 'kompralo-master-birthday-v1',
-  planId: 'gold',
+  planId: 'premium',
   status: 'published',
   themeId: 'azure',
   featureOverrides: {

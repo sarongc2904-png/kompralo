@@ -24,7 +24,7 @@ import type {
   InvitationThemeSelectionInput,
 } from '@/domain/invitations/types';
 import type { IInvitationRepository, ActivateAfterPaymentInput, CreateFromPaidOrderInput, CreateFromPaidOrderResult } from '@/domain/invitations/repository.types';
-import type { FeatureOverrides, PlanId } from '@/domain/plans/types';
+import type { FeatureOverrides } from '@/domain/plans/types';
 import type { InvitationStatus } from '@/domain/invitations/status';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { tryGetSupabaseEnv } from '@/lib/supabase/env';
@@ -485,7 +485,7 @@ class LocalInvitationRepository implements IInvitationRepository {
       category:    'wedding',
       variant:     'couple',
       templateId:  'kompralo-master-wedding-v1',
-      planId:      input.planId as PlanId,
+      planId:      input.planId,
       status:      'paid',
       themeId:     'champagne',
       featureOverrides: {},

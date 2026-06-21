@@ -27,7 +27,7 @@ export interface ActivateAfterPaymentInput {
 }
 
 export interface CreateFromPaidOrderInput {
-  planId:          string;
+  planId:          PlanId;
   customerEmail:   string;
   customerName?:   string | null;
   stripeSessionId: string;

@@ -20,9 +20,10 @@ create table if not exists public.orders (
   stripe_payment_intent_id text,                          -- null until payment succeeds
 
   -- Product purchased
-  product_id               text not null,                 -- 'basic' | 'premium' | 'deluxe'
-  plan_id                  text not null                  -- 'basic' | 'gold' | 'platinum'
-                           check (plan_id in ('basic', 'gold', 'platinum')),
+  product_id               text not null                  -- 'basic' | 'premium' | 'deluxe'
+                           check (product_id in ('basic', 'premium', 'deluxe')),
+  plan_id                  text not null                  -- 'basic' | 'premium' | 'deluxe'
+                           check (plan_id in ('basic', 'premium', 'deluxe')),
 
   -- Optional FK to the invitation being purchased for.
   -- SET NULL on delete so orders are preserved even if the invitation is removed.
@@ -108,7 +109,7 @@ comment on table public.orders is
 comment on column public.orders.stripe_session_id        is 'Stripe cs_... session id. Unique constraint ensures webhook idempotency.';
 comment on column public.orders.stripe_payment_intent_id is 'Stripe pi_... id. Populated once checkout.session.completed fires.';
 comment on column public.orders.product_id               is 'Internal product id: basic | premium | deluxe.';
-comment on column public.orders.plan_id                  is 'Invitation plan unlocked by this purchase: basic | gold | platinum.';
+comment on column public.orders.plan_id                  is 'Invitation plan unlocked by this purchase: basic | premium | deluxe.';
 comment on column public.orders.invitation_id            is 'Optional FK — the invitation this purchase is associated with.';
 comment on column public.orders.amount_total             is 'Charged amount in smallest currency unit (centavos for MXN).';
 comment on column public.orders.status                   is 'pending | paid | failed | refunded. Updated by the Stripe webhook.';

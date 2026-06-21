@@ -6,7 +6,7 @@ export const sofiaAlejandroWeddingInvitation: InvitationContent = {
   category: 'wedding',
   variant: 'couple',
   templateId: 'kompralo-master-wedding-v1',
-  planId: 'platinum',
+  planId: 'deluxe',
   status: 'published',
   themeId: 'champagne',
   featureOverrides: {},

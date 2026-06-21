@@ -6,7 +6,7 @@ export const babyShowerDemoInvitation: InvitationContent = {
   category: 'baby-shower',
   variant: 'girl',
   templateId: 'kompralo-master-baby-shower-v1',
-  planId: 'platinum',
+  planId: 'deluxe',
   status: 'published',
   themeId: 'floral',
   featureOverrides: {

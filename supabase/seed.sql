@@ -40,7 +40,7 @@ insert into public.users (id, email, full_name, plan_id) values (
   '00000000-0000-0000-0000-000000000001',
   'demo@kompralo.mx',
   'Kompralo Demo',
-  'platinum'
+  'deluxe'
 ) on conflict (id) do nothing;
 
 -- ---------------------------------------------------------------------------
@@ -59,7 +59,7 @@ insert into public.invitations (
   '00000000-0000-0000-0000-000000000001',
   'sofia-y-alejandro',
   'wedding', 'couple', 'kompralo-master-wedding-v1',
-  'platinum', 'published', 'champagne',
+  'deluxe', 'published', 'champagne',
   'Sofía & Alejandro', 'Nuestra Boda',
   '2026-10-24T18:00:00',
   '2026-06-17T09:56:00-05:00',
@@ -109,7 +109,7 @@ insert into public.invitations (
   '00000000-0000-0000-0000-000000000001',
   'baby-shower-demo',
   'baby-shower', 'girl', 'kompralo-master-baby-shower-v1',
-  'platinum', 'published', 'floral',
+  'deluxe', 'published', 'floral',
   'Baby Shower de Valentina', 'Bienvenida al mundo',
   '2027-03-15T11:00:00',
   '2026-06-17T10:00:00-05:00',
@@ -159,7 +159,7 @@ insert into public.invitations (
   '00000000-0000-0000-0000-000000000001',
   'birthday-demo',
   'birthday', 'woman', 'kompralo-master-birthday-v1',
-  'gold', 'published', 'azure',
+  'premium', 'published', 'azure',
   'Cumpleaños de Isabella', '30 años',
   '2027-05-20T19:00:00',
   '2026-06-17T10:00:00-05:00',
@@ -209,7 +209,7 @@ insert into public.invitations (
   '00000000-0000-0000-0000-000000000001',
   'baptism-demo',
   'baptism', 'girl', 'kompralo-master-baptism-v1',
-  'gold', 'published', 'azure',
+  'premium', 'published', 'azure',
   'Bautizo de Emilia', 'Bienvenida a la fe',
   '2027-04-18T10:30:00',
   '2026-06-17T10:30:00-05:00',

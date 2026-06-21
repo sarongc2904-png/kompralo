@@ -32,8 +32,12 @@ export async function createCheckoutSession(
   }
 
   const metadata: Record<string, string> = {
-    productId: product.id,
-    planId:    product.planId,
+    product_id: product.id,
+    plan_id:    product.planId,
+    // Kept during rollout so an older webhook deployment can still consume
+    // sessions created by the new checkout. Values remain canonical.
+    productId:  product.id,
+    planId:     product.planId,
   };
 
   if (input.invitationId) {

@@ -32,7 +32,7 @@ create table if not exists public.users (
   full_name   text,
   phone       text,
   plan_id     text not null default 'basic'
-              check (plan_id in ('basic', 'gold', 'platinum')),
+              check (plan_id in ('basic', 'premium', 'deluxe')),
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
@@ -62,7 +62,7 @@ create table if not exists public.invitations (
                check (variant in ('couple', 'girl', 'boy', 'woman', 'man', 'neutral')),
   template_id  text not null,
   plan_id      text not null
-               check (plan_id in ('basic', 'gold', 'platinum')),
+               check (plan_id in ('basic', 'premium', 'deluxe')),
   status       text not null default 'draft'
                check (status in ('draft', 'preview', 'pending_payment', 'paid', 'published', 'archived', 'deleted')),
   theme_id     text not null default 'champagne',
@@ -318,7 +318,7 @@ create table if not exists public.payments (
   stripe_payment_intent_id  text unique,
   amount_cents              int not null check (amount_cents > 0),
   currency                  text not null default 'mxn',
-  plan_id                   text not null check (plan_id in ('basic', 'gold', 'platinum')),
+  plan_id                   text not null check (plan_id in ('basic', 'premium', 'deluxe')),
   status                    text not null default 'pending'
                             check (status in ('pending', 'completed', 'failed', 'refunded')),
   paid_at                   timestamptz,

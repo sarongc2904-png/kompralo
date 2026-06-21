@@ -1,9 +1,7 @@
 import {
   basicFeatures,
   deluxeFeatures,
-  goldFeatures,
   mergePlanFeatures,
-  platinumFeatures,
   premiumFeatures,
 } from '@/domain/plans/features';
 import type { FeatureOverrides, InvitationFeatures, InvitationPlan, PlanId } from '@/domain/plans/types';
@@ -30,24 +28,10 @@ export const plansById: Record<PlanId, InvitationPlan> = {
     description: 'Experiencia completa: StoryBook, línea del tiempo, padrinos, mesa de regalos, hospedaje e intro cinemática.',
     features: deluxeFeatures,
   },
-  // Legacy aliases — keep existing invitations working.
-  gold: {
-    id: 'gold',
-    name: 'Premium',
-    description: 'Todo Basic más música, galería, video de portada y código QR.',
-    features: goldFeatures,
-  },
-  platinum: {
-    id: 'platinum',
-    name: 'Deluxe',
-    description: 'Experiencia completa: StoryBook, línea del tiempo, padrinos, mesa de regalos, hospedaje e intro cinemática.',
-    features: platinumFeatures,
-  },
 };
 
 export function getPlanById(planId?: string | null): InvitationPlan {
-  if (!planId) return plansById[defaultPlanId];
-  return plansById[planId as PlanId] ?? plansById[defaultPlanId];
+  return plansById[normalizePlanId(planId)];
 }
 
 export function getFeaturesForPlan(

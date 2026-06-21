@@ -10,8 +10,8 @@ import { notifyPreviewRefresh } from './previewRefresh';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const PLAN_RANK: Record<PlanId, number> = { basic: 1, premium: 2, gold: 2, deluxe: 3, platinum: 3 };
-const PLAN_LABEL: Record<PlanId, string> = { basic: 'Basic', premium: 'Premium', gold: 'Premium', deluxe: 'Deluxe', platinum: 'Deluxe' };
+const PLAN_RANK: Record<PlanId, number> = { basic: 1, premium: 2, deluxe: 3 };
+const PLAN_LABEL: Record<PlanId, string> = { basic: 'Basic', premium: 'Premium', deluxe: 'Deluxe' };
 
 const CATEGORY_LABEL: Record<FeatureCategory, string> = {
   core:       'Esenciales',

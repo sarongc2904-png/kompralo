@@ -32,8 +32,8 @@ const STATUS_BADGE: Record<string, { label: string; bg: string; text: string }> 
 
 const PLAN_BADGE: Record<string, { bg: string; text: string }> = {
   basic:    { bg: '#F3F3F3', text: '#616161' },
-  gold:     { bg: '#FFF8E1', text: '#B8860B' },
-  platinum: { bg: '#EDE7F6', text: '#512DA8' },
+  premium:  { bg: '#FFF8E1', text: '#B8860B' },
+  deluxe:   { bg: '#EDE7F6', text: '#512DA8' },
 };
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
@@ -314,8 +314,8 @@ export default function FeaturesPage() {
         <Badge label="Cliente"      bg="#E8EAF6" text="#303F9F" />
         <Badge label="Admin"        bg="#E0F2F1" text="#00695C" />
         <Badge label="basic"        bg="#F3F3F3" text="#616161" />
-        <Badge label="gold"         bg="#FFF8E1" text="#B8860B" />
-        <Badge label="platinum"     bg="#EDE7F6" text="#512DA8" />
+        <Badge label="premium"      bg="#FFF8E1" text="#B8860B" />
+        <Badge label="deluxe"       bg="#EDE7F6" text="#512DA8" />
       </div>
 
       {/* ── Categories ─────────────────────────────────────────────────────── */}

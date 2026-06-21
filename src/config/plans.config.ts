@@ -20,6 +20,6 @@ export { mergePlanFeatures } from '@/domain/plans/features';
 
 export const planFeatures = {
   basic: plansById.basic.features,
-  gold: plansById.gold.features,
-  platinum: plansById.platinum.features,
+  premium: plansById.premium.features,
+  deluxe: plansById.deluxe.features,
 };

@@ -17,7 +17,7 @@ import { verifyWebhookSignature } from '@/lib/stripe';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import type { CreateOrderInput } from '@/domain/orders';
 import type { ProductId } from '@/domain/products';
-import type { PlanId } from '@/domain/plans/types';
+import { parsePlanId, resolvePurchasedPlanId } from '@/domain/plans/types';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { sendOrderConfirmationEmail } from '@/lib/resend';
@@ -48,12 +48,29 @@ export async function POST(request: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('[webhook/stripe] checkout.session.completed received — session=%s', session.id);
 
-        const productId = session.metadata?.productId as ProductId | undefined;
-        const planId    = session.metadata?.planId    as PlanId    | undefined;
+        const rawPlanId = session.metadata?.plan_id ?? session.metadata?.planId;
+        const planResolution = resolvePurchasedPlanId(rawPlanId, session.amount_total);
+        const planId = planResolution.planId;
+        if (planResolution.error) {
+          console.error(
+            '[webhook/stripe] plan resolution warning — session=%s source=%s: %s',
+            session.id,
+            planResolution.source,
+            planResolution.error,
+          );
+        }
 
-        if (!productId || !planId) {
-          // Session not from this app — ignore silently.
-          break;
+        const rawProductId = session.metadata?.product_id ?? session.metadata?.productId;
+        const metadataProductId = parsePlanId(rawProductId);
+        const productId: ProductId = planId;
+        if (!metadataProductId || metadataProductId !== planId) {
+          console.error(
+            '[webhook/stripe] missing/unknown/mismatched product metadata — session=%s product=%s plan=%s; using canonical product=%s',
+            session.id,
+            rawProductId ?? 'missing',
+            planId,
+            productId,
+          );
         }
 
         const invitationId    = session.metadata?.invitationId ?? null;
@@ -247,7 +264,8 @@ export async function POST(request: NextRequest) {
 
       case 'checkout.session.expired': {
         const session = event.data.object as Stripe.Checkout.Session;
-        if (!session.metadata?.productId) break;
+        const rawProductId = session.metadata?.product_id ?? session.metadata?.productId;
+        if (!rawProductId) break;
 
         const existing = await orderRepo.getBySessionId(session.id);
         if (existing && existing.status === 'pending') {

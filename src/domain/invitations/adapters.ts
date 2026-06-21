@@ -1,9 +1,9 @@
-import { defaultPlanId, getPlanById } from '@/domain/plans/registry';
+import { normalizePlanId } from '@/domain/plans/types';
 import { defaultThemeId, getThemeById } from '@/domain/themes/registry';
 import type { InvitationContent } from '@/domain/invitations/types';
 
 export function applyInvitationFallbacks(input: InvitationContent): InvitationContent {
-  const planId = getPlanById(input.planId).id ?? defaultPlanId;
+  const planId = normalizePlanId(input.planId);
   const themeId = getThemeById(input.themeId).id ?? defaultThemeId;
 
   return {

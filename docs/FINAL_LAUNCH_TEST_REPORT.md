@@ -215,14 +215,14 @@ Verificacion estatica:
 - `NEXT_PUBLIC_DASHBOARD_ASSISTANT_ENABLED` controla visibilidad cliente.
 - `DASHBOARD_ASSISTANT_ALLOWED_PLANS` se evalua server-side.
 - Aliases:
-  - `premium` -> `gold`
-  - `deluxe` -> `platinum`
+  - `gold` -> `premium` (solo alias heredado de lectura)
+  - `platinum` -> `deluxe` (solo alias heredado de lectura)
 - El editor pasa solo props seguras: `enabledByEnv`, `enabledForPlan`, `eventType`.
 - La llamada a `/api/assistant` no debe enviar `customerEmail` ni `invitationId`.
 
 Pendiente:
 
-- Validar desde navegador productivo con planes Basic, Premium/Gold y Deluxe/Platinum reales.
+- Validar desde navegador productivo con planes Basic, Premium y Deluxe reales.
 
 ## Rutas locales probadas
 

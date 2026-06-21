@@ -1,4 +1,5 @@
 import type { Product, ProductId } from './types';
+import { parsePlanId } from '@/domain/plans/types';
 
 export const productsById: Record<ProductId, Product> = {
   basic: {
@@ -56,5 +57,6 @@ export const productsById: Record<ProductId, Product> = {
 export const availableProducts = Object.values(productsById);
 
 export function getProductById(id: string): Product | null {
-  return productsById[id as ProductId] ?? null;
+  const canonicalId = parsePlanId(id);
+  return canonicalId ? productsById[canonicalId] : null;
 }
