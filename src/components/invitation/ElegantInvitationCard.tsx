@@ -5,29 +5,23 @@ import { motion } from 'framer-motion';
 
 // ─── Shared premium card design tokens ───────────────────────────────────────
 //
-// These values are the single source of truth for the warm ivory glass card
-// style used across all invitation sections. Inline styles are intentional
-// here to stay independent of theme CSS variables that may vary by theme,
-// while still respecting --v2 tokens when the ThemeProviderV2 is present.
+// Warm ivory glass card style used across all invitation sections.
+// Uses --v2 CSS custom properties with warm-ivory fallbacks.
 
-// NOTE: We intentionally use --v2-card-ivory-bg and --v2-card-radius here,
-// NOT --v2-glass-bg or --v2-radius-lg, because every theme overrides those
-// two with their own palette values. These new variables have no theme
-// definition yet, so the warm-ivory fallback is always applied.
 export const CARD_BASE: React.CSSProperties = {
   background:
-    'var(--v2-card-ivory-bg, linear-gradient(145deg, rgba(255,250,238,0.96), rgba(255,244,220,0.90)))',
-  backdropFilter: 'blur(10px) saturate(140%)',
-  WebkitBackdropFilter: 'blur(10px) saturate(140%)',
-  border: '1px solid var(--v2-card-border, rgba(212,175,95,0.38))',
-  borderRadius: 'var(--v2-card-radius, 28px)',
+    'var(--v2-card-ivory-bg, linear-gradient(152deg, rgba(255,251,242,0.97) 0%, rgba(253,245,229,0.93) 45%, rgba(247,235,210,0.90) 100%))',
+  backdropFilter: 'blur(14px) saturate(140%)',
+  WebkitBackdropFilter: 'blur(14px) saturate(140%)',
+  border: '1px solid var(--v2-card-border, rgba(200,167,93,0.35))',
+  borderRadius: 'var(--v2-card-radius, 24px)',
   boxShadow:
-    '0 18px 45px rgba(116,84,38,0.14), inset 0 1px 0 rgba(255,255,255,0.75)',
+    'var(--v2-shadow-card, 0 2px 6px rgba(116,84,38,0.06), 0 16px 40px rgba(120,88,40,0.13), inset 0 1px 0 rgba(255,255,255,0.85))',
   overflow: 'hidden',
   position: 'relative',
 };
 
-// Reusable top-gloss overlay — add as first child inside any card that wants it
+// Reusable top-gloss overlay — renders a subtle light-catch like fine paper
 export function CardGloss() {
   return (
     <div
@@ -35,8 +29,44 @@ export function CardGloss() {
       style={{
         position: 'absolute',
         top: 0, left: 0, right: 0,
-        height: '45%',
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, transparent 100%)',
+        height: '50%',
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.08) 40%, transparent 100%)',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    />
+  );
+}
+
+// Inner double border — letterpress-inspired luxury detail
+function InnerBorder() {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        inset: '6px',
+        borderRadius: 'calc(var(--v2-card-radius, 24px) - 4px)',
+        border: '1px solid var(--v2-color-border, rgba(200,167,93,0.20))',
+        pointerEvents: 'none',
+        zIndex: 1,
+        opacity: 0.5,
+      }}
+    />
+  );
+}
+
+// Linen paper texture overlay — very subtle grain
+function LinenTexture() {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        opacity: 0.04,
+        mixBlendMode: 'multiply',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         pointerEvents: 'none',
         zIndex: 0,
       }}
@@ -56,6 +86,8 @@ export interface ElegantInvitationCardProps {
   animateFrom?: AnimateFrom;
   /** Framer Motion delay in seconds. Default: 0. */
   animateDelay?: number;
+  /** Show inner double border. Default: true */
+  showInnerBorder?: boolean;
 }
 
 function buildInitial(from: AnimateFrom): Record<string, number> | undefined {
@@ -72,6 +104,7 @@ export default function ElegantInvitationCard({
   style,
   animateFrom = 'bottom',
   animateDelay = 0,
+  showInnerBorder = true,
 }: ElegantInvitationCardProps) {
   const initial     = buildInitial(animateFrom);
   const whileInView = initial ? { opacity: 1, x: 0, y: 0, scale: 1 } : undefined;
@@ -86,7 +119,11 @@ export default function ElegantInvitationCard({
       className={className}
       style={{ ...CARD_BASE, ...style }}
     >
+      <CardGloss />
+      <LinenTexture />
+      {showInnerBorder && <InnerBorder />}
       {children}
     </motion.div>
   );
 }
+

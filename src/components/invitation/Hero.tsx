@@ -171,13 +171,13 @@ export default function Hero({
         style={{
           y: gradientY,
           position: 'absolute', inset: 0,
-          background: `radial-gradient(circle at 50% 50%, rgba(196,169,98,0.10) 0%, transparent 60%), linear-gradient(
+          background: `radial-gradient(circle at 50% 45%, rgba(200,167,93,0.12) 0%, transparent 65%), linear-gradient(
             180deg,
-            rgba(13,10,7,0.22) 0%,
-            rgba(13,10,7,0.12) 30%,
-            rgba(13,10,7,0.16) 55%,
-            rgba(13,10,7,0.65) 82%,
-            rgba(13,10,7,0.90) 100%
+            rgba(31,26,22,0.35) 0%,
+            rgba(31,26,22,0.15) 35%,
+            rgba(31,26,22,0.20) 60%,
+            rgba(251,247,239,0.60) 85%,
+            var(--v2-background-main, #FBF7EF) 100%
           )`,
           willChange: 'transform',
         }}
@@ -201,10 +201,10 @@ export default function Hero({
         {/* Emotional phrase */}
         <motion.p
           initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 0.80, y: 0 }}
+          animate={{ opacity: 1.0, y: 0 }}
           transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`text-[10px] md:text-xs uppercase tracking-[0.28em] mb-5 text-center max-w-xs px-6 ${theme.bodyFont}`}
-          style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)', color: 'var(--v2-color-text-over-video, #F1E3C8)' }}
+          className={`text-xs md:text-sm font-semibold uppercase tracking-[0.28em] mb-5 text-center max-w-md px-6 ${theme.bodyFont}`}
+          style={{ textShadow: '0 2px 8px rgba(0,0,0,0.65)', color: '#FFFFFF' }}
         >
           {emotionalPhrase}
         </motion.p>
@@ -216,29 +216,37 @@ export default function Hero({
           transition={{ duration: 1.0, delay: 0.7 }}
           style={{
             width: 48, height: 1,
-            background: 'linear-gradient(90deg, transparent, var(--v2-color-accent, #E8D5A8), transparent)',
+            background: 'linear-gradient(90deg, transparent, var(--v2-color-accent, #C8A75D), transparent)',
             marginBottom: 28,
           }}
         />
 
         {/* Names */}
         <div
-          className="relative select-none px-6 py-8 md:px-12 md:py-10 mx-auto"
+          className="relative select-none px-8 py-10 md:px-14 md:py-12 mx-auto"
           style={{ overflow: 'visible', textAlign: 'center', lineHeight: 1.1 }}
         >
           {/* Sibling glass background to avoid clipping WebKit cursive text */}
           <div
             className="absolute inset-0 rounded-[2rem] md:rounded-[3rem] pointer-events-none"
             style={{
-              background: 'var(--v2-glass-bg, rgba(255, 255, 255, 0.05))',
-              backdropFilter: 'var(--v2-glass-blur, blur(16px))',
-              WebkitBackdropFilter: 'var(--v2-glass-blur, blur(16px))',
-              border: '1px solid var(--v2-glass-border, rgba(255, 255, 255, 0.12))',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              background: 'linear-gradient(152deg, rgba(255,251,242,0.18) 0%, rgba(253,245,229,0.12) 50%, rgba(247,235,210,0.06) 100%)',
+              backdropFilter: 'blur(20px) saturate(130%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(130%)',
+              border: '1px solid rgba(200, 167, 93, 0.22)',
+              boxShadow: '0 12px 40px rgba(116, 84, 38, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35)',
               zIndex: -1,
             }}
-          />
+          >
+            {/* Inner Border for the glass plate */}
+            <div
+              className="absolute inset-1.5 rounded-[1.6rem] md:rounded-[2.6rem] pointer-events-none"
+              style={{
+                border: '1px solid rgba(200, 167, 93, 0.14)',
+                opacity: 0.6,
+              }}
+            />
+          </div>
 
           <motion.span
             initial={{ opacity: 0, y: 22 }}
@@ -248,9 +256,9 @@ export default function Hero({
             style={{
               fontSize: 'clamp(3rem, 9vw, 5.5rem)',
               fontFamily: 'var(--v2-font-heading, inherit)',
-              textShadow: '0 2px 24px rgba(0,0,0,0.45), 0 0 40px rgba(196,169,98,0.3)',
+              textShadow: '0 2px 12px rgba(31,26,22,0.08), 0 8px 30px rgba(31,26,22,0.15)',
               overflow: 'visible',
-              color: 'var(--v2-color-text-over-video, #F1E3C8)',
+              color: 'var(--v2-color-text-primary, #1F1A16)',
             }}
           >
             {primaryName}
@@ -261,7 +269,7 @@ export default function Hero({
             animate={{ opacity: 0.9, scale: 1 }}
             transition={{ duration: 0.8, delay: 1.3, ease: [0.34, 1.56, 0.64, 1] }}
             className="block my-1"
-            style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', letterSpacing: '0.12em', color: 'var(--v2-color-accent, #C4A962)' }}
+            style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', letterSpacing: '0.12em', color: 'var(--v2-color-accent, #C8A75D)' }}
           >
             ♡
           </motion.span>
@@ -274,9 +282,9 @@ export default function Hero({
             style={{
               fontSize: 'clamp(3rem, 9vw, 5.5rem)',
               fontFamily: 'var(--v2-font-heading, inherit)',
-              textShadow: '0 2px 24px rgba(0,0,0,0.45), 0 0 40px rgba(196,169,98,0.3)',
+              textShadow: '0 2px 12px rgba(31,26,22,0.08), 0 8px 30px rgba(31,26,22,0.15)',
               overflow: 'visible',
-              color: 'var(--v2-color-text-over-video, #F1E3C8)',
+              color: 'var(--v2-color-text-primary, #1F1A16)',
             }}
           >
             {secondaryName}
@@ -291,14 +299,14 @@ export default function Hero({
           className="mt-6 text-center"
         >
           <p
-            className={`text-[9px] md:text-[10px] uppercase tracking-[0.32em] mb-1 ${theme.bodyFont}`}
-            style={{ color: 'var(--v2-color-text-over-video, #F1E3C8)', opacity: 0.6 }}
+            className={`text-[11px] md:text-xs font-semibold uppercase tracking-[0.25em] mb-1.5 ${theme.bodyFont}`}
+            style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}
           >
             {eventLabel}
           </p>
           <p
-            className={`text-[11px] md:text-xs tracking-[0.18em] ${theme.bodyFont}`}
-            style={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)', color: 'var(--v2-color-text-over-video, #F1E3C8)', opacity: 0.85 }}
+            className={`text-[14px] md:text-[16px] font-bold tracking-[0.12em] ${theme.bodyFont}`}
+            style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}
           >
             {formattedDate}
           </p>
@@ -307,16 +315,22 @@ export default function Hero({
         {/* Scroll hint */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={{ opacity: 1.0 }}
           transition={{ delay: 2.8, duration: 1 }}
-          className="mt-10 flex flex-col items-center gap-2"
+          className="mt-10 flex flex-col items-center gap-2 select-none"
         >
+          <span 
+            className={`text-[10px] font-semibold uppercase tracking-[0.3em] ${theme.bodyFont}`} 
+            style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
+          >
+            Deslizar
+          </span>
           <motion.div
-            animate={{ y: [0, 7, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
             style={{
-              width: 1, height: 36,
-              background: 'linear-gradient(180deg, transparent 0%, var(--v2-color-accent, rgba(196,169,98,0.7)) 100%)',
+              width: 1.5, height: 40,
+              background: 'linear-gradient(180deg, var(--v2-color-accent, #C8A75D) 0%, transparent 100%)',
             }}
           />
         </motion.div>

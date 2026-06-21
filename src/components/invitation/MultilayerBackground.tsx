@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+
 import { Theme } from '@/domain/themes/types';
 import { useThemeV2, resolveThemeBackgroundAssets } from '@/domain/themes-v2';
 import type { ThemeIdV2 } from '@/domain/themes-v2/types';
@@ -55,7 +55,7 @@ function FloatingHearts() {
       swayAmp: 18 + Math.random() * 28,
       swayFreq: 0.003 + Math.random() * 0.004,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      alpha: 0.06 + Math.random() * 0.14,
+      alpha: 0.03 + Math.random() * 0.05,
       rotation: Math.random() * Math.PI * 2,
       rotSpeed: (Math.random() - 0.5) * 0.008,
     }));
@@ -273,9 +273,214 @@ function FogLayers() {
   );
 }
 
+// ─── WATERMARK SEAMLESS BACKGROUND PATTERN ───────────────────────────────────
+function BackgroundPattern() {
+  return (
+    <div
+      className="absolute inset-0 opacity-[0.035] mix-blend-multiply pointer-events-none select-none z-[-15]"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M30,30 C45,15 55,15 70,30 C85,45 85,55 70,70 C55,85 45,85 30,70 C15,55 15,45 30,30 Z M90,90 C105,75 115,75 130,90' fill='none' stroke='%23C8A75D' stroke-width='0.5'/%3E%3Cpath d='M60,0 C65,15 75,25 90,30 M60,0 C55,15 45,25 30,30 M60,120 C65,105 75,95 90,90 M60,120 C55,105 45,95 30,90 M0,60 C15,65 25,75 30,90 M0,60 C15,55 25,45 30,30 M120,60 C105,65 95,75 90,90 M120,60 C105,55 95,45 90,30' fill='none' stroke='%23C8A75D' stroke-width='0.5'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+      }}
+    />
+  );
+}
+
+// ─── GOLDEN WEDDING RINGS WATERMARK ──────────────────────────────────────────
+function GoldenWeddingRings({ className, style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg
+      viewBox="0 0 200 120"
+      className={className}
+      style={{
+        width: '320px',
+        height: '200px',
+        color: 'var(--v2-color-accent, #C8A75D)',
+        ...style,
+      }}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="ringGold" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#DFBA73" />
+          <stop offset="50%" stopColor="#C8A75D" />
+          <stop offset="100%" stopColor="#9E7D3B" />
+        </linearGradient>
+        <filter id="ringGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      <g transform="rotate(-12 70 60)">
+        <circle cx="70" cy="60" r="42" stroke="url(#ringGold)" strokeWidth="5.5" filter="url(#ringGlow)" opacity="0.8" />
+        <circle cx="70" cy="60" r="42" stroke="#FFF" strokeWidth="1" opacity="0.3" />
+      </g>
+      <g transform="rotate(12 130 60)">
+        <circle cx="130" cy="60" r="42" stroke="url(#ringGold)" strokeWidth="5.5" filter="url(#ringGlow)" opacity="0.8" />
+        <circle cx="130" cy="60" r="42" stroke="#FFF" strokeWidth="1" opacity="0.3" />
+      </g>
+      <path d="M95,25 Q95,35 105,35 Q95,35 95,45 Q95,35 85,35 Q95,35 95,25 Z" fill="#FFF" opacity="0.9" />
+      <circle cx="95" cy="35" r="2" fill="#DFBA73" />
+      <path d="M145,85 Q145,92 152,92 Q145,92 145,99 Q145,92 138,92 Q145,92 145,85 Z" fill="#FFF" opacity="0.8" />
+      <path d="M50,80 Q50,85 55,85 Q50,85 50,90 Q50,85 45,85 Q50,85 50,80 Z" fill="#FFF" opacity="0.7" />
+    </svg>
+  );
+}
+
+// ─── GOLDEN FLORAL CORNER ORNAMENT ───────────────────────────────────────────
+function GoldenFloralCorner({ className, style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg
+      viewBox="0 0 150 150"
+      className={className}
+      style={{
+        width: '160px',
+        height: '160px',
+        color: 'var(--v2-color-accent, #C8A75D)',
+        ...style,
+      }}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="cornerGold" x1="0" y1="0" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#DFBA73" />
+          <stop offset="100%" stopColor="#A88744" />
+        </linearGradient>
+      </defs>
+      <path d="M10,140 L10,10 L140,10" stroke="url(#cornerGold)" strokeWidth="1" strokeDasharray="3 3" opacity="0.5" />
+      <path d="M20,130 C20,60 60,20 130,20" stroke="url(#cornerGold)" strokeWidth="1.5" opacity="0.6" />
+      <path d="M30,120 C30,70 70,30 120,30" stroke="url(#cornerGold)" strokeWidth="0.8" opacity="0.4" />
+      
+      <g transform="translate(25, 25)" stroke="url(#cornerGold)" strokeWidth="1.5">
+        <circle cx="0" cy="0" r="14" strokeWidth="1" fill="rgba(255,250,238,0.7)" />
+        <path d="M-8,-8 C-4,-14 4,-14 8,-8" fill="none" />
+        <path d="M8,-8 C14,-4 14,4 8,8" fill="none" />
+        <path d="M8,8 C4,14 -4,14 -8,8" fill="none" />
+        <path d="M-8,8 C-14,4 -14,-4 -8,-8" fill="none" />
+        <circle cx="0" cy="0" r="6" fill="none" />
+        <path d="M-2,-2 C0,-4 2,-4 2,-2 C2,0 0,2 -2,2" fill="none" />
+      </g>
+      
+      <g transform="translate(75, 20) scale(0.7)" stroke="url(#cornerGold)" strokeWidth="1.2">
+        <circle cx="0" cy="0" r="10" fill="rgba(255,250,238,0.5)" />
+        <path d="M-6,-6 C-3,-10 3,-10 6,-6 C10,-3 10,3 6,6 C3,10 -3,10 -6,6 C-10,3 -10,-3 -6,-6 Z" fill="none" />
+      </g>
+      
+      <g transform="translate(20, 75) scale(0.7)" stroke="url(#cornerGold)" strokeWidth="1.2">
+        <circle cx="0" cy="0" r="10" fill="rgba(255,250,238,0.5)" />
+        <path d="M-6,-6 C-3,-10 3,-10 6,-6 C10,-3 10,3 6,6 C3,10 -3,10 -6,6 C-10,3 -10,-3 -6,-6 Z" fill="none" />
+      </g>
+      
+      <path d="M25,39 C25,60 40,80 60,90" stroke="url(#cornerGold)" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
+      <path d="M39,25 C60,25 80,40 90,60" stroke="url(#cornerGold)" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
+      
+      <path d="M60,90 C62,82 70,80 75,85 C70,90 65,92 60,90 Z" fill="url(#cornerGold)" opacity="0.7" />
+      <path d="M90,60 C82,62 80,70 85,75 C90,70 92,65 90,60 Z" fill="url(#cornerGold)" opacity="0.7" />
+      <path d="M110,15 C115,10 125,12 130,8" stroke="url(#cornerGold)" strokeWidth="1" opacity="0.6" />
+      <path d="M15,110 C10,115 12,125 8,130" stroke="url(#cornerGold)" strokeWidth="1" opacity="0.6" />
+    </svg>
+  );
+}
+
+// ─── GOLDEN LAUREL/OLIVE BRANCH ORNAMENT ─────────────────────────────────────
+function GoldenBranch({ className, style, flipped = false }: { className?: string; style?: React.CSSProperties; flipped?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 100 200"
+      className={className}
+      style={{
+        width: '100px',
+        height: '200px',
+        color: 'var(--v2-color-accent, #C8A75D)',
+        transform: flipped ? 'scaleX(-1)' : undefined,
+        ...style,
+      }}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="branchGold" x1="0" y1="0" x2="100" y2="200" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#DFBA73" />
+          <stop offset="100%" stopColor="#9E7D3B" />
+        </linearGradient>
+      </defs>
+      <path d="M15,190 Q30,120 20,10 Q25,80 60,40" stroke="url(#branchGold)" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+      
+      <path d="M19,160 C25,155 35,158 38,152 C32,158 25,162 19,160 Z" fill="url(#branchGold)" opacity="0.6" />
+      <path d="M19,160 C12,158 5,162 2,156 C8,154 15,157 19,160 Z" fill="url(#branchGold)" opacity="0.6" />
+      
+      <path d="M22,125 C30,118 42,120 45,112 C38,120 30,125 22,125 Z" fill="url(#branchGold)" opacity="0.7" />
+      <path d="M22,125 C14,121 6,128 2,122 C9,118 16,121 22,125 Z" fill="url(#branchGold)" opacity="0.6" />
+      
+      <path d="M22,90 C32,82 42,85 46,78 C38,85 30,90 22,90 Z" fill="url(#branchGold)" opacity="0.7" />
+      <path d="M22,90 C14,85 8,92 3,86 C10,82 17,85 22,90 Z" fill="url(#branchGold)" opacity="0.6" />
+      
+      <path d="M20,55 C30,47 38,50 42,42 C34,50 28,55 20,55 Z" fill="url(#branchGold)" opacity="0.8" />
+      <path d="M20,55 C12,50 8,57 2,51 C9,48 15,51 20,55 Z" fill="url(#branchGold)" opacity="0.7" />
+      
+      <path d="M20,10 C24,5 23,-5 19,-8 C15,-4 16,5 20,10 Z" fill="url(#branchGold)" opacity="0.8" />
+      
+      <circle cx="45" cy="112" r="1.5" fill="#FFF" opacity="0.7" />
+      <circle cx="5" cy="51" r="1" fill="#FFF" opacity="0.6" />
+    </svg>
+  );
+}
+
+// ─── FLORAL SILHOUETTE OVERLAY ────────────────────────────────────────────────
+function FloralOverlay({ className, style, position = 'top-left' }: { className?: string; style?: React.CSSProperties; position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' }) {
+  let transform = '';
+  if (position === 'top-right') transform = 'scaleX(-1)';
+  else if (position === 'bottom-left') transform = 'scaleY(-1)';
+  else if (position === 'bottom-right') transform = 'scale(-1)';
+
+  return (
+    <svg
+      viewBox="0 0 200 200"
+      className={className}
+      style={{
+        width: '280px',
+        height: '280px',
+        color: 'var(--v2-color-accent, #C8A75D)',
+        transform,
+        opacity: 0.15,
+        ...style,
+      }}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M0,0 C40,10 70,30 90,60 C100,80 90,110 70,120 C50,130 20,110 10,80 C5,60 15,30 0,0 Z" fill="rgba(200, 167, 93, 0.035)" />
+      <circle cx="50" cy="50" r="12" stroke="currentColor" strokeWidth="1.2" />
+      <circle cx="50" cy="50" r="6" stroke="currentColor" strokeWidth="0.8" strokeDasharray="2 2" />
+      
+      <path d="M50,38 C56,26 68,26 74,38" stroke="currentColor" strokeWidth="1" fill="rgba(255,250,238,0.3)" />
+      <path d="M62,50 C74,56 74,68 62,74" stroke="currentColor" strokeWidth="1" fill="rgba(255,250,238,0.3)" />
+      <path d="M50,62 C44,74 32,74 26,62" stroke="currentColor" strokeWidth="1" fill="rgba(255,250,238,0.3)" />
+      <path d="M38,50 C26,44 26,32 38,26" stroke="currentColor" strokeWidth="1" fill="rgba(255,250,238,0.3)" />
+      
+      <path d="M58,42 C68,34 76,42 68,52" stroke="currentColor" strokeWidth="0.8" />
+      <path d="M58,58 C68,68 76,58 68,48" stroke="currentColor" strokeWidth="0.8" />
+      <path d="M42,58 C32,68 24,58 32,48" stroke="currentColor" strokeWidth="0.8" />
+      <path d="M42,42 C32,34 24,42 32,52" stroke="currentColor" strokeWidth="0.8" />
+      
+      <path d="M50,62 C60,90 90,110 120,110" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M62,50 C90,60 110,90 110,120" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      
+      <path d="M90,85 C100,80 115,82 120,75 C112,85 100,90 90,85 Z" fill="currentColor" opacity="0.4" />
+      <path d="M90,85 C80,95 82,110 75,115 C85,107 90,95 90,85 Z" fill="currentColor" opacity="0.4" />
+      <path d="M105,100 C115,95 130,97 135,90 C127,100 115,105 105,100 Z" fill="currentColor" opacity="0.3" />
+      
+      <path d="M120,110 C125,105 132,105 135,110 C132,115 125,115 120,110 Z" fill="currentColor" opacity="0.5" />
+      <path d="M135,110 L145,110" stroke="currentColor" strokeWidth="0.8" />
+      
+      <path d="M20,80 A50,50 0 0,0 80,140" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1 4" />
+      <path d="M30,90 A40,40 0 0,0 90,150" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1 4" />
+    </svg>
+  );
+}
+
 // ─── V2 LAYER CONTENT ─────────────────────────────────────────────────────────
-// Returns JSX for each parallax depth layer keyed by V2 theme ID.
-// Only the asset source and blend-mode change per theme; positions/sizes are unchanged.
 function buildLayerContent(
   themeId: ThemeIdV2,
   assets: ThemeBackgroundAssets
@@ -284,15 +489,12 @@ function buildLayerContent(
   switch (themeId) {
 
     case 'luxury-gold':
-      // Pastel light theme — layer images designed for dark bg; render empty to keep background clean
       return { layer1: <></>, layer2: <></>, layer3: <></> };
 
     case 'modern-dark':
-      // Pastel light theme — layer images designed for dark bg; render empty to keep background clean
       return { layer1: <></>, layer2: <></>, layer3: <></> };
 
     case 'floral':
-      // Blush botanical — multiply blend for soft petal depth
       return {
         layer1: (
           <>
@@ -333,7 +535,6 @@ function buildLayerContent(
     case 'ivory-editorial':
     case 'editorial':
     default:
-      // Warm ivory/champagne — multiply blend for elegant paper layering
       return {
         layer1: (
           <>
@@ -343,32 +544,71 @@ function buildLayerContent(
               <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
                 style={{ top: '190vh', right: '-6vw', width: '54vw', maxWidth: '640px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'rotate(180deg) scaleX(-1)' }} />
             </div>
-            <div className="absolute w-full" style={{ top: '350vh', height: '550vh' }}>
+            <div className="absolute w-full" style={{ top: '350vh', height: '650vh' }}>
               <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
                 style={{ top: '60vh', left: '-5vw', width: '52vw', maxWidth: '620px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'scaleX(-1) rotate(15deg)' }} />
               <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '290vh', right: '-5vw', width: '50vw', maxWidth: '600px', mixBlendMode: 'multiply', opacity: 0.20, transform: 'rotate(-20deg)' }} />
+                style={{ top: '320vh', right: '-5vw', width: '50vw', maxWidth: '600px', mixBlendMode: 'multiply', opacity: 0.20, transform: 'rotate(-20deg)' }} />
+            </div>
+
+            {/* Centered Golden Wedding Rings watermarks in background layer 1 (slow parallax) */}
+            <div className="absolute inset-0 w-full pointer-events-none select-none" style={{ height: '1000vh' }}>
+              <GoldenWeddingRings
+                className="absolute left-1/2 -translate-x-1/2 opacity-[0.05] md:opacity-[0.07]"
+                style={{ top: '130vh' }}
+              />
+              <GoldenWeddingRings
+                className="absolute left-1/2 -translate-x-1/2 opacity-[0.05] md:opacity-[0.07]"
+                style={{ top: '440vh' }}
+              />
+              <GoldenWeddingRings
+                className="absolute left-1/2 -translate-x-1/2 opacity-[0.05] md:opacity-[0.07]"
+                style={{ top: '760vh' }}
+              />
+
+              {/* Large soft floral overlays in background */}
+              <FloralOverlay className="absolute left-[2vw] opacity-[0.035]" style={{ top: '70vh' }} position="top-left" />
+              <FloralOverlay className="absolute right-[2vw] opacity-[0.025]" style={{ top: '280vh' }} position="top-right" />
+              <FloralOverlay className="absolute left-[3vw] opacity-[0.03]" style={{ top: '600vh' }} position="bottom-left" />
+              <FloralOverlay className="absolute right-[2vw] opacity-[0.02]" style={{ top: '880vh' }} position="bottom-right" />
             </div>
           </>
         ),
         layer2: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
+          <div className="absolute inset-0 w-full pointer-events-none select-none" style={{ height: '1000vh' }}>
             <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
               style={{ top: '40vh', right: '2vw', width: '38vw', maxWidth: '440px', mixBlendMode: 'multiply', opacity: 0.38 }} />
             <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '320vh', left: '3vw', width: '34vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.30, transform: 'scaleX(-1) rotate(-10deg)' }} />
+              style={{ top: '340vh', left: '3vw', width: '34vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.30, transform: 'scaleX(-1) rotate(-10deg)' }} />
             <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '640vh', right: '4vw', width: '36vw', maxWidth: '420px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'rotate(15deg)' }} />
+              style={{ top: '680vh', right: '4vw', width: '36vw', maxWidth: '420px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'rotate(15deg)' }} />
+
+            {/* Alternating Golden Laurel Branches along the sides in layer 2 */}
+            <GoldenBranch className="absolute left-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '90vh' }} />
+            <GoldenBranch className="absolute right-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '200vh' }} flipped />
+            <GoldenBranch className="absolute left-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '310vh' }} flipped />
+            <GoldenBranch className="absolute right-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '450vh' }} />
+            <GoldenBranch className="absolute left-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '580vh' }} />
+            <GoldenBranch className="absolute right-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '700vh' }} flipped />
+            <GoldenBranch className="absolute left-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '820vh' }} />
+            <GoldenBranch className="absolute right-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '930vh' }} flipped />
+
+            {/* Golden Floral Corners to frame major transitions */}
+            <GoldenFloralCorner className="absolute left-0 opacity-[0.18]" style={{ top: '10vh' }} />
+            <GoldenFloralCorner className="absolute right-0 opacity-[0.18]" style={{ top: '10vh', transform: 'scaleX(-1)' }} />
+            <GoldenFloralCorner className="absolute left-0 opacity-[0.12]" style={{ top: '260vh' }} />
+            <GoldenFloralCorner className="absolute right-0 opacity-[0.12]" style={{ top: '510vh', transform: 'scaleX(-1)' }} />
+            <GoldenFloralCorner className="absolute left-0 opacity-[0.15]" style={{ top: '800vh' }} />
           </div>
         ),
         layer3: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
+          <div className="absolute inset-0 w-full pointer-events-none select-none" style={{ height: '1000vh' }}>
             <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_10s_ease-in-out_infinite]"
               style={{ top: '70vh', left: '8vw', width: '42vw', maxWidth: '500px', mixBlendMode: 'multiply', opacity: 0.26 }} />
             <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_8s_ease-in-out_infinite_1.5s]"
-              style={{ top: '380vh', right: '6vw', width: '40vw', maxWidth: '480px', mixBlendMode: 'multiply', opacity: 0.22, transform: 'scaleX(-1)' }} />
+              style={{ top: '400vh', right: '6vw', width: '40vw', maxWidth: '480px', mixBlendMode: 'multiply', opacity: 0.22, transform: 'scaleX(-1)' }} />
             <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_12s_ease-in-out_infinite_3s]"
-              style={{ top: '720vh', left: '12vw', width: '38vw', maxWidth: '460px', mixBlendMode: 'multiply', opacity: 0.18, transform: 'rotate(10deg)' }} />
+              style={{ top: '760vh', left: '12vw', width: '38vw', maxWidth: '460px', mixBlendMode: 'multiply', opacity: 0.18, transform: 'rotate(10deg)' }} />
           </div>
         ),
       };
@@ -382,80 +622,11 @@ interface MultilayerBackgroundProps {
 }
 
 export default function MultilayerBackground({ theme }: MultilayerBackgroundProps) {
-  // V2 theme — available because MultilayerBackground renders inside ThemeProviderV2
   const themeV2 = useThemeV2();
   const bgAssets = resolveThemeBackgroundAssets(themeV2);
   const layerContent = buildLayerContent(themeV2.id, bgAssets);
 
-  const [isMobile, setIsMobile] = useState(true);
 
-  // Scroll tracking
-  const { scrollY } = useScroll();
-
-  // Mouse position tracking (for 3D mouse parallax on desktop)
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Springs for smooth cursor tracking
-  const springConfig = { damping: 30, stiffness: 120 };
-  const mouseXSpring = useSpring(mouseX, springConfig);
-  const mouseYSpring = useSpring(mouseY, springConfig);
-
-  // Mouse offsets for different layers
-  const mouseXOffset1 = useTransform(mouseXSpring, [-0.5, 0.5], [-15, 15]);
-  const mouseYOffset1 = useTransform(mouseYSpring, [-0.5, 0.5], [-15, 15]);
-
-  const mouseXOffset2 = useTransform(mouseXSpring, [-0.5, 0.5], [-35, 35]);
-  const mouseYOffset2 = useTransform(mouseYSpring, [-0.5, 0.5], [-35, 35]);
-
-  const mouseXOffset3 = useTransform(mouseXSpring, [-0.5, 0.5], [-60, 60]);
-  const mouseYOffset3 = useTransform(mouseYSpring, [-0.5, 0.5], [-60, 60]);
-
-  // Combine scroll Y and mouse move offsets for each depth layer
-  // Layer 1: Deep Slow background (0.04x scroll speed)
-  const yLayer1 = useTransform([scrollY, mouseYOffset1], ([s, m]) => {
-    const scrollFactor = isMobile ? -0.02 : -0.04;
-    return scrollFactor * (s as number) + (m as number);
-  });
-  const xLayer1 = mouseXOffset1;
-
-  // Layer 2: Midground details (0.1x scroll speed)
-  const yLayer2 = useTransform([scrollY, mouseYOffset2], ([s, m]) => {
-    const scrollFactor = isMobile ? -0.05 : -0.1;
-    return scrollFactor * (s as number) + (m as number);
-  });
-  const xLayer2 = mouseXOffset2;
-
-  // Layer 3: Faster foreground drifting elements (0.2x scroll speed)
-  const yLayer3 = useTransform([scrollY, mouseYOffset3], ([s, m]) => {
-    const scrollFactor = isMobile ? -0.1 : -0.2;
-    return scrollFactor * (s as number) + (m as number);
-  });
-  const xLayer3 = mouseXOffset3;
-
-  // Detect mobile user agents and screen widths to disable heavy effects
-  useEffect(() => {
-    const checkViewport = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkViewport();
-    window.addEventListener('resize', checkViewport);
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (window.innerWidth < 768) return; // Disable mouse tracking on mobile
-      const { innerWidth, innerHeight } = window;
-      const x = (e.clientX / innerWidth) - 0.5;
-      const y = (e.clientY / innerHeight) - 0.5;
-      mouseX.set(x);
-      mouseY.set(y);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('resize', checkViewport);
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, [mouseX, mouseY]);
 
   return (
   <>
@@ -468,6 +639,9 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
           style={{ background: `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})` }}
         />
 
+        {/* Repeating premium organic floral/scroll pattern watermark */}
+        <BackgroundPattern />
+
         {/* Subtle radial center brightening (makes content area feel lit) */}
         <div
           className="absolute inset-0"
@@ -475,50 +649,6 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
             background: `radial-gradient(ellipse 80% 60% at 50% 20%, var(--v2-color-overlay, ${theme.colors.overlay || 'rgba(255,252,248,0.28)'}) 0%, transparent 70%)`,
           }}
         />
-
-        {/* Premium Ambient Glows — driven by V1 theme.bgGlows */}
-        {theme.bgGlows && theme.bgGlows.length >= 3 && (
-          <>
-            {/* Glow 1: warm — top-left atmospheric wash */}
-            <div
-              className="absolute top-[-18%] left-[-12%] w-[70%] h-[65%] rounded-full animate-glow-slow-1 transition-all duration-1000"
-              style={{
-                backgroundColor: theme.bgGlows[0],
-                filter: 'blur(110px)',
-                opacity: 0.12,
-                mixBlendMode: 'multiply',
-              }}
-            />
-            {/* Glow 2: deep — bottom-right counterweight */}
-            <div
-              className="absolute bottom-[5%] right-[-14%] w-[65%] h-[65%] rounded-full animate-glow-slow-2 transition-all duration-1000"
-              style={{
-                backgroundColor: theme.bgGlows[1],
-                filter: 'blur(130px)',
-                opacity: 0.10,
-                mixBlendMode: 'multiply',
-              }}
-            />
-            {/* Glow 3: accent — center */}
-            <div
-              className="absolute top-[35%] left-[25%] w-[55%] h-[50%] rounded-full animate-glow-slow-3 transition-all duration-1000"
-              style={{
-                backgroundColor: theme.bgGlows[2],
-                filter: 'blur(120px)',
-                opacity: 0.07,
-                mixBlendMode: 'multiply',
-              }}
-            />
-            {/* Glow 4: soft white highlight — top-center bloom */}
-            <div
-              className="absolute top-[-5%] left-[20%] w-[60%] h-[40%] rounded-full"
-              style={{
-                background: 'rgba(255, 252, 246, 0.20)',
-                filter: 'blur(90px)',
-              }}
-            />
-          </>
-        )}
 
         {/* Edge vignette — frames the page with depth */}
         <div
@@ -535,32 +665,32 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
         />
       </div>
 
-      {/* 1. Parallax Layer 1 — deep/slow (0.04× scroll + mouse depth 1) */}
-      <motion.div
+      {/* 1. Static Layer 1 */}
+      <div
         className="invitation-bg-layer invitation-bg-layer-1"
         aria-hidden="true"
-        style={{ x: xLayer1, y: yLayer1, position: 'absolute', inset: 0, pointerEvents: 'none', willChange: isMobile ? 'auto' : 'transform' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
       >
         {layerContent.layer1}
-      </motion.div>
+      </div>
 
-      {/* 2. Parallax Layer 2 — midground (0.1× scroll + mouse depth 2) */}
-      <motion.div
+      {/* 2. Static Layer 2 */}
+      <div
         className="invitation-bg-layer invitation-bg-layer-2"
         aria-hidden="true"
-        style={{ x: xLayer2, y: yLayer2, position: 'absolute', inset: 0, pointerEvents: 'none', willChange: isMobile ? 'auto' : 'transform' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
       >
         {layerContent.layer2}
-      </motion.div>
+      </div>
 
-      {/* 3. Parallax Layer 3 — foreground drift (0.2× scroll + mouse depth 3) */}
-      <motion.div
+      {/* 3. Static Layer 3 */}
+      <div
         className="invitation-bg-layer invitation-bg-layer-3"
         aria-hidden="true"
-        style={{ x: xLayer3, y: yLayer3, position: 'absolute', inset: 0, pointerEvents: 'none', willChange: isMobile ? 'auto' : 'transform' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
       >
         {layerContent.layer3}
-      </motion.div>
+      </div>
     </div>
 
     {/* Floating hearts — driven by V2 theme particles flag */}

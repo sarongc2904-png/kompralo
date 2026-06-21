@@ -3,11 +3,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Theme } from '@/domain/themes/types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, MessageSquare, Copy, Check } from 'lucide-react';
+import { CheckCircle2, MessageSquare, Copy, Check, ChevronDown, User, Phone, FileText } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import LiquidCard from './LiquidCard';
 import SectionShell from './SectionShell';
-import { ThemeDivider } from '@/components/theme-v2';
+import SectionHeader from './SectionHeader';
 
 // ─── WhatsApp URL helper ──────────────────────────────────────────────────────
 
@@ -115,7 +115,6 @@ function LiquidButtons({
   const noRef  = useRef<HTMLButtonElement>(null);
   const [blobStyle, setBlobStyle] = useState<React.CSSProperties>({ opacity: 0 });
 
-  // Position the blob over the active button
   useEffect(() => {
     const btn = attending === true ? yesRef.current : attending === false ? noRef.current : null;
     if (!btn) { setBlobStyle({ opacity: 0 }); return; }
@@ -138,7 +137,7 @@ function LiquidButtons({
       style={{
         filter: 'url(#goo-rsvp)',
         background: `var(--v2-glass-bg, ${theme.colors.surface || 'rgba(255,255,255,0.55)'})`,
-        border: `1px solid var(--v2-color-border, ${theme.borders.subtle || 'rgba(197,168,128,0.25)'})`,
+        border: '1.5px solid var(--v2-color-border, rgba(200, 167, 93, 0.40))',
         boxShadow: `var(--v2-shadow-card, none)`,
       }}
     >
@@ -162,13 +161,23 @@ function LiquidButtons({
         }}
       />
 
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 relative">
+        {/* Vertical separator */}
+        <div 
+          className="absolute top-0 bottom-0 left-1/2 w-[1px] pointer-events-none" 
+          style={{ background: 'var(--v2-color-border, rgba(200, 167, 93, 0.25))', zIndex: 5 }} 
+        />
+        
         <button
           ref={yesRef}
           type="button"
           onClick={() => setAttending(true)}
           className={base}
-          style={{ color: attending === true ? '#fff' : theme.colors.textSecondary }}
+          style={{ 
+            color: attending === true ? '#fff' : 'var(--v2-color-text-secondary, #5C4A3E)',
+            zIndex: 10,
+            textShadow: attending === true ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
+          }}
         >
           Sí asistiré
         </button>
@@ -177,7 +186,11 @@ function LiquidButtons({
           type="button"
           onClick={() => setAttending(false)}
           className={base}
-          style={{ color: attending === false ? '#fff' : theme.colors.textSecondary }}
+          style={{ 
+            color: attending === false ? '#fff' : 'var(--v2-color-text-secondary, #5C4A3E)',
+            zIndex: 10,
+            textShadow: attending === false ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
+          }}
         >
           No podré asistir
         </button>
@@ -188,12 +201,13 @@ function LiquidButtons({
 
 // ─── GLASS INPUT ──────────────────────────────────────────────────────────────
 function GlassInput({
-  id, type = 'text', value, onChange, placeholder, required, label, theme,
+  id, type = 'text', value, onChange, placeholder, required, label, theme, icon: Icon,
 }: {
   id: string; type?: string; value: string;
   onChange: (v: string) => void; placeholder: string;
   required?: boolean; label: string;
   theme: Theme;
+  icon?: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
 }) {
   const [focused, setFocused] = useState(false);
 
@@ -201,28 +215,34 @@ function GlassInput({
     <div>
       <label
         htmlFor={id}
-        className="block text-[10px] uppercase tracking-[0.22em] mb-2 font-semibold"
-        style={{ color: theme.colors.textSecondary || '#8B7050' }}
+        className="block text-xs uppercase tracking-[0.22em] mb-2 font-semibold flex items-center gap-1.5"
+        style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
       >
         {label}
+        {required && <span style={{ color: 'var(--v2-color-accent, #C8A75D)' }}>✦</span>}
       </label>
-      <div className="relative">
+      <div className="relative flex items-center">
+        {Icon && (
+          <div className="absolute left-3.5 pointer-events-none" style={{ color: 'var(--v2-color-accent, #C8A75D)', opacity: 0.8 }}>
+            <Icon className="w-4 h-4" />
+          </div>
+        )}
         <input
           id={id} type={type} value={value} required={required}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
-          className="w-full px-4 py-3 text-sm outline-none transition-all duration-300"
+          className={`w-full py-3.5 pr-4 text-sm outline-none transition-all duration-300 ${Icon ? 'pl-10' : 'pl-4'}`}
           style={{
-            background: theme.colors.surface || 'rgba(255,255,255,0.65)',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,252,246,0.70) 100%)',
             backdropFilter: 'blur(12px)',
-            border: `1px solid ${focused ? `var(--v2-color-accent, ${theme.colors.accent})` : `var(--v2-color-border, ${theme.borders.subtle})`}`,
-            borderRadius: `var(--v2-radius-sm, 10px)`,
-            color: `var(--v2-color-text-primary, ${theme.colors.textPrimary || '#3D2B1A'})`,
+            border: `1px solid ${focused ? `var(--v2-color-accent, #C8A75D)` : `var(--v2-color-border, rgba(200, 167, 93, 0.22))`}`,
+            borderRadius: '12px',
+            color: `var(--v2-color-text-primary, #1F1A16)`,
             boxShadow: focused
-              ? `0 0 0 3px var(--v2-color-accent-soft, ${theme.colors.accentSoft}), 0 4px 16px var(--v2-color-accent-soft, ${theme.colors.accentSoft})`
-              : '0 1px 4px rgba(0,0,0,0.04)',
+              ? `0 0 0 3px var(--v2-color-accent-soft, rgba(200, 167, 93, 0.12))`
+              : '0 1px 4px rgba(0,0,0,0.02)',
           }}
         />
         {/* Focus glow border */}
@@ -231,10 +251,9 @@ function GlassInput({
           animate={{ opacity: focused ? 1 : 0, scaleX: focused ? 1 : 0.4 }}
           transition={{ duration: 0.3 }}
           style={{
-            position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1,
-            background: `linear-gradient(90deg, transparent, var(--v2-color-accent, ${theme.colors.accent || '#C5A880'}), transparent)`,
+            position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1.5,
+            background: `linear-gradient(90deg, transparent, var(--v2-color-accent, #C8A75D), transparent)`,
             transformOrigin: 'center',
-            borderRadius: 2,
           }}
         />
       </div>
@@ -376,45 +395,58 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
     <SectionShell className="select-none" contentClassName="max-w-2xl mx-auto">
       <GooFilter />
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-12"
-        >
-          <p className={`text-xs uppercase tracking-[0.28em] mb-3 ${theme.accentText} ${theme.bodyFont}`}>
-            Confirmación
-          </p>
-          <h3 className={`text-3xl md:text-4xl font-light tracking-wide ${theme.headingFont} ${theme.bodyText}`}>
-            Confirmar Asistencia
-          </h3>
-          <ThemeDivider className="mt-6" />
-        </motion.div>
+      {/* Header */}
+      <SectionHeader eyebrow="Confirmación" title="Confirmar Asistencia" theme={theme} className="mb-12" />
 
-        {/* Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="relative"
-        >
+      {/* Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.1 }}
+        className="relative"
+      >
         <LiquidCard theme={theme} style={{ padding: '48px 40px' }}>
           {/* Morphing blob decorations */}
-          <MorphBlob color={theme.colors.accentSoft} size={220} top="-80px" left="-80px" delay={0}   duration={10} opacity={0.14} />
-          <MorphBlob color={theme.colors.accent} size={180} bottom="-60px" right="-60px" delay={3} duration={12} opacity={0.12} />
-          <MorphBlob color={theme.colors.overlay} size={150} top="40%" left="60%" delay={1.5} duration={9} opacity={0.10} />
+          <MorphBlob color={theme.colors.accentSoft} size={220} top="-80px" left="-80px" delay={0}   duration={10} opacity={0.06} />
+          <MorphBlob color={theme.colors.accent} size={180} bottom="-60px" right="-60px" delay={3} duration={12} opacity={0.04} />
+          <MorphBlob color={theme.colors.overlay} size={150} top="40%" left="60%" delay={1.5} duration={9} opacity={0.03} />
+
+          {/* Inner luxury gold framing */}
+          <div className="absolute inset-4 border border-[rgba(200,167,93,0.22)] rounded-2xl pointer-events-none z-0" />
+          <div className="absolute inset-5 border border-[rgba(200,167,93,0.10)] rounded-xl pointer-events-none z-0" />
+
+          {/* Golden Corner Flourishes */}
+          <div className="absolute top-6 left-6 text-[rgba(200,167,93,0.45)] pointer-events-none z-0">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M0,24 L0,0 L24,0 M0,0 L12,12" />
+            </svg>
+          </div>
+          <div className="absolute top-6 right-6 text-[rgba(200,167,93,0.45)] pointer-events-none z-0 rotate-90">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M0,24 L0,0 L24,0 M0,0 L12,12" />
+            </svg>
+          </div>
+          <div className="absolute bottom-6 left-6 text-[rgba(200,167,93,0.45)] pointer-events-none z-0 -rotate-90">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M0,24 L0,0 L24,0 M0,0 L12,12" />
+            </svg>
+          </div>
+          <div className="absolute bottom-6 right-6 text-[rgba(200,167,93,0.45)] pointer-events-none z-0 rotate-180">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M0,24 L0,0 L24,0 M0,0 L12,12" />
+            </svg>
+          </div>
 
           {/* Top gloss stripe */}
           <div
             aria-hidden="true"
             style={{
-              position: 'absolute', top: 0, left: 0, right: 0, height: '45%',
+              position: 'absolute', top: 0, left: 0, right: 0, height: '50%',
               background: 'linear-gradient(180deg, rgba(255,255,255,0.32) 0%, transparent 100%)',
               borderRadius: '28px 28px 0 0',
               pointerEvents: 'none',
+              zIndex: 1,
             }}
           />
 
@@ -429,24 +461,24 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                 className="relative z-10 space-y-6"
               >
                 <GlassInput
-                  id="rsvp-name" label="Nombre Completo *"
+                  id="rsvp-name" label="Nombre Completo"
                   value={name} onChange={setName}
                   placeholder="Escribe tu nombre" required
-                  theme={theme}
+                  theme={theme} icon={User}
                 />
 
                 <GlassInput
                   id="rsvp-phone" label="Teléfono Celular" type="tel"
                   value={phone} onChange={setPhone}
                   placeholder="Escribe tu número de teléfono"
-                  theme={theme}
+                  theme={theme} icon={Phone}
                 />
 
                 {/* Attend buttons */}
                 <div>
                   <span
-                    className="block text-[10px] uppercase tracking-[0.22em] mb-3 font-semibold"
-                    style={{ color: theme.colors.textSecondary || '#8B7050' }}
+                    className="block text-xs uppercase tracking-[0.22em] mb-3 font-semibold"
+                    style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
                   >
                     ¿Asistirás al evento? *
                   </span>
@@ -464,28 +496,33 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                     >
                       <label
                         htmlFor="rsvp-guests"
-                        className="block text-[10px] uppercase tracking-[0.22em] mb-2 font-semibold"
-                        style={{ color: theme.colors.textSecondary || '#8B7050' }}
+                        className="block text-xs uppercase tracking-[0.22em] mb-2 font-semibold"
+                        style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
                       >
                         Cantidad de Invitados
                       </label>
-                      <select
-                        id="rsvp-guests"
-                        value={guests}
-                        onChange={(e) => setGuests(Number(e.target.value))}
-                        className="w-full px-4 py-3 text-sm outline-none"
-                        style={{
-                          background: theme.colors.surface || 'rgba(255,255,255,0.65)',
-                          backdropFilter: 'blur(12px)',
-                          border: `1px solid var(--v2-color-border, ${theme.borders.subtle || 'rgba(197,168,128,0.25)'})`,
-                          borderRadius: `var(--v2-radius-sm, 10px)`,
-                          color: `var(--v2-color-text-primary, ${theme.colors.textPrimary || '#3D2B1A'})`,
-                        }}
-                      >
-                        {[1, 2, 3, 4].map((n) => (
-                          <option key={n} value={n}>{n} {n === 1 ? 'Persona' : 'Personas'}</option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <select
+                          id="rsvp-guests"
+                          value={guests}
+                          onChange={(e) => setGuests(Number(e.target.value))}
+                          className="w-full py-3.5 pr-10 pl-4 text-sm outline-none appearance-none cursor-pointer"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,252,246,0.70) 100%)',
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.22))',
+                            borderRadius: '12px',
+                            color: 'var(--v2-color-text-primary, #1F1A16)',
+                          }}
+                        >
+                          {[1, 2, 3, 4].map((n) => (
+                            <option key={n} value={n}>{n} {n === 1 ? 'Persona' : 'Personas'}</option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--v2-color-accent, #C8A75D)' }}>
+                          <ChevronDown size={16} />
+                        </div>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -494,28 +531,31 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                 <div>
                   <label
                     htmlFor="rsvp-notes"
-                    className="block text-[10px] uppercase tracking-[0.22em] mb-2 font-semibold"
-                    style={{ color: theme.colors.textSecondary || '#8B7050' }}
+                    className="block text-xs uppercase tracking-[0.22em] mb-2 font-semibold"
+                    style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
                   >
                     Notas / Mensaje especial
                   </label>
-                  <div className="relative">
+                  <div className="relative flex items-start">
+                    <div className="absolute left-3.5 top-3.5 pointer-events-none" style={{ color: 'var(--v2-color-accent, #C8A75D)', opacity: 0.8 }}>
+                      <FileText className="w-4 h-4" />
+                    </div>
                     <textarea
                       id="rsvp-notes" rows={3} value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       onFocus={() => setNoteFocused(true)}
                       onBlur={() => setNoteFocused(false)}
                       placeholder="Algún mensaje o restricción alimentaria..."
-                      className="w-full px-4 py-3 text-sm outline-none resize-none transition-all duration-300"
+                      className="w-full py-3.5 pr-4 pl-10 text-sm outline-none resize-none transition-all duration-300"
                       style={{
-                        background: theme.colors.surface || 'rgba(255,255,255,0.65)',
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,252,246,0.70) 100%)',
                         backdropFilter: 'blur(12px)',
-                        border: `1px solid ${noteFocused ? `var(--v2-color-accent, ${theme.colors.accent})` : `var(--v2-color-border, ${theme.borders.subtle})`}`,
-                        borderRadius: `var(--v2-radius-sm, 10px)`,
-                        color: `var(--v2-color-text-primary, ${theme.colors.textPrimary || '#3D2B1A'})`,
+                        border: `1px solid ${noteFocused ? `var(--v2-color-accent, #C8A75D)` : `var(--v2-color-border, rgba(200, 167, 93, 0.22))`}`,
+                        borderRadius: '12px',
+                        color: 'var(--v2-color-text-primary, #1F1A16)',
                         boxShadow: noteFocused
-                          ? `0 0 0 3px var(--v2-color-accent-soft, ${theme.colors.accentSoft})`
-                          : '0 1px 4px rgba(0,0,0,0.04)',
+                          ? `0 0 0 3px var(--v2-color-accent-soft, rgba(200, 167, 93, 0.12))`
+                          : '0 1px 4px rgba(0,0,0,0.02)',
                       }}
                     />
                     <motion.div
@@ -524,7 +564,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                       transition={{ duration: 0.3 }}
                       style={{
                         position: 'absolute', bottom: 0, left: '10%', right: '10%', height: 1,
-                        background: `linear-gradient(90deg, transparent, var(--v2-color-accent, ${theme.colors.accent || '#C5A880'}), transparent)`,
+                        background: `linear-gradient(90deg, transparent, var(--v2-color-accent, #C8A75D), transparent)`,
                         transformOrigin: 'center',
                       }}
                     />
@@ -559,12 +599,13 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                   whileTap={{ scale: 0.98 }}
                   className="w-full py-4 text-[11px] uppercase tracking-[0.3em] font-semibold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
-                    color: `var(--v2-btn-text, #fff)`,
-                    background: `var(--v2-btn-bg, linear-gradient(135deg, ${theme.colors.accent || '#C5A880'} 0%, ${theme.borders.strong || '#A8865A'} 100%))`,
-                    borderRadius: `var(--v2-radius-md, 12px)`,
-                    border: 'none',
-                    boxShadow: `var(--v2-shadow-card, ${theme.shadows.soft})`,
-                    letterSpacing: '0.28em',
+                    color: '#ffffff',
+                    background: 'linear-gradient(135deg, var(--v2-color-accent, #C8A75D) 0%, var(--v2-color-accent-hover, #D4B870) 100%)',
+                    borderRadius: '30px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 25px rgba(200, 167, 93, 0.25)',
+                    letterSpacing: '0.3em',
+                    textShadow: '0 1px 2px rgba(0, 0, 0, 0.15)',
                   }}
                 >
                   {formState === 'submitting' ? 'Enviando…' : 'Confirmar Asistencia'}

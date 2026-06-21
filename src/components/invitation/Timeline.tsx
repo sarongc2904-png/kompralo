@@ -5,6 +5,8 @@ import { Theme } from '@/domain/themes/types';
 import { TimelineEvent } from '@/domain/invitations/types';
 import { motion, useScroll } from 'framer-motion';
 import { Heart } from 'lucide-react';
+import SectionShell from './SectionShell';
+import SectionHeader from './SectionHeader';
 
 interface TimelineProps {
   events: TimelineEvent[];
@@ -12,8 +14,6 @@ interface TimelineProps {
 }
 
 // ── Mobile single-column item ─────────────────────────────────────────────────
-// Heart lives in normal flow (not absolute), so it's always visible.
-
 function MobileItem({
   event, index, total, theme,
 }: {
@@ -24,7 +24,7 @@ function MobileItem({
 }) {
   return (
     <motion.div
-      className="relative flex gap-4"
+      className="relative flex gap-5"
       initial={{ opacity: 0, x: -14 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: '-30px' }}
@@ -32,31 +32,30 @@ function MobileItem({
     >
       {/* Left column: heart + connector line */}
       <div className="relative flex shrink-0 flex-col items-center">
-        {/* Heart circle — always in the DOM, no opacity:0 initial state */}
+        {/* Heart circle */}
         <div
-          className="z-10 flex h-10 w-10 items-center justify-center rounded-full shadow-md"
+          className="z-10 flex h-9 w-9 items-center justify-center rounded-full shadow-sm"
           style={{
-            border: `1px solid var(--v2-color-border, #EDE8DF)`,
-            background: 'var(--v2-glass-bg, #FFFAF3)',
-            color: `var(--v2-color-accent, #C5A880)`,
+            border: `1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))`,
+            background: 'var(--v2-surface-elevated, #FFFDF8)',
+            color: `var(--v2-color-accent, #C8A75D)`,
           }}
           aria-hidden="true"
         >
-          <Heart className="h-4 w-4 fill-current" strokeWidth={0} />
+          <Heart className="h-3.5 w-3.5 fill-current" strokeWidth={1} />
         </div>
 
-        {/* Vertical connector — only between items, not after the last */}
+        {/* Vertical connector */}
         {index < total - 1 && (
           <motion.div
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="mt-2 w-[2px] flex-1 origin-top rounded-full"
+            className="mt-2 w-[1.5px] flex-1 origin-top rounded-full"
             style={{
               minHeight: '64px',
-              background: `linear-gradient(to bottom, var(--v2-color-accent, #c9a24f) 0%, var(--v2-color-accent, #c9a24f) 65%, transparent 100%)`,
-              opacity: 0.65,
+              background: `linear-gradient(to bottom, var(--v2-color-accent, #C8A75D) 0%, rgba(200,167,93,0.15) 75%, transparent 100%)`,
             }}
             aria-hidden="true"
           />
@@ -64,24 +63,28 @@ function MobileItem({
       </div>
 
       {/* Right column: text */}
-      <div className="min-w-0 pb-10">
+      <div className="min-w-0 pb-8">
         <span
-          className="text-xs font-semibold tracking-widest font-mono"
-          style={{ color: `var(--v2-color-accent, #C5A880)` }}
+          className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium tracking-widest font-mono mb-2"
+          style={{
+            background: 'var(--v2-color-accent-soft, rgba(200, 167, 93, 0.10))',
+            border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))',
+            color: 'var(--v2-color-accent, #C8A75D)',
+          }}
         >
           {event.year}
         </span>
 
         <h4
-          className={`mt-1 text-lg font-light tracking-wide leading-snug ${theme.headingFont}`}
-          style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, inherit)' }}
+          className={`mt-1 text-lg font-normal tracking-wide leading-snug ${theme.headingFont}`}
+          style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
         >
           {event.title}
         </h4>
 
         <p
           className={`mt-2 text-sm leading-relaxed ${theme.bodyFont}`}
-          style={{ color: 'var(--v2-color-text-secondary, inherit)', opacity: 0.85 }}
+          style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)', opacity: 0.85 }}
         >
           {event.description}
         </p>
@@ -91,7 +94,6 @@ function MobileItem({
 }
 
 // ── Desktop alternating item ───────────────────────────────────────────────────
-
 function DesktopItem({
   event, index, theme,
 }: {
@@ -103,7 +105,7 @@ function DesktopItem({
 
   return (
     <div className={`relative flex flex-row ${isEven ? 'flex-row-reverse' : ''} items-center`}>
-      {/* Pulsing heart marker — centered on the dividing line */}
+      {/* Pulsing heart marker */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -112,17 +114,16 @@ function DesktopItem({
           transition={{ type: 'spring', stiffness: 200, damping: 15 }}
         >
           <motion.div
-            animate={{ scale: [1, 1.15, 1, 1.15, 1] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut', repeatDelay: 0.8 }}
-            className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-md"
+            animate={{ scale: [1, 1.06, 1, 1.06, 1] }}
+            transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut', repeatDelay: 1 }}
+            className="w-9 h-9 rounded-full flex items-center justify-center shadow-sm"
             style={{
-              borderWidth: '1px',
-              borderStyle: 'solid',
-              borderColor: `var(--v2-color-border, #EDE8DF)`,
-              color: `var(--v2-color-accent, #C5A880)`,
+              border: `1px solid var(--v2-color-border, rgba(200, 167, 93, 0.28))`,
+              background: 'var(--v2-surface-elevated, #FFFDF8)',
+              color: `var(--v2-color-accent, #C8A75D)`,
             }}
           >
-            <Heart className="w-4 h-4 fill-current" strokeWidth={1} />
+            <Heart className="w-3.5 h-3.5 fill-current" strokeWidth={1} />
           </motion.div>
         </motion.div>
       </div>
@@ -140,21 +141,26 @@ function DesktopItem({
       >
         <div className={isEven ? 'text-right' : 'text-left'}>
           <span
-            className={`inline-block text-sm font-semibold tracking-widest font-mono mb-2 ${theme.accentText}`}
+            className="inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest font-mono mb-3"
+            style={{
+              background: 'var(--v2-color-accent-soft, rgba(200, 167, 93, 0.10))',
+              border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))',
+              color: 'var(--v2-color-accent, #C8A75D)',
+            }}
           >
             {event.year}
           </span>
 
           <h4
-            className={`text-xl font-light mb-3 tracking-wide ${theme.headingFont}`}
-            style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, inherit)' }}
+            className={`text-xl font-normal mb-3 tracking-wide ${theme.headingFont}`}
+            style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
           >
             {event.title}
           </h4>
 
           <p
             className={`text-sm leading-relaxed max-w-sm ${isEven ? 'ml-auto mr-0' : 'mr-auto ml-0'} ${theme.bodyFont}`}
-            style={{ color: 'var(--v2-color-text-secondary, inherit)', opacity: 0.85 }}
+            style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)', opacity: 0.85 }}
           >
             {event.description}
           </p>
@@ -165,7 +171,6 @@ function DesktopItem({
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-
 export default function Timeline({ events, theme }: TimelineProps) {
   const desktopRef = useRef<HTMLDivElement>(null);
 
@@ -177,66 +182,72 @@ export default function Timeline({ events, theme }: TimelineProps) {
   if (!events || events.length === 0) return null;
 
   return (
-    <section className="py-20 md:py-28 px-6 md:px-8 bg-transparent select-none">
-      <div className="max-w-4xl mx-auto">
+    <SectionShell className="select-none" contentClassName="max-w-4xl mx-auto">
+      {/* Section header */}
+      <SectionHeader 
+        eyebrow="Nuestra Historia" 
+        title="Línea del Tiempo" 
+        theme={theme}
+        className="mb-16 md:mb-24"
+      />
 
-        {/* Section header */}
-        <div className="text-center mb-16 md:mb-24">
-          <p className={`text-xs uppercase tracking-[0.25em] mb-3 ${theme.accentText} ${theme.bodyFont}`}>
-            Nuestra Historia
-          </p>
-          <h3
-            className={`text-3xl md:text-4xl font-light tracking-wide ${theme.headingFont} ${theme.bodyText}`}
-            style={{ fontFamily: 'var(--v2-font-heading, inherit)' }}
-          >
-            Línea del Tiempo
-          </h3>
-          <div
-            className="w-12 mx-auto mt-6"
-            aria-hidden="true"
-            style={{ height: '1px', background: `var(--v2-divider-color, ${theme.colors.accent})`, opacity: 0.6 }}
+      {/* ── MOBILE layout (block on < md, hidden on ≥ md) ── */}
+      <div className="block md:hidden">
+        {events.map((event, index) => (
+          <MobileItem
+            key={event.id}
+            event={event}
+            index={index}
+            total={events.length}
+            theme={theme}
           />
-        </div>
+        ))}
+      </div>
 
-        {/* ── MOBILE layout (block on < md, hidden on ≥ md) ── */}
-        <div className="block md:hidden">
+      {/* ── DESKTOP layout (hidden on < md, block on ≥ md) ── */}
+      <div ref={desktopRef} className="relative hidden md:block">
+        {/* Top Line End Ornament */}
+        <div 
+          className="absolute left-1/2 -top-1.5 -translate-x-1/2 z-10 w-3 h-3 rounded-full"
+          style={{
+            background: 'var(--v2-color-accent, #C5A880)',
+            border: '2.5px solid var(--v2-background-main, #FBF7EF)',
+            boxShadow: '0 0 0 1px var(--v2-color-border, rgba(200,167,93,0.35))',
+          }}
+        />
+
+        {/* Static faint background line */}
+        <div
+          className="absolute left-1/2 top-2 bottom-2 w-[1px] -translate-x-1/2 z-0"
+          style={{ background: `var(--v2-color-border, rgba(200, 167, 93, 0.25))` }}
+        />
+        {/* Animated growing accent line */}
+        <motion.div
+          style={{ scaleY: scrollYProgress, originY: 0, background: `var(--v2-color-accent, #C8A75D)` }}
+          className="absolute left-1/2 top-2 bottom-2 w-[1.5px] -translate-x-1/2 z-0"
+        />
+
+        {/* Bottom Line End Ornament */}
+        <div 
+          className="absolute left-1/2 -bottom-1.5 -translate-x-1/2 z-10 w-3 h-3 rounded-full"
+          style={{
+            background: 'var(--v2-color-accent, #C5A880)',
+            border: '2.5px solid var(--v2-background-main, #FBF7EF)',
+            boxShadow: '0 0 0 1px var(--v2-color-border, rgba(200,167,93,0.35))',
+          }}
+        />
+
+        <div className="space-y-24">
           {events.map((event, index) => (
-            <MobileItem
+            <DesktopItem
               key={event.id}
               event={event}
               index={index}
-              total={events.length}
               theme={theme}
             />
           ))}
         </div>
-
-        {/* ── DESKTOP layout (hidden on < md, block on ≥ md) ── */}
-        <div ref={desktopRef} className="relative hidden md:block">
-          {/* Static faint background line */}
-          <div
-            className="absolute left-1/2 top-0 bottom-0 w-[1px] -translate-x-1/2 z-0"
-            style={{ background: `var(--v2-color-border, #EDE8DF)` }}
-          />
-          {/* Animated growing accent line */}
-          <motion.div
-            style={{ scaleY: scrollYProgress, originY: 0, background: `var(--v2-color-accent, #C5A880)` }}
-            className="absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 z-0"
-          />
-
-          <div className="space-y-24">
-            {events.map((event, index) => (
-              <DesktopItem
-                key={event.id}
-                event={event}
-                index={index}
-                theme={theme}
-              />
-            ))}
-          </div>
-        </div>
-
       </div>
-    </section>
+    </SectionShell>
   );
 }

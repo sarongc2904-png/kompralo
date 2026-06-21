@@ -12,23 +12,93 @@ interface PadrinosProps {
 }
 
 // Icon map per rubro
-function RubroIcon({ icon, size = 20, stroke = 'var(--v2-color-accent, #EDD8A0)' }: { icon: Padrino['icon']; size?: number; stroke?: string }) {
+function RubroIcon({ icon, size = 20, stroke = 'var(--v2-color-accent, #C8A75D)' }: { icon: Padrino['icon']; size?: number; stroke?: string }) {
   const s = size;
   const sw = 1.3;
 
   const paths: Record<Padrino['icon'], React.ReactNode> = {
-    flowers: <><circle cx="12" cy="8" r="3" stroke={stroke} strokeWidth={sw}/><path d="M12 2c0 3-3 3-3 6s3 3 3 6M12 2c0 3 3 3 3 6s-3 3-3 6" stroke={stroke} strokeWidth={sw}/><path d="M6 8c3 0 3 3 6 3s3-3 6-3M6 8c3 0 3-3 6-3s3 3 6 3" stroke={stroke} strokeWidth={sw}/></>,
-    cake: <><rect x="3" y="11" width="18" height="9" rx="1" stroke={stroke} strokeWidth={sw}/><path d="M3 11V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2" stroke={stroke} strokeWidth={sw}/><path d="M8 7V5M12 7V4M16 7V5" stroke={stroke} strokeWidth={sw} strokeLinecap="round"/></>,
-    music: <><path d="M9 18V5l12-2v13" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"/><circle cx="6" cy="18" r="3" stroke={stroke} strokeWidth={sw}/><circle cx="18" cy="16" r="3" stroke={stroke} strokeWidth={sw}/></>,
-    rings: <><circle cx="8" cy="12" r="5" stroke={stroke} strokeWidth={sw}/><circle cx="16" cy="12" r="5" stroke={stroke} strokeWidth={sw}/></>,
-    photo: <><rect x="3" y="5" width="18" height="14" rx="2" stroke={stroke} strokeWidth={sw}/><circle cx="12" cy="12" r="4" stroke={stroke} strokeWidth={sw}/><path d="M3 9h1M20 9h1" stroke={stroke} strokeWidth={sw} strokeLinecap="round"/></>,
-    video: <><rect x="2" y="7" width="14" height="10" rx="1" stroke={stroke} strokeWidth={sw}/><path d="m16 11 6-4v10l-6-4Z" stroke={stroke} strokeWidth={sw} strokeLinejoin="round"/></>,
-    lights: <><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke={stroke} strokeWidth={sw} strokeLinecap="round"/><circle cx="12" cy="12" r="4" stroke={stroke} strokeWidth={sw}/></>,
-    bar: <><path d="M8 22V12L3 3h18l-5 9v10" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"/><path d="M8 22h8" stroke={stroke} strokeWidth={sw} strokeLinecap="round"/></>,
-    car: <><path d="M5 17H3a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h1l3-4h10l3 4h1a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2" stroke={stroke} strokeWidth={sw} strokeLinejoin="round"/><circle cx="7.5" cy="17" r="2.5" stroke={stroke} strokeWidth={sw}/><circle cx="16.5" cy="17" r="2.5" stroke={stroke} strokeWidth={sw}/></>,
-    church: <><path d="M12 2v6M9 5h6" stroke={stroke} strokeWidth={sw} strokeLinecap="round"/><path d="M4 22V10l8-6 8 6v12" stroke={stroke} strokeWidth={sw} strokeLinejoin="round"/><path d="M9 22v-6h6v6" stroke={stroke} strokeWidth={sw}/></>,
-    dress: <><path d="M8 2 5 22h14L16 2M8 2l4 6 4-6" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round"/></>,
-    gift: <><rect x="3" y="8" width="18" height="13" rx="1" stroke={stroke} strokeWidth={sw}/><path d="M3 12h18" stroke={stroke} strokeWidth={sw}/><path d="M12 8V21" stroke={stroke} strokeWidth={sw}/><path d="M8 8c0-2 2-4 4-2 2-2 4 0 4 2" stroke={stroke} strokeWidth={sw}/></>,
+    flowers: (
+      <>
+        <circle cx="12" cy="12" r="3" stroke={stroke} strokeWidth={sw} />
+        <path d="M12 5a3 3 0 1 0 0 6 3 3 0 1 0 0-6Z" stroke={stroke} strokeWidth={sw} />
+        <path d="M12 13a3 3 0 1 0 0 6 3 3 0 1 0 0-6Z" stroke={stroke} strokeWidth={sw} />
+        <path d="M5 12a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" stroke={stroke} strokeWidth={sw} />
+        <path d="M13 12a3 3 0 1 0 6 0 3 3 0 1 0-6 0Z" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
+    cake: (
+      <>
+        <path d="M5 20h14M6 20v-4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v4M8 15V11a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v4M10 10V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
+        <circle cx="12" cy="4" r="1.2" fill={stroke} />
+      </>
+    ),
+    music: (
+      <>
+        <path d="M9 17V5l10-2v12" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="6" cy="17" r="3" stroke={stroke} strokeWidth={sw} />
+        <circle cx="16" cy="15" r="3" stroke={stroke} strokeWidth={sw} />
+        <path d="M9 9l10-2" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
+    rings: (
+      <>
+        <circle cx="9" cy="13" r="5.5" stroke={stroke} strokeWidth={sw} />
+        <circle cx="15" cy="11" r="5.5" stroke={stroke} strokeWidth={sw} />
+        <path d="M17 5.5l1.5 1.5M18.5 5.5L17 7" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
+      </>
+    ),
+    photo: (
+      <>
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke={stroke} strokeWidth={sw} strokeLinejoin="round" />
+        <circle cx="12" cy="13" r="4" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
+    video: (
+      <>
+        <path d="m15 10 7-5v14l-7-5z" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="1" y="6" width="14" height="12" rx="2" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
+    lights: (
+      <>
+        <path d="M12 3c.2 2.5 1.5 3.8 4 4-2.5.2-3.8 1.5-4 4-.2-2.5-1.5-3.8-4-4 2.5-.2 3.8-1.5 4-4Z" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M18 14c.1 1.5.9 2.3 2.4 2.4-1.5.1-2.3.9-2.4 2.4-.1-1.5-.9-2.3-2.4-2.4 1.5-.1 2.3-.9 2.4-2.4Z" stroke={stroke} strokeWidth={sw} />
+        <path d="M6 13c.1 1.2.7 1.8 1.8 1.9-1.1.1-1.7.7-1.8 1.8-.1-1.1-.7-1.7-1.8-1.8 1.1-.1 1.7-.7 1.8-1.8Z" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
+    bar: (
+      <>
+        <path d="M12 22v-9M8 22h8M12 13a7 7 0 0 1-7-7V3h14v3a7 7 0 0 1-7 7ZM5 6h14" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="10" cy="8" r="0.5" fill={stroke} />
+        <circle cx="12" cy="9" r="0.5" fill={stroke} />
+        <circle cx="14" cy="7" r="0.5" fill={stroke} />
+      </>
+    ),
+    car: (
+      <>
+        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12.5V16c0 .6.4 1 1 1h2" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="7" cy="17" r="3" stroke={stroke} strokeWidth={sw} />
+        <circle cx="17" cy="17" r="3" stroke={stroke} strokeWidth={sw} />
+        <path d="M5 11h14M9 11v6M13 11v6" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
+    church: (
+      <>
+        <path d="M12 2v4M10 4h4M4 22V10l8-5 8 5v12H4Z" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M10 22v-5a2 2 0 0 1 4 0v5M12 10a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3Z" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
+    dress: (
+      <>
+        <path d="M8 2 5 22h14L16 2M8 2l4 6 4-6" stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" />
+      </>
+    ),
+    gift: (
+      <>
+        <rect x="3" y="8" width="18" height="13" rx="1" stroke={stroke} strokeWidth={sw} />
+        <path d="M3 12h18M12 8V21M8 8c0-2 2-4 4-2 2-2 4 0 4 2" stroke={stroke} strokeWidth={sw} />
+      </>
+    ),
   };
 
   return (
@@ -78,32 +148,32 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
               key={p.id}
               animateFrom="bottom"
               animateDelay={i * 0.06}
-              className="flex flex-col items-center text-center w-[140px] sm:w-[160px]"
-              style={{ padding: '22px 14px 18px' }}
+              className="flex flex-col items-center text-center w-[150px] sm:w-[170px]"
+              style={{ padding: '24px 16px 20px' }}
             >
               {/* Icon medallion */}
               <div style={{
                 width: 48, height: 48, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #2A2418 0%, #1C1509 100%)',
-                border: `1px solid var(--v2-color-border-strong, rgba(197,168,128,0.45))`,
+                background: 'linear-gradient(135deg, rgba(255, 251, 242, 0.9) 0%, rgba(245, 235, 210, 0.75) 100%)',
+                border: `1px solid var(--v2-color-border-strong, rgba(200,167,93,0.45))`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 marginBottom: 12, flexShrink: 0,
-                boxShadow: `0 4px 12px rgba(0,0,0,0.22), 0 0 0 3px var(--v2-color-accent-soft, rgba(197,168,128,0.10))`,
+                boxShadow: `inset 0 1px 3px rgba(255,255,255,0.85), 0 3px 8px rgba(116,84,38,0.04), 0 0 0 3px var(--v2-color-accent-soft, rgba(200,167,93,0.08))`,
               }}>
-                <RubroIcon icon={p.icon} size={20} />
+                <RubroIcon icon={p.icon} size={20} stroke="var(--v2-color-accent, #C8A75D)" />
               </div>
 
               {/* Rubro */}
-              <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-2" style={{ color: `var(--v2-color-accent, #C5A880)` }}>
+              <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-bold mb-2" style={{ color: `var(--v2-color-accent, #C8A75D)` }}>
                 {p.rubro}
               </p>
 
               {/* Divider */}
-              <div style={{ width: 24, height: 1, background: `var(--v2-divider-color, #C5A880)`, opacity: 0.35, marginBottom: 10 }} />
+              <div style={{ width: 24, height: 1, background: `var(--v2-divider-color, #C8A75D)`, opacity: 0.35, marginBottom: 10 }} />
 
               {/* Names */}
               {p.names.map((name, ni) => (
-                <p key={ni} className="text-[14px] font-light leading-snug" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
+                <p key={ni} className="text-[13px] sm:text-[14px] font-medium leading-snug" style={{ color: `var(--v2-color-text-primary, #1F1A16)` }}>
                   {name}
                 </p>
               ))}

@@ -5,6 +5,48 @@
 
 ---
 
+## FASE IVORY-EDITORIAL-PREMIUM-REDESIGN — Rediseño Visual Ivory Editorial a Papelería de Lujo
+
+Fecha: 2026-06-21
+
+### Objetivo
+
+1. Rediseñar por completo la estética del tema `ivory-editorial` para emular una invitación de boda física premium internacional, con colores suaves, texturas táctiles, marcos dobles y un aspecto editorial sofisticado.
+2. Eliminar contrastes estridentes o estilos toscos e incorporar divisores ornamentales personalizados, tipografía fluida y botones redondeados tipo "píldora".
+3. Verificar que todos los componentes compilen exitosamente bajo TypeScript y Next.js sin alterar en lo absoluto la lógica del RSVP, integraciones o rutas.
+
+### Cambios
+
+- `src/domain/themes-v2/themes/ivory-editorial.ts`:
+  - Se definieron tokens refinados de sombras ligeras, contrastes suaves y variables personalizadas para el tema de cuenta regresiva.
+- `src/components/invitation/ElegantInvitationCard.tsx`:
+  - Creación del contenedor de tarjeta sofisticado con doble marco interior dorado de 1px/0.5px offset, fondo texturizado simulando papel de lino y sombras flotantes suaves.
+- `src/components/invitation/SectionHeader.tsx`:
+  - Integración de divisores caligráficos SVG en color ámbar/dorado y soporte de tamaños tipográficos responsivos fluidos mediante `clamp()`.
+- `src/components/invitation/SectionShell.tsx`:
+  - Se añadió soporte para alternar entre fondos claros y crema/champán suave.
+- `src/components/invitation/Hero.tsx`:
+  - Ajustes de estilo al contenedor tipo tarjeta flotante de vidrio, opacidad y filtro desaturado al video de fondo, y un sutil indicador "Deslizar" para navegación.
+- `src/components/invitation/Countdown.tsx`:
+  - Enmarcado dorado de 1px alrededor de las tarjetas de números y tipografía de etiquetas aumentada. Corrección de una llave de cierre redundante en `FlipCard`.
+- `src/components/invitation/Parents.tsx`, `Itinerary.tsx`, `DressCode.tsx`, `GiftRegistry.tsx`, `Hospedaje.tsx`:
+  - Migración a contenedores `ElegantInvitationCard` para unificar la estética de la papelería.
+  - Se eliminaron acentos visuales invasivos como líneas rojas y bloques laterales gruesos.
+  - Corrección en `Hospedaje.tsx` para hacer genérico el texto de firma y evitar nombres hardcodeados.
+- `src/components/invitation/Location.tsx`:
+  - Botones rediseñados tipo píldora de vidrio y ajuste dinámico del color de fondo del mapa.
+- `src/components/invitation/RSVPForm.tsx`:
+  - Rediseño de inputs, labels a `text-xs font-bold`, botones de selección y botón principal a estilo premium tipo cápsula.
+- `src/components/invitation/MultilayerBackground.tsx`:
+  - Reducción de la opacidad de los corazones flotantes a un rango muy tenue (`0.03` a `0.08`) para evitar saturación visual.
+
+### Validación
+
+- `npx tsc --noEmit`: Completado exitosamente.
+- `npm run build`: Compilación en producción exitosa y libre de errores.
+
+---
+
 ## FASE REDESIGN-PUBLIC-PAGES-3D-AND-TEXT-SYNC — Hero 3D interactivo y sincronización de copys con producción
 
 Fecha: 2026-06-21

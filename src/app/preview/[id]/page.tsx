@@ -6,8 +6,10 @@ import {
   resolveInvitationContext,
   isPreviewableInvitationStatus,
   buildNoIndexMetadata,
+  invitationRepository,
 } from '@/domain/invitations';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { tryGetSupabaseEnv } from '@/lib/supabase/env';
 
 // Never cache the preview — always re-fetch so saved changes appear immediately.
 export const dynamic = 'force-dynamic';
@@ -27,9 +29,16 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
   const { from, themePreview }    = await searchParams;
   const isFromEditor              = from === 'editor';
 
-  // Use service role so RLS does not block preview reads (editor-only route).
-  const repo       = new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
-  const invitation = await repo.getPreviewById(id);
+  // Use service role so RLS does not block preview reads (editor-only route) if Supabase is configured.
+  let invitation = null;
+  const env = tryGetSupabaseEnv();
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (env && serviceRoleKey) {
+    const repo       = new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
+    invitation = await repo.getPreviewById(id);
+  } else {
+    invitation = await invitationRepository.getPreviewById(id);
+  }
 
   console.log('[PreviewPage] id=%s found=%s status=%s',
     id, !!invitation, invitation?.status ?? 'n/a');

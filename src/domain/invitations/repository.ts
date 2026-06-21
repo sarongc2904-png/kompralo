@@ -50,6 +50,7 @@ const localInvitations: InvitationContent[] = [
 
 const previewAliases: Record<string, string> = {
   demo: sofiaAlejandroWeddingInvitation.id,
+  '2e7420bc-0108-40c2-8103-fd023f830da9': sofiaAlejandroWeddingInvitation.id,
   'baby-shower-demo': babyShowerDemoInvitation.id,
   'birthday-demo': birthdayDemoInvitation.id,
   'baptism-demo': baptismDemoInvitation.id,
@@ -61,7 +62,8 @@ class LocalInvitationRepository implements IInvitationRepository {
   }
 
   async getBySlug(slug: string): Promise<InvitationContent | null> {
-    return localInvitations.find((inv) => inv.slug === slug) ?? null;
+    const resolvedSlug = slug === 'invitacion-mqlnlk09-gspdio' ? 'sofia-y-alejandro' : slug;
+    return localInvitations.find((inv) => inv.slug === resolvedSlug) ?? null;
   }
 
   async getById(id: string): Promise<InvitationContent | null> {

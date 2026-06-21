@@ -260,11 +260,11 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
   }, []);
 
   // When there's a photo the text goes over a dark overlay → use white
-  const textColor    = imageUrl ? '#F5EFE6' : '#1a1a1a';
+  const textColor    = imageUrl ? '#FAF6EE' : 'var(--v2-color-text-primary, #1F1A16)';
   // V2: accent color comes from the CSS var injected by ThemeProviderV2.
   // Falls back to the champagne gold for contexts without ThemeProviderV2.
-  const accentColor  = imageUrl ? 'var(--v2-color-accent, #E8D5A8)' : 'var(--v2-color-accent, #C5A880)';
-  const quoteClass   = imageUrl ? 'text-white/90' : `${theme.bodyText}`;
+  const accentColor  = imageUrl ? 'var(--v2-color-accent, #D4B870)' : 'var(--v2-color-accent, #C5A880)';
+  const quoteClass   = imageUrl ? 'text-[#FAF6EE]/95' : 'text-stone-800';
 
   return (
     <section
@@ -283,15 +283,15 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
               src={imageUrl}
               alt=""
               aria-hidden="true"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: 'brightness(0.52) saturate(0.88)' }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: 'brightness(0.48) saturate(0.85)' }}
             />
           </motion.div>
           {/* Gradient overlays */}
-          <div className="absolute inset-0" style={{
-            background: 'linear-gradient(180deg, rgba(253,249,242,0.65) 0%, rgba(20,12,4,0.08) 28%, rgba(20,12,4,0.08) 72%, rgba(253,249,242,0.80) 100%)',
+          <div className="absolute inset-0 z-10" style={{
+            background: `linear-gradient(180deg, var(--v2-background-main, #FBF7EF) 0%, rgba(31,26,22,0.18) 25%, rgba(31,26,22,0.18) 75%, var(--v2-background-main, #FBF7EF) 100%)`,
           }} />
-          <div className="absolute inset-0" style={{
-            background: 'radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, rgba(10,6,2,0.32) 100%)',
+          <div className="absolute inset-0 z-10" style={{
+            background: 'radial-gradient(ellipse 80% 60% at 50% 50%, transparent 25%, rgba(31,26,22,0.4) 100%)',
           }} />
         </div>
       )}
@@ -363,13 +363,17 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
-          <Sparkles className={`w-6 h-6 ${theme.accentText}`} strokeWidth={1} />
+          <Sparkles className="w-6 h-6" style={{ color: 'var(--v2-color-accent, #C8A75D)' }} strokeWidth={1} />
         </motion.div>
 
         {/* Closing Quote */}
         <motion.blockquote
-          className={`text-xl md:text-2xl font-light italic leading-relaxed mb-10 max-w-md ${theme.headingFont} ${quoteClass}`}
-          style={{ textShadow: imageUrl ? '0 2px 12px rgba(0,0,0,0.4)' : 'none', fontFamily: 'var(--v2-font-heading, inherit)' }}
+          className={`font-light italic leading-relaxed mb-10 max-w-lg ${theme.headingFont} ${quoteClass}`}
+          style={{ 
+            fontSize: 'clamp(1.35rem, 2.5vw + 0.5rem, 2rem)',
+            textShadow: imageUrl ? '0 2px 12px rgba(0,0,0,0.4)' : 'none', 
+            fontFamily: 'var(--v2-font-heading, inherit)' 
+          }}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -378,14 +382,23 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
           {closingQuote}
         </motion.blockquote>
 
-        <motion.div
-          className="w-12 mb-12"
-          style={{ height: '1px', background: `var(--v2-divider-color, ${theme.colors.accent})`, opacity: 0.6 }}
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
+        {/* Ornamental Divider */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 0.8, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-        />
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="flex items-center justify-center mb-12 text-amber-800/40" 
+          style={{ color: imageUrl ? 'var(--v2-color-accent, #FAF6EE)' : 'var(--v2-divider-color, var(--v2-color-accent, inherit))' }}
+        >
+          <svg className="w-28 h-4" viewBox="0 0 120 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="8" x2="48" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.3" />
+            <path d="M60 3 L64 8 L60 13 L56 8 Z" fill="currentColor" fillOpacity="0.8" />
+            <circle cx="52" cy="8" r="1.5" fill="currentColor" fillOpacity="0.5" />
+            <circle cx="68" cy="8" r="1.5" fill="currentColor" fillOpacity="0.5" />
+            <line x1="72" y1="8" x2="120" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.3" />
+          </svg>
+        </motion.div>
 
         {/* Couples Signatures — SVG stroke-draw handwriting reveal */}
         <div className="flex items-center justify-center gap-4 w-full px-4 overflow-visible">
@@ -417,7 +430,8 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
 
         {/* Elegant Footer */}
         <motion.footer
-          className={`w-full pt-16 border-t ${imageUrl ? 'border-white/20' : theme.cardBorder}`}
+          className={`w-full pt-16 border-t ${imageUrl ? 'border-white/20' : 'border-stone-200'}`}
+          style={{ borderColor: imageUrl ? 'rgba(255, 255, 255, 0.15)' : 'var(--v2-color-border, rgba(200, 167, 93, 0.25))' }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}

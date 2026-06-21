@@ -7,23 +7,21 @@ import {
   resolveInvitationContext,
   isPublicInvitationStatus,
   buildInvitationMetadata,
+  invitationRepository,
 } from '@/domain/invitations';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
-
-/**
- * Service-role backed repository for public invitation reads.
- * This is a Server Component file — the service role key never reaches the browser.
- * Using service role bypasses RLS so public (paid/published) invitations are
- * readable without requiring the anon role to have SELECT policies.
- * Access control is enforced here: only paid/published + not-deleted are served.
- */
-function createPublicRepo() {
-  return new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
-}
+import { tryGetSupabaseEnv } from '@/lib/supabase/env';
 
 export const getPublicInvitation = cache(async (slug: string) => {
-  const repo = createPublicRepo();
-  const invitation = await repo.getBySlug(slug);
+  let invitation = null;
+  const env = tryGetSupabaseEnv();
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (env && serviceRoleKey) {
+    const repo = new SupabaseInvitationRepository(createServiceRoleSupabaseClient());
+    invitation = await repo.getBySlug(slug);
+  } else {
+    invitation = await invitationRepository.getBySlug(slug);
+  }
 
   console.log('[PublicInvitationRoute] slug=%s found=%s status=%s',
     slug, !!invitation, invitation?.status ?? 'n/a');

@@ -10,7 +10,7 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
   colors: {
     pageBackground:  '#FBF7EF',
     surface:         'rgba(255,250,238,0.93)',
-    surfaceAlt:      '#F2E4C8',
+    surfaceAlt:      '#F5ECD9',
     surfaceElevated: '#FFFDF8',
     textPrimary:     '#1F1A16',
     textSecondary:   '#5C4A3E',
@@ -27,10 +27,10 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
     headingFamily:   '"Cormorant Garamond", "Georgia", serif',
     bodyFamily:      '"Inter", system-ui, sans-serif',
     scriptFamily:    '"Pinyon Script", cursive',
-    headingWeight:   '300',
+    headingWeight:   '400',
     headingTracking: '0.06em',
     bodyTracking:    '0.01em',
-    headingClass:    'font-editorial font-light tracking-wide',
+    headingClass:    'font-editorial font-normal tracking-wide',
     bodyClass:       'font-sans',
     scriptClass:     'font-calligraphy',
   },
@@ -64,10 +64,10 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
   },
 
   shadows: {
-    soft:     '0 4px 16px rgba(116,84,38,0.10)',
-    card:     '0 18px 45px rgba(116,84,38,0.14)',
-    elevated: '0 24px 60px rgba(116,84,38,0.18)',
-    book:     '0 32px 80px rgba(116,84,38,0.22)',
+    soft:     '0 2px 8px rgba(116,84,38,0.06), 0 8px 24px rgba(116,84,38,0.10)',
+    card:     '0 2px 6px rgba(116,84,38,0.06), 0 16px 40px rgba(120,88,40,0.13), inset 0 1px 0 rgba(255,255,255,0.85)',
+    elevated: '0 6px 14px rgba(116,84,38,0.08), 0 28px 64px rgba(120,88,40,0.17), inset 0 1px 0 rgba(255,255,255,0.9)',
+    book:     '0 8px 20px rgba(116,84,38,0.10), 0 40px 80px rgba(116,84,38,0.22), inset 0 1px 0 rgba(255,255,255,0.9)',
   },
 
   button: {
@@ -96,7 +96,7 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
   backgrounds: {
     main:      '#FBF7EF',
     hero:      'linear-gradient(180deg, rgba(251,247,239,0.08) 0%, transparent 35%, rgba(251,247,239,0.96) 100%)',
-    sections:  'rgba(200,167,93,0.04)',
+    sections:  'rgba(200,167,93,0.05)',
     storyBook: '#FBF7EF',
     gallery:   'transparent',
     final:     'linear-gradient(160deg, #F2E4C8 0%, #FBF7EF 100%)',
@@ -113,22 +113,20 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
   cssVariables: {
     '--v2-color-page-bg':          '#FBF7EF',
     '--v2-color-surface':          'linear-gradient(145deg, rgba(255,250,238,0.96), rgba(255,244,220,0.90))',
-    // ── Premium card chrome (consumed by ElegantInvitationCard, Itinerary, GiftRegistry) ──
-    // These have no definition in other themes, so setting them here keeps the
-    // upgrade scoped to the ivory-editorial preview only.
+    // ── Premium card chrome ──
     '--v2-card-ivory-bg':          'linear-gradient(152deg, rgba(255,251,242,0.97) 0%, rgba(253,245,229,0.93) 45%, rgba(247,235,210,0.90) 100%)',
-    '--v2-card-border':            'rgba(200,167,93,0.42)',
-    '--v2-card-radius':            '26px',
-    '--v2-color-surface-alt':      '#F2E4C8',
+    '--v2-card-border':            'rgba(200,167,93,0.35)',
+    '--v2-card-radius':            '24px',
+    '--v2-color-surface-alt':      '#F5ECD9',
     '--v2-color-surface-elevated': '#FFFDF8',
     '--v2-color-text-primary':     '#1F1A16',
     '--v2-color-text-secondary':   '#5C4A3E',
     '--v2-color-text-muted':       '#8A7665',
     '--v2-color-accent':           '#C8A75D',
-    '--v2-color-accent-soft':      'rgba(200,167,93,0.15)',
+    '--v2-color-accent-soft':      'rgba(200,167,93,0.12)',
     '--v2-color-accent-hover':     '#D4B870',
-    '--v2-color-border':           'rgba(200,167,93,0.35)',
-    '--v2-color-border-strong':    'rgba(200,167,93,0.70)',
+    '--v2-color-border':           'rgba(200,167,93,0.30)',
+    '--v2-color-border-strong':    'rgba(200,167,93,0.65)',
     '--v2-color-overlay':          'rgba(251,247,239,0.90)',
     '--v2-radius-sm':              '6px',
     '--v2-radius-md':              '12px',
@@ -142,11 +140,13 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
     '--v2-btn-border':             '1px solid rgba(200,167,93,0.65)',
     '--v2-btn-hover-bg':           '#C8A75D',
     '--v2-btn-hover-text':         '#1F1A16',
-    '--v2-divider-color':          'rgba(200,167,93,0.45)',
+    '--v2-divider-color':          'rgba(200,167,93,0.40)',
+    '--v2-ornament-color':         'rgba(200,167,93,0.40)',
+    '--v2-section-bg-alt':         'rgba(247, 240, 227, 0.45)',
     '--v2-background-main':        '#FBF7EF',
     '--v2-background-story':       '#FBF7EF',
-    '--v2-background-sections':    'rgba(200,167,93,0.04)',
-    '--v2-background-final':       'linear-gradient(160deg, #F2E4C8 0%, #FBF7EF 100%)',
+    '--v2-background-sections':    'rgba(200,167,93,0.05)',
+    '--v2-background-final':       'linear-gradient(160deg, #F5ECD9 0%, #FBF7EF 100%)',
     '--v2-font-heading':           '"Cormorant Garamond", "Georgia", serif',
     '--v2-font-body':              '"Inter", system-ui, sans-serif',
     '--v2-bg-layer-1':             '/layers/bg_layer1_champagne.png',
@@ -209,10 +209,10 @@ export const ivoryEditorialThemeV1: InvitationTheme = {
   },
 
   shadows: {
-    soft:     '0 4px 16px rgba(116,84,38,0.10)',
-    card:     '0 18px 45px rgba(116,84,38,0.14)',
-    elevated: '0 24px 60px rgba(116,84,38,0.18)',
-    book:     '0 32px 80px rgba(116,84,38,0.22)',
+    soft:     '0 2px 8px rgba(116,84,38,0.06), 0 8px 24px rgba(116,84,38,0.10)',
+    card:     '0 2px 6px rgba(116,84,38,0.06), 0 16px 40px rgba(120,88,40,0.13), inset 0 1px 0 rgba(255,255,255,0.85)',
+    elevated: '0 6px 14px rgba(116,84,38,0.08), 0 28px 64px rgba(120,88,40,0.17), inset 0 1px 0 rgba(255,255,255,0.9)',
+    book:     '0 8px 20px rgba(116,84,38,0.10), 0 40px 80px rgba(116,84,38,0.22), inset 0 1px 0 rgba(255,255,255,0.9)',
   },
 
   effects: {
@@ -241,7 +241,7 @@ export const ivoryEditorialThemeV1: InvitationTheme = {
   // Legacy Tailwind class strings — consumed directly by components
   bodyBg:       'bg-[#FBF7EF]',
   bodyText:     'text-[#1F1A16]',
-  headingFont:  'font-editorial font-light tracking-wide',
+  headingFont:  'font-editorial font-normal tracking-wide',
   bodyFont:     'font-sans',
   accentBg:     'bg-[#C8A75D] hover:bg-[#D4B870]',
   accentText:   'text-[#5C4A3E]',

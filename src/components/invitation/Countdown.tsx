@@ -99,10 +99,9 @@ function FlipCard({ value, label, theme, maxDigits = 2 }: { value: number; label
 
   const digitStyle: React.CSSProperties = {
     fontSize: FS, lineHeight: 1,
-    // V2: use accent token — resolveTheme maps champagne→editorial which has the same gold.
-    color: `var(--v2-color-accent, ${theme.colors.accent})`,
-    fontFamily: 'Georgia, "Times New Roman", serif',
-    fontWeight: 300, letterSpacing: '-0.02em',
+    color: `var(--v2-color-text-primary, #1F1A16)`,
+    fontFamily: 'var(--v2-font-heading, "Cormorant Garamond", Georgia, serif)',
+    fontWeight: 400, letterSpacing: '-0.02em',
     userSelect: 'none', pointerEvents: 'none',
   };
 
@@ -120,99 +119,108 @@ function FlipCard({ value, label, theme, maxDigits = 2 }: { value: number; label
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isCompact ? 10 : 14, minWidth: 0 }}>
-      {/* Card */}
-      <div style={{ position: 'relative', width: W, height: H, perspective: '600px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: isCompact ? 12 : 16, minWidth: 0 }}>
+      {/* Outer frame wrapper */}
+      <div 
+        style={{
+          padding: '6px',
+          borderRadius: '14px',
+          border: '1px solid var(--v2-color-border, rgba(200,167,93,0.22))',
+          background: 'rgba(255,255,255,0.25)',
+          boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.01), 0 2px 8px rgba(116,84,38,0.03)',
+        }}
+      >
+        {/* Card */}
+        <div style={{ position: 'relative', width: W, height: H, perspective: '600px' }}>
 
-        {/* ── STATIC TOP (new value) ── */}
-        <div style={{
-          ...cardBase, top: 0, height: HALF,
-          background: theme.textures.leather || 'linear-gradient(180deg, #2A2418 0%, #222018 100%)',
-          borderRadius: '8px 8px 0 0',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
-        }}>
-          {renderInnerTop(currStr)}
+          {/* ── STATIC TOP (new value) ── */}
+          <div style={{
+            ...cardBase, top: 0, height: HALF,
+            background: 'var(--v2-countdown-card-bg-top, linear-gradient(180deg, #FAF6EE 0%, #F5ECDB 100%))',
+            borderRadius: '8px 8px 0 0',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7)',
+          }}>
+            {renderInnerTop(currStr)}
+          </div>
+
+          {/* ── STATIC BOTTOM (new value) ── */}
+          <div style={{
+            ...cardBase, bottom: 0, height: HALF,
+            background: 'var(--v2-countdown-card-bg-bottom, linear-gradient(180deg, #F5ECDB 0%, #EFE3CE 100%))',
+            borderRadius: '0 0 8px 8px',
+            boxShadow: 'inset 0 -1px 0 rgba(0,0,0,0.01)',
+          }}>
+            {renderInnerBottom(currStr)}
+          </div>
+
+          {/* ── CENTER DIVIDER ── */}
+          <div style={{
+            position: 'absolute', top: HALF - 0.5, left: 0, width: W, height: 1,
+            background: 'var(--v2-countdown-divider-color, rgba(116,84,38,0.20))', zIndex: 15,
+          }} />
+
+          {/* ── FLIP FLAPS ── */}
+          {flipping && (
+            <>
+              {/* Old top flap → flips DOWN (0 → -90) */}
+              <motion.div
+                style={{
+                  ...cardBase, top: 0, height: HALF,
+                  background: 'var(--v2-countdown-card-bg-top, linear-gradient(180deg, #FAF6EE 0%, #F5ECDB 100%))',
+                  borderRadius: '8px 8px 0 0',
+                  transformOrigin: 'center bottom',
+                  zIndex: 30,
+                  backfaceVisibility: 'hidden',
+                }}
+                initial={{ rotateX: 0 }}
+                animate={{ rotateX: -90 }}
+                transition={{ duration: 0.32, ease: [0.55, 0, 1, 0.45] }}
+              >
+                {renderInnerTop(prevStr)}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.02) 100%)',
+                  pointerEvents: 'none',
+                }} />
+              </motion.div>
+
+              {/* New bottom flap → unfolds (90 → 0, delayed) */}
+              <motion.div
+                style={{
+                  ...cardBase, bottom: 0, height: HALF,
+                  background: 'var(--v2-countdown-card-bg-bottom, linear-gradient(180deg, #F5ECDB 0%, #EFE3CE 100%))',
+                  borderRadius: '0 0 8px 8px',
+                  transformOrigin: 'center top',
+                  zIndex: 30,
+                  backfaceVisibility: 'hidden',
+                }}
+                initial={{ rotateX: 90 }}
+                animate={{ rotateX: 0 }}
+                transition={{ duration: 0.32, ease: [0, 0.55, 0.45, 1], delay: 0.32 }}
+              >
+                {renderInnerBottom(currStr)}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(180deg, rgba(0,0,0,0.03) 0%, rgba(255,255,255,0.1) 100%)',
+                  pointerEvents: 'none',
+                }} />
+              </motion.div>
+            </>
+          )}
+
+          {/* Outer card shadow */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: 8, pointerEvents: 'none',
+            boxShadow: 'var(--v2-shadow-soft, 0 4px 12px rgba(116,84,38,0.06), 0 12px 30px rgba(120,88,40,0.10)), inset 0 0 0 1px rgba(200,167,93,0.15)',
+            zIndex: 5,
+          }} />
         </div>
-
-        {/* ── STATIC BOTTOM (new value) ── */}
-        <div style={{
-          ...cardBase, bottom: 0, height: HALF,
-          background: theme.textures.leather || 'linear-gradient(180deg, #1C1A12 0%, #161410 100%)',
-          borderRadius: '0 0 8px 8px',
-          boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.03)',
-        }}>
-          {renderInnerBottom(currStr)}
-        </div>
-
-        {/* ── CENTER DIVIDER ── */}
-        <div style={{
-          position: 'absolute', top: HALF - 1, left: 0, width: W, height: 2,
-          background: 'rgba(0,0,0,0.7)', zIndex: 15,
-        }} />
-
-        {/* ── FLIP FLAPS ── */}
-        {flipping && (
-          <>
-            {/* Old top flap → flips DOWN (0 → -90) */}
-            <motion.div
-              style={{
-                ...cardBase, top: 0, height: HALF,
-                background: theme.textures.leather || 'linear-gradient(180deg, #2A2418 0%, #222018 100%)',
-                borderRadius: '8px 8px 0 0',
-                transformOrigin: 'center bottom',
-                zIndex: 30,
-                backfaceVisibility: 'hidden',
-              }}
-              initial={{ rotateX: 0 }}
-              animate={{ rotateX: -90 }}
-              transition={{ duration: 0.32, ease: [0.55, 0, 1, 0.45] }}
-            >
-              {renderInnerTop(prevStr)}
-              {/* Sheen overlay on flap */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.1) 100%)',
-                pointerEvents: 'none',
-              }} />
-            </motion.div>
-
-            {/* New bottom flap → unfolds (90 → 0, delayed) */}
-            <motion.div
-              style={{
-                ...cardBase, bottom: 0, height: HALF,
-                background: theme.textures.leather || 'linear-gradient(180deg, #1C1A12 0%, #161410 100%)',
-                borderRadius: '0 0 8px 8px',
-                transformOrigin: 'center top',
-                zIndex: 30,
-                backfaceVisibility: 'hidden',
-              }}
-              initial={{ rotateX: 90 }}
-              animate={{ rotateX: 0 }}
-              transition={{ duration: 0.32, ease: [0, 0.55, 0.45, 1], delay: 0.32 }}
-            >
-              {renderInnerBottom(currStr)}
-              {/* Sheen overlay on flap */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(255,255,255,0.03) 100%)',
-                pointerEvents: 'none',
-              }} />
-            </motion.div>
-          </>
-        )}
-
-        {/* Outer card shadow */}
-        <div style={{
-          position: 'absolute', inset: 0, borderRadius: 8, pointerEvents: 'none',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05)',
-          zIndex: 5,
-        }} />
       </div>
 
       {/* Label */}
       <span style={{
-        fontSize: isCompact ? 8 : 9, letterSpacing: isCompact ? '0.18em' : '0.28em', textTransform: 'uppercase',
-        color: theme.colors.textSecondary || '#7A5C35', fontFamily: 'Georgia, serif', opacity: 1, fontWeight: 600,
+        fontSize: isCompact ? 10 : 11, letterSpacing: isCompact ? '0.22em' : '0.28em', textTransform: 'uppercase',
+        color: 'var(--v2-color-text-secondary, #5C4A3E)', fontFamily: 'var(--v2-font-body, inherit)', opacity: 0.85, fontWeight: 600,
       }}>
         {label}
       </span>
@@ -274,14 +282,23 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
         className="flex flex-col items-center"
       >
         {/* Header */}
-        <p className={`text-xs uppercase tracking-[0.3em] mb-3 ${theme.accentText} ${theme.bodyFont}`}>
+        <p 
+          className={`text-[10px] md:text-xs uppercase tracking-[0.35em] mb-4 ${theme.accentText} ${theme.bodyFont}`}
+          style={{ color: 'var(--v2-color-accent, inherit)', opacity: 0.9 }}
+        >
           {eventPassed ? 'Un Momento Especial' : 'Cuenta Regresiva'}
         </p>
-        <svg width="100" height="18" viewBox="0 0 100 18" fill="none" className="mb-8 md:mb-10 opacity-40">
-          <line x1="0"  y1="9" x2="40" y2="9" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.7" />
-          <circle cx="50" cy="9" r="3" fill={`var(--v2-color-accent, ${theme.colors.accent})`} />
-          <line x1="60" y1="9" x2="100" y2="9" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.7" />
-        </svg>
+        
+        {/* Ornamental Divider */}
+        <div className="flex items-center justify-center mb-10 text-amber-800/40" style={{ color: 'var(--v2-divider-color, var(--v2-color-accent, inherit))' }}>
+          <svg className="w-28 h-4" viewBox="0 0 120 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="8" x2="48" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.3" />
+            <path d="M60 3 L64 8 L60 13 L56 8 Z" fill="currentColor" fillOpacity="0.8" />
+            <circle cx="52" cy="8" r="1.5" fill="currentColor" fillOpacity="0.5" />
+            <circle cx="68" cy="8" r="1.5" fill="currentColor" fillOpacity="0.5" />
+            <line x1="72" y1="8" x2="120" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.3" />
+          </svg>
+        </div>
 
         {!hasValidDate ? (
           /* ── NO VALID DATE STATE ────────────────────────────────────────── */
@@ -343,11 +360,15 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
         )}
 
         {/* Footer ornament */}
-        <svg width="100" height="18" viewBox="0 0 100 18" fill="none" className="mt-10 opacity-30">
-          <line x1="0"  y1="9" x2="40" y2="9" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.7" />
-          <circle cx="50" cy="9" r="3" fill={`var(--v2-color-accent, ${theme.colors.accent})`} />
-          <line x1="60" y1="9" x2="100" y2="9" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.7" />
-        </svg>
+        <div className="flex items-center justify-center mt-12 text-amber-800/30" style={{ color: 'var(--v2-divider-color, var(--v2-color-accent, inherit))' }}>
+          <svg className="w-24 h-4" viewBox="0 0 120 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="8" x2="48" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.2" />
+            <path d="M60 5 L63 8 L60 11 L57 8 Z" fill="currentColor" fillOpacity="0.6" />
+            <circle cx="52" cy="8" r="1" fill="currentColor" fillOpacity="0.4" />
+            <circle cx="68" cy="8" r="1" fill="currentColor" fillOpacity="0.4" />
+            <line x1="72" y1="8" x2="120" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.2" />
+          </svg>
+        </div>
       </motion.div>
     </section>
   );
