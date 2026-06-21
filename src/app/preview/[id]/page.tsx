@@ -63,7 +63,7 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
         plan={plan}
         features={features}
         mode="preview"
-        showPreviewBadge
+        showPreviewBadge={isFromEditor}
       />
     </>
   );
