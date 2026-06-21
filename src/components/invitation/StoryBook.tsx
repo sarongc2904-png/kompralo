@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Theme } from '@/domain/themes/types';
 import { InvitationProtagonist, StorySlide } from '@/domain/invitations/types';
@@ -55,7 +56,6 @@ function BookCover({ brideName, groomName, onClick, theme }: {
           transition={{ duration: 0 }}
           whileHover={{ rotateY: -6, rotateX: 2, transition: { duration: 0.45 } }}
         >
-          {/* Floating animation via CSS */}
           <motion.div
             className="absolute inset-0"
             animate={{ y: [0, -7, 0] }}
@@ -69,17 +69,11 @@ function BookCover({ brideName, groomName, onClick, theme }: {
                 boxShadow: '-12px 14px 50px rgba(0,0,0,0.75), -4px 4px 12px rgba(0,0,0,0.4)',
               }}
             >
-              {/* Leather grain noise */}
               <div className="absolute inset-0 opacity-[0.035]" style={{ backgroundImage: NOISE_SVG }} />
-
-              {/* Double gold frame */}
               <div className="absolute inset-4 border border-[#D4AF37]/22 pointer-events-none" />
               <div className="absolute inset-[22px] border border-[#D4AF37]/10 pointer-events-none" />
 
-              {/* Corner accents */}
-              {[
-                'top-4 left-4', 'top-4 right-4', 'bottom-4 left-4', 'bottom-4 right-4'
-              ].map((pos, i) => (
+              {['top-4 left-4', 'top-4 right-4', 'bottom-4 left-4', 'bottom-4 right-4'].map((pos, i) => (
                 <div key={i} className={`absolute ${pos} w-4 h-4 opacity-30`}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d={i < 2 ? (i === 0 ? 'M0 8 L0 0 L8 0' : 'M8 0 L16 0 L16 8') : (i === 2 ? 'M0 8 L0 16 L8 16' : 'M8 16 L16 16 L16 8')}
@@ -88,7 +82,6 @@ function BookCover({ brideName, groomName, onClick, theme }: {
                 </div>
               ))}
 
-              {/* Top ornament */}
               <div className="absolute top-9 left-1/2 -translate-x-1/2">
                 <svg width="100" height="20" viewBox="0 0 100 20" fill="none">
                   <line x1="0" y1="10" x2="36" y2="10" stroke="#D4AF37" strokeWidth="0.6" opacity="0.5" />
@@ -98,7 +91,6 @@ function BookCover({ brideName, groomName, onClick, theme }: {
                 </svg>
               </div>
 
-              {/* Names + subtitle */}
               <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
                 <p
                   className="text-[30px] italic tracking-wide leading-tight mb-3"
@@ -119,7 +111,6 @@ function BookCover({ brideName, groomName, onClick, theme }: {
                 </p>
               </div>
 
-              {/* Bottom ornament */}
               <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
                 <svg width="70" height="20" viewBox="0 0 70 20" fill="none">
                   <path d="M8 10 Q35 2 62 10 Q35 18 8 10Z" fill="none" stroke="#D4AF37" strokeWidth="0.6" opacity="0.42" />
@@ -127,13 +118,12 @@ function BookCover({ brideName, groomName, onClick, theme }: {
                 </svg>
               </div>
 
-              {/* Click hint */}
               <p className="absolute bottom-5 w-full text-center text-[8.5px] tracking-[0.3em] uppercase transition-all duration-500 opacity-40 group-hover:opacity-70" style={{ color: `var(--v2-color-accent, ${theme.colors.accent})` }}>
                 ✦ Abrir el libro ✦
               </p>
             </div>
 
-            {/* ── SPINE (left edge) ── */}
+            {/* ── SPINE ── */}
             <div
               className="absolute top-0 left-0 w-[18px] h-full"
               style={{
@@ -143,7 +133,7 @@ function BookCover({ brideName, groomName, onClick, theme }: {
               }}
             />
 
-            {/* ── PAGES STACK (right edge) ── */}
+            {/* ── PAGES STACK ── */}
             <div
               className="absolute top-[3px] right-0 w-[15px] h-[calc(100%-6px)]"
               style={{
@@ -153,7 +143,7 @@ function BookCover({ brideName, groomName, onClick, theme }: {
               }}
             />
 
-            {/* ── BOTTOM SHADOW ── */}
+            {/* ── SHADOW ── */}
             <div
               className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-[86%] h-5 pointer-events-none"
               style={{
@@ -165,7 +155,6 @@ function BookCover({ brideName, groomName, onClick, theme }: {
         </motion.div>
       </div>
 
-      {/* Pulse hint below */}
       <motion.p
         className="mt-8 text-[10px] tracking-[0.3em] uppercase"
         style={{ color: `var(--v2-color-text-secondary, ${theme.colors.textSecondary})`, fontFamily: 'Georgia, serif' }}
@@ -178,20 +167,64 @@ function BookCover({ brideName, groomName, onClick, theme }: {
   );
 }
 
-// ─── TEXT PAGE ────────────────────────────────────────────────────────────────
+// ─── IMAGE PAGE ───────────────────────────────────────────────────────────────
+// The image is double-contained: outer box controls size/aspect, inner box
+// clips and rounds the image. The image NEVER escapes to the text page.
 
-function TextPage({ slide, pageNum, isLeft, theme }: {
+function ImagePage({ imageUrl, alt }: { imageUrl: string; alt: string }) {
+  return (
+    <div
+      className="
+        relative w-full
+        aspect-[4/5] md:aspect-auto md:min-h-[520px]
+        overflow-hidden
+        rounded-t-2xl md:rounded-l-none md:rounded-r-none
+        bg-stone-900
+        flex items-center justify-center
+        p-2 md:p-0
+      "
+    >
+      {/* Inner image container — strictly bounded, never bleeds */}
+      <div className="relative w-full h-full min-h-[280px] md:min-h-[520px] overflow-hidden">
+        <Image
+          src={imageUrl}
+          alt={alt || 'Nuestra historia'}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-contain object-top md:object-cover md:object-center"
+          style={{ filter: 'sepia(0.18) contrast(0.97) brightness(0.96)' }}
+        />
+        {/* Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+        {/* Spine shadow — desktop only, on the right edge toward the center fold */}
+        <div className="hidden md:block absolute top-0 right-0 w-12 h-full bg-gradient-to-r from-transparent to-black/14 pointer-events-none" />
+        {/* Paper overlay */}
+        <div className="absolute inset-0 opacity-[0.025] mix-blend-multiply pointer-events-none" style={{ backgroundImage: NOISE_SVG }} />
+      </div>
+    </div>
+  );
+}
+
+// ─── TEXT PAGE ────────────────────────────────────────────────────────────────
+// Pure text — no image, no background-image, no overflow from ImagePage.
+
+function TextPage({ slide, pageNum, theme }: {
   slide: StorySlide;
   pageNum: number;
-  isLeft: boolean;
   theme: Theme;
 }) {
   return (
     <div
-      className="relative md:h-full flex flex-col justify-center overflow-hidden"
+      className="
+        relative w-full
+        min-h-[280px] md:min-h-[520px]
+        flex flex-col justify-center
+        overflow-hidden
+        rounded-b-2xl md:rounded-l-none md:rounded-r-none
+      "
       style={{
         background: `var(--v2-background-story, ${theme.backgrounds.storyBook || 'linear-gradient(135deg, #fdf9f0 0%, #f5efdd 50%, #ede7d2 100%)'})`,
-        padding: isLeft ? '32px 24px 32px 32px' : '32px 32px 32px 24px',
+        padding: '36px 32px 36px 32px',
       }}
     >
       {/* Paper grain */}
@@ -201,13 +234,10 @@ function TextPage({ slide, pageNum, isLeft, theme }: {
       <div className="absolute inset-3 border pointer-events-none" style={{ borderColor: theme.borders.subtle }} />
       <div className="absolute inset-[13px] border pointer-events-none opacity-40" style={{ borderColor: theme.borders.subtle }} />
 
-      {/* Spine gradient */}
-      {isLeft
-        ? <div className="absolute top-0 right-0 w-10 h-full bg-gradient-to-r from-transparent to-black/10 pointer-events-none" />
-        : <div className="absolute top-0 left-0 w-10 h-full bg-gradient-to-l from-transparent to-black/10 pointer-events-none" />
-      }
+      {/* Spine shadow — desktop only, on the left edge toward the center fold */}
+      <div className="hidden md:block absolute top-0 left-0 w-12 h-full bg-gradient-to-l from-transparent to-black/08 pointer-events-none" />
 
-      {/* Radial aged vignette */}
+      {/* Aged vignette */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'radial-gradient(ellipse at center, transparent 48%, rgba(139,115,85,0.05) 100%)' }}
@@ -227,7 +257,7 @@ function TextPage({ slide, pageNum, isLeft, theme }: {
         <div className="w-8 h-px mx-auto mb-4 opacity-55" style={{ background: `var(--v2-color-accent, ${theme.colors.accent})` }} />
 
         <p
-          className="text-[13px] md:text-sm leading-relaxed text-justify opacity-82"
+          className="text-[13px] md:text-sm leading-relaxed text-justify opacity-90"
           style={{ fontFamily: 'Georgia, serif', color: `var(--v2-color-text-primary, ${theme.colors.textPrimary})` }}
         >
           {slide.text}
@@ -244,49 +274,19 @@ function TextPage({ slide, pageNum, isLeft, theme }: {
   );
 }
 
-// ─── IMAGE PAGE ───────────────────────────────────────────────────────────────
-
-function ImagePage({ imageUrl, alt, isLeft }: { imageUrl: string; alt: string; isLeft: boolean }) {
-  return (
-    <div className="relative aspect-[4/5] md:aspect-auto md:h-full overflow-hidden flex items-center justify-center bg-stone-900">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imageUrl}
-        alt={alt}
-        className="w-full h-full object-contain object-top md:object-cover"
-        style={{ filter: 'sepia(0.18) contrast(0.97) brightness(0.96)' }}
-      />
-      {/* Vignette */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-black/06 pointer-events-none" />
-      {/* Spine gradient */}
-      {isLeft
-        ? <div className="absolute top-0 right-0 w-10 h-full bg-gradient-to-r from-transparent to-black/16 pointer-events-none" />
-        : <div className="absolute top-0 left-0 w-10 h-full bg-gradient-to-l from-transparent to-black/16 pointer-events-none" />
-      }
-      {/* Paper overlay */}
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-multiply pointer-events-none" style={{ backgroundImage: NOISE_SVG }} />
-    </div>
-  );
-}
-
 // ─── FINAL SPREAD ─────────────────────────────────────────────────────────────
 
 function FinalSpread({ brideName, groomName, theme }: { brideName: string; groomName: string; theme: Theme }) {
   return (
     <div
-      className="relative w-full h-full flex items-center justify-center overflow-hidden"
+      className="relative w-full min-h-[380px] md:min-h-[520px] flex items-center justify-center overflow-hidden"
       style={{ background: `var(--v2-background-final, ${theme.backgrounds.final || 'linear-gradient(135deg, #fdf9ef 0%, #f0eadb 50%, #e7e0ce 100%)'})` }}
     >
-      {/* Paper grain */}
       <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: NOISE_SVG }} />
-
-      {/* Frames */}
       <div className="absolute inset-4 border pointer-events-none" style={{ borderColor: theme.borders.subtle }} />
       <div className="absolute inset-7 border pointer-events-none opacity-45" style={{ borderColor: theme.borders.subtle }} />
 
-      {/* Content */}
       <div className="relative z-10 text-center px-10 max-w-lg mx-auto">
-        {/* Top ornament */}
         <svg width="140" height="28" viewBox="0 0 140 28" fill="none" className="mx-auto mb-7 opacity-48">
           <line x1="0" y1="14" x2="53" y2="14" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.8" />
           <path d="M58 4 L70 14 L58 24 L62 14Z" fill={`var(--v2-color-accent, ${theme.colors.accent})`} opacity="0.7" />
@@ -327,14 +327,12 @@ function FinalSpread({ brideName, groomName, theme }: { brideName: string; groom
           </p>
         </div>
 
-        {/* Bottom ornament */}
         <svg width="100" height="22" viewBox="0 0 100 22" fill="none" className="mx-auto mt-8 opacity-38">
           <path d="M10 11 Q50 3 90 11 Q50 19 10 11Z" fill="none" stroke={`var(--v2-color-accent, ${theme.colors.accent})`} strokeWidth="0.8" />
           <circle cx="50" cy="11" r="2.5" fill={`var(--v2-color-accent, ${theme.colors.accent})`} />
         </svg>
       </div>
 
-      {/* Vignette */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'radial-gradient(ellipse at center, transparent 44%, rgba(139,115,85,0.05) 100%)' }}
@@ -346,18 +344,19 @@ function FinalSpread({ brideName, groomName, theme }: { brideName: string; groom
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export default function StoryBook({ protagonists, slides, theme, brideName, groomName }: StoryBookProps) {
-  const primaryName = protagonists?.[0]?.name ?? brideName ?? 'Sofía';
+  const primaryName   = protagonists?.[0]?.name ?? brideName ?? 'Sofía';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? 'Alejandro';
+
   const [phase, setPhase] = useState<'closed' | 'open'>('closed');
   const [spread, setSpread] = useState(0);
-  const [dir, setDir] = useState(1);
+  const [dir, setDir]       = useState(1);
   const autoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const totalSpreads = slides.length + 1; // +1 for final page
-  const isFinal = spread >= slides.length;
-  const currentSlide = !isFinal ? slides[spread] : null;
-  const imageOnLeft = spread % 2 === 0;
-  const pageNum = spread * 2 + 1;
+  const totalSpreads  = slides.length + 1;
+  const isFinal       = spread >= slides.length;
+  const currentSlide  = !isFinal ? slides[spread] : null;
+  const imageOnLeft   = spread % 2 === 0;
+  const pageNum       = spread * 2 + 1;
 
   const clearAuto = () => { if (autoRef.current) clearTimeout(autoRef.current); };
 
@@ -389,24 +388,18 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
     clearAuto(); setDir(i > spread ? 1 : -1); setSpread(i);
   };
 
-  // Page-turn variants with 3D perspective flip
+  // Page-turn: simple fade + slight scale. No rotateY to avoid 3D bleed between columns.
   const spreadVariants = {
-    enter: (d: number) => ({
-      rotateY: d > 0 ? 40 : -40,
-      opacity: 0,
-      scale: 0.97,
-    }),
+    enter: (_d: number) => ({ opacity: 0, scale: 0.98 }),
     center: {
-      rotateY: 0,
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
     },
-    exit: (d: number) => ({
-      rotateY: d > 0 ? -40 : 40,
+    exit: (_d: number) => ({
       opacity: 0,
-      scale: 0.97,
-      transition: { duration: 0.45, ease: [0.55, 0, 1, 0.45] as [number, number, number, number] },
+      scale: 0.98,
+      transition: { duration: 0.35, ease: [0.55, 0, 1, 0.45] as [number, number, number, number] },
     }),
   };
 
@@ -440,25 +433,20 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
         ) : (
           <motion.div
             key="open"
-            initial={{ opacity: 0, scale: 0.88 }}
-            animate={{ opacity: 1, scale: 1, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } }}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } }}
             className="w-full max-w-5xl flex flex-col items-center"
           >
             {/* ── BOOK SPREAD ── */}
+            {/*
+              No fixed height on the outer container. The pages (ImagePage + TextPage)
+              drive their own height via min-h. This prevents the image from being
+              clipped or bleeding into the text column.
+            */}
             <div
-              className="relative w-full overflow-hidden"
-              style={{
-                minHeight: 'clamp(280px, 52vw, 520px)',
-                boxShadow: theme.shadows.book,
-              }}
+              className="relative w-full rounded-2xl overflow-hidden"
+              style={{ boxShadow: theme.shadows.book }}
             >
-              {/* Center spine */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[3px] h-full z-20 pointer-events-none"
-                style={{ background: 'linear-gradient(to bottom, #1a0f08/60, #2a1a0e, #1a0f08/60)' }}
-              />
-              {/* Spine highlight */}
-              <div className="absolute top-0 left-[calc(50%-1px)] w-px h-full bg-[#D4AF37]/10 z-20 pointer-events-none" />
-
               <AnimatePresence initial={false} custom={dir} mode="wait">
                 <motion.div
                   key={`spread-${spread}`}
@@ -467,22 +455,34 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  className="absolute inset-0"
-                  style={{ perspective: '1400px', transformStyle: 'preserve-3d' }}
+                  className="w-full"
                 >
                   {isFinal ? (
                     <FinalSpread brideName={primaryName} groomName={secondaryName} theme={theme} />
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 md:h-full">
+                    /*
+                      Two-column grid on desktop, single column on mobile.
+                      Each column has its own overflow-hidden — the image is
+                      completely contained within ImagePage and cannot bleed.
+                    */
+                    <div className="relative grid grid-cols-1 md:grid-cols-2">
+
+                      {/* Center fold line — desktop only */}
+                      <div
+                        className="hidden md:block pointer-events-none absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[3px] z-20"
+                        style={{ background: 'linear-gradient(to bottom, rgba(26,15,8,0.25), #2a1a0e 50%, rgba(26,15,8,0.25))' }}
+                      />
+                      <div className="hidden md:block pointer-events-none absolute top-0 bottom-0 left-[calc(50%-1px)] w-px bg-[#D4AF37]/10 z-20" />
+
                       {imageOnLeft ? (
                         <>
-                          <ImagePage imageUrl={currentSlide!.imageUrl} alt={currentSlide!.title} isLeft={true} />
-                          <TextPage slide={currentSlide!} pageNum={pageNum + 1} isLeft={false} theme={theme} />
+                          <ImagePage imageUrl={currentSlide!.imageUrl} alt={currentSlide!.title} />
+                          <TextPage slide={currentSlide!} pageNum={pageNum + 1} theme={theme} />
                         </>
                       ) : (
                         <>
-                          <TextPage slide={currentSlide!} pageNum={pageNum} isLeft={true} theme={theme} />
-                          <ImagePage imageUrl={currentSlide!.imageUrl} alt={currentSlide!.title} isLeft={false} />
+                          <TextPage slide={currentSlide!} pageNum={pageNum} theme={theme} />
+                          <ImagePage imageUrl={currentSlide!.imageUrl} alt={currentSlide!.title} />
                         </>
                       )}
                     </div>
@@ -504,7 +504,6 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
                 {spread === 0 ? 'Cerrar' : 'Anterior'}
               </button>
 
-              {/* Dot navigation */}
               <div className="flex items-center gap-2">
                 {Array.from({ length: totalSpreads }).map((_, i) => (
                   <button
@@ -514,7 +513,9 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
                     style={{
                       width: i === spread ? 20 : 6,
                       height: 6,
-                      background: i === spread ? `var(--v2-color-accent, ${theme.colors.accent})` : `var(--v2-color-accent-soft, ${theme.colors.accentSoft})`,
+                      background: i === spread
+                        ? `var(--v2-color-accent, ${theme.colors.accent})`
+                        : `var(--v2-color-accent-soft, ${theme.colors.accentSoft})`,
                     }}
                     aria-label={`Página ${i + 1}`}
                   />
@@ -534,7 +535,6 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
               </button>
             </div>
 
-            {/* Page counter */}
             <p className="mt-3 text-[8.5px] tracking-[0.22em] font-mono opacity-40" style={{ color: `var(--v2-color-text-secondary, ${theme.colors.textSecondary})` }}>
               Página {spread + 1} de {totalSpreads}
             </p>
