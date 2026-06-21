@@ -52,11 +52,11 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                 transition={{ duration: 0.65, delay: idx * 0.06, ease: [0.16, 1, 0.3, 1] }}
                 className="relative flex flex-col justify-between items-center text-center group w-full sm:w-[300px] md:w-[280px]"
                 style={{
-                  background: 'var(--v2-glass-bg, rgba(255, 250, 238, 0.88))',
+                  background: 'var(--v2-card-ivory-bg, linear-gradient(145deg, rgba(255,250,238,0.96), rgba(255,244,220,0.90)))',
                   backdropFilter: 'blur(22px) saturate(150%)',
                   WebkitBackdropFilter: 'blur(22px) saturate(150%)',
                   border: '1px solid var(--v2-card-border, rgba(212, 175, 95, 0.30))',
-                  borderRadius: 'var(--v2-radius-lg, 24px)',
+                  borderRadius: 'var(--v2-card-radius, 28px)',
                   boxShadow: '0 8px 36px rgba(120, 88, 40, 0.11), 0 1px 4px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.92)',
                   overflow: 'hidden',
                   padding: '32px',
@@ -112,7 +112,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                               <div className="flex items-start gap-2.5">
                                 <Building className={`w-3.5 h-3.5 mt-0.5 opacity-60 ${theme.accentText}`} />
                                 <div>
-                                  <span className="block opacity-60 font-semibold uppercase text-[8px] tracking-wider">Banco</span>
+                                  <span className="block opacity-60 font-semibold uppercase text-[10px] tracking-[0.14em]">Banco</span>
                                   <span className={`font-semibold ${theme.cardText}`}>{item.bankDetails.bankName}</span>
                                 </div>
                               </div>
@@ -120,7 +120,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                               <div className="flex items-start gap-2.5">
                                 <User className={`w-3.5 h-3.5 mt-0.5 opacity-60 ${theme.accentText}`} />
                                 <div>
-                                  <span className="block opacity-60 font-semibold uppercase text-[8px] tracking-wider">Titular</span>
+                                  <span className="block opacity-60 font-semibold uppercase text-[10px] tracking-[0.14em]">Titular</span>
                                   <span className={`font-semibold ${theme.cardText}`}>{item.bankDetails.accountOwner}</span>
                                 </div>
                               </div>
@@ -128,7 +128,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                               <div className="flex items-start gap-2.5">
                                 <CreditCard className={`w-3.5 h-3.5 mt-0.5 opacity-60 ${theme.accentText}`} />
                                 <div className="w-full">
-                                  <span className="block opacity-60 font-semibold uppercase text-[8px] tracking-wider">CLABE</span>
+                                  <span className="block opacity-60 font-semibold uppercase text-[10px] tracking-[0.14em]">CLABE</span>
                                   <span className={`font-bold font-mono ${theme.cardText} break-all block text-xs select-all mt-0.5`}>
                                     {item.bankDetails.clabe}
                                   </span>
@@ -156,7 +156,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                       {!isRevealed ? (
                         <button
                           onClick={() => toggleReveal(item.id)}
-                          className={`w-full py-3 border ${theme.cardBorder} hover:opacity-80 text-[10px] uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer bg-white/80 hover:bg-white ${theme.bodyFont} ${theme.cardText}`}
+                          className={`w-full py-3 border ${theme.cardBorder} hover:opacity-80 text-[12px] uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer bg-[#fff8ea]/70 hover:bg-[#fff8ea] ${theme.bodyFont} ${theme.cardText}`}
                         >
                           <Eye className="w-3.5 h-3.5 opacity-70" />
                           Revelar Datos
@@ -165,7 +165,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                         <div className="flex flex-col gap-2 w-full">
                           <button
                             onClick={() => copyToClipboard(item.bankDetails!.clabe, item.id)}
-                            className={`w-full py-3 border ${theme.cardBorder} hover:opacity-80 text-[10px] uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer bg-white hover:opacity-80 ${theme.bodyFont} ${theme.cardText}`}
+                            className={`w-full py-3 border ${theme.cardBorder} hover:opacity-80 text-[12px] uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer bg-[#fff8ea]/70 hover:bg-[#fff8ea] ${theme.bodyFont} ${theme.cardText}`}
                           >
                             {copiedId === item.id ? (
                               <>
@@ -181,7 +181,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                           </button>
                           <button
                             onClick={() => toggleReveal(item.id)}
-                            className="text-[9px] uppercase tracking-wider text-gray-400 hover:text-black transition-colors py-1 cursor-pointer flex items-center justify-center gap-1"
+                            className="text-[11px] uppercase tracking-[0.15em] text-gray-400 hover:text-black transition-colors py-1 cursor-pointer flex items-center justify-center gap-1"
                           >
                             <EyeOff className="w-3 h-3" />
                             Ocultar Datos
@@ -194,7 +194,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`w-full py-3 border ${theme.cardBorder} hover:opacity-80 text-[10px] uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 bg-white/80 hover:bg-white ${theme.bodyFont} ${theme.cardText}`}
+                      className={`w-full py-3 border ${theme.cardBorder} hover:opacity-80 text-[12px] uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2 bg-[#fff8ea]/70 hover:bg-[#fff8ea] ${theme.bodyFont} ${theme.cardText}`}
                     >
                       Ver Mesa
                       <ExternalLink className="w-3 h-3 opacity-60" />
