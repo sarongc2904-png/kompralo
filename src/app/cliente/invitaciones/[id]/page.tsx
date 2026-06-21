@@ -1,0 +1,460 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound, redirect } from 'next/navigation';
+import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import type { RSVPResponse } from '@/domain/rsvp/types';
+import QrCard from './QrCard';
+import ShareButtons from './ShareButtons';
+
+export const metadata: Metadata = { title: 'Dashboard de invitación — Kompralo' };
+
+const T = {
+  ivory:     '#E8D7B8',
+  cream:     '#F1E3C8',
+  dark:      '#0D0A07',
+  mid:       '#1A1612',
+  light:     '#6B4A35',
+  gold:      '#C4A962',
+  border:    '#EAD7A3',
+  white:     '#F1E3C8',
+} as const;
+
+const planLabels: Record<string, string> = {
+  basic: 'Basic', premium: 'Premium', gold: 'Premium', deluxe: 'Deluxe', platinum: 'Deluxe',
+};
+
+const categoryLabels: Record<string, string> = {
+  wedding: 'Boda', baptism: 'Bautizo', 'baby-shower': 'Baby Shower', birthday: 'Cumpleaños',
+};
+
+const attendanceLabels: Record<string, string> = {
+  yes: 'Sí asistirá', no: 'No asistirá', maybe: 'Tal vez',
+};
+
+const attendanceColors: Record<string, string> = {
+  yes: '#238636', no: '#D32F2F', maybe: '#8A6D3B',
+};
+
+const attendanceBg: Record<string, string> = {
+  yes: '#E6F4EA', no: '#FCE8E6', maybe: '#FCF8E3',
+};
+
+function formatDate(iso?: string | null): string {
+  if (!iso) return '—';
+  try {
+    return new Intl.DateTimeFormat('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })
+      .format(new Date(iso.includes('T') ? iso : iso + 'T12:00:00'));
+  } catch { return iso; }
+}
+
+function formatDateTime(iso: string): string {
+  try {
+    return new Intl.DateTimeFormat('es-MX', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      .format(new Date(iso));
+  } catch { return iso; }
+}
+
+// ─── RSVP helpers ─────────────────────────────────────────────────────────────
+
+function isAttending(r: RSVPResponse): boolean {
+  return r.attendance === 'yes';
+}
+
+function isNotAttending(r: RSVPResponse): boolean {
+  return r.attendance === 'no';
+}
+
+function getTotalPeople(r: RSVPResponse): number {
+  if (!isAttending(r)) return 0;
+  const n = Number(r.guestCount ?? 0);
+  return (Number.isFinite(n) && n > 0 ? n : 0) + 1;
+}
+
+function buildStats(responses: RSVPResponse[]) {
+  const total       = responses.length;
+  const yesCount    = responses.filter(isAttending).length;
+  const noCount     = responses.filter(isNotAttending).length;
+  const totalPeople = responses.reduce((sum, r) => sum + getTotalPeople(r), 0);
+  return { total, yesCount, noCount, totalPeople };
+}
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
+function PageStyles() {
+  return (
+    <style>{`
+      .db-btn { transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease; }
+      .db-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15,12,9,0.1); }
+      .db-btn:active { transform: translateY(0); }
+      .db-stat-card { transition: transform .2s ease, box-shadow .2s ease; }
+      .db-stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,12,9,0.06); }
+
+      /* Desktop table */
+      .rsvp-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+      .rsvp-table th {
+        padding: .75rem 1rem; text-align: left;
+        font-size: .75rem; font-weight: 700;
+        letter-spacing: .06em; text-transform: uppercase;
+        color: ${T.light}; border-bottom: 1px solid ${T.border};
+        white-space: nowrap;
+      }
+      .rsvp-table td {
+        padding: .75rem 1rem; border-bottom: 1px solid rgba(234,215,163,0.45);
+        color: ${T.mid}; vertical-align: top;
+      }
+      .rsvp-table tr:last-child td { border-bottom: none; }
+      .rsvp-table tr:hover td { background: rgba(234,215,163,0.12); }
+
+      @media (max-width: 767px) {
+        .rsvp-table-wrap { display: none; }
+        .rsvp-cards-wrap { display: block; }
+      }
+      @media (min-width: 768px) {
+        .rsvp-table-wrap { display: block; }
+        .rsvp-cards-wrap { display: none; }
+      }
+    `}</style>
+  );
+}
+
+// ─── Stat card ────────────────────────────────────────────────────────────────
+
+function StatCard({ label, value, sub, accent }: { label: string; value: number; sub: string; accent?: string }) {
+  return (
+    <div
+      className="db-stat-card"
+      style={{
+        background: T.white, border: `1px solid ${T.border}`,
+        borderRadius: '1rem', padding: '1.25rem 1rem',
+        textAlign: 'center', boxShadow: '0 2px 8px rgba(15,12,9,0.03)',
+        borderTop: accent ? `3px solid ${accent}` : undefined,
+      }}
+    >
+      <p style={{ margin: '0 0 .25rem', fontSize: '2rem', fontWeight: 800, color: accent ?? T.dark, lineHeight: 1 }}>
+        {value}
+      </p>
+      <p style={{ margin: '0 0 .25rem', fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>
+        {label}
+      </p>
+      <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{sub}</p>
+    </div>
+  );
+}
+
+// ─── RSVP mobile card ─────────────────────────────────────────────────────────
+
+function RsvpCard({ r }: { r: RSVPResponse }) {
+  const companions = Number(r.guestCount ?? 0);
+  const validComp  = Number.isFinite(companions) && companions > 0 ? companions : 0;
+  const total      = isAttending(r) ? validComp + 1 : 0;
+
+  return (
+    <div style={{
+      background: T.white, border: `1px solid ${T.border}`,
+      borderRadius: '1rem', padding: '1.125rem 1.25rem',
+      marginBottom: '.75rem',
+      borderLeft: `3px solid ${attendanceColors[r.attendance] ?? T.border}`,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', marginBottom: '.5rem' }}>
+        <p style={{ margin: 0, fontWeight: 700, color: T.dark, fontSize: '.9375rem' }}>{r.name}</p>
+        <span style={{
+          padding: '.2rem .625rem', borderRadius: '2rem',
+          fontSize: '.6875rem', fontWeight: 700, whiteSpace: 'nowrap',
+          color: attendanceColors[r.attendance] ?? T.mid,
+          background: attendanceBg[r.attendance] ?? T.cream,
+        }}>
+          {attendanceLabels[r.attendance] ?? r.attendance}
+        </span>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.375rem .75rem', fontSize: '.8125rem', color: T.mid }}>
+        {isAttending(r) && (
+          <>
+            <span style={{ color: T.light, fontSize: '.75rem' }}>Acompañantes</span>
+            <span style={{ fontWeight: 600 }}>{validComp}</span>
+            <span style={{ color: T.light, fontSize: '.75rem' }}>Total personas</span>
+            <span style={{ fontWeight: 600, color: '#238636' }}>{total}</span>
+          </>
+        )}
+        {r.phone && (
+          <>
+            <span style={{ color: T.light, fontSize: '.75rem' }}>Teléfono</span>
+            <span>{r.phone}</span>
+          </>
+        )}
+      </div>
+
+      {r.message && (
+        <p style={{ margin: '.5rem 0 0', fontSize: '.8125rem', color: T.mid, fontStyle: 'italic', borderTop: `1px solid ${T.border}`, paddingTop: '.5rem' }}>
+          &ldquo;{r.message}&rdquo;
+        </p>
+      )}
+
+      <p style={{ margin: '.5rem 0 0', fontSize: '.75rem', color: T.light }}>
+        {formatDateTime(r.createdAt)}
+      </p>
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+interface Props {
+  params: Promise<{ id: string }>;
+}
+
+export default async function InvitationDashboard({ params }: Props) {
+  const { id } = await params;
+
+  // 1. Auth check
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user?.email) {
+    redirect(`/login?redirect=/cliente/invitaciones/${id}`);
+  }
+
+  const email = user.email;
+  const svc   = createServiceRoleSupabaseClient();
+
+  // 2. Fetch invitation, verify ownership
+  const { data: inv } = await svc
+    .from('invitations')
+    .select('id, slug, customer_email, plan_id, status, title, subtitle, event_date, category, published_at')
+    .eq('id', id)
+    .eq('customer_email', email)
+    .single();
+
+  if (!inv) {
+    notFound();
+  }
+
+  // 3. Fetch RSVP responses
+  const { data: rsvpRows } = await svc
+    .from('rsvp_responses')
+    .select('id, invitation_id, name, phone, attendance, guest_count, message, status, created_at, updated_at')
+    .eq('invitation_id', id)
+    .order('created_at', { ascending: false });
+
+  const responses: RSVPResponse[] = (rsvpRows ?? []).map((r) => ({
+    id:           r.id,
+    invitationId: r.invitation_id,
+    name:         r.name,
+    phone:        r.phone ?? undefined,
+    attendance:   r.attendance,
+    guestCount:   Number(r.guest_count ?? 0),
+    message:      r.message ?? undefined,
+    status:       r.status,
+    createdAt:    r.created_at,
+    updatedAt:    r.updated_at,
+  }));
+
+  const stats = buildStats(responses);
+
+  // 4. Build URLs
+  const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
+  const publicUrl = `${appUrl}/preview/${id}`;
+  const editUrl   = `/dashboard/invitations/${id}/edit`;
+
+  // 5. Display helpers
+  const eventTitle   = inv.title ?? 'Mi invitación';
+  const eventSlug    = (inv.slug ?? id).replace(/[^a-z0-9-]/gi, '-').toLowerCase();
+  const planLabel    = planLabels[inv.plan_id] ?? inv.plan_id ?? '—';
+  const categoryLabel = categoryLabels[inv.category] ?? inv.category ?? '—';
+  const eventDate    = formatDate(inv.event_date);
+
+  return (
+    <main style={{
+      minHeight:  '100dvh',
+      background: T.ivory,
+      backgroundImage: 'radial-gradient(ellipse at 50% 0%, rgba(184,150,106,0.06) 0%, transparent 60%)',
+      padding:    '4rem 1.25rem 3rem',
+      fontFamily: 'var(--font-inter, system-ui, sans-serif)',
+      position:   'relative',
+    }}>
+      <div className="paper-noise" />
+      <PageStyles />
+
+      {/* Nav */}
+      <nav style={{
+        position: 'absolute', top: 0, left: 0, right: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '.875rem clamp(1.25rem,5vw,3rem)',
+        borderBottom: `1px solid ${T.border}`,
+        background: 'rgba(250,247,242,0.85)', backdropFilter: 'blur(10px)',
+        zIndex: 10,
+      }}>
+        <Link href="/cliente" style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.dark, textDecoration: 'none' }}>
+          ← Mis invitaciones
+        </Link>
+        <Link href="/auth/signout" style={{ fontSize: '.8125rem', color: T.light, textDecoration: 'none', fontWeight: 500 }}>
+          Cerrar sesión
+        </Link>
+      </nav>
+
+      <div style={{ maxWidth: '900px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
+
+        {/* ── Header ── */}
+        <div style={{ marginBottom: '2rem' }}>
+          <p style={{ fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', color: T.gold, textTransform: 'uppercase', margin: '0 0 .375rem' }}>
+            Dashboard del evento
+          </p>
+          <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.2 }}>
+            {eventTitle}
+          </h1>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem .75rem', fontSize: '.8125rem', color: T.mid, marginBottom: '1.25rem' }}>
+            <span>{categoryLabel}</span>
+            <span style={{ color: T.border }}>·</span>
+            <span>{eventDate}</span>
+            <span style={{ color: T.border }}>·</span>
+            <span style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '2rem', padding: '.1rem .625rem', fontSize: '.75rem', fontWeight: 700, color: T.gold }}>
+              Plan {planLabel}
+            </span>
+          </div>
+
+          {/* Action buttons row */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.625rem' }}>
+            <Link href={editUrl} className="db-btn" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '.375rem',
+              padding: '.625rem 1.25rem', background: T.gold, color: T.dark,
+              borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
+              textDecoration: 'none', boxShadow: '0 4px 12px rgba(196,169,98,0.25)',
+            }}>
+              ✏️ Editar invitación
+            </Link>
+            <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '.375rem',
+              padding: '.625rem 1.25rem', background: T.cream,
+              border: `1px solid ${T.border}`, color: T.dark,
+              borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
+              textDecoration: 'none',
+            }}>
+              👁 Ver invitación
+            </a>
+            <a href={`/api/invitations/${id}/rsvp/export`} className="db-btn" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '.375rem',
+              padding: '.625rem 1.25rem', background: T.dark, color: T.cream,
+              borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
+              textDecoration: 'none',
+            }}>
+              ⬇ Descargar Excel
+            </a>
+          </div>
+        </div>
+
+        {/* ── Stats ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.875rem', marginBottom: '2rem' }}>
+          <StatCard label="Respuestas" value={stats.total} sub="confirmaciones totales" />
+          <StatCard label="Sí asistirán" value={stats.yesCount} sub="respuestas positivas" accent="#238636" />
+          <StatCard label="No asistirán" value={stats.noCount} sub="respuestas negativas" accent="#D32F2F" />
+          <StatCard label="Personas" value={stats.totalPeople} sub="total real confirmado" accent={T.gold} />
+        </div>
+
+        {/* ── Two-column layout (desktop) ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 280px', gap: '1.5rem', alignItems: 'start' }}>
+
+          {/* Left: RSVP list */}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
+              <h2 style={{ margin: 0, fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+                Confirmaciones RSVP
+              </h2>
+              <span style={{ fontSize: '.8125rem', color: T.light, fontWeight: 600 }}>
+                {responses.length} {responses.length === 1 ? 'respuesta' : 'respuestas'}
+              </span>
+            </div>
+
+            {responses.length === 0 ? (
+              <div style={{
+                background: T.white, border: `1px solid ${T.border}`,
+                borderRadius: '1.25rem', padding: '2.5rem 1.5rem',
+                textAlign: 'center',
+              }}>
+                <div style={{ fontSize: '2.25rem', marginBottom: '.75rem' }}>📭</div>
+                <p style={{ margin: '0 0 .5rem', fontWeight: 700, color: T.dark, fontSize: '1rem' }}>
+                  Aún no hay confirmaciones
+                </p>
+                <p style={{ margin: 0, color: T.light, fontSize: '.875rem', lineHeight: 1.6 }}>
+                  Cuando tus invitados respondan, aparecerán aquí.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Desktop table */}
+                <div className="rsvp-table-wrap" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', overflow: 'auto' }}>
+                  <table className="rsvp-table">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Asistencia</th>
+                        <th>Acomp.</th>
+                        <th>Personas</th>
+                        <th>Teléfono</th>
+                        <th>Mensaje</th>
+                        <th>Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {responses.map((r) => {
+                        const comp  = Number(r.guestCount ?? 0);
+                        const vComp = Number.isFinite(comp) && comp > 0 ? comp : 0;
+                        const ppl   = isAttending(r) ? vComp + 1 : 0;
+                        return (
+                          <tr key={r.id}>
+                            <td style={{ fontWeight: 600, color: T.dark }}>{r.name}</td>
+                            <td>
+                              <span style={{
+                                padding: '.2rem .625rem', borderRadius: '2rem',
+                                fontSize: '.75rem', fontWeight: 700,
+                                color: attendanceColors[r.attendance] ?? T.mid,
+                                background: attendanceBg[r.attendance] ?? T.cream,
+                                whiteSpace: 'nowrap',
+                              }}>
+                                {attendanceLabels[r.attendance] ?? r.attendance}
+                              </span>
+                            </td>
+                            <td style={{ textAlign: 'center' }}>{vComp}</td>
+                            <td style={{ textAlign: 'center', fontWeight: 600, color: isAttending(r) ? '#238636' : T.light }}>
+                              {ppl > 0 ? ppl : '—'}
+                            </td>
+                            <td>{r.phone ?? '—'}</td>
+                            <td style={{ maxWidth: '180px', fontSize: '.8125rem', fontStyle: r.message ? 'italic' : 'normal', color: T.mid }}>
+                              {r.message ? `"${r.message}"` : '—'}
+                            </td>
+                            <td style={{ fontSize: '.75rem', whiteSpace: 'nowrap', color: T.light }}>
+                              {formatDateTime(r.createdAt)}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile cards */}
+                <div className="rsvp-cards-wrap">
+                  {responses.map((r) => <RsvpCard key={r.id} r={r} />)}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Right sidebar: QR + share */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
+
+            <div style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.25rem' }}>
+              <p style={{ margin: '0 0 .875rem', fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
+                Compartir invitación
+              </p>
+              <ShareButtons publicUrl={publicUrl} eventTitle={eventTitle} />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom padding for mobile */}
+        <div style={{ height: '2rem' }} />
+      </div>
+    </main>
+  );
+}

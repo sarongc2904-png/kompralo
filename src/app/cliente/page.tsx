@@ -5,6 +5,36 @@ import { SupabaseOrderRepository } from '@/domain/orders';
 import type { Order } from '@/domain/orders';
 import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/lib/supabase/server';
 
+interface RsvpStats { total: number; yes: number; no: number; people: number }
+
+async function fetchRsvpStats(invitationIds: string[]): Promise<Record<string, RsvpStats>> {
+  if (invitationIds.length === 0) return {};
+  try {
+    const svc = createServiceRoleSupabaseClient();
+    const { data } = await svc
+      .from('rsvp_responses')
+      .select('invitation_id, attendance, guest_count')
+      .in('invitation_id', invitationIds);
+    if (!data) return {};
+
+    const map: Record<string, RsvpStats> = {};
+    for (const id of invitationIds) map[id] = { total: 0, yes: 0, no: 0, people: 0 };
+
+    for (const r of data) {
+      const s = map[r.invitation_id];
+      if (!s) continue;
+      s.total++;
+      if (r.attendance === 'yes') {
+        s.yes++;
+        s.people += Math.max(0, Number(r.guest_count ?? 0)) + 1;
+      } else if (r.attendance === 'no') {
+        s.no++;
+      }
+    }
+    return map;
+  } catch { return {}; }
+}
+
 export const metadata: Metadata = { title: 'Mis invitaciones — Kompralo' };
 
 const T = {
@@ -147,7 +177,7 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
   );
 }
 
-function OrderCard({ order }: { order: Order }) {
+function OrderCard({ order, rsvpStats }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number } }) {
   const statusColor: Record<string, string> = {
     pending:  '#8A6D3B',
     paid:     '#238636',
@@ -163,6 +193,13 @@ function OrderCard({ order }: { order: Order }) {
   };
 
   const isPaid = order.status === 'paid';
+
+  const appUrl       = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
+  const publicUrl    = order.invitationId ? `${appUrl}/preview/${order.invitationId}` : null;
+  const shareMessage = publicUrl
+    ? `Hola, queremos invitarte a nuestro evento.\n\nAbre nuestra invitación digital aquí:\n${publicUrl}\n\nPor favor confirma tu asistencia desde la invitación. ¡Te esperamos!`
+    : '';
+  const whatsappUrl  = shareMessage ? `https://wa.me/?text=${encodeURIComponent(shareMessage)}` : null;
 
   return (
     <div
@@ -209,21 +246,74 @@ function OrderCard({ order }: { order: Order }) {
           : 'Preparando correo de confirmación'}
       </p>
 
+      {/* RSVP mini-stats */}
+      {order.invitationId && isPaid && rsvpStats !== undefined && (
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '.5rem',
+          marginBottom: '1.25rem',
+          padding: '.875rem', background: T.cream,
+          border: `1px solid ${T.border}`, borderRadius: '.875rem',
+        }}>
+          {[
+            { label: 'Respuestas', value: rsvpStats.total, color: T.dark },
+            { label: 'Sí asistirán', value: rsvpStats.yes, color: '#238636' },
+            { label: 'No asistirán', value: rsvpStats.no, color: '#D32F2F' },
+            { label: 'Personas', value: rsvpStats.people, color: T.gold },
+          ].map(({ label, value, color }) => (
+            <div key={label} style={{ textAlign: 'center' }}>
+              <p style={{ margin: '0 0 .125rem', fontSize: '1.25rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</p>
+              <p style={{ margin: 0, fontSize: '.6875rem', color: T.light, lineHeight: 1.3 }}>{label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Actions */}
       {order.invitationId && isPaid && (
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
           <Link
-            href={`/dashboard/invitations/${order.invitationId}/edit`}
+            href={`/cliente/invitaciones/${order.invitationId}`}
             className="cl-btn"
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.375rem',
-              padding: '0.625rem 1.5rem', background: T.gold, color: T.dark,
-              borderRadius: '0.625rem', fontSize: '0.875rem', fontWeight: 700,
-              textDecoration: 'none', boxShadow: '0 4px 12px rgba(184,150,106,0.2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+              padding: '0.75rem 1.5rem', background: T.dark, color: T.cream,
+              borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+              textDecoration: 'none', minHeight: '46px', textAlign: 'center',
             }}
           >
-            ✏️ Editar invitación
+            📊 Administrar evento
           </Link>
+          <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+            <Link
+              href={`/dashboard/invitations/${order.invitationId}/edit`}
+              className="cl-btn"
+              style={{
+                flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+                padding: '0.625rem 1rem', background: T.gold, color: T.dark,
+                borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+                textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                boxShadow: '0 4px 12px rgba(184,150,106,0.2)',
+              }}
+            >
+              ✏️ Editar invitación
+            </Link>
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cl-btn"
+                style={{
+                  flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+                  padding: '0.625rem 1rem', background: '#25D366', color: '#fff',
+                  borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+                  textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                }}
+              >
+                Compartir invitación
+              </a>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -253,6 +343,11 @@ export default async function ClientePage({ searchParams }: Props) {
 
   const hasValidEmail = trimmedEmail && isValidEmail(trimmedEmail);
   const orders = hasValidEmail ? await fetchOrders(trimmedEmail) : [];
+
+  const paidInvitationIds = orders
+    .filter((o) => o.status === 'paid' && !!o.invitationId)
+    .map((o) => o.invitationId as string);
+  const rsvpStatsMap = await fetchRsvpStats(paidInvitationIds);
 
   return (
     <main
@@ -396,7 +491,11 @@ export default async function ClientePage({ searchParams }: Props) {
               <strong>{trimmedEmail}</strong>
             </p>
             {orders.map((order) => (
-              <OrderCard key={order.id} order={order} />
+              <OrderCard
+                key={order.id}
+                order={order}
+                rsvpStats={order.invitationId ? rsvpStatsMap[order.invitationId] : undefined}
+              />
             ))}
 
             {/* Buy another CTA — no free creation allowed */}
