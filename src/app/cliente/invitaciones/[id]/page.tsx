@@ -89,6 +89,19 @@ function PageStyles() {
       .db-stat-card { transition: transform .2s ease, box-shadow .2s ease; }
       .db-stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,12,9,0.06); }
 
+      /* Main two-column layout — single column on mobile, sidebar on desktop */
+      .db-main-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        align-items: start;
+      }
+      @media (min-width: 768px) {
+        .db-main-grid {
+          grid-template-columns: minmax(0, 1fr) 280px;
+        }
+      }
+
       /* Desktop table */
       .rsvp-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
       .rsvp-table th {
@@ -350,8 +363,8 @@ export default async function InvitationDashboard({ params }: Props) {
           <StatCard label="Personas" value={stats.totalPeople} sub="total real confirmado" accent={T.gold} />
         </div>
 
-        {/* ── Two-column layout (desktop) ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 280px', gap: '1.5rem', alignItems: 'start' }}>
+        {/* ── Two-column layout: full-width on mobile, sidebar on desktop ── */}
+        <div className="db-main-grid">
 
           {/* Left: RSVP list */}
           <div>
