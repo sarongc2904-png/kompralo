@@ -86,21 +86,40 @@ function isAdminMode(): boolean {
   return process.env.ADMIN_ACCESS_ENABLED === 'true';
 }
 
-async function getSessionEmail(): Promise<string | null> {
+async function getSession(): Promise<{ email: string; userId: string } | null> {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
-    return user?.email ?? null;
+    if (!user?.email || !user?.id) return null;
+    return { email: user.email, userId: user.id };
   } catch {
     return null;
   }
 }
 
-async function fetchOrders(email: string): Promise<Order[]> {
+async function fetchOrders(userId: string, email: string): Promise<Order[]> {
   try {
-    const supabase   = createServiceRoleSupabaseClient();
-    const orderRepo  = new SupabaseOrderRepository(supabase);
-    return await orderRepo.findByCustomerEmail(email);
+    const supabase  = createServiceRoleSupabaseClient();
+    const orderRepo = new SupabaseOrderRepository(supabase);
+
+    // Query by Auth user ID first (authoritative owner) and by customer_email
+    // (for purchases made before owner_user_id was introduced). Merge and deduplicate.
+    const [byUserId, byEmail] = await Promise.all([
+      orderRepo.findByOwnerUserId(userId),
+      orderRepo.findByCustomerEmail(email),
+    ]);
+
+    const seen = new Set<string>();
+    const merged: Order[] = [];
+    for (const o of [...byUserId, ...byEmail]) {
+      if (!seen.has(o.id)) { seen.add(o.id); merged.push(o); }
+    }
+    merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    console.log('[Cliente] session user id:', userId);
+    console.log('[Cliente] session email:', email);
+    console.log('[Cliente] invitations count:', merged.length);
+    return merged;
   } catch {
     return [];
   }
@@ -328,12 +347,14 @@ interface Props {
 
 export default async function ClientePage({ searchParams }: Props) {
   const { email: emailParam } = await searchParams;
-  const sessionEmail = await getSessionEmail();
+  const session = await getSession();
   const adminMode = isAdminMode();
 
-  if (!sessionEmail && !adminMode) {
+  if (!session && !adminMode) {
     redirect('/login?redirect=/cliente');
   }
+
+  const sessionEmail = session?.email ?? null;
 
   // Authenticated session always wins. Query email is only a local/admin fallback.
   const adminEmail = adminMode ? emailParam?.trim() : undefined;
@@ -342,7 +363,15 @@ export default async function ClientePage({ searchParams }: Props) {
   const isAdminEmailFallback = !isAuthenticated && adminMode;
 
   const hasValidEmail = trimmedEmail && isValidEmail(trimmedEmail);
-  const orders = hasValidEmail ? await fetchOrders(trimmedEmail) : [];
+  const orders = (hasValidEmail && session)
+    ? await fetchOrders(session.userId, session.email)
+    : (hasValidEmail && adminEmail)
+      ? await (async () => {
+          const svc  = createServiceRoleSupabaseClient();
+          const repo = new SupabaseOrderRepository(svc);
+          return repo.findByCustomerEmail(adminEmail);
+        })()
+      : [];
 
   const paidInvitationIds = orders
     .filter((o) => o.status === 'paid' && !!o.invitationId)

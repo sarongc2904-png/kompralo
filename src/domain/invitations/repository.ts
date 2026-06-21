@@ -522,9 +522,10 @@ class LocalInvitationRepository implements IInvitationRepository {
 }
 
 // ─── Fallback-aware repository ────────────────────────────────────────────────
-// Tries Supabase for each call; falls back to local on any error.
-// Logs [Supabase] on success and [Fallback Local] on error so ops can observe
-// which path is active in development and staging.
+// Tries Supabase for each call; falls back to local ONLY in development.
+// In production, errors surface instead of silently serving demo data.
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 class FallbackInvitationRepository implements IInvitationRepository {
   constructor(
@@ -560,7 +561,11 @@ class FallbackInvitationRepository implements IInvitationRepository {
       console.log('[Supabase] invitations.getById(%s) — %s', id, result ? 'found' : 'null');
       return result;
     } catch (err) {
-      console.warn('[Fallback Local] invitations.getById(%s) — Supabase error:', id, err);
+      if (IS_PRODUCTION) {
+        console.error('[Supabase] invitations.getById(%s) failed in production — NOT falling back to local:', id, err);
+        return null;
+      }
+      console.warn('[Fallback Local] invitations.getById(%s) — Supabase error (dev only):', id, err);
       return this.fallback.getById(id);
     }
   }
@@ -571,7 +576,11 @@ class FallbackInvitationRepository implements IInvitationRepository {
       console.log('[Supabase] invitations.getPreviewById(%s) — %s', id, result ? 'found' : 'null');
       return result;
     } catch (err) {
-      console.warn('[Fallback Local] invitations.getPreviewById(%s) — Supabase error:', id, err);
+      if (IS_PRODUCTION) {
+        console.error('[Supabase] invitations.getPreviewById(%s) failed in production — NOT falling back to local:', id, err);
+        return null;
+      }
+      console.warn('[Fallback Local] invitations.getPreviewById(%s) — Supabase error (dev only):', id, err);
       return this.fallback.getPreviewById(id);
     }
   }

@@ -57,11 +57,24 @@ export async function POST(request: NextRequest) {
         }
 
         const invitationId    = session.metadata?.invitationId ?? null;
-        const customerEmail   = session.customer_details?.email ?? null;
+        const customerEmail   = session.customer_details?.email
+          ?? session.customer_email
+          ?? null;
         const customerName    = session.customer_details?.name  ?? null;
         const paymentIntent   = typeof session.payment_intent === 'string'
           ? session.payment_intent
           : null;
+
+        // Owner identity embedded at checkout time by /api/checkout/route.ts.
+        // ownerEmail is the Auth user's email; may differ from customerEmail (Stripe payment email).
+        const ownerUserId = session.metadata?.ownerUserId ?? null;
+        const ownerEmail  = session.metadata?.ownerEmail  ?? customerEmail;
+
+        console.log('[Webhook] session id:', session.id);
+        console.log('[Webhook] payment email:', customerEmail);
+        console.log('[Webhook] owner email:', ownerEmail);
+        console.log('[Webhook] owner user id:', ownerUserId);
+        console.log('[Webhook] plan id:', planId);
 
         // ── 1. Create or update order (idempotent) ──────────────────────────
 
@@ -86,6 +99,7 @@ export async function POST(request: NextRequest) {
             invitationId,
             customerEmail,
             customerName,
+            ownerUserId,
           };
           order = await orderRepo.create(orderInput);
           console.log('[webhook/stripe] order created — session=%s productId=%s', session.id, productId);
@@ -120,6 +134,7 @@ export async function POST(request: NextRequest) {
                 customerEmail,
                 customerName,
                 stripeSessionId: session.id,
+                ownerUserId,
               });
               finalInvitationId = newId;
 
@@ -138,8 +153,11 @@ export async function POST(request: NextRequest) {
 
         // ── 3. Send confirmation email (idempotent via confirmation_email_sent_at) ──
 
-        if (!customerEmail) {
-          console.warn('[webhook/stripe] skipping email — no customerEmail (session=%s)', session.id);
+        // Email goes to ownerEmail (the Auth user's email) when available,
+        // otherwise falls back to the Stripe payment email.
+        const emailRecipient = ownerEmail ?? customerEmail;
+        if (!emailRecipient) {
+          console.warn('[webhook/stripe] skipping email — no recipient email (session=%s)', session.id);
           break;
         }
 
@@ -170,7 +188,7 @@ export async function POST(request: NextRequest) {
           const { rawToken } = await createInvitationAccessToken({
             invitationId: finalInvitationId,
             orderId: freshOrder.id,
-            customerEmail,
+            customerEmail: emailRecipient,
           });
           const accessUrl = new URL('/access/consume', appUrl);
           accessUrl.searchParams.set('token', rawToken);
@@ -185,7 +203,7 @@ export async function POST(request: NextRequest) {
 
             const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
               type: 'invite',
-              email: customerEmail,
+              email: emailRecipient,
               options: { redirectTo: callbackUrl.toString() },
             });
 
@@ -193,7 +211,7 @@ export async function POST(request: NextRequest) {
               console.warn('[webhook/stripe] generateLink failed (non-fatal, session=%s):', session.id, linkError.message);
             } else {
               inviteUrl = linkData?.properties?.action_link ?? null;
-              console.log('[webhook/stripe] invite link generated for %s', customerEmail);
+              console.log('[webhook/stripe] invite link generated for %s', emailRecipient);
             }
           } catch (inviteErr) {
             console.warn('[webhook/stripe] generateLink threw (non-fatal, session=%s):', session.id, inviteErr);
@@ -202,7 +220,7 @@ export async function POST(request: NextRequest) {
           const loginUrl = new URL('/login', appUrl).toString();
 
           await sendOrderConfirmationEmail({
-            to:           customerEmail,
+            to:           emailRecipient,
             customerName,
             planId,
             amountTotal:  session.amount_total,
@@ -212,7 +230,8 @@ export async function POST(request: NextRequest) {
             loginUrl,
           });
           await orderRepo.markConfirmationEmailSent(session.id);
-          console.log('[webhook/stripe] confirmation email sent to %s (session=%s)', customerEmail, session.id);
+          console.log('[webhook/stripe] confirmation email sent to %s (session=%s)', emailRecipient, session.id);
+          console.log('[Webhook] email sent:', emailRecipient, '| order:', freshOrder.id, '| invitation:', finalInvitationId);
         } catch (emailErr) {
           const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
           console.error('[webhook/stripe] email failed (session=%s):', session.id, msg);

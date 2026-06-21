@@ -265,18 +265,31 @@ export default async function InvitationDashboard({ params }: Props) {
     redirect(`/login?redirect=/cliente/invitaciones/${id}`);
   }
 
-  const email = user.email;
-  const svc   = createServiceRoleSupabaseClient();
+  const email  = user.email;
+  const userId = user.id;
+  const svc    = createServiceRoleSupabaseClient();
 
-  // 2. Fetch invitation, verify ownership
+  // 2. Fetch invitation, verify ownership.
+  // Ownership = Auth user ID matches (authoritative) OR customer_email matches (legacy/guest).
   const { data: inv } = await svc
     .from('invitations')
-    .select('id, slug, customer_email, plan_id, status, title, subtitle, event_date, category, published_at, rsvp_mode')
+    .select('id, slug, customer_email, user_id, plan_id, status, title, subtitle, event_date, category, published_at, rsvp_mode')
     .eq('id', id)
-    .eq('customer_email', email)
     .single();
 
-  if (!inv) {
+  console.log('[Client Dashboard] session user id:', userId);
+  console.log('[Client Dashboard] session email:', email);
+  console.log('[Client Dashboard] invitation owner user_id:', inv?.user_id ?? 'null');
+  console.log('[Client Dashboard] invitation customer_email:', inv?.customer_email ?? 'null');
+
+  const hasAccess = inv && (
+    inv.user_id === userId ||
+    (typeof inv.customer_email === 'string' && inv.customer_email.toLowerCase() === email.toLowerCase())
+  );
+
+  console.log('[Client Dashboard] access:', hasAccess ? 'granted' : 'denied');
+
+  if (!hasAccess) {
     notFound();
   }
 

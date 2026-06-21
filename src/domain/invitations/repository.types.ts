@@ -31,6 +31,8 @@ export interface CreateFromPaidOrderInput {
   customerEmail:   string;
   customerName?:   string | null;
   stripeSessionId: string;
+  /** Auth user who initiated the purchase. Persisted as invitations.user_id. */
+  ownerUserId?:    string | null;
 }
 
 export interface CreateFromPaidOrderResult {

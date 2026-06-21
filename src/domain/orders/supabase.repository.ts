@@ -46,6 +46,7 @@ function mapRow(row: OrderRow): Order {
     invitationId:            row.invitation_id ?? null,
     customerEmail:           row.customer_email ?? null,
     customerName:            row.customer_name  ?? null,
+    ownerUserId:             row.owner_user_id  ?? null,
     confirmationEmailSentAt: row.confirmation_email_sent_at ?? null,
     confirmationEmailError:  row.confirmation_email_error  ?? null,
     createdAt:               row.created_at,
@@ -67,9 +68,10 @@ export class SupabaseOrderRepository implements IOrderRepository {
         amount_total:             input.amountTotal,
         currency:                 input.currency,
         status:                   input.status,
-        invitation_id:            input.invitationId ?? null,
+        invitation_id:            input.invitationId  ?? null,
         customer_email:           input.customerEmail ?? null,
         customer_name:            input.customerName  ?? null,
+        owner_user_id:            input.ownerUserId   ?? null,
       })
       .select()
       .single();
@@ -177,6 +179,17 @@ export class SupabaseOrderRepository implements IOrderRepository {
       .from('orders')
       .select('*')
       .eq('customer_email', email)
+      .order('created_at', { ascending: false });
+
+    if (error || !data) return [];
+    return data.map(mapRow);
+  }
+
+  async findByOwnerUserId(userId: string): Promise<Order[]> {
+    const { data, error } = await this.supabase
+      .from('orders')
+      .select('*')
+      .eq('owner_user_id', userId)
       .order('created_at', { ascending: false });
 
     if (error || !data) return [];

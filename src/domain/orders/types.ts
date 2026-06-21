@@ -21,6 +21,8 @@ export interface Order {
   invitationId: string | null;
   customerEmail: string | null;
   customerName: string | null;
+  /** Auth user who initiated the purchase (null for guest checkouts). */
+  ownerUserId: string | null;
   /** Set after Resend confirms delivery. null = not yet sent. */
   confirmationEmailSentAt: string | null;
   /** Last Resend error message if delivery failed. null = no error. */
@@ -40,4 +42,6 @@ export interface CreateOrderInput {
   invitationId?:         string | null;
   customerEmail?:        string | null;
   customerName?:         string | null;
+  /** Auth user who initiated the purchase. Set from Stripe metadata.owner_user_id. */
+  ownerUserId?:          string | null;
 }

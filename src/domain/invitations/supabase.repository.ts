@@ -857,7 +857,7 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
     const { data: invRow, error: invError } = await this.supabase
       .from('invitations')
       .insert({
-        user_id:        null,
+        user_id:        input.ownerUserId ?? null,
         slug,
         category:       'wedding',
         variant:        'couple',

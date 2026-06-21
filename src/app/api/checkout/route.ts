@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCheckoutSession } from '@/lib/stripe';
 import { getProductById } from '@/domain/products';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 function errorResponse(message: string, status: number) {
   return NextResponse.json({ success: false, error: message }, { status });
@@ -40,13 +41,31 @@ export async function POST(request: NextRequest) {
     return errorResponse(`Producto no encontrado: ${productId}`, 404);
   }
 
+  // Read the authenticated session so ownership is embedded in Stripe metadata.
+  // This lets the webhook assign the invitation to the correct Auth user even
+  // when the buyer uses a different email in the Stripe checkout form.
+  let ownerUserId: string | undefined;
+  let ownerEmail: string | undefined;
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.id)    ownerUserId = user.id;
+    if (user?.email) ownerEmail  = user.email;
+    console.log('[Checkout] session user id:', ownerUserId ?? 'none (guest)');
+    console.log('[Checkout] session email:', ownerEmail ?? 'none (guest)');
+  } catch {
+    // Non-fatal — guest checkout is allowed.
+  }
+
   const origin = requireOrigin(request);
 
   try {
     const result = await createCheckoutSession({
       productId,
       invitationId,
-      customerEmail,
+      customerEmail: customerEmail ?? ownerEmail,
+      ownerUserId,
+      ownerEmail,
       successUrl: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl:  `${origin}/checkout/cancel`,
     });

@@ -12,6 +12,10 @@ export interface CreateCheckoutSessionInput {
   cancelUrl: string;
   /** Customer email pre-filled in the Stripe checkout form. */
   customerEmail?: string;
+  /** Supabase Auth user ID of the authenticated buyer (embedded in metadata for webhook). */
+  ownerUserId?: string;
+  /** Email of the authenticated buyer (embedded in metadata; determines who owns the invitation). */
+  ownerEmail?: string;
 }
 
 export interface CheckoutSessionResult {
@@ -34,6 +38,15 @@ export async function createCheckoutSession(
 
   if (input.invitationId) {
     metadata.invitationId = input.invitationId;
+  }
+
+  // Embed authenticated buyer identity so the webhook can assign ownership
+  // without relying solely on the Stripe payment email.
+  if (input.ownerUserId) {
+    metadata.ownerUserId = input.ownerUserId;
+  }
+  if (input.ownerEmail) {
+    metadata.ownerEmail = input.ownerEmail;
   }
 
   const params: Stripe.Checkout.SessionCreateParams = {

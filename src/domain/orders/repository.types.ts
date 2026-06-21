@@ -8,6 +8,7 @@ export interface IOrderRepository {
   markConfirmationEmailSent(stripeSessionId: string): Promise<void>;
   markConfirmationEmailFailed(stripeSessionId: string, error: string): Promise<void>;
   findByCustomerEmail(email: string): Promise<Order[]>;
+  findByOwnerUserId(userId: string): Promise<Order[]>;
   /**
    * Links an auto-created invitation to an order.
    * Only sets invitation_id if it is currently null; logs a warning if it already
