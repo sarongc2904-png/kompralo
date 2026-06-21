@@ -512,6 +512,7 @@ class LocalInvitationRepository implements IInvitationRepository {
       createdAt:   now,
       updatedAt:   now,
       publishedAt: null,
+      rsvpMode:    'open',
     };
 
     localInvitations.push(invitation);

@@ -6,6 +6,7 @@ import type { RSVPResponse } from '@/domain/rsvp/types';
 import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
 import ShareButtons from './ShareButtons';
+import RsvpModeSelector from './RsvpModeSelector';
 
 export const dynamic  = 'force-dynamic';
 export const revalidate = 0;
@@ -270,7 +271,7 @@ export default async function InvitationDashboard({ params }: Props) {
   // 2. Fetch invitation, verify ownership
   const { data: inv } = await svc
     .from('invitations')
-    .select('id, slug, customer_email, plan_id, status, title, subtitle, event_date, category, published_at')
+    .select('id, slug, customer_email, plan_id, status, title, subtitle, event_date, category, published_at, rsvp_mode')
     .eq('id', id)
     .eq('customer_email', email)
     .single();
@@ -315,6 +316,7 @@ export default async function InvitationDashboard({ params }: Props) {
   const planLabel    = planLabels[inv.plan_id] ?? inv.plan_id ?? '—';
   const categoryLabel = categoryLabels[inv.category] ?? inv.category ?? '—';
   const eventDate    = formatDate(inv.event_date);
+  const rsvpMode     = (inv.rsvp_mode === 'passes_only' ? 'passes_only' : 'open') as 'open' | 'passes_only';
 
   return (
     <main style={{
@@ -417,8 +419,21 @@ export default async function InvitationDashboard({ params }: Props) {
         {/* ── Two-column layout: full-width on mobile, sidebar on desktop ── */}
         <div className="db-main-grid">
 
-          {/* Left: RSVP list */}
+          {/* Left: mode selector + RSVP list + passes */}
           <div>
+            {/* ── Confirmation mode selector ── */}
+            <div style={{
+              background: T.white, border: `1px solid ${T.border}`,
+              borderRadius: '1.25rem', padding: '1.25rem 1.25rem .875rem',
+              marginBottom: '1.5rem',
+            }}>
+              <RsvpModeSelector
+                invitationId={id}
+                initialMode={rsvpMode}
+                publicUrl={publicUrl}
+                eventTitle={eventTitle}
+              />
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
                 Confirmaciones RSVP

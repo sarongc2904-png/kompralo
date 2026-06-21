@@ -145,4 +145,5 @@ export const baptismDemoInvitation: InvitationContent = {
   createdAt: '2026-06-17T10:30:00-05:00',
   updatedAt: '2026-06-17T10:30:00-05:00',
   publishedAt: '2026-06-17T10:30:00-05:00',
+  rsvpMode: 'open',
 };

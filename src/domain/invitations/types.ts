@@ -357,6 +357,8 @@ export interface InvitationContent {
   hotels: Hotel[];
   social: SocialConfig;
   rsvpWhatsAppNumber: string;
+  /** Controls whether the public invitation shows the open RSVP form or a "use your pass" notice. */
+  rsvpMode: 'open' | 'passes_only';
   customerEmail?: string | null;
   createdAt: string;
   updatedAt: string;

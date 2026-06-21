@@ -231,4 +231,5 @@ export const sofiaAlejandroWeddingInvitation: InvitationContent = {
   createdAt: '2026-06-16T19:18:00-05:00',
   updatedAt: '2026-06-17T09:56:00-05:00',
   publishedAt: '2026-06-17T09:56:00-05:00',
+  rsvpMode: 'open',
 };

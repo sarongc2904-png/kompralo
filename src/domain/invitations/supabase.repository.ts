@@ -127,6 +127,7 @@ export function mapSupabaseInvitationToInvitationContent(
     hotels: c.hotels ?? [],
     social: c.social,
     rsvpWhatsAppNumber: c.rsvp_whatsapp_number ?? '',
+    rsvpMode: (row.rsvp_mode === 'passes_only' ? 'passes_only' : 'open') as 'open' | 'passes_only',
   };
 }
 

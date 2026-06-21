@@ -149,4 +149,5 @@ export const babyShowerDemoInvitation: InvitationContent = {
   createdAt: '2026-06-17T10:00:00-05:00',
   updatedAt: '2026-06-17T10:00:00-05:00',
   publishedAt: '2026-06-17T10:00:00-05:00',
+  rsvpMode: 'open',
 };

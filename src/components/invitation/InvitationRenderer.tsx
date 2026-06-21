@@ -27,6 +27,61 @@ import Timeline from '@/components/invitation/Timeline';
 
 export type InvitationRenderMode = 'public' | 'preview' | 'dev';
 
+// ─── Passes-only notice ───────────────────────────────────────────────────────
+// Shown instead of the open RSVP form when rsvpMode === 'passes_only'.
+function PassesOnlyNotice({ theme }: { theme: Theme }) {
+  return (
+    <section
+      className="relative py-20 px-4 flex flex-col items-center justify-center text-center"
+      style={{ background: `var(--v2-background-sections, ${theme.backgrounds.sections})` }}
+    >
+      <div
+        style={{
+          maxWidth: 440,
+          padding: '2.5rem 2rem',
+          border: `1px solid var(--v2-color-border, ${theme.colors.border})`,
+          borderRadius: '1.5rem',
+          background: `var(--v2-color-surface, ${theme.colors.surface})`,
+          boxShadow: theme.shadows.card,
+        }}
+      >
+        <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🎟️</div>
+        <h3
+          style={{
+            margin: '0 0 .75rem',
+            fontSize: '1.25rem',
+            fontWeight: 700,
+            fontFamily: 'Georgia, "Times New Roman", serif',
+            color: `var(--v2-color-text-primary, ${theme.colors.textPrimary})`,
+          }}
+        >
+          Confirmación de asistencia
+        </h3>
+        <p
+          style={{
+            margin: '0 0 .625rem',
+            fontSize: '.9375rem',
+            lineHeight: 1.65,
+            color: `var(--v2-color-text-primary, ${theme.colors.textPrimary})`,
+            opacity: 0.85,
+          }}
+        >
+          Para confirmar tu asistencia usa el pase personalizado que te envió el anfitrión.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: '.8125rem',
+            color: `var(--v2-color-text-secondary, ${theme.colors.textSecondary})`,
+          }}
+        >
+          Si no tienes tu pase, contacta al anfitrión.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 interface InvitationRendererProps {
   invitation: InvitationContent;
   theme: Theme;
@@ -173,13 +228,17 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showRSVP" features={features}>
-        <RSVPForm
-          invitationId={invitation.id}
-          rsvpWhatsAppNumber={invitation.rsvpWhatsAppNumber}
-          theme={theme}
-          eventTitle={invitation.title}
-          eventDate={invitation.eventDate}
-        />
+        {invitation.rsvpMode === 'passes_only' ? (
+          <PassesOnlyNotice theme={theme} />
+        ) : (
+          <RSVPForm
+            invitationId={invitation.id}
+            rsvpWhatsAppNumber={invitation.rsvpWhatsAppNumber}
+            theme={theme}
+            eventTitle={invitation.title}
+            eventDate={invitation.eventDate}
+          />
+        )}
       </FeatureGate>
 
       <FeatureGate feature="showWhatsApp" features={features}>
