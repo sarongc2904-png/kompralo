@@ -86,7 +86,7 @@ export default async function AdminDashboardPage() {
   const monthRev = paid.filter(o => (o.created_at as string) >= monthStart).reduce((s, o) => s + (Number(o.amount_total) || 0), 0);
 
   const basicPaid   = paid.filter(o => o.plan_id === 'basic');
-  const premiumPaid = paid.filter(o => o.plan_id === 'gold' || o.plan_id === 'premium');
+  const premiumPaid = paid.filter(o => o.plan_id === 'premium');
   const deluxePaid  = paid.filter(o => o.plan_id === 'deluxe');
 
   const basicRev   = basicPaid.reduce((s, o) => s + (Number(o.amount_total) || 0), 0);

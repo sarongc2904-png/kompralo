@@ -7,7 +7,7 @@ import {
 import type { FeatureOverrides, InvitationFeatures, InvitationPlan, PlanId } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
 
-export const defaultPlanId: PlanId = 'gold';
+export const defaultPlanId: PlanId = 'premium';
 
 export const plansById: Record<PlanId, InvitationPlan> = {
   basic: {
@@ -16,8 +16,8 @@ export const plansById: Record<PlanId, InvitationPlan> = {
     description: 'Portada, cuenta regresiva, RSVP, WhatsApp, mapa, itinerario, vestimenta y mensaje final.',
     features: basicFeatures,
   },
-  gold: {
-    id: 'gold',
+  premium: {
+    id: 'premium',
     name: 'Premium',
     description: 'Todo Basic más música, galería, video de portada y código QR.',
     features: premiumFeatures,

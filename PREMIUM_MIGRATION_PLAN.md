@@ -1,189 +1,165 @@
-# Premium Plan Migration — Complete Plan
+# Premium Plan Theme Migration — Corrected Plan
 
 ## Problem Statement
-Premium invitations in production have legacy themes (`champagne`, `luxury-gold`) instead of `ivory-editorial`. They need to be:
-1. Normalized from `plan_id='premium'` to `plan_id='gold'` (canonical)
-2. Updated to use `theme_id='ivory-editorial'`
+Premium invitations in production have legacy themes (`champagne`, `luxury-gold`) instead of `ivory-editorial`. 
+
+**CORRECTION:** `plan_id` must remain `'premium'` (Supabase constraint allows only 'basic', 'premium', 'deluxe').
+Only `theme_id` changes to `'ivory-editorial'` to render with final template.
 
 ---
 
-## Code Changes (COMPLETED)
+## Code Changes (REVERTED & CORRECTED)
 
-### 1. Plan Type System — `src/domain/plans/types.ts`
-**Changed:** `PlanId = 'basic' | 'premium' | 'deluxe'` → `PlanId = 'basic' | 'gold' | 'deluxe'`
+All changes to map Premium to 'gold' plan_id have been REVERTED.
 
-- **parsePlanId():** Both `'gold'` and `'premium'` (from Stripe) now map to `'gold'`
-- **normalizePlanId():** Default fallback changed from `'premium'` to `'gold'`
-- **inferPlanIdFromAmount():** 89900 amount now infers `'gold'` instead of `'premium'`
-- **LegacyPlanId:** Updated to `'premium' | 'platinum'` (both are now legacy)
+### 1. Plan Type System — `src/domain/plans/types.ts` ✅ REVERTED
+- `PlanId = 'basic' | 'premium' | 'deluxe'` (UNCHANGED — no 'gold')
+- `parsePlanId()`: Both `'gold'` (legacy) and `'premium'` (Stripe) → `'premium'`
+- `normalizePlanId()`: Default `'premium'`
+- `inferPlanIdFromAmount()`: 89900 → `'premium'`
 
-### 2. Plan Registry — `src/domain/plans/registry.ts`
-**Changed:** `plansById['premium']` → `plansById['gold']`
+### 2. Plan Registry — `src/domain/plans/registry.ts` ✅ REVERTED
+- `plansById['premium']` (RESTORED — no 'gold' key)
+- `plan.id = 'premium'`
+- `plan.name = 'Premium'`
 
-- Key changed from `'premium'` to `'gold'`
-- `plan.id = 'gold'` (canonical ID in DB)
-- `plan.name = 'Premium'` (display name still says Premium)
-- `defaultPlanId = 'gold'`
+### 3. Products Catalog — `src/domain/products/catalog.ts` ✅ REVERTED
+- `productsById['premium']` (RESTORED)
+- `planId: 'premium'`
 
-### 3. Products Catalog — `src/domain/products/catalog.ts`
-**Changed:** `productsById['premium']` → `productsById['gold']`
+### 4. Admin API — `src/app/api/admin/invitations/route.ts` ✅ REVERTED
+- Default plan: `'premium'`
 
-- Key: `'gold'`
-- `planId: 'gold'`
-- Name: still "Premium" for UI
-
-### 4. Admin API — `src/app/api/admin/invitations/route.ts`
-**Changed:** Default plan from `'premium'` to `'gold'` (line 41)
-
-### 5. Admin Dashboard — `src/app/admin/page.tsx`
-**Changed:** Premium filter to include both `'gold'` and `'premium'` (line 89)
-
-```typescript
-const premiumPaid = paid.filter(o => o.plan_id === 'gold' || o.plan_id === 'premium');
-```
+### 5. Admin Dashboard — `src/app/admin/page.tsx` ✅ REVERTED
+- Filter: `plan_id === 'premium'` (no 'gold')
 
 ---
 
-## SQL Migration Steps
+## SQL Migration (CORRECTED)
 
 ### Step 1: Verify Before Migration
 ```bash
-psql -U postgres -d your_db -f scripts/01_premium_migration_verify_before.sql
+psql -U postgres -d your_db -f scripts/01_premium_theme_migration_verify_before.sql
 ```
 
-**Output you should see:**
-- Count of `plan_id='premium'` with `theme_id IN ('champagne', 'luxury-gold')`
-- Status breakdown (paid/published)
-- Sample invitations with legacy themes
+**Expected output:**
+- Count of Premium invitations with legacy theme
+- Sample invitations that need theme update
 
-### Step 2: Execute Migration
+### Step 2: Execute Migration (THEME ONLY)
 ```bash
-psql -U postgres -d your_db -f scripts/02_premium_migration_execute.sql
+psql -U postgres -d your_db -f scripts/02_premium_theme_migration_execute.sql
 ```
 
 **This will:**
-- UPDATE all `plan_id='premium'` to `plan_id='gold'`
-- UPDATE all theme_id to `'ivory-editorial'`
-- SET `updated_at=now()`
-- Only for `status IN ('paid', 'published')` and `deleted IS NULL`
+```sql
+UPDATE public.invitations
+SET
+  theme_id = 'ivory-editorial',
+  updated_at = now()
+WHERE
+  plan_id = 'premium'
+  AND status IN ('paid', 'published')
+  AND deleted IS NULL
+  AND theme_id != 'ivory-editorial';
+```
 
-**Safety:** Wrapped in transaction — you can ROLLBACK if needed.
+**Safety:**
+- ✓ `plan_id` remains `'premium'` (Supabase constraint)
+- ✓ Only updates Premium invitations
+- ✓ Only updates paid/published
+- ✓ Respects soft deletes
+- ✓ Does NOT touch basic or deluxe
+- ✓ Does NOT delete invitation_content
 
 ### Step 3: Verify After Migration
 ```bash
-psql -U postgres -d your_db -f scripts/03_premium_migration_verify_after.sql
+psql -U postgres -d your_db -f scripts/03_premium_theme_migration_verify_after.sql
 ```
 
-**Output you should see:**
-- All migrated invitations now have `plan_id='gold'` ✓
-- All have `theme_id='ivory-editorial'` ✓
-- NO invitations still have `plan_id='premium'` ✓
-- `invitation_content` still exists for all ✓
-- `basic` and `deluxe` untouched ✓
+**Expected output:**
+- All Premium now have `theme_id='ivory-editorial'` ✓
+- All still have `plan_id='premium'` ✓
+- No Premium with other themes ✓
+- Basic and Deluxe untouched ✓
 
-### Step 4: Optional — Backfill Missing Content
-If invitations have empty `invitation_content`:
-```bash
-psql -U postgres -d your_db -f scripts/04_premium_backfill_content.sql
+---
+
+## Premium Plan Flow (Corrected)
+
 ```
+Stripe Checkout    →    Webhook        →    Supabase
+────────────────────────────────────────────────────────
+premium metadata   →    parsePlanId()  →    plan_id='premium'
+                   →    (normalizes)   →    theme_id='ivory-editorial'
+```
+
+New Premium invitations:
+- **plan_id:** `'premium'` (persisted to DB)
+- **theme_id:** `'ivory-editorial'` (final template)
+- **features:** premiumFeatures (music, gallery, video, QR, parents)
 
 ---
 
 ## Testing Premium After Migration
 
 ### New Premium Purchase
-1. **In Stripe checkout:**
-   - Select Premium plan
-   - Stripe sends `plan_id='premium'` in metadata
-
-2. **In webhook:**
-   - `resolvePurchasedPlanId('premium')` → `parsePlanId('premium')` → `'gold'`
-   - Saves to DB with `plan_id='gold'` ✓
-
-3. **Verify in Supabase:**
-   - New row in `invitations` table has `plan_id='gold'` ✓
+1. **Stripe checkout:** Select Premium plan
+2. **Webhook:** Receives `plan_id='premium'`, saves with `theme_id='ivory-editorial'`
+3. **Supabase check:**
+   - `plan_id='premium'` ✓
    - `theme_id='ivory-editorial'` ✓
-   - `invitation_content` has complete Sofia-Alejandro fixture data ✓
+   - `invitation_content` has complete data ✓
+4. **Render:**
+   - `/preview/[id]` → ivory-editorial theme, final Hero design ✓
+   - `/i/[slug]` → same ✓
+   - NO golden heart ✓
+   - Gallery, Music, Parents enabled ✓
 
-4. **Render check:**
-   - `/preview/[id]` should show ivory-editorial theme with final Hero design
-   - `/i/[slug]` should show same template
-   - NO golden heart (CinematicIntro) ✓
-   - Gallery, music, parents sections enabled ✓
-   - StoryBook, timeline, padrinos DISABLED ✓
-
-### Existing Premium (Migrated)
-1. **Check Supabase:**
-   - All old `plan_id='premium'` now `'gold'` ✓
-   - All old themes now `'ivory-editorial'` ✓
-
-2. **Render check:**
-   - `/i/[slug]` for old Premium should show corrected template
-   - Theme should be ivory-editorial, not champagne ✓
-   - Hero should be final photographic design ✓
+### Existing Premium (After Migration)
+1. **Check Supabase:** All Premium now have `theme_id='ivory-editorial'` ✓
+2. **Render:**
+   - `/i/[slug]` → corrected theme ✓
+   - Hero final design ✓
+   - Not champagne/luxury-gold ✓
 
 ---
 
 ## Rollback Plan
 
-If something goes wrong:
-
-**During migration (before COMMIT):**
-```sql
-ROLLBACK;
-```
-
-**After migration:**
+If needed:
 ```sql
 UPDATE public.invitations
-SET plan_id = 'premium', theme_id = 'champagne'  -- or luxury-gold
-WHERE plan_id = 'gold'
-  AND status IN ('paid', 'published');
+SET theme_id = 'champagne'  -- or whatever was the original theme
+WHERE plan_id = 'premium' AND status IN ('paid', 'published');
 ```
 
-Then revert code changes to `src/domain/plans/types.ts`.
-
----
-
-## Plan Normalization Summary
-
-**What goes into Stripe checkout metadata:**
-- `plan_id: 'premium'` (sent by frontend)
-
-**What gets saved to Supabase:**
-- `plan_id: 'gold'` (normalized via parsePlanId)
-- `theme_id: 'ivory-editorial'` (set in supabase.repository.ts:901)
-
-**How it's resolved in code:**
-- `getPlanById('gold')` → `plansById.gold` → premiumFeatures ✓
-- `resolvePurchasedPlanId('premium')` → `'gold'` ✓
-- Both Stripe and legacy invitations use same plan ID ✓
+No code changes needed to rollback (types unchanged).
 
 ---
 
 ## Files Modified
 
-### Code Changes
-- ✅ `src/domain/plans/types.ts` — PlanId type, parsePlanId, normalizePlanId
-- ✅ `src/domain/plans/registry.ts` — plansById, defaultPlanId
-- ✅ `src/domain/products/catalog.ts` — productsById
-- ✅ `src/app/api/admin/invitations/route.ts` — default plan
-- ✅ `src/app/admin/page.tsx` — premium filter
+### Code (REVERTED)
+- ✅ `src/domain/plans/types.ts` — back to 'premium', no 'gold'
+- ✅ `src/domain/plans/registry.ts` — back to 'premium' key
+- ✅ `src/domain/products/catalog.ts` — back to 'premium'
+- ✅ `src/app/api/admin/invitations/route.ts` — default 'premium'
+- ✅ `src/app/admin/page.tsx` — filter 'premium' only
 
-### Migration Scripts
-- ✅ `scripts/01_premium_migration_verify_before.sql`
-- ✅ `scripts/02_premium_migration_execute.sql`
-- ✅ `scripts/03_premium_migration_verify_after.sql`
-- ✅ `scripts/04_premium_backfill_content.sql`
+### Migration Scripts (CORRECTED)
+- ✅ `scripts/01_premium_theme_migration_verify_before.sql`
+- ✅ `scripts/02_premium_theme_migration_execute.sql`
+- ✅ `scripts/03_premium_theme_migration_verify_after.sql`
 
 ---
 
-## Status: READY FOR DEPLOYMENT
+## Status: ✅ CORRECTED
 
-✅ Code changes committed  
-✅ SQL migration scripts ready  
+✅ Code reverted to use 'premium' (no 'gold')  
+✅ SQL migration ONLY changes theme_id  
+✅ Supabase constraint respected  
 ✅ Verification queries included  
-✅ Backfill script available (optional)  
-✅ Rollback plan documented  
+✅ Rollback documented  
 
-**Next:** Run migration scripts against production in order.
+**Next:** Run migration scripts 01 → 02 → 03 against Supabase production.

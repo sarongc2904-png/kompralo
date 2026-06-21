@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   const statusInput = typeof body.status === 'string' ? body.status : 'paid';
   if (!VALID_STATUSES.has(statusInput)) return err(`Invalid status. Valid: ${[...VALID_STATUSES].join(', ')}`);
 
-  const planId = normalizePlanId(typeof body.plan_id === 'string' ? body.plan_id : 'gold');
+  const planId = normalizePlanId(typeof body.plan_id === 'string' ? body.plan_id : 'premium');
 
   // Validate owner_user_id format before any DB call
   if (ownerUserIdRaw && !UUID_RE.test(ownerUserIdRaw)) {
