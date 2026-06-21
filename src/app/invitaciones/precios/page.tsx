@@ -75,10 +75,15 @@ function PageStyles() {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-function formatPrice(centavos: number, _currency: string): string {
+function formatPrice(centavos: number, _currency: string): React.ReactNode {
   // Manual format: "$1,499" — avoids locale-dependent "MX$" prefix
   const amount = centavos / 100;
-  return '$' + amount.toLocaleString('es-MX', { maximumFractionDigits: 0 });
+  return (
+    <>
+      <span style={{ fontFamily: 'var(--font-inter, system-ui, sans-serif)', fontWeight: 500, marginRight: '0.05em' }}>$</span>
+      {amount.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
+    </>
+  );
 }
 
 const planMeta: Record<string, { ideal:string; highlight:string }> = {
@@ -114,72 +119,89 @@ function ProductCard({ product, featured }: { product:Product; featured?:boolean
   const priceStr = formatPrice(product.price, product.currency);
   const meta = planMeta[product.id] ?? { ideal:'', highlight:'' };
 
+  let imageUrl = '';
+  if (product.id === 'basic') imageUrl = '/images/invitaciones/invitation-paper-detail.webp';
+  if (product.id === 'premium') imageUrl = '/images/invitaciones/wedding-details.webp';
+  if (product.id === 'deluxe') imageUrl = '/images/invitaciones/xv-event-editorial.webp';
+
   return (
     <HoverCard lift={featured ? 8 : 5} style={{ height:'100%' }} className={featured ? 'pr2-featured-card' : undefined}>
       <div style={{
         position:'relative', display:'flex', flexDirection:'column', height:'100%',
         background: featured ? T.dark : T.white,
         border: featured ? `2px solid ${T.gold}` : `1px solid ${T.border}`,
-        borderRadius:'8px', padding:'2.25rem 1.75rem',
+        borderRadius:'8px', padding: 0,
         boxShadow: featured
           ? `0 14px 56px rgba(184,150,106,0.22), 0 2px 0 rgba(184,150,106,0.25) inset`
           : '0 2px 12px rgba(15,12,9,0.04)',
+        overflow: 'hidden'
       }}>
-        {/* Popular badge */}
-        {featured && (
-          <div style={{
-            position:'absolute', top:'-1px', left:'50%', transform:'translateX(-50%)',
-            background:T.gold, color:T.dark,
-            fontSize:'.6875rem', fontWeight:800, letterSpacing:0,
-            padding:'.25rem 1.125rem', borderRadius:'0 0 .625rem .625rem', whiteSpace:'nowrap',
-          }}>
-            MÁS VENDIDO
-          </div>
-        )}
+        {/* Card Header Image */}
+        <div style={{ height: 160, position: 'relative', marginBottom: '1.25rem', background: '#000' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: featured ? 0.75 : 0.9 }} />
+          <div style={{ position: 'absolute', inset: 0, background: featured ? 'linear-gradient(to bottom, transparent, #0D0A07)' : 'linear-gradient(to bottom, transparent, #F1E3C8)' }} />
+          
+          {/* Popular badge */}
+          {featured && (
+            <div style={{
+              position:'absolute', top:0, left:'50%', transform:'translateX(-50%)',
+              background:T.gold, color:T.dark,
+              fontSize:'.6875rem', fontWeight:800, letterSpacing:0,
+              padding:'.35rem 1.125rem', borderRadius:'0 0 .625rem .625rem', whiteSpace:'nowrap',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              zIndex: 10
+            }}>
+              MÁS VENDIDO
+            </div>
+          )}
+        </div>
 
-        {/* Ideal label */}
-        {meta.ideal && (
-          <p style={{ margin:'0 0 .375rem', fontSize:'.72rem', fontWeight:600, color: featured ? T.champagne : T.light, letterSpacing:0 }}>
-            {meta.ideal}
+        <div style={{ padding: '0 1.75rem 2.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+          {/* Ideal label */}
+          {meta.ideal && (
+            <p style={{ margin:'0 0 .375rem', fontSize:'.72rem', fontWeight:600, color: featured ? T.champagne : T.light, letterSpacing:0 }}>
+              {meta.ideal}
+            </p>
+          )}
+
+          {/* Plan name */}
+          <h2 style={{ margin:'0 0 .375rem', fontSize:'1.625rem', fontWeight:700, color: featured ? '#F1E3C8' : T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+            {product.name}
+          </h2>
+
+          {/* Highlight */}
+          <p style={{ margin:'0 0 1.5rem', fontSize:'.875rem', color: featured ? '#C5B0A0' : T.mid, lineHeight:1.55, minHeight:'2.5em' }}>
+            {meta.highlight || product.description}
           </p>
-        )}
 
-        {/* Plan name */}
-        <h2 style={{ margin:'0 0 .375rem', fontSize:'1.625rem', fontWeight:700, color: featured ? '#F1E3C8' : T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
-          {product.name}
-        </h2>
+          {/* Price */}
+          <div style={{ marginBottom:'1.625rem' }}>
+            <span style={{ fontSize:'2.75rem', fontWeight:800, color: featured ? '#F1E3C8' : T.dark, lineHeight:1, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+              {priceStr}
+            </span>
+            <span style={{ fontSize:'.875rem', color: featured ? '#C5B0A0' : T.light, marginLeft:'.375rem' }}>
+              MXN / pago único
+            </span>
+          </div>
 
-        {/* Highlight */}
-        <p style={{ margin:'0 0 1.5rem', fontSize:'.875rem', color: featured ? '#C5B0A0' : T.mid, lineHeight:1.55, minHeight:'2.5em' }}>
-          {meta.highlight || product.description}
-        </p>
+          {/* Feature list */}
+          <div style={{ flex:1, marginBottom:'2.125rem' }}>
+            <FeatureList features={product.features} dark={featured} />
+          </div>
 
-        {/* Price */}
-        <div style={{ marginBottom:'1.625rem' }}>
-          <span style={{ fontSize:'2.75rem', fontWeight:800, color: featured ? '#F1E3C8' : T.dark, lineHeight:1, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
-            {priceStr}
-          </span>
-          <span style={{ fontSize:'.875rem', color: featured ? '#C5B0A0' : T.light, marginLeft:'.375rem' }}>
-            MXN / pago único
-          </span>
+          {/* CTA — CheckoutButton is unchanged */}
+          <CheckoutButton
+            productId={product.id}
+            label={`Comprar ${product.name}`}
+            className={[
+              'w-full py-3 px-6 rounded-md text-sm font-bold transition-opacity cursor-pointer text-center whitespace-nowrap',
+              featured
+                ? 'bg-[#C4A962] text-[#0D0A07] hover:opacity-90'
+                : 'bg-[#0D0A07] text-[#F1E3C8] hover:opacity-85',
+            ].join(' ')}
+          />
         </div>
-
-        {/* Feature list */}
-        <div style={{ flex:1, marginBottom:'2.125rem' }}>
-          <FeatureList features={product.features} dark={featured} />
-        </div>
-
-        {/* CTA — CheckoutButton is unchanged */}
-        <CheckoutButton
-          productId={product.id}
-          label={`Comprar ${product.name}`}
-          className={[
-            'w-full py-3 px-6 rounded-md text-sm font-bold transition-opacity cursor-pointer text-center whitespace-nowrap',
-            featured
-              ? 'bg-[#C4A962] text-[#0D0A07] hover:opacity-90'
-              : 'bg-[#0D0A07] text-[#F1E3C8] hover:opacity-85',
-          ].join(' ')}
-        />
       </div>
     </HoverCard>
   );

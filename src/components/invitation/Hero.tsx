@@ -223,9 +223,23 @@ export default function Hero({
 
         {/* Names */}
         <div
+          className="relative select-none px-6 py-8 md:px-12 md:py-10 mx-auto"
           style={{ overflow: 'visible', textAlign: 'center', lineHeight: 1.1 }}
-          className="select-none"
         >
+          {/* Sibling glass background to avoid clipping WebKit cursive text */}
+          <div
+            className="absolute inset-0 rounded-[2rem] md:rounded-[3rem] pointer-events-none"
+            style={{
+              background: 'var(--v2-glass-bg, rgba(255, 255, 255, 0.05))',
+              backdropFilter: 'var(--v2-glass-blur, blur(16px))',
+              WebkitBackdropFilter: 'var(--v2-glass-blur, blur(16px))',
+              border: '1px solid var(--v2-glass-border, rgba(255, 255, 255, 0.12))',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              zIndex: -1,
+            }}
+          />
+
           <motion.span
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}

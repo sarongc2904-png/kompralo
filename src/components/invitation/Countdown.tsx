@@ -265,7 +265,7 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
   ];
 
   return (
-    <section className="pt-28 pb-24 md:pt-40 md:pb-36 px-4 bg-transparent text-center select-none overflow-hidden">
+    <section className="pt-28 pb-24 md:pt-40 md:pb-36 px-4 bg-transparent text-center select-none overflow-visible">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}

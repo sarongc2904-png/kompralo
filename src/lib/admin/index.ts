@@ -2,10 +2,26 @@
  * Admin helpers for KOMPRALO dashboard.
  * All functions that touch admin_users use createServiceRoleSupabaseClient
  * to bypass RLS (no permissive policy on admin_users).
+ *
+ * SERVER-ONLY: do not import from 'use client' files.
+ * For URL/message helpers safe in client components, import from '@/lib/admin/urls'.
  */
 
+import 'server-only';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+
+// Re-export URL helpers so server components can keep using '@/lib/admin'.
+export {
+  getAppUrl,
+  publicUrl,
+  previewUrl,
+  editorUrl,
+  clientDashboardUrl,
+  adminInvitationUrl,
+  whatsappClientMessage,
+  whatsappGuestsMessage,
+} from '@/lib/admin/urls';
 
 export interface AdminUser {
   id: string;
@@ -201,46 +217,3 @@ export async function generateUniqueSlug(
   return `invitacion-${Date.now().toString(36)}`;
 }
 
-// ─── URL helpers ──────────────────────────────────────────────────────────────
-
-export function getAppUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL?.trim() ?? 'https://kompralo.vercel.app';
-}
-
-export function publicUrl(slug: string): string {
-  return `${getAppUrl()}/${slug}`;
-}
-
-export function previewUrl(invitationId: string): string {
-  return `${getAppUrl()}/preview/${invitationId}`;
-}
-
-export function editorUrl(invitationId: string): string {
-  return `${getAppUrl()}/dashboard/invitations/${invitationId}/edit`;
-}
-
-export function clientDashboardUrl(invitationId: string): string {
-  return `${getAppUrl()}/cliente/invitaciones/${invitationId}`;
-}
-
-export function adminInvitationUrl(invitationId: string): string {
-  return `${getAppUrl()}/admin/invitations/${invitationId}`;
-}
-
-// ─── WhatsApp message helpers ─────────────────────────────────────────────────
-
-export function whatsappClientMessage(editorLink: string, publicLink: string): string {
-  return (
-    `Hola, tu invitación digital ya está lista para editar.\n\n` +
-    `Accede aquí:\n${editorLink}\n\n` +
-    `Cuando termines, comparte este link con tus invitados:\n${publicLink}`
-  );
-}
-
-export function whatsappGuestsMessage(publicLink: string): string {
-  return (
-    `Hola, te compartimos nuestra invitación digital.\n\n` +
-    `Ver invitación:\n${publicLink}\n\n` +
-    `Por favor confirma tu asistencia desde la invitación.`
-  );
-}

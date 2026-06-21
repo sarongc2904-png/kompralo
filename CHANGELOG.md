@@ -5,6 +5,43 @@
 
 ---
 
+## FASE REDESIGN-PUBLIC-PAGES-3D-AND-TEXT-SYNC — Hero 3D interactivo y sincronización de copys con producción
+
+Fecha: 2026-06-21
+
+### Objetivo
+
+1. Reemplazar el diseño estático del Hero en la landing page (`/invitaciones`) por una experiencia 3D inmersiva con seguimiento de mouse.
+2. Adaptar la paleta de colores general cambiando el acento "cyan neón" por un tono "café/dorado oscuro" (`#A67B5B`) para elevar la percepción premium de la marca.
+3. Sincronizar todos los textos (copys), descripciones de planes y enlaces del menú de navegación desde la versión actual en producción (Vercel) al nuevo layout local, conservando la estructura de diseño editorial intacta.
+
+### Cambios
+
+- `src/components/public/Hero3D.tsx` (NUEVO):
+  - Creación de componente Hero interactivo utilizando `framer-motion` y `useSpring`/`useTransform`.
+  - Implementación de tarjetas de invitaciones suspendidas en el espacio 3D que reaccionan sutilmente a la posición del puntero del mouse usando `perspective` y `translateZ`.
+  - Sustitución de sombras lumínicas de color cyan `rgba(0,229,255,...)` a café oscuro `rgba(166,123,91,...)`.
+  - Actualización de los textos (Eyebrow, Title, Copy) para coincidir con la web en vivo.
+
+- `src/app/invitaciones/page.tsx`:
+  - Se importó y montó el nuevo `Hero3D` en sustitución del componente `Hero` estático.
+  - Actualización de la constante de diseño `T.cyan` a `#A67B5B`.
+  - Adaptación de los botones secundarios y bordes/glows que usaban variables RGB a la nueva paleta.
+  - **Sincronización de contenido**:
+    - **Header/Footer**: Enlaces de navegación actualizados a "Cómo funciona", "Demo real", "Ver planes", "Acceder".
+    - **DiscoverBlocks**: Descripciones adaptadas ("El centro digital de tu evento", "Menos estrés, más emoción").
+    - **ValuesGrid**: Textos descriptivos reasignados a los íconos existentes.
+    - **Ediciones**: Las descripciones cortas de Basic, Premium y Deluxe coinciden con Vercel.
+    - **CTA Final**: Se ajustó el copy a "El tiempo es ahora. Da el primer paso hacia un evento...".
+
+### Validación
+
+- `npx tsc --noEmit`: OK.
+- Componente interactivo no rompe la visualización móvil (comportamiento fallback de centrado).
+- Diseño de la página, número de secciones e imágenes originales conservados (a petición del usuario).
+
+---
+
 ## FASE CANONICAL-PLAN-IDS-AUDIT — Basic, Premium y Deluxe como únicos planes persistidos
 
 Fecha: 2026-06-21

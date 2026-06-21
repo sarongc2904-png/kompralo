@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { publicUrl, previewUrl, editorUrl, clientDashboardUrl, whatsappClientMessage, whatsappGuestsMessage } from '@/lib/admin';
+import { publicUrl, previewUrl, editorUrl, clientDashboardUrl, whatsappClientMessage, whatsappGuestsMessage } from '@/lib/admin/urls';
 
 const PLAN_OPTIONS = ['basic', 'premium', 'deluxe'] as const;
 const STATUS_OPTIONS = ['draft', 'pending_payment', 'paid', 'published', 'paused', 'cancelled', 'archived'] as const;
