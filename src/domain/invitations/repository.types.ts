@@ -9,6 +9,7 @@ import type {
   InvitationItineraryInput,
   InvitationGiftRegistryInput,
   InvitationDressCodeInput,
+  InvitationParentsInput,
   InvitationSponsorsInput,
   InvitationStoryBookInput,
   InvitationAccommodationInput,
@@ -52,6 +53,7 @@ export interface IInvitationRepository {
   updateItinerary(id: string, input: InvitationItineraryInput): Promise<InvitationContent>;
   updateGiftRegistry(id: string, input: InvitationGiftRegistryInput): Promise<InvitationContent>;
   updateDressCode(id: string, input: InvitationDressCodeInput): Promise<InvitationContent>;
+  updateParents(id: string, input: InvitationParentsInput): Promise<InvitationContent>;
   updatePadrinos(id: string, input: InvitationSponsorsInput): Promise<InvitationContent>;
   updateStoryBook(id: string, input: InvitationStoryBookInput): Promise<InvitationContent>;
   updateAccommodation(id: string, input: InvitationAccommodationInput): Promise<InvitationContent>;

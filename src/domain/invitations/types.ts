@@ -100,6 +100,10 @@ export interface ParentCouple {
   motherName: string;
 }
 
+export interface InvitationParentsInput {
+  parents: ParentCouple[];
+}
+
 export type PadrinoIcon =
   | 'flowers' | 'cake' | 'music' | 'rings' | 'photo'
   | 'video'   | 'lights' | 'bar' | 'car' | 'church' | 'dress' | 'gift';

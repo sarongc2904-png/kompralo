@@ -15,6 +15,7 @@ import type {
   InvitationItineraryInput,
   InvitationGiftRegistryInput,
   InvitationDressCodeInput,
+  InvitationParentsInput,
   InvitationSponsorsInput,
   InvitationStoryBookInput,
   InvitationAccommodationInput,
@@ -279,6 +280,27 @@ class LocalInvitationRepository implements IInvitationRepository {
 
     localInvitations[idx] = updated;
     console.log('[Local] updateDressCode(%s) — updated in memory (not persisted)', id);
+    return updated;
+  }
+
+  async updateParents(id: string, input: InvitationParentsInput): Promise<InvitationContent> {
+    const idx = localInvitations.findIndex((inv) => inv.id === id);
+    if (idx === -1) throw new Error(`[Local] updateParents: invitation "${id}" not found`);
+
+    const existing = localInvitations[idx];
+    const updated: InvitationContent = {
+      ...existing,
+      parents: input.parents.map((p) => ({
+        side:          p.side,
+        protagonistId: p.protagonistId,
+        fatherName:    p.fatherName.trim(),
+        motherName:    p.motherName.trim(),
+      })),
+      updatedAt: new Date().toISOString(),
+    };
+
+    localInvitations[idx] = updated;
+    console.log('[Local] updateParents(%s) — updated in memory (not persisted)', id);
     return updated;
   }
 
@@ -670,6 +692,17 @@ class FallbackInvitationRepository implements IInvitationRepository {
     } catch (err) {
       console.warn('[Fallback Local] invitations.updateDressCode(%s) — Supabase error:', id, err);
       return this.fallback.updateDressCode(id, input);
+    }
+  }
+
+  async updateParents(id: string, input: InvitationParentsInput): Promise<InvitationContent> {
+    try {
+      const result = await this.primary.updateParents(id, input);
+      console.log('[Supabase] invitations.updateParents(%s) — %d couples OK', id, input.parents.length);
+      return result;
+    } catch (err) {
+      console.warn('[Fallback Local] invitations.updateParents(%s) — Supabase error:', id, err);
+      return this.fallback.updateParents(id, input);
     }
   }
 

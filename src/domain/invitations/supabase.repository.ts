@@ -32,6 +32,7 @@ import type {
   InvitationItineraryInput,
   InvitationGiftRegistryInput,
   InvitationDressCodeInput,
+  InvitationParentsInput,
   InvitationSponsorsInput,
   InvitationStoryBookInput,
   InvitationAccommodationInput,
@@ -542,6 +543,37 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
     const updated = await this.getById(id);
     if (!updated) {
       throw new Error(`[Supabase] updateDressCode: could not re-fetch invitation "${id}" after update`);
+    }
+    return updated;
+  }
+
+  async updateParents(id: string, input: InvitationParentsInput): Promise<InvitationContent> {
+    const now = new Date().toISOString();
+
+    const parents = input.parents.map((p) => ({
+      side:          p.side,
+      protagonistId: p.protagonistId,
+      fatherName:    p.fatherName.trim(),
+      motherName:    p.motherName.trim(),
+    }));
+
+    const { error } = await this.supabase
+      .from('invitation_content')
+      .update({ parents, updated_at: now })
+      .eq('invitation_id', id);
+
+    if (error) {
+      throw new Error(`[Supabase] updateParents failed: ${error.message}`);
+    }
+
+    await this.supabase
+      .from('invitations')
+      .update({ updated_at: now })
+      .eq('id', id);
+
+    const updated = await this.getById(id);
+    if (!updated) {
+      throw new Error(`[Supabase] updateParents: could not re-fetch invitation "${id}" after update`);
     }
     return updated;
   }

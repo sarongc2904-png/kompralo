@@ -12,6 +12,7 @@ export const ASSISTANT_CATEGORIES = [
   'Portada',
   'Mensaje de bienvenida',
   'Protagonistas',
+  'Nuestros padres',
   'Nuestra historia',
   'Galería',
   'Línea de tiempo',
@@ -49,6 +50,13 @@ export const DASHBOARD_ASSISTANT_PROMPT_OPTIONS: DashboardAssistantPromptOption[
   { id: 'prot-groom',    category: 'Protagonistas', title: 'Texto para el novio',            description: 'Descripción breve y cálida.',                defaultTone: 'elegant'   },
   { id: 'prot-main',     category: 'Protagonistas', title: 'Protagonista principal',         description: 'Para XV años, cumpleaños o bautizo.',        defaultTone: 'emotional' },
   { id: 'prot-family',   category: 'Protagonistas', title: 'Texto familiar',                 description: 'Apropiado para eventos de familia.',         defaultTone: 'formal'    },
+
+  // ── Nuestros padres ───────────────────────────────────────────────────────
+  { id: 'parents-elegant',   category: 'Nuestros padres', title: 'Texto elegante',   description: 'Presentación sofisticada de las familias.',   defaultTone: 'elegant'   as AssistantTone, targetField: 'parents.message' },
+  { id: 'parents-gratitude', category: 'Nuestros padres', title: 'Agradecimiento',   description: 'Reconocimiento emotivo hacia los padres.',    defaultTone: 'emotional' as AssistantTone, targetField: 'parents.message' },
+  { id: 'parents-religious', category: 'Nuestros padres', title: 'Texto religioso',  description: 'Con referencia a bendición y fe familiar.',  defaultTone: 'religious' as AssistantTone, targetField: 'parents.message' },
+  { id: 'parents-emotional', category: 'Nuestros padres', title: 'Texto emotivo',    description: 'Cálido, cercano y personal.',                 defaultTone: 'emotional' as AssistantTone, targetField: 'parents.message' },
+  { id: 'parents-brief',     category: 'Nuestros padres', title: 'Texto breve',      description: 'Conciso y digno.',                           defaultTone: 'brief'     as AssistantTone, targetField: 'parents.message' },
 
   // ── Nuestra historia ──────────────────────────────────────────────────────
   { id: 'story-romantic',    category: 'Nuestra historia', title: 'Historia romántica completa',  description: 'Emotiva y detallada.',                     defaultTone: 'romantic'  },
@@ -252,6 +260,13 @@ export function buildDashboardAssistantPrompt(params: {
     'prot-groom':    `Redacta un texto breve y cálido para presentar al novio.${contextLine}`,
     'prot-main':     `Redacta un texto para presentar al protagonista principal del evento.${contextLine}`,
     'prot-family':   `Redacta un texto familiar y cálido para presentar a los protagonistas.${contextLine}`,
+
+    // Nuestros padres
+    'parents-elegant':   `Redacta un texto elegante para presentar a los padres de los novios en la invitación.${contextLine}`,
+    'parents-gratitude': `Redacta un texto emotivo de agradecimiento hacia los padres de los novios.${contextLine}`,
+    'parents-religious': `Redacta un texto con tono espiritual sobre la bendición y el rol de los padres en la boda.${contextLine}`,
+    'parents-emotional': `Redacta un texto personal y cálido sobre el amor y apoyo de los padres de los novios.${contextLine}`,
+    'parents-brief':     `Redacta un texto breve y digno para la sección de padres en la invitación.${contextLine}`,
 
     // Historia
     'story-romantic':    `Escribe una historia romántica y emotiva para la sección "Nuestra historia".${contextLine}`,

@@ -20,7 +20,7 @@ import type {
   InvitationFinalMessageInput,
   InvitationTimelineEventInput,
 } from '@/domain/invitations';
-import type { InvitationHeroVideoInput } from '@/domain/invitations/types';
+import type { InvitationHeroVideoInput, ParentCouple } from '@/domain/invitations/types';
 
 // ─── Shared result type ───────────────────────────────────────────────────────
 
@@ -126,6 +126,9 @@ const invitationRepository: IInvitationRepository = {
   },
   async updateDressCode(id, input) {
     return getAuthorizedInvitationRepository(id).then((repository) => repository.updateDressCode(id, input));
+  },
+  async updateParents(id, input) {
+    return getAuthorizedInvitationRepository(id).then((repository) => repository.updateParents(id, input));
   },
   async updatePadrinos(id, input) {
     return getAuthorizedInvitationRepository(id).then((repository) => repository.updatePadrinos(id, input));
@@ -1260,4 +1263,64 @@ export async function updateInvitationLocation(
   revalidatePath(`/dashboard/invitations/${id}/edit`);
 
   return { success: true, message: 'Ubicación guardada correctamente.' };
+}
+
+// =============================================================================
+// updateInvitationParents
+// =============================================================================
+
+export interface UpdateInvitationParentsInput {
+  id: string;
+  slug: string;
+  brideFather: string;
+  brideMother: string;
+  groomFather: string;
+  groomMother: string;
+  brideProtagonistId: string;
+  groomProtagonistId: string;
+}
+
+export async function updateInvitationParents(
+  input: UpdateInvitationParentsInput,
+): Promise<UpdateInvitationResult> {
+  const { id } = input;
+
+  const parents: ParentCouple[] = [];
+
+  const hasBride = input.brideFather.trim() || input.brideMother.trim();
+  const hasGroom = input.groomFather.trim() || input.groomMother.trim();
+
+  if (hasBride) {
+    parents.push({
+      side:          'bride',
+      protagonistId: input.brideProtagonistId || 'bride',
+      fatherName:    input.brideFather.trim(),
+      motherName:    input.brideMother.trim(),
+    });
+  }
+  if (hasGroom) {
+    parents.push({
+      side:          'groom',
+      protagonistId: input.groomProtagonistId || 'groom',
+      fatherName:    input.groomFather.trim(),
+      motherName:    input.groomMother.trim(),
+    });
+  }
+
+  try {
+    const repo = await getAuthorizedInvitationRepository(id);
+    await repo.updateParents(id, { parents });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[Editor] updateInvitationParents error:', message);
+    return { success: false, error: `Error al guardar los padres: ${message}` };
+  }
+
+  revalidatePath(`/${input.slug}`);
+  revalidatePath(`/i/${input.slug}`);
+  revalidatePath(`/invitaciones/${input.slug}`);
+  revalidatePath(`/preview/${id}`);
+  revalidatePath(`/dashboard/invitations/${id}/edit`);
+
+  return { success: true, message: 'Padres guardados correctamente.' };
 }

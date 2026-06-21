@@ -9,6 +9,7 @@ import MediaForm from './MediaForm';
 import LocationForm from './LocationForm';
 import GalleryForm from './GalleryForm';
 import ProtagonistsForm from './ProtagonistsForm';
+import ParentsForm from './ParentsForm';
 import ItineraryForm from './ItineraryForm';
 import GiftRegistryForm from './GiftRegistryForm';
 import DressCodeForm from './DressCodeForm';
@@ -229,6 +230,16 @@ export default async function EditInvitationPage({ params }: Props) {
         >
           <ProtagonistsForm invitation={invitation} />
         </Section>
+
+        {/* ── 4. Nuestros padres — bodas (Premium+) ───────────────────────── */}
+        {invitation.category === 'wedding' && isPremiumOrDeluxe && (
+          <Section
+            title="Nuestros padres"
+            hint="Nombres de los padres de los novios. Aparecerán en la sección 'Nuestras Familias' de la invitación."
+          >
+            <ParentsForm invitation={invitation} />
+          </Section>
+        )}
 
         {/* ── 3. Nuestra historia — Deluxe ────────────────────────────────── */}
         {isDeluxe && (
