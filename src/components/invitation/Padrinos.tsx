@@ -94,7 +94,7 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
               </div>
 
               {/* Rubro */}
-              <p className="text-[9px] uppercase tracking-[0.22em] font-semibold mb-2" style={{ color: `var(--v2-color-accent, #C5A880)` }}>
+              <p className="text-[11px] uppercase tracking-[0.2em] font-semibold mb-2" style={{ color: `var(--v2-color-accent, #C5A880)` }}>
                 {p.rubro}
               </p>
 
@@ -103,7 +103,7 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
 
               {/* Names */}
               {p.names.map((name, ni) => (
-                <p key={ni} className="text-[11px] font-light leading-snug" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
+                <p key={ni} className="text-[14px] font-light leading-snug" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
                   {name}
                 </p>
               ))}

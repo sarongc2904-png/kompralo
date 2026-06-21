@@ -86,7 +86,7 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
                 <div className="flex-1 min-w-0">
                   {/* Name + stars */}
                   <div className="flex items-start gap-3 mb-1 flex-wrap">
-                    <h4 className="text-sm font-medium tracking-wide" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
+                    <h4 className="text-base font-semibold tracking-wide" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
                       {hotel.name}
                     </h4>
                     <PriceTag range={hotel.priceRange} />
@@ -99,19 +99,19 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center gap-2">
                       <MapPin className="w-3 h-3 flex-shrink-0" style={{ color: `var(--v2-color-accent, #C5A880)` }} />
-                      <span className="text-[11px] opacity-70 truncate" style={{ color: `var(--v2-color-text-secondary, #5A4030)` }}>{hotel.address}</span>
+                      <span className="text-[13px] opacity-80 truncate" style={{ color: `var(--v2-color-text-secondary, #5A4030)` }}>{hotel.address}</span>
                     </div>
                     {hotel.phone && (
                       <div className="flex items-center gap-2">
                         <Phone className="w-3 h-3 flex-shrink-0" style={{ color: `var(--v2-color-accent, #C5A880)` }} />
-                        <span className="text-[11px] opacity-70" style={{ color: `var(--v2-color-text-secondary, #5A4030)` }}>{hotel.phone}</span>
+                        <span className="text-[13px] opacity-80" style={{ color: `var(--v2-color-text-secondary, #5A4030)` }}>{hotel.phone}</span>
                       </div>
                     )}
                     <div className="flex items-center gap-2 mt-0.5">
                       <div className="w-3 h-3 flex-shrink-0 flex items-center justify-center">
                         <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#C5A880' }} />
                       </div>
-                      <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: `var(--v2-color-accent, #C5A880)` }}>
+                      <span className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: `var(--v2-color-accent, #C5A880)` }}>
                         {hotel.distance}
                       </span>
                     </div>
@@ -133,7 +133,7 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
                       textDecoration: 'none',
                     }}
                   >
-                    <span className="text-[9px] uppercase tracking-[0.2em] font-semibold leading-tight text-center" style={{ color: `var(--v2-btn-text, #FFFFFF)` }}>
+                    <span className="text-[11px] uppercase tracking-[0.18em] font-semibold leading-tight text-center" style={{ color: `var(--v2-btn-text, #FFFFFF)` }}>
                       Reservar
                     </span>
                   </a>

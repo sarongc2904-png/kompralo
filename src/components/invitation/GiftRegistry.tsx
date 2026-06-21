@@ -92,7 +92,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                   {/* Bank Details (Hidden by default, reveals on toggle) */}
                   {item.logoType === 'bank' && item.bankDetails && (
                     <div className="w-full">
-                      <p className={`text-[11px] opacity-70 mb-2 max-w-[200px] mx-auto ${theme.bodyFont}`}>
+                      <p className={`text-[13px] opacity-75 mb-2 max-w-[200px] mx-auto ${theme.bodyFont}`}>
                         Información bancaria para realizar transferencias.
                       </p>
                       
@@ -143,7 +143,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
 
                   {/* Standard description for normal links */}
                   {item.logoType !== 'bank' && (
-                    <p className={`text-[11px] opacity-70 mb-4 max-w-[200px] mx-auto ${theme.bodyFont}`}>
+                    <p className={`text-[13px] opacity-75 mb-4 max-w-[200px] mx-auto ${theme.bodyFont}`}>
                       Haz clic abajo para ver la mesa de regalos directamente.
                     </p>
                   )}

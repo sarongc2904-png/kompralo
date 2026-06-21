@@ -5,7 +5,6 @@ import { Theme } from '@/domain/themes/types';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { ThemeDivider } from '@/components/theme-v2';
-import InkRevealText from './InkRevealText';
 import ElegantInvitationCard from './ElegantInvitationCard';
 
 interface DressCodeProps {
@@ -52,7 +51,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
           </h4>
 
           <p
-            className={`text-sm leading-relaxed mb-8 ${theme.bodyFont}`}
+            className={`text-base leading-relaxed mb-8 ${theme.bodyFont}`}
             style={{ color: 'var(--v2-color-text-secondary, inherit)', opacity: 0.9 }}
           >
             {dressCode.description}
@@ -61,7 +60,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
           {/* Color Swatches */}
           {theme.dressCodeSwatches && theme.dressCodeSwatches.length > 0 && (
             <div className="mt-8">
-              <p className={`text-[10px] uppercase tracking-[0.2em] mb-4 opacity-65 ${theme.cardText} ${theme.bodyFont}`}>
+              <p className={`text-xs uppercase tracking-[0.18em] mb-4 opacity-75 ${theme.cardText} ${theme.bodyFont}`}>
                 Sugerencia de Colores
               </p>
               
@@ -93,7 +92,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
 
           {/* Important notes */}
           {dressCode.suggestions && (
-            <p className={`text-xs italic opacity-70 mt-8 pt-6 ${theme.bodyFont} ${theme.cardText}`}
+            <p className={`text-[13px] italic opacity-75 mt-8 pt-6 ${theme.bodyFont} ${theme.cardText}`}
               style={{ borderTop: `1px solid var(--v2-color-border, ${theme.colors.border})` }}>
               * {dressCode.suggestions}
             </p>

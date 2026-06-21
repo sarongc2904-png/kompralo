@@ -10,14 +10,19 @@ import { motion } from 'framer-motion';
 // here to stay independent of theme CSS variables that may vary by theme,
 // while still respecting --v2 tokens when the ThemeProviderV2 is present.
 
+// NOTE: We intentionally use --v2-card-ivory-bg and --v2-card-radius here,
+// NOT --v2-glass-bg or --v2-radius-lg, because every theme overrides those
+// two with their own palette values. These new variables have no theme
+// definition yet, so the warm-ivory fallback is always applied.
 export const CARD_BASE: React.CSSProperties = {
-  background: 'var(--v2-glass-bg, rgba(255, 250, 238, 0.88))',
-  backdropFilter: 'blur(22px) saturate(150%)',
-  WebkitBackdropFilter: 'blur(22px) saturate(150%)',
-  border: '1px solid var(--v2-card-border, rgba(212, 175, 95, 0.30))',
-  borderRadius: 'var(--v2-radius-lg, 24px)',
+  background:
+    'var(--v2-card-ivory-bg, linear-gradient(145deg, rgba(255,250,238,0.96), rgba(255,244,220,0.90)))',
+  backdropFilter: 'blur(10px) saturate(140%)',
+  WebkitBackdropFilter: 'blur(10px) saturate(140%)',
+  border: '1px solid var(--v2-card-border, rgba(212,175,95,0.38))',
+  borderRadius: 'var(--v2-card-radius, 28px)',
   boxShadow:
-    '0 8px 36px rgba(120, 88, 40, 0.11), 0 1px 4px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.92)',
+    '0 18px 45px rgba(116,84,38,0.14), inset 0 1px 0 rgba(255,255,255,0.75)',
   overflow: 'hidden',
   position: 'relative',
 };

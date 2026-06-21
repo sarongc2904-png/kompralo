@@ -47,7 +47,7 @@ function FamilyCard({
       {/* Whose side label */}
       <div className="relative z-10 text-center mb-5">
         <span
-          className="text-[9px] uppercase tracking-[0.28em] font-semibold"
+          className="text-[12px] uppercase tracking-[0.2em] font-semibold"
           style={{ color: `var(--v2-color-accent, #C5A880)` }}
         >
           {cardTitle}
@@ -77,12 +77,12 @@ function FamilyCard({
           </div>
           <div>
             <p
-              className="text-[9px] uppercase tracking-[0.22em] mb-0.5 font-semibold"
+              className="text-[11px] uppercase tracking-[0.18em] mb-0.5 font-semibold"
               style={{ color: `var(--v2-color-accent, #A88C5A)` }}
             >
               Padre
             </p>
-            <p className="text-sm font-light tracking-wide" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
+            <p className="text-[17px] font-light tracking-wide leading-snug" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
               {couple.fatherName}
             </p>
           </div>
@@ -114,12 +114,12 @@ function FamilyCard({
           </div>
           <div>
             <p
-              className="text-[9px] uppercase tracking-[0.22em] mb-0.5 font-semibold"
+              className="text-[11px] uppercase tracking-[0.18em] mb-0.5 font-semibold"
               style={{ color: `var(--v2-color-accent, #A88C5A)` }}
             >
               Madre
             </p>
-            <p className="text-sm font-light tracking-wide" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
+            <p className="text-[17px] font-light tracking-wide leading-snug" style={{ color: `var(--v2-color-text-primary, #3D2B1A)` }}>
               {couple.motherName}
             </p>
           </div>

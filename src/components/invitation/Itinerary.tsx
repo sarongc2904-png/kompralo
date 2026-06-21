@@ -5,7 +5,6 @@ import { Theme } from '@/domain/themes/types';
 import { ItineraryItem } from '@/domain/invitations/types';
 import { motion, Variants } from 'framer-motion';
 import { Sparkles, Church, GlassWater, Utensils, Music } from 'lucide-react';
-import InkRevealText from './InkRevealText';
 import SectionHeader from './SectionHeader';
 import SectionShell from './SectionShell';
 
@@ -94,7 +93,7 @@ export default function Itinerary({ items, theme }: ItineraryProps) {
                 </div>
 
                 {/* Time Badge */}
-                <span className={`text-[11px] font-mono font-semibold tracking-[0.22em] mb-3 ${theme.accentText}`}>
+                <span className={`text-[13px] font-mono font-semibold tracking-[0.2em] mb-3 ${theme.accentText}`}>
                   {item.time}
                 </span>
 
@@ -107,7 +106,7 @@ export default function Itinerary({ items, theme }: ItineraryProps) {
                 </h4>
 
                 {/* Location */}
-                <p className={`text-xs leading-relaxed opacity-65 ${theme.bodyFont} ${theme.cardText}`}>
+                <p className={`text-[13px] leading-relaxed opacity-75 ${theme.bodyFont} ${theme.cardText}`}>
                   {item.location}
                 </p>
 
