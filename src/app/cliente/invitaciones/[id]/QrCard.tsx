@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import QRCode from 'react-qr-code';
 
 const T = {
-  dark:      '#0D0A07',
-  mid:       '#1A1612',
-  light:     '#6B4A35',
-  gold:      '#C4A962',
-  cream:     '#F1E3C8',
-  border:    '#EAD7A3',
-  white:     '#F1E3C8',
+  dark:   '#0D0A07',
+  mid:    '#1A1612',
+  light:  '#6B4A35',
+  gold:   '#C4A962',
+  cream:  '#F1E3C8',
+  border: '#EAD7A3',
 } as const;
 
 interface Props {
@@ -19,8 +18,26 @@ interface Props {
 }
 
 export default function QrCard({ publicUrl, eventSlug }: Props) {
+  const [open, setOpen]     = useState(false);
   const [copied, setCopied] = useState(false);
-  const qrRef = useRef<HTMLDivElement>(null);
+  const qrRef               = useRef<HTMLDivElement>(null);
+
+  const close = useCallback(() => setOpen(false), []);
+
+  // ESC to close
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') close(); }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, close]);
+
+  // Scroll lock while open
+  useEffect(() => {
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
   async function handleCopy() {
     try {
@@ -28,7 +45,6 @@ export default function QrCard({ publicUrl, eventSlug }: Props) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // fallback: prompt
       window.prompt('Copia el link:', publicUrl);
     }
   }
@@ -37,7 +53,7 @@ export default function QrCard({ publicUrl, eventSlug }: Props) {
     const svgEl = qrRef.current?.querySelector('svg');
     if (!svgEl) return;
 
-    const size = 320;
+    const size    = 320;
     const svgData = new XMLSerializer().serializeToString(svgEl);
     const canvas  = document.createElement('canvas');
     canvas.width  = size + 40;
@@ -48,7 +64,7 @@ export default function QrCard({ publicUrl, eventSlug }: Props) {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const img = new Image();
+    const img  = new Image();
     const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
     const url  = URL.createObjectURL(blob);
 
@@ -64,80 +80,171 @@ export default function QrCard({ publicUrl, eventSlug }: Props) {
   }
 
   return (
-    <div style={{
-      background:   T.white,
-      border:       `1px solid ${T.border}`,
-      borderRadius: '1.25rem',
-      padding:      '1.5rem',
-      textAlign:    'center',
-      boxShadow:    '0 2px 8px rgba(15,12,9,0.03)',
-    }}>
-      <p style={{ margin: '0 0 1.25rem', fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
-        Código QR de tu invitación
-      </p>
-
-      {/* QR */}
-      <div
-        ref={qrRef}
+    <>
+      {/* ── Trigger button ── */}
+      <button
+        onClick={() => setOpen(true)}
         style={{
-          display:      'inline-flex',
-          background:   '#ffffff',
-          padding:      '1rem',
-          borderRadius: '.75rem',
-          border:       `1px solid ${T.border}`,
-          marginBottom: '1rem',
+          width: '100%', minHeight: '46px',
+          padding: '.75rem 1rem',
+          background: T.dark, color: T.cream,
+          border: 'none', borderRadius: '.75rem',
+          fontSize: '.875rem', fontWeight: 700,
+          cursor: 'pointer', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', gap: '.5rem',
+          boxSizing: 'border-box',
         }}
       >
-        <QRCode value={publicUrl} size={180} level="M" />
-      </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h2v2h-2v-2zm-4 0h2v2h-2v-2zm4 4h2v4h-6v-2h2v-2h2zm-4 2h2v2h-2v-2z"/>
+        </svg>
+        Ver código QR
+      </button>
 
-      {/* Public link text */}
-      <p style={{
-        margin:       '0 0 1.25rem',
-        fontSize:     '.75rem',
-        color:        T.light,
-        wordBreak:    'break-all',
-        lineHeight:   1.5,
-        padding:      '0 .25rem',
-      }}>
-        {publicUrl}
-      </p>
+      {/* ── Modal ── */}
+      {open && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={close}
+            aria-hidden="true"
+            style={{
+              position: 'fixed', inset: 0,
+              background: 'rgba(13,10,7,0.72)',
+              backdropFilter: 'blur(4px)',
+              WebkitBackdropFilter: 'blur(4px)',
+              zIndex: 9998,
+            }}
+          />
 
-      {/* Buttons */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '.625rem' }}>
-        <button
-          onClick={handleDownloadQr}
-          style={{
-            width: '100%', minHeight: '46px',
-            padding: '.75rem 1rem',
-            background: T.dark, color: T.cream,
-            border: 'none', borderRadius: '.75rem',
-            fontSize: '.875rem', fontWeight: 700,
-            cursor: 'pointer', display: 'flex',
-            alignItems: 'center', justifyContent: 'center', gap: '.5rem',
-          }}
-        >
-          ⬇ Descargar QR
-        </button>
+          {/* Dialog */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Código QR de tu invitación"
+            style={{
+              position: 'fixed',
+              top: '50%', left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 'min(380px, calc(100vw - 2rem))',
+              maxHeight: 'calc(100dvh - 2rem)',
+              overflowY: 'auto',
+              background: T.cream,
+              border: `1px solid ${T.border}`,
+              borderRadius: '1.5rem',
+              padding: '1.5rem',
+              zIndex: 9999,
+              boxShadow: '0 20px 60px rgba(13,10,7,0.28)',
+              textAlign: 'center',
+              boxSizing: 'border-box',
+            }}
+          >
+            {/* Header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: '1.25rem',
+            }}>
+              <p style={{
+                margin: 0, fontSize: '.6875rem', fontWeight: 700,
+                letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold,
+              }}>
+                Código QR de tu invitación
+              </p>
+              <button
+                onClick={close}
+                aria-label="Cerrar"
+                style={{
+                  background: 'none', border: `1px solid ${T.border}`,
+                  cursor: 'pointer', padding: '.25rem .6rem',
+                  color: T.mid, fontSize: '1.25rem', lineHeight: 1,
+                  borderRadius: '.5rem', fontWeight: 700,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                ×
+              </button>
+            </div>
 
-        <button
-          onClick={handleCopy}
-          style={{
-            width: '100%', minHeight: '46px',
-            padding: '.75rem 1rem',
-            background: copied ? '#E6F4EA' : T.cream,
-            color: copied ? '#238636' : T.dark,
-            border: `1px solid ${copied ? '#A7D7B0' : T.border}`,
-            borderRadius: '.75rem',
-            fontSize: '.875rem', fontWeight: 700,
-            cursor: 'pointer', display: 'flex',
-            alignItems: 'center', justifyContent: 'center', gap: '.5rem',
-            transition: 'background .2s, color .2s, border-color .2s',
-          }}
-        >
-          {copied ? '✓ ¡Link copiado!' : '⎘ Copiar link'}
-        </button>
-      </div>
-    </div>
+            {/* QR Code */}
+            <div
+              ref={qrRef}
+              style={{
+                display: 'inline-flex',
+                background: '#ffffff',
+                padding: '1rem',
+                borderRadius: '.75rem',
+                border: `1px solid ${T.border}`,
+                marginBottom: '1rem',
+              }}
+            >
+              <QRCode value={publicUrl} size={200} level="M" />
+            </div>
+
+            {/* Public link */}
+            <p style={{
+              margin: '0 0 1.25rem',
+              fontSize: '.75rem',
+              color: T.light,
+              wordBreak: 'break-all',
+              lineHeight: 1.5,
+              padding: '0 .25rem',
+            }}>
+              {publicUrl}
+            </p>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.625rem' }}>
+              <button
+                onClick={handleDownloadQr}
+                style={{
+                  width: '100%', minHeight: '46px',
+                  padding: '.75rem 1rem',
+                  background: T.dark, color: T.cream,
+                  border: 'none', borderRadius: '.75rem',
+                  fontSize: '.875rem', fontWeight: 700,
+                  cursor: 'pointer', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', gap: '.5rem',
+                }}
+              >
+                ⬇ Descargar QR como imagen
+              </button>
+
+              <button
+                onClick={handleCopy}
+                style={{
+                  width: '100%', minHeight: '46px',
+                  padding: '.75rem 1rem',
+                  background: copied ? '#E6F4EA' : '#ffffff',
+                  color: copied ? '#238636' : T.dark,
+                  border: `1px solid ${copied ? '#A7D7B0' : T.border}`,
+                  borderRadius: '.75rem',
+                  fontSize: '.875rem', fontWeight: 700,
+                  cursor: 'pointer', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', gap: '.5rem',
+                  transition: 'background .2s, color .2s, border-color .2s',
+                }}
+              >
+                {copied ? '✓ ¡Link copiado!' : '⎘ Copiar link de invitación'}
+              </button>
+
+              <button
+                onClick={close}
+                style={{
+                  width: '100%', minHeight: '46px',
+                  padding: '.75rem 1rem',
+                  background: 'transparent', color: T.light,
+                  border: `1px solid ${T.border}`, borderRadius: '.75rem',
+                  fontSize: '.875rem', fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }
