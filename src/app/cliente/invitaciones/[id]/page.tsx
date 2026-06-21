@@ -320,7 +320,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
   // 4. Build URLs
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
-  const publicUrl = `${appUrl}/preview/${id}`;
+  const publicUrl = `${appUrl}/${inv.slug}`;
   const editUrl   = `/dashboard/invitations/${id}/edit`;
 
   // 5. Display helpers

@@ -7,6 +7,19 @@ import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/l
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
 
+async function fetchInvitationSlugs(ids: string[]): Promise<Record<string, string>> {
+  if (ids.length === 0) return {};
+  try {
+    const svc = createServiceRoleSupabaseClient();
+    const { data } = await svc
+      .from('invitations')
+      .select('id, slug')
+      .in('id', ids);
+    if (!data) return {};
+    return Object.fromEntries(data.map((r) => [r.id, r.slug as string]));
+  } catch { return {}; }
+}
+
 async function fetchRsvpStats(invitationIds: string[]): Promise<Record<string, RsvpStats>> {
   if (invitationIds.length === 0) return {};
   try {
@@ -194,7 +207,7 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
   );
 }
 
-function OrderCard({ order, rsvpStats }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number } }) {
+function OrderCard({ order, rsvpStats, invitationSlug }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null }) {
   const statusColor: Record<string, string> = {
     pending:  '#8A6D3B',
     paid:     '#238636',
@@ -212,7 +225,7 @@ function OrderCard({ order, rsvpStats }: { order: Order; rsvpStats?: { total: nu
   const isPaid = order.status === 'paid';
 
   const appUrl       = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
-  const publicUrl    = order.invitationId ? `${appUrl}/preview/${order.invitationId}` : null;
+  const publicUrl    = invitationSlug ? `${appUrl}/${invitationSlug}` : null;
   const shareMessage = publicUrl
     ? `Hola, queremos invitarte a nuestro evento.\n\nAbre nuestra invitación digital aquí:\n${publicUrl}\n\nPor favor confirma tu asistencia desde la invitación. ¡Te esperamos!`
     : '';
@@ -374,7 +387,10 @@ export default async function ClientePage({ searchParams }: Props) {
   const paidInvitationIds = orders
     .filter((o) => o.status === 'paid' && !!o.invitationId)
     .map((o) => o.invitationId as string);
-  const rsvpStatsMap = await fetchRsvpStats(paidInvitationIds);
+  const [rsvpStatsMap, slugsMap] = await Promise.all([
+    fetchRsvpStats(paidInvitationIds),
+    fetchInvitationSlugs(paidInvitationIds),
+  ]);
 
   return (
     <main
@@ -522,6 +538,7 @@ export default async function ClientePage({ searchParams }: Props) {
                 key={order.id}
                 order={order}
                 rsvpStats={order.invitationId ? rsvpStatsMap[order.invitationId] : undefined}
+                invitationSlug={order.invitationId ? slugsMap[order.invitationId] : null}
               />
             ))}
 
