@@ -1198,3 +1198,66 @@ export async function updateThemeSelection(
 
   return { success: true, message: `Tema "${themeId}" aplicado correctamente.` };
 }
+
+// =============================================================================
+// updateInvitationLocation
+// =============================================================================
+
+export interface UpdateInvitationLocationInput {
+  id: string;
+  slug: string;
+  googleMapsUrl: string;
+  wazeUrl: string;
+}
+
+export async function updateInvitationLocation(
+  input: UpdateInvitationLocationInput,
+): Promise<UpdateInvitationResult> {
+  if (input.googleMapsUrl) {
+    const gm = input.googleMapsUrl;
+    if (
+      !gm.includes('maps.google') &&
+      !gm.includes('google.com/maps') &&
+      !gm.includes('goo.gl/maps') &&
+      !gm.includes('maps.app.goo.gl')
+    ) {
+      return { success: false, error: 'La URL de Google Maps debe ser un enlace de maps.google.com, google.com/maps o goo.gl/maps.' };
+    }
+    if (!isValidUrl(gm)) return { success: false, error: 'La URL de Google Maps no es válida.' };
+  }
+  if (input.wazeUrl) {
+    if (!input.wazeUrl.includes('waze.com')) {
+      return { success: false, error: 'La URL de Waze debe ser de waze.com.' };
+    }
+    if (!isValidUrl(input.wazeUrl)) return { success: false, error: 'La URL de Waze no es válida.' };
+  }
+
+  const { id } = input;
+
+  // Preserve existing media fields — only update location links.
+  const current = await getServiceInvitationRepository().getById(id);
+  if (!current) return { success: false, error: 'Invitación no encontrada.' };
+
+  try {
+    const repo = await getAuthorizedInvitationRepository(id);
+    await repo.updateMediaInfo(id, {
+      heroImageUrl:  current.hero?.imageUrl   ?? '',
+      heroVideoUrl:  current.hero?.videoUrl   ?? '',
+      musicUrl:      current.music?.audioUrl  ?? '',
+      musicTitle:    current.music?.title     ?? '',
+      youtubeUrl:    current.hero?.youtubeUrl ?? '',
+      googleMapsUrl: input.googleMapsUrl.trim(),
+      wazeUrl:       input.wazeUrl.trim(),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[Editor] updateInvitationLocation error:', message);
+    return { success: false, error: `Error al guardar la ubicación: ${message}` };
+  }
+
+  revalidatePath(`/i/${input.slug}`);
+  revalidatePath(`/preview/${id}`);
+  revalidatePath(`/dashboard/invitations/${id}/edit`);
+
+  return { success: true, message: 'Ubicación guardada correctamente.' };
+}

@@ -6,6 +6,7 @@ import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import { normalizePlanId } from '@/domain/plans/types';
 import EditForm from './EditForm';
 import MediaForm from './MediaForm';
+import LocationForm from './LocationForm';
 import GalleryForm from './GalleryForm';
 import ProtagonistsForm from './ProtagonistsForm';
 import ItineraryForm from './ItineraryForm';
@@ -195,14 +196,15 @@ export default async function EditInvitationPage({ params }: Props) {
           title="Portada y multimedia"
           hint={
             plan === 'basic'
-              ? 'Imagen principal, enlace de Google Maps y Waze. Música y video disponibles en plan Premium.'
-              : 'Imagen principal, video de portada, música de fondo y links de navegación al venue.'
+              ? 'Imagen principal, música y video disponibles en plan Premium.'
+              : 'Imagen principal, video de portada y música de fondo.'
           }
         >
           <MediaForm invitation={invitation} plan={plan} />
         </Section>
 
-        {/* ── 3. Protagonistas ────────────────────────────────────────────── */}
+        {/* ── Novios / Protagonistas (no aparece en la lista numerada
+             pero no se elimina — va justo después de Portada) ─────────── */}
         <Section
           title={invitation.category === 'wedding' ? 'Novios / Protagonistas' : 'Protagonistas'}
           hint={
@@ -214,17 +216,7 @@ export default async function EditInvitationPage({ params }: Props) {
           <ProtagonistsForm invitation={invitation} />
         </Section>
 
-        {/* ── 4. Galería — Premium+ ───────────────────────────────────────── */}
-        {isPremiumOrDeluxe && (
-          <Section
-            title="Galería de fotos"
-            hint="Las imágenes se muestran en el carrusel de la invitación en el orden definido aquí."
-          >
-            <GalleryForm invitation={invitation} />
-          </Section>
-        )}
-
-        {/* ── 5. Nuestra historia — Deluxe ────────────────────────────────── */}
+        {/* ── 3. Nuestra historia — Deluxe ────────────────────────────────── */}
         {isDeluxe && (
           <Section
             title="Nuestra historia"
@@ -245,10 +237,20 @@ export default async function EditInvitationPage({ params }: Props) {
           </Section>
         )}
 
-        {/* ── 6. Línea del tiempo — Deluxe ────────────────────────────────── */}
+        {/* ── 4. Nuestra galería — Premium+ ───────────────────────────────── */}
+        {isPremiumOrDeluxe && (
+          <Section
+            title="Nuestra galería"
+            hint="Las imágenes se muestran en el carrusel de la invitación en el orden definido aquí."
+          >
+            <GalleryForm invitation={invitation} />
+          </Section>
+        )}
+
+        {/* ── 5. Línea de tiempo — Deluxe ─────────────────────────────────── */}
         {isDeluxe && (
           <Section
-            title="Línea del tiempo"
+            title="Línea de tiempo"
             hint="Momentos clave de la historia del evento en orden cronológico."
           >
             <TimelineForm
@@ -265,12 +267,20 @@ export default async function EditInvitationPage({ params }: Props) {
           </Section>
         )}
 
-        {/* ── 7. Itinerario del evento ─────────────────────────────────────── */}
+        {/* ── 6. Itinerario del evento ─────────────────────────────────────── */}
         <Section
           title="Itinerario del evento"
           hint="Define los momentos clave del día en orden cronológico."
         >
           <ItineraryForm invitation={invitation} />
+        </Section>
+
+        {/* ── 7. Ubicación ────────────────────────────────────────────────── */}
+        <Section
+          title="Ubicación"
+          hint="Agrega los links de Google Maps y Waze para que los invitados lleguen fácilmente al venue."
+        >
+          <LocationForm invitation={invitation} />
         </Section>
 
         {/* ── 8. Código de vestimenta ──────────────────────────────────────── */}
@@ -281,10 +291,20 @@ export default async function EditInvitationPage({ params }: Props) {
           <DressCodeForm invitation={invitation} />
         </Section>
 
-        {/* ── 9. Padrinos — Deluxe ────────────────────────────────────────── */}
+        {/* ── 9. Mesa de regalos — Deluxe ──────────────────────────────────── */}
         {isDeluxe && (
           <Section
-            title="Padrinos"
+            title="Mesa de regalos"
+            hint="Agrega tiendas en línea o datos bancarios."
+          >
+            <GiftRegistryForm invitation={invitation} />
+          </Section>
+        )}
+
+        {/* ── 10. Nuestros padrinos — Deluxe ───────────────────────────────── */}
+        {isDeluxe && (
+          <Section
+            title="Nuestros padrinos"
             hint="Agrupa a los padrinos por rubro."
           >
             <SponsorsForm
@@ -300,17 +320,7 @@ export default async function EditInvitationPage({ params }: Props) {
           </Section>
         )}
 
-        {/* ── 10. Mesa de regalos — Deluxe ────────────────────────────────── */}
-        {isDeluxe && (
-          <Section
-            title="Mesa de regalos"
-            hint="Agrega tiendas en línea o datos bancarios."
-          >
-            <GiftRegistryForm invitation={invitation} />
-          </Section>
-        )}
-
-        {/* ── 11. Hospedaje — Deluxe ──────────────────────────────────────── */}
+        {/* ── 11. Hospedaje — Deluxe ───────────────────────────────────────── */}
         {isDeluxe && (
           <Section
             title="Hospedaje"
@@ -335,10 +345,10 @@ export default async function EditInvitationPage({ params }: Props) {
           </Section>
         )}
 
-        {/* ── 12. Redes y hashtag — Deluxe ────────────────────────────────── */}
+        {/* ── 12. Redes y Hashtag — Deluxe ─────────────────────────────────── */}
         {isDeluxe && (
           <Section
-            title="Redes y hashtag"
+            title="Redes y Hashtag"
             hint="Hashtag oficial del evento y redes sociales para que los invitados compartan."
           >
             <SocialForm
@@ -374,7 +384,7 @@ export default async function EditInvitationPage({ params }: Props) {
           />
         </Section>
 
-        {/* ── 14. Diseño y tema ────────────────────────────────────────────── */}
+        {/* ── Diseño y tema ────────────────────────────────────────────────── */}
         <Section
           title="Diseño y tema"
           hint="Elige el tema visual de la invitación. Cada tema define colores, tipografía, formas y efectos."
@@ -386,7 +396,7 @@ export default async function EditInvitationPage({ params }: Props) {
           />
         </Section>
 
-        {/* ── 15. Secciones activas ────────────────────────────────────────── */}
+        {/* ── Secciones activas ────────────────────────────────────────────── */}
         <Section
           title="Secciones activas"
           hint="Activa o desactiva secciones individualmente. Las secciones bloqueadas requieren un plan superior."

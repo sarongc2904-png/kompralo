@@ -225,26 +225,11 @@ export default function MediaForm({ invitation, plan = 'premium' }: MediaFormPro
           </div>
         )}
 
-        {/* Navegación */}
-        <div>
-          <SectionLabel>Navegación</SectionLabel>
-          <div className="grid grid-cols-1 gap-4">
-            <Field
-              label="Google Maps URL"
-              name="googleMapsUrl"
-              defaultValue={invitation.location?.googleMapsLink ?? ''}
-              hint="Enlace de maps.google.com, google.com/maps o goo.gl/maps."
-              placeholder="https://maps.google.com/..."
-            />
-            <Field
-              label="Waze URL"
-              name="wazeUrl"
-              defaultValue={invitation.location?.wazeLink ?? ''}
-              hint="Enlace de waze.com."
-              placeholder="https://waze.com/ul?..."
-            />
-          </div>
-        </div>
+        {/* Location fields moved to the dedicated Ubicación section.
+            Hidden inputs preserve current values so saving multimedia
+            does not overwrite the location links. */}
+        <input type="hidden" name="googleMapsUrl" value={invitation.location?.googleMapsLink ?? ''} />
+        <input type="hidden" name="wazeUrl"       value={invitation.location?.wazeLink       ?? ''} />
       </div>
 
       {/* Submit */}
@@ -256,6 +241,7 @@ export default function MediaForm({ invitation, plan = 'premium' }: MediaFormPro
           style={{ background: '#1A1410', color: '#F5F3F0', opacity: isPending ? 0.6 : 1 }}
         >
           {isPending ? 'Guardando…' : 'Guardar portada y multimedia'}
+
         </button>
       </div>
     </form>
