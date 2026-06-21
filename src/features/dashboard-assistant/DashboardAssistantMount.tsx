@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { DashboardAssistantWidget } from './DashboardAssistantWidget';
-import type { DashboardAssistantEventType } from './types';
+import type { InvitationAssistantContext } from './types';
 
 interface DashboardAssistantMountProps {
   enabledByEnv: boolean;
   enabledForPlan: boolean;
-  eventType?: DashboardAssistantEventType;
+  invitationContext: InvitationAssistantContext;
 }
 
 function isDashboardAssistantRoute(pathname: string): boolean {
@@ -18,7 +18,7 @@ function isDashboardAssistantRoute(pathname: string): boolean {
 export function DashboardAssistantMount({
   enabledByEnv,
   enabledForPlan,
-  eventType = 'wedding',
+  invitationContext,
 }: DashboardAssistantMountProps) {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
@@ -35,7 +35,7 @@ export function DashboardAssistantMount({
   return (
     <DashboardAssistantWidget
       enabledForPlan={enabledForPlan}
-      eventType={eventType}
+      invitationContext={invitationContext}
       pathname={pathname}
     />
   );

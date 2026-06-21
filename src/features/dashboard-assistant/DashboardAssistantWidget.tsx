@@ -2,30 +2,26 @@
 
 import { useEffect, useState } from 'react';
 import { DashboardAssistantPanel } from './DashboardAssistantPanel';
-import type { DashboardAssistantEventType } from './types';
+import type { DashboardAssistantEventType, InvitationAssistantContext } from './types';
 
 type DashboardAssistantWidgetProps = {
   enabledForPlan: boolean;
-  eventType?: DashboardAssistantEventType;
+  invitationContext: InvitationAssistantContext;
   pathname?: string;
 };
 
 export function DashboardAssistantWidget({
   enabledForPlan,
-  eventType = 'wedding',
+  invitationContext,
   pathname,
 }: DashboardAssistantWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-      }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') setIsOpen(false);
     }
-
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isOpen]);
@@ -36,7 +32,7 @@ export function DashboardAssistantWidget({
     <>
       {isOpen && (
         <DashboardAssistantPanel
-          eventType={eventType}
+          invitationContext={invitationContext}
           pathname={pathname}
           onClose={() => setIsOpen(false)}
         />
@@ -44,7 +40,7 @@ export function DashboardAssistantWidget({
 
       <button
         type="button"
-        onClick={() => setIsOpen((value) => !value)}
+        onClick={() => setIsOpen((v) => !v)}
         aria-label={isOpen ? 'Cerrar asistente de textos' : 'Abrir asistente de textos'}
         style={{
           position: 'fixed',
@@ -60,12 +56,11 @@ export function DashboardAssistantWidget({
           cursor: 'pointer',
           fontSize: '0.8125rem',
           fontWeight: 700,
-          letterSpacing: '0',
           lineHeight: 1,
           maxWidth: 'calc(100vw - 32px)',
         }}
       >
-        {isOpen ? 'Cerrar' : 'Ayuda para textos'}
+        {isOpen ? 'Cerrar' : '✦ Asistente de textos'}
       </button>
     </>
   );

@@ -26,7 +26,7 @@ import {
   isDashboardAssistantAllowedForPlan,
   isDashboardAssistantEnabled,
 } from '@/features/dashboard-assistant/dashboardAssistantConfig';
-import type { DashboardAssistantEventType } from '@/features/dashboard-assistant/types';
+import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
 
 function isAdminMode(): boolean {
   return process.env.ADMIN_ACCESS_ENABLED === 'true';
@@ -162,9 +162,23 @@ export default async function EditInvitationPage({ params }: Props) {
   const isPremiumOrDeluxe = plan === 'premium' || plan === 'deluxe';
   const isDeluxe          = plan === 'deluxe';
 
-  const assistantEnabledByEnv = isDashboardAssistantEnabled();
+  const assistantEnabledByEnv   = isDashboardAssistantEnabled();
   const assistantAllowedForPlan = isDashboardAssistantAllowedForPlan(invitation.planId);
-  const assistantEventType = getDashboardAssistantEventType(invitation.category);
+
+  const assistantContext: InvitationAssistantContext = {
+    eventType:            getDashboardAssistantEventType(invitation.category),
+    title:                invitation.title || undefined,
+    protagonists:         invitation.protagonists
+                            .filter((p) => p.name)
+                            .map((p) => ({ name: p.name, role: p.role || undefined })),
+    eventDate:            invitation.eventDate || undefined,
+    eventTime:            invitation.eventTime || undefined,
+    venueName:            invitation.location?.venueName || undefined,
+    address:              invitation.location?.address   || undefined,
+    hashtag:              invitation.social?.hashtag     || undefined,
+    dressCodeType:        invitation.dressCode?.type        || undefined,
+    dressCodeDescription: invitation.dressCode?.description || undefined,
+  };
 
   const previewUrl = `/preview/${invitation.id}?from=editor`;
 
@@ -438,7 +452,7 @@ export default async function EditInvitationPage({ params }: Props) {
       <DashboardAssistantMount
         enabledByEnv={assistantEnabledByEnv}
         enabledForPlan={assistantAllowedForPlan}
-        eventType={assistantEventType}
+        invitationContext={assistantContext}
       />
     </div>
   );
