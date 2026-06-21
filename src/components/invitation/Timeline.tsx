@@ -47,12 +47,16 @@ function MobileItem({
 
         {/* Vertical connector — only between items, not after the last */}
         {index < total - 1 && (
-          <div
-            className="mt-2 w-px flex-1"
+          <motion.div
+            initial={{ scaleY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="mt-2 w-[2px] flex-1 origin-top rounded-full"
             style={{
-              minHeight: '48px',
-              background: `linear-gradient(to bottom, var(--v2-color-accent, #C5A880) 0%, transparent 100%)`,
-              opacity: 0.35,
+              minHeight: '64px',
+              background: `linear-gradient(to bottom, var(--v2-color-accent, #c9a24f) 0%, var(--v2-color-accent, #c9a24f) 65%, transparent 100%)`,
+              opacity: 0.65,
             }}
             aria-hidden="true"
           />
@@ -69,14 +73,15 @@ function MobileItem({
         </span>
 
         <h4
-          className={`mt-1 text-lg font-light tracking-wide leading-snug ${theme.headingFont} ${theme.bodyText}`}
-          style={{ fontFamily: 'var(--v2-font-heading, inherit)' }}
+          className={`mt-1 text-lg font-light tracking-wide leading-snug ${theme.headingFont}`}
+          style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, inherit)' }}
         >
           {event.title}
         </h4>
 
         <p
-          className={`mt-2 text-sm leading-relaxed opacity-70 ${theme.bodyFont} ${theme.bodyText}`}
+          className={`mt-2 text-sm leading-relaxed ${theme.bodyFont}`}
+          style={{ color: 'var(--v2-color-text-secondary, inherit)', opacity: 0.85 }}
         >
           {event.description}
         </p>
@@ -141,14 +146,15 @@ function DesktopItem({
           </span>
 
           <h4
-            className={`text-xl font-light mb-3 tracking-wide ${theme.headingFont} ${theme.bodyText}`}
-            style={{ fontFamily: 'var(--v2-font-heading, inherit)' }}
+            className={`text-xl font-light mb-3 tracking-wide ${theme.headingFont}`}
+            style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, inherit)' }}
           >
             {event.title}
           </h4>
 
           <p
-            className={`text-sm leading-relaxed opacity-75 max-w-sm ${isEven ? 'ml-auto mr-0' : 'mr-auto ml-0'} ${theme.bodyFont} ${theme.bodyText}`}
+            className={`text-sm leading-relaxed max-w-sm ${isEven ? 'ml-auto mr-0' : 'mr-auto ml-0'} ${theme.bodyFont}`}
+            style={{ color: 'var(--v2-color-text-secondary, inherit)', opacity: 0.85 }}
           >
             {event.description}
           </p>

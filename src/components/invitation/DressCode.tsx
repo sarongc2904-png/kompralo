@@ -38,17 +38,23 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
 
 
         {/* Info Card */}
-        <div className="p-8 md:p-12 shadow-sm"
+        <div className="p-6 md:p-12 overflow-hidden shadow-sm"
           style={{ border: `1px solid var(--v2-color-border, ${theme.colors.border})`, background: `var(--v2-color-surface, ${theme.colors.surface})`, borderRadius: `var(--v2-radius-lg, 16px)`, boxShadow: `var(--v2-shadow-card, 0 4px 16px rgba(0,0,0,0.08))` }}>
           <div className="inline-block p-3 rounded-full mb-6" style={{ background: `var(--v2-color-accent-soft, rgba(197,168,128,0.10))` }}>
             <Sparkles className={`w-5 h-5 ${theme.accentText}`} />
           </div>
 
-          <h4 className={`text-2xl font-light tracking-wide mb-4 ${theme.headingFont} ${theme.cardText}`}>
+          <h4
+            className={`text-2xl font-light tracking-wide mb-4 ${theme.headingFont}`}
+            style={{ color: 'var(--v2-color-text-primary, inherit)' }}
+          >
             {dressCode.type}
           </h4>
 
-          <p className={`text-sm leading-relaxed opacity-85 mb-8 ${theme.bodyFont} ${theme.cardText}`}>
+          <p
+            className={`text-sm leading-relaxed mb-8 ${theme.bodyFont}`}
+            style={{ color: 'var(--v2-color-text-secondary, inherit)', opacity: 0.9 }}
+          >
             {dressCode.description}
           </p>
 
@@ -59,7 +65,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
                 Sugerencia de Colores
               </p>
               
-              <div className="flex gap-4 justify-center items-center">
+              <div className="flex flex-wrap gap-3 justify-center items-center">
                 {theme.dressCodeSwatches.map((color, index) => (
                   <motion.div
                     key={index}
@@ -72,10 +78,10 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
                       damping: 15,
                       delay: index * 0.1,
                     }}
-                    className="flex flex-col items-center gap-1.5"
+                    className="flex-shrink-0 flex flex-col items-center gap-1.5"
                   >
-                    <div 
-                      className="w-10 h-10 rounded-full border border-black/10 shadow-sm"
+                    <div
+                      className="w-9 h-9 rounded-full border border-black/10 shadow-sm"
                       style={{ backgroundColor: color }}
                       title={color}
                     />
