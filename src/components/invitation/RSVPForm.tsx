@@ -2,11 +2,38 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Theme } from '@/domain/themes/types';
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { CheckCircle2, MessageSquare } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, MessageSquare, Copy, Check } from 'lucide-react';
 import LiquidCard from './LiquidCard';
 import SectionShell from './SectionShell';
 import { ThemeDivider } from '@/components/theme-v2';
+
+// ─── WhatsApp URL helper ──────────────────────────────────────────────────────
+
+/**
+ * Builds a wa.me deep-link.
+ * - No phone → wa.me/?text=… (user picks recipient — works on all platforms)
+ * - Mexico 10-digit numbers get the 52 country-code prepended automatically.
+ * - Numbers that already start with 52 (12 digits) are left as-is.
+ * - All non-digit characters (spaces, +, dashes) are stripped before use.
+ */
+function buildWhatsAppUrl(message: string, rawPhone?: string | null): string {
+  const encoded = encodeURIComponent(message);
+  if (!rawPhone) return `https://wa.me/?text=${encoded}`;
+
+  const digits = rawPhone.replace(/\D/g, '');
+  if (!digits) return `https://wa.me/?text=${encoded}`;
+
+  let phone = digits;
+  if (digits.length === 10) {
+    // Mexico local number — prepend country code
+    phone = `52${digits}`;
+  }
+  // 12-digit starting with 52 → already correct
+  // 11-digit US numbers, 13+ international → pass as-is
+
+  return `https://wa.me/${phone}?text=${encoded}`;
+}
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -222,6 +249,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
   const [formState,   setFormState]   = useState<FormState>('idle');
   const [errorMsg,    setErrorMsg]    = useState('');
   const [noteFocused, setNoteFocused] = useState(false);
+  const [copied,      setCopied]      = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,10 +295,29 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
     setGuests(1);
   };
 
-  const getWhatsAppLink = () => {
-    const status  = attending ? 'SÍ ASISTIRÉ' : 'NO PODRÉ ASISTIR';
-    const message = `Hola, soy ${name}.\nEstatus: ${status}${attending ? `\nAsistiremos: ${guests} persona(s)` : ''}${notes ? `\nNota: "${notes}"` : ''}\nTeléfono: ${phone}`;
-    return `https://wa.me/${rsvpWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+  const buildRsvpMessage = () => {
+    const status = attending ? 'Sí asistiré ✓' : 'No podré asistir';
+    return [
+      `Hola, confirmo mi asistencia.`,
+      ``,
+      `Nombre: ${name}`,
+      `Asistencia: ${status}`,
+      attending ? `Invitados: ${guests} persona${guests !== 1 ? 's' : ''}` : null,
+      phone ? `Teléfono: ${phone}` : null,
+      notes ? `Mensaje: ${notes}` : null,
+    ]
+      .filter((l) => l !== null)
+      .join('\n');
+  };
+
+  const handleCopyMessage = async () => {
+    try {
+      await navigator.clipboard.writeText(buildRsvpMessage());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // clipboard not available — silent fail
+    }
   };
 
   return (
@@ -497,20 +544,48 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
                 </p>
 
                 <div className="w-full max-w-sm space-y-3">
+                  {/* Primary: open WhatsApp with pre-filled message */}
                   <a
-                    href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full py-3.5 text-[10px] uppercase tracking-widest transition-all duration-300"
+                    href={buildWhatsAppUrl(buildRsvpMessage(), rsvpWhatsAppNumber)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full py-3.5 text-[10px] uppercase tracking-widest transition-all duration-300 no-underline"
                     style={{
                       background: `var(--v2-glass-bg, ${theme.colors.surface})`,
                       border: `1px solid var(--v2-color-border, ${theme.borders.subtle})`,
                       borderRadius: 10,
                       color: `var(--v2-color-text-secondary, ${theme.colors.textSecondary})`,
+                      minHeight: 46,
+                      textDecoration: 'none',
                     }}
                   >
-                    <MessageSquare className="w-4 h-4" style={{ color: '#25D366' }} />
+                    <MessageSquare className="w-4 h-4 flex-shrink-0" style={{ color: '#25D366' }} />
                     Enviar Copia por WhatsApp
                   </a>
+
+                  {/* Secondary: copy message to clipboard */}
                   <button
+                    type="button"
+                    onClick={handleCopyMessage}
+                    className="flex items-center justify-center gap-2 w-full py-3 text-[9px] uppercase tracking-widest transition-opacity"
+                    style={{
+                      background: 'none',
+                      border: `1px solid var(--v2-color-border, ${theme.borders.subtle})`,
+                      borderRadius: 10,
+                      cursor: 'pointer',
+                      color: theme.colors.textSecondary,
+                      minHeight: 40,
+                      opacity: copied ? 1 : 0.6,
+                    }}
+                  >
+                    {copied
+                      ? <><Check className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#25D366' }} /> Mensaje Copiado</>
+                      : <><Copy className="w-3.5 h-3.5 flex-shrink-0" /> Copiar Mensaje</>
+                    }
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={handleReset}
                     className="w-full py-3 text-[9px] uppercase tracking-widest opacity-50 hover:opacity-80 transition-opacity"
                     style={{ background: 'none', border: 'none', cursor: 'pointer', color: theme.colors.textSecondary }}
