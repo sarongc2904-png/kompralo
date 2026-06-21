@@ -60,7 +60,7 @@ export const deluxeFeatures: InvitationFeatures = {
   showGiftRegistry:  true,
   showAccommodation: true,
   showHashtag:       true,
-  showIntro:         true,
+  showIntro:         false,
   showGuestbook:     true,
   showMessages:      true,
 };
