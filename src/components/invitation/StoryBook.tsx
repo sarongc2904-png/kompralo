@@ -188,10 +188,10 @@ function TextPage({ slide, pageNum, isLeft, theme }: {
 }) {
   return (
     <div
-      className="relative h-full flex flex-col justify-center overflow-hidden"
+      className="relative md:h-full flex flex-col justify-center overflow-hidden"
       style={{
         background: `var(--v2-background-story, ${theme.backgrounds.storyBook || 'linear-gradient(135deg, #fdf9f0 0%, #f5efdd 50%, #ede7d2 100%)'})`,
-        padding: isLeft ? '36px 32px 36px 44px' : '36px 44px 36px 32px',
+        padding: isLeft ? '32px 24px 32px 32px' : '32px 32px 32px 24px',
       }}
     >
       {/* Paper grain */}
@@ -248,12 +248,12 @@ function TextPage({ slide, pageNum, isLeft, theme }: {
 
 function ImagePage({ imageUrl, alt, isLeft }: { imageUrl: string; alt: string; isLeft: boolean }) {
   return (
-    <div className="relative h-full overflow-hidden">
+    <div className="relative aspect-[4/5] md:aspect-auto md:h-full overflow-hidden flex items-center justify-center bg-stone-900">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageUrl}
         alt={alt}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain object-top md:object-cover"
         style={{ filter: 'sepia(0.18) contrast(0.97) brightness(0.96)' }}
       />
       {/* Vignette */}
@@ -448,7 +448,7 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
             <div
               className="relative w-full overflow-hidden"
               style={{
-                height: 'clamp(360px, 52vw, 520px)',
+                minHeight: 'clamp(280px, 52vw, 520px)',
                 boxShadow: theme.shadows.book,
               }}
             >
@@ -473,7 +473,7 @@ export default function StoryBook({ protagonists, slides, theme, brideName, groo
                   {isFinal ? (
                     <FinalSpread brideName={primaryName} groomName={secondaryName} theme={theme} />
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 md:h-full">
                       {imageOnLeft ? (
                         <>
                           <ImagePage imageUrl={currentSlide!.imageUrl} alt={currentSlide!.title} isLeft={true} />
