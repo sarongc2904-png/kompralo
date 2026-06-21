@@ -78,6 +78,7 @@ export default function ElegantInvitationCard({
 
   return (
     <motion.div
+      data-elegant-card=""
       initial={initial}
       whileInView={whileInView}
       viewport={{ once: true, margin: '-50px' }}

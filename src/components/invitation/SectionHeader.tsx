@@ -9,7 +9,7 @@ interface SectionHeaderProps {
 
 export default function SectionHeader({ eyebrow, title, theme, className = '' }: SectionHeaderProps) {
   return (
-    <div className={`text-center mb-12 ${className}`}>
+    <div data-section-header="" className={`text-center mb-12 ${className}`}>
       {eyebrow && (
         <p className={`text-xs uppercase tracking-[0.28em] mb-3 ${theme.accentText} ${theme.bodyFont}`}>
           {eyebrow}

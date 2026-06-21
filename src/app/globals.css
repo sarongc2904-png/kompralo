@@ -394,6 +394,68 @@ html.lenis, html.lenis body {
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   Ivory Editorial Romance — PREVIEW-ONLY premium styling
+   Active only when the root carries data-theme-v2="ivory-editorial"
+   (i.e. ?themePreview=ivory-editorial). Never affects other themes.
+   Card chrome/colors come from the theme's --v2-* variables; the rules
+   below add what variables can't reach: woven texture, a legibility
+   type-scale, and mobile overflow safety.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Soft organza / linen weave — pure CSS, paints behind all content */
+[data-theme-v2="ivory-editorial"] {
+  background-image:
+    repeating-linear-gradient(45deg,  rgba(200,167,93,0.022) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(135deg, rgba(160,120,60,0.016) 0 1px, transparent 1px 6px);
+  background-attachment: fixed;
+}
+
+/* Warmer paper grain for the editorial feel */
+[data-theme-v2="ivory-editorial"] .paper-noise {
+  opacity: 0.06;
+}
+@media (max-width: 767px) {
+  [data-theme-v2="ivory-editorial"] .paper-noise {
+    opacity: 0.04;
+  }
+}
+
+/* ── Type scale — section headers (Itinerario, Ubicación, etc.) ─────── */
+/* Scoped to the shared SectionHeader hook → never touches hero, book,
+   gallery, or any fixed-size frame. clamp() keeps mobile contained. */
+[data-theme-v2="ivory-editorial"] [data-section-header] > p {
+  font-size: clamp(0.72rem, 2.6vw, 0.82rem) !important;
+  letter-spacing: 0.3em !important;
+}
+[data-theme-v2="ivory-editorial"] [data-section-header] > h3 {
+  font-size: clamp(2.05rem, 7vw, 2.9rem) !important;
+  line-height: 1.18 !important;
+}
+
+/* ── Type scale + legibility — inside premium cards ────────────────── */
+[data-theme-v2="ivory-editorial"] [data-elegant-card] h4 {
+  font-size: clamp(1.35rem, 5vw, 1.7rem) !important;
+  line-height: 1.3 !important;
+}
+[data-theme-v2="ivory-editorial"] [data-elegant-card] p {
+  font-size: clamp(0.95rem, 3.6vw, 1.05rem) !important;
+  line-height: 1.75 !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+/* Keep small eyebrow/label text inside cards from being over-enlarged */
+[data-theme-v2="ivory-editorial"] [data-elegant-card] p.text-xs,
+[data-theme-v2="ivory-editorial"] [data-elegant-card] p[class*="text-[1"] {
+  font-size: clamp(0.72rem, 2.8vw, 0.82rem) !important;
+  line-height: 1.5 !important;
+}
+
+/* ── Mobile overflow safety ────────────────────────────────────────── */
+[data-theme-v2="ivory-editorial"] [data-elegant-card] {
+  max-width: 100%;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .invitation-bg-layer img,
   .paper-noise {

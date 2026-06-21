@@ -113,6 +113,12 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
   cssVariables: {
     '--v2-color-page-bg':          '#FBF7EF',
     '--v2-color-surface':          'linear-gradient(145deg, rgba(255,250,238,0.96), rgba(255,244,220,0.90))',
+    // ── Premium card chrome (consumed by ElegantInvitationCard, Itinerary, GiftRegistry) ──
+    // These have no definition in other themes, so setting them here keeps the
+    // upgrade scoped to the ivory-editorial preview only.
+    '--v2-card-ivory-bg':          'linear-gradient(152deg, rgba(255,251,242,0.97) 0%, rgba(253,245,229,0.93) 45%, rgba(247,235,210,0.90) 100%)',
+    '--v2-card-border':            'rgba(200,167,93,0.42)',
+    '--v2-card-radius':            '26px',
     '--v2-color-surface-alt':      '#F2E4C8',
     '--v2-color-surface-elevated': '#FFFDF8',
     '--v2-color-text-primary':     '#1F1A16',
@@ -128,8 +134,8 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
     '--v2-radius-md':              '12px',
     '--v2-radius-lg':              '20px',
     '--v2-radius-xl':              '28px',
-    '--v2-shadow-card':            '0 18px 45px rgba(116,84,38,0.14)',
-    '--v2-shadow-elevated':        '0 24px 60px rgba(116,84,38,0.18)',
+    '--v2-shadow-card':            '0 2px 6px rgba(116,84,38,0.06), 0 16px 40px rgba(120,88,40,0.13), inset 0 1px 0 rgba(255,255,255,0.85)',
+    '--v2-shadow-elevated':        '0 6px 14px rgba(116,84,38,0.08), 0 28px 64px rgba(120,88,40,0.17), inset 0 1px 0 rgba(255,255,255,0.9)',
     '--v2-glass-bg':               'rgba(255,250,238,0.82)',
     '--v2-btn-bg':                 'rgba(200,167,93,0.15)',
     '--v2-btn-text':               '#1F1A16',
