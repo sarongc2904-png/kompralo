@@ -28,5 +28,5 @@ export type { InvitationStatus } from '@/domain/invitations/status';
 export const invitationConfig = {
   ...sofiaAlejandroWeddingInvitation,
   planId: 'deluxe',
-  themeId: 'champagne',
+  themeId: 'ivory-editorial',
 } satisfies InvitationContentType;

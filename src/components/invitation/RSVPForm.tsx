@@ -129,7 +129,7 @@ function LiquidButtons({
   }, [attending]);
 
   const base =
-    'relative z-10 py-4 text-[11px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300 cursor-pointer outline-none border-0 bg-transparent w-full';
+    'relative z-10 py-4 text-[13px] md:text-[14px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300 cursor-pointer outline-none border-0 bg-transparent w-full';
 
   return (
     <div
@@ -215,7 +215,7 @@ function GlassInput({
     <div>
       <label
         htmlFor={id}
-        className="block text-xs uppercase tracking-[0.22em] mb-2 font-semibold flex items-center gap-1.5"
+        className="block text-sm uppercase tracking-[0.22em] mb-2 font-semibold flex items-center gap-1.5"
         style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
       >
         {label}
@@ -233,7 +233,7 @@ function GlassInput({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
-          className={`w-full py-3.5 pr-4 text-sm outline-none transition-all duration-300 ${Icon ? 'pl-10' : 'pl-4'}`}
+          className={`w-full py-3.5 pr-4 text-base outline-none transition-all duration-300 ${Icon ? 'pl-10' : 'pl-4'}`}
           style={{
             background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,252,246,0.70) 100%)',
             backdropFilter: 'blur(12px)',
@@ -477,7 +477,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                 {/* Attend buttons */}
                 <div>
                   <span
-                    className="block text-xs uppercase tracking-[0.22em] mb-3 font-semibold"
+                    className="block text-sm uppercase tracking-[0.22em] mb-3 font-semibold"
                     style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
                   >
                     ¿Asistirás al evento? *
@@ -496,7 +496,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                     >
                       <label
                         htmlFor="rsvp-guests"
-                        className="block text-xs uppercase tracking-[0.22em] mb-2 font-semibold"
+                        className="block text-sm uppercase tracking-[0.22em] mb-2 font-semibold"
                         style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
                       >
                         Cantidad de Invitados
@@ -506,7 +506,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                           id="rsvp-guests"
                           value={guests}
                           onChange={(e) => setGuests(Number(e.target.value))}
-                          className="w-full py-3.5 pr-10 pl-4 text-sm outline-none appearance-none cursor-pointer"
+                          className="w-full py-3.5 pr-10 pl-4 text-base outline-none appearance-none cursor-pointer"
                           style={{
                             background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,252,246,0.70) 100%)',
                             backdropFilter: 'blur(12px)',
@@ -531,7 +531,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                 <div>
                   <label
                     htmlFor="rsvp-notes"
-                    className="block text-xs uppercase tracking-[0.22em] mb-2 font-semibold"
+                    className="block text-sm uppercase tracking-[0.22em] mb-2 font-semibold"
                     style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
                   >
                     Notas / Mensaje especial
@@ -546,7 +546,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                       onFocus={() => setNoteFocused(true)}
                       onBlur={() => setNoteFocused(false)}
                       placeholder="Algún mensaje o restricción alimentaria..."
-                      className="w-full py-3.5 pr-4 pl-10 text-sm outline-none resize-none transition-all duration-300"
+                      className="w-full py-3.5 pr-4 pl-10 text-base outline-none resize-none transition-all duration-300"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,252,246,0.70) 100%)',
                         backdropFilter: 'blur(12px)',
@@ -597,7 +597,7 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, even
                   disabled={attending === null || !name || formState === 'submitting'}
                   whileHover={{ scale: 1.015 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 text-[11px] uppercase tracking-[0.3em] font-semibold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full py-4 text-[13px] md:text-[14px] uppercase tracking-[0.3em] font-semibold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{
                     color: '#ffffff',
                     background: 'linear-gradient(135deg, var(--v2-color-accent, #C8A75D) 0%, var(--v2-color-accent-hover, #D4B870) 100%)',

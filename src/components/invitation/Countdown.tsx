@@ -219,7 +219,7 @@ function FlipCard({ value, label, theme, maxDigits = 2 }: { value: number; label
 
       {/* Label */}
       <span style={{
-        fontSize: isCompact ? 10 : 11, letterSpacing: isCompact ? '0.22em' : '0.28em', textTransform: 'uppercase',
+        fontSize: isCompact ? 11 : 13, letterSpacing: isCompact ? '0.22em' : '0.28em', textTransform: 'uppercase',
         color: 'var(--v2-color-text-secondary, #5C4A3E)', fontFamily: 'var(--v2-font-body, inherit)', opacity: 0.85, fontWeight: 600,
       }}>
         {label}
@@ -283,7 +283,7 @@ export default function Countdown({ eventDate, theme }: CountdownProps) {
       >
         {/* Header */}
         <p 
-          className={`text-[10px] md:text-xs uppercase tracking-[0.35em] mb-4 ${theme.accentText} ${theme.bodyFont}`}
+          className={`text-[11px] md:text-[14px] uppercase tracking-[0.35em] mb-4 ${theme.accentText} ${theme.bodyFont}`}
           style={{ color: 'var(--v2-color-accent, inherit)', opacity: 0.9 }}
         >
           {eventPassed ? 'Un Momento Especial' : 'Cuenta Regresiva'}

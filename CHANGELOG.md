@@ -5,6 +5,47 @@
 
 ---
 
+## FASE IVORY-EDITORIAL-VISUAL-FINETUNING — Ajustes visuales, contraste de textos y soporte móvil en Ivory Editorial
+
+Fecha: 2026-06-21
+
+### Objetivo
+
+1. Incrementar la legibilidad general aplicando color negro sólido/carbono a todos los textos de la invitación `ivory-editorial`.
+2. Aumentar y optimizar responsivamente las tipografías principales y secundarias en todas las secciones para dispositivos móviles.
+3. Eliminar efectos de niebla tridimensional y capas de paralaje cargadas en el fondo, simplificándolo a una capa base texturizada con flores de acuarela estáticas en las esquinas.
+4. Mejorar estéticamente el botón de corazón dorado de la cortina de entrada (Cinematic Intro) con doble borde de trazo fino, una animación sutil de destello, y la conjunción cursiva "y" en negro.
+5. Aplicar un fondo personalizado de rosas de acuarela blush en la sección de Galería.
+6. Proporcionar enlace de red local para previsualización directa en el celular.
+
+### Cambios
+
+- `src/domain/themes-v2/themes/ivory-editorial.ts`:
+  - Se modificaron los tokens de color a negro (`#000000`/`#222222`) para garantizar alto contraste y legibilidad en todos los componentes.
+- `src/components/invitation/CinematicIntro.tsx`:
+  - Se rediseñó el botón de acceso `GoldenHeart` utilizando vectores SVG con doble trazo de oro fino, un destello animado y la conjunción "y" en negro cursiva en el centro.
+  - Se hizo interactivo todo el contenedor de la pantalla de bienvenida (`onClick={handleOpen}`) con `cursor-pointer` para permitir que el usuario acceda a la invitación tocando/haciendo clic en cualquier parte de la pantalla (solucionando problemas de pulsaciones fallidas en dispositivos móviles).
+- `src/components/invitation/MultilayerBackground.tsx`:
+  - Se removieron las flores doradas tridimensionales y el efecto de niebla. Se configuró como fondo principal la imagen texturizada con flores de acuarela estáticas `wedding_floral_background.png` en las esquinas a opacidad constante del 95%.
+- `src/components/invitation/HorizontalGallery.tsx`:
+  - Se agregó soporte para usar un fondo de rosas de acuarela rosa y crema (`gallery_floral_background.png`) específico para el tema `ivory-editorial`.
+- `src/components/invitation/Hero.tsx`:
+  - Rediseño completo de la portada. Se oscureció y desaturó el fondo (`brightness(0.68) contrast(0.95) saturate(0.78) sepia(0.08)`) y se aplicó un degradado radial-vertical oscuro para mejorar la legibilidad.
+  - Se convirtió la tarjeta central en un panel de vidrio champagne más sólido (`rgba(255, 245, 224, 0.22)`) con blur de `20px`, bordes champagne suaves y sombra intensa (`box-shadow: 0 28px 90px rgba(0,0,0,0.35)`).
+  - Los textos se cambiaron a oro champagne (`#F8E7C6` para los nombres y `#F4DFC0` para el resto) con una sombra tipográfica profunda (`text-shadow: 0 5px 28px rgba(0,0,0,0.75)`).
+  - Se agregaron estilos de sobreescritura responsive para móvil (`max-width: 768px`) que oscurecen la tarjeta a `rgba(20, 15, 10, 0.48)` para asegurar contraste y escalan el título fluidamente sin desbordes.
+- `src/components/invitation/Parents.tsx`, `Itinerary.tsx`, `Countdown.tsx`, `Location.tsx`, `GiftRegistry.tsx`, `DressCode.tsx`, `RSVPForm.tsx`, `StoryBook.tsx`, `SectionHeader.tsx`:
+  - Aumentados los tamaños tipográficos y configurados de forma responsiva para celulares.
+- `src/components/invitation/FinalMessage.tsx`:
+  - Aumentados los tamaños tipográficos y configurados de forma responsiva.
+  - Se implementó la firma unificada (`UnifiedSignatures`) que agrupa ambos nombres ("Sofía" y "Alejandro") y el ampersand "&" dentro de un único elemento SVG con viewBox constante. Esto previene desproporciones de escala causadas por diferencias de longitud en los nombres y garantiza que ambas firmas se muestren exactamente al mismo tamaño y perfectamente alineadas horizontalmente sobre la misma línea de base.
+
+### Validación
+
+- `npx tsc --noEmit`: Ejecución exitosa de verificación de tipos (TypeScript).
+
+---
+
 ## FASE IVORY-EDITORIAL-PREMIUM-REDESIGN — Rediseño Visual Ivory Editorial a Papelería de Lujo
 
 Fecha: 2026-06-21

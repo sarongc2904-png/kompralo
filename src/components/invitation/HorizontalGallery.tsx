@@ -186,8 +186,24 @@ export default function HorizontalGallery({ images, theme }: HorizontalGalleryPr
 
   if (!images || images.length === 0) return null;
 
+  const isIvoryEditorial = (theme.id as string) === 'ivory-editorial';
+
   return (
-    <div ref={sectionRef} id="gallery-section" className="relative overflow-hidden" style={{ background: `var(--v2-color-page-bg, ${theme.bgSolid ?? '#F8F2E6'})`, zIndex: 2 }}>
+    <div 
+      ref={sectionRef} 
+      id="gallery-section" 
+      className="relative overflow-hidden" 
+      style={isIvoryEditorial ? {
+        backgroundImage: 'url(/layers/gallery_floral_background.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        zIndex: 2,
+      } : {
+        background: `var(--v2-color-page-bg, ${theme.bgSolid ?? '#F8F2E6'})`,
+        zIndex: 2,
+      }}
+    >
       {/* Desktop Horizontal Scroll Track */}
       <div className="hidden md:flex h-screen items-center relative">
         {/* Moving Image Track */}

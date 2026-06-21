@@ -20,13 +20,13 @@ export const productsById: Record<ProductId, Product> = {
       'Mensaje final',
     ],
   },
-  premium: {
-    id:          'premium',
+  gold: {
+    id:          'gold',
     name:        'Premium',
     description: 'Para quien quiere organizar mejor su evento con galería, música e historia.',
     price:       89900, // $899.00 MXN in centavos
     currency:    'mxn',
-    planId:      'premium',
+    planId:      'gold',
     features: [
       'Todo lo de Basic',
       'Galería de fotos',

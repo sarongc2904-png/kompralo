@@ -50,14 +50,14 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
         </div>
 
         <h4
-          className={`text-2xl font-normal tracking-wide mb-4 ${theme.headingFont}`}
+          className={`text-3xl md:text-4xl font-normal tracking-wide mb-4 ${theme.headingFont}`}
           style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
         >
           {dressCode.type}
         </h4>
 
         <p
-          className={`text-base leading-relaxed mb-8 ${theme.bodyFont}`}
+          className={`text-lg md:text-xl leading-relaxed mb-8 ${theme.bodyFont}`}
           style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)', opacity: 0.95 }}
         >
           {dressCode.description}
@@ -66,7 +66,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
         {/* Color Swatches */}
         {theme.dressCodeSwatches && theme.dressCodeSwatches.length > 0 && (
           <div className="mt-8">
-            <p className={`text-xs uppercase tracking-[0.22em] mb-4 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-muted, #8A7665)' }}>
+            <p className={`text-[13px] md:text-[14px] uppercase tracking-[0.22em] mb-4 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-muted, #8A7665)' }}>
               Sugerencia de Colores
             </p>
             
@@ -90,7 +90,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
                     style={{ backgroundColor: color }}
                     title={color}
                   />
-                  <span className="text-[9px] uppercase tracking-wider font-mono" style={{ color: 'var(--v2-color-text-muted, #8A7665)', opacity: 0.75 }}>
+                  <span className="text-[11px] md:text-[12px] uppercase tracking-wider font-mono" style={{ color: 'var(--v2-color-text-muted, #8A7665)', opacity: 0.75 }}>
                     {getColorLabel(color)}
                   </span>
                 </motion.div>
@@ -102,7 +102,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
         {/* Important notes */}
         {dressCode.suggestions && (
           <p 
-            className={`text-sm italic mt-8 pt-6 leading-relaxed ${theme.bodyFont}`}
+            className={`text-base md:text-lg italic mt-8 pt-6 leading-relaxed ${theme.bodyFont}`}
             style={{ 
               borderTop: `1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))`,
               color: 'var(--v2-color-text-secondary, #5C4A3E)'

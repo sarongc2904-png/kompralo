@@ -100,77 +100,100 @@ function SignatureSVG({
 }
 
 // GSAP approach: animate strokeDashoffset on a <text> SVG element as signature reveal
-function SignatureReveal({
-  name,
-  delay = 0,
-  color = '#1a1a1a',
-  accentColor = '#C5A880',
+function UnifiedSignatures({
+  primaryName,
+  secondaryName,
+  color,
+  accentColor,
 }: {
-  name: string;
-  delay?: number;
-  color?: string;
-  accentColor?: string;
+  primaryName: string;
+  secondaryName: string;
+  color: string;
+  accentColor: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<SVGTextElement>(null);
-  const fillTextRef = useRef<SVGTextElement>(null);
+  const text1Ref = useRef<SVGTextElement>(null);
+  const fillText1Ref = useRef<SVGTextElement>(null);
+  const text2Ref = useRef<SVGTextElement>(null);
+  const fillText2Ref = useRef<SVGTextElement>(null);
+  const fillAmpRef = useRef<SVGTextElement>(null);
+  
   const isInView = useInView(containerRef, { once: true, margin: '-5% 0px' });
 
-  const chars = name.length;
-  const vbWidth = Math.max(160, chars * 42);
-
   useEffect(() => {
-    if (!textRef.current || !fillTextRef.current || !isInView) return;
+    if (!text1Ref.current || !fillText1Ref.current || !text2Ref.current || !fillText2Ref.current || !fillAmpRef.current || !isInView) return;
 
-    const el = textRef.current;
-    const fillEl = fillTextRef.current;
+    const el1 = text1Ref.current;
+    const fillEl1 = fillText1Ref.current;
+    const el2 = text2Ref.current;
+    const fillEl2 = fillText2Ref.current;
+    const ampEl = fillAmpRef.current;
 
-    // Approximate stroke length based on character count (works well for calligraphy fonts)
-    const approxLen = chars * 220;
+    const len1 = primaryName.length * 220;
+    const len2 = secondaryName.length * 220;
 
-    gsap.set(el, {
-      strokeDasharray: approxLen,
-      strokeDashoffset: approxLen,
+    gsap.set([el1, el2], {
       opacity: 1,
     });
-    gsap.set(fillEl, { opacity: 0 });
+    gsap.set(el1, {
+      strokeDasharray: len1,
+      strokeDashoffset: len1,
+    });
+    gsap.set(el2, {
+      strokeDasharray: len2,
+      strokeDashoffset: len2,
+    });
+    gsap.set([fillEl1, fillEl2, ampEl], { opacity: 0 });
 
-    const tl = gsap.timeline({ delay });
+    const tl = gsap.timeline({ delay: 0.6 });
 
-    // 1. Draw the stroke (signature draw)
-    tl.to(el, {
+    // 1. Draw first signature
+    tl.to(el1, {
       strokeDashoffset: 0,
-      duration: 1.8,
+      duration: 1.5,
       ease: 'power2.inOut',
     });
 
-    // 2. Fade out stroke, fade in fill (ink settles)
-    tl.to(el, { opacity: 0, duration: 0.5, ease: 'power1.in' }, '-=0.3');
-    tl.to(fillEl, { opacity: 1, duration: 0.5, ease: 'power1.out' }, '<');
+    // 2. Reveal ampersand
+    tl.to(ampEl, {
+      opacity: 1,
+      duration: 0.6,
+      ease: 'power1.out',
+    }, '-=0.3');
+
+    // 3. Draw second signature
+    tl.to(el2, {
+      strokeDashoffset: 0,
+      duration: 1.5,
+      ease: 'power2.inOut',
+    }, '-=0.3');
+
+    // 4. Fade to fills
+    tl.to([el1, el2], { opacity: 0, duration: 0.4 }, '-=0.2');
+    tl.to([fillEl1, fillEl2], { opacity: 1, duration: 0.4 }, '<');
 
     return () => {
       tl.kill();
     };
-  }, [isInView, delay, chars]);
+  }, [isInView, primaryName, secondaryName]);
 
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center justify-center"
-      style={{ minWidth: 0, flex: 1 }}
+      className="relative flex items-center justify-center w-full overflow-visible"
     >
       <svg
-        viewBox={`0 0 ${vbWidth} 90`}
+        viewBox="0 0 600 90"
         className="w-full overflow-visible"
-        style={{ maxWidth: `${Math.min(vbWidth * 2.2, 420)}px`, height: '90px' }}
-        aria-label={name}
+        style={{ maxWidth: '540px', height: '90px' }}
+        aria-label={`${primaryName} & ${secondaryName}`}
       >
-        {/* Final filled version (fades in after stroke draw) */}
+        {/* First Name */}
         <text
-          ref={fillTextRef}
-          x="50%"
-          y="68"
-          textAnchor="middle"
+          ref={fillText1Ref}
+          x="270"
+          y="65"
+          textAnchor="end"
           fontFamily="var(--font-calligraphy), 'Pinyon Script', cursive"
           fontSize="64"
           fill={color}
@@ -178,23 +201,68 @@ function SignatureReveal({
           className="select-none"
           style={{ filter: `drop-shadow(0 0 8px ${accentColor}22)` }}
         >
-          {name}
+          {primaryName}
         </text>
-        {/* Stroke-draw animated text */}
         <text
-          ref={textRef}
-          x="50%"
-          y="68"
-          textAnchor="middle"
+          ref={text1Ref}
+          x="270"
+          y="65"
+          textAnchor="end"
           fontFamily="var(--font-calligraphy), 'Pinyon Script', cursive"
           fontSize="64"
           fill="none"
           stroke={color}
-          strokeWidth="1.4"
+          strokeWidth="1.2"
           opacity="0"
           className="select-none"
         >
-          {name}
+          {primaryName}
+        </text>
+
+        {/* Ampersand */}
+        <text
+          ref={fillAmpRef}
+          x="300"
+          y="65"
+          textAnchor="middle"
+          fontFamily="var(--font-calligraphy), 'Pinyon Script', cursive"
+          fontSize="48"
+          fill={accentColor}
+          opacity="0"
+          className="select-none"
+        >
+          &
+        </text>
+
+        {/* Second Name */}
+        <text
+          ref={fillText2Ref}
+          x="330"
+          y="65"
+          textAnchor="start"
+          fontFamily="var(--font-calligraphy), 'Pinyon Script', cursive"
+          fontSize="64"
+          fill={color}
+          opacity="0"
+          className="select-none"
+          style={{ filter: `drop-shadow(0 0 8px ${accentColor}22)` }}
+        >
+          {secondaryName}
+        </text>
+        <text
+          ref={text2Ref}
+          x="330"
+          y="65"
+          textAnchor="start"
+          fontFamily="var(--font-calligraphy), 'Pinyon Script', cursive"
+          fontSize="64"
+          fill="none"
+          stroke={color}
+          strokeWidth="1.2"
+          opacity="0"
+          className="select-none"
+        >
+          {secondaryName}
         </text>
       </svg>
     </div>
@@ -370,7 +438,7 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
         <motion.blockquote
           className={`font-light italic leading-relaxed mb-10 max-w-lg ${theme.headingFont} ${quoteClass}`}
           style={{ 
-            fontSize: 'clamp(1.35rem, 2.5vw + 0.5rem, 2rem)',
+            fontSize: 'clamp(1.6rem, 3vw + 0.5rem, 2.35rem)',
             textShadow: imageUrl ? '0 2px 12px rgba(0,0,0,0.4)' : 'none', 
             fontFamily: 'var(--v2-font-heading, inherit)' 
           }}
@@ -401,32 +469,12 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
         </motion.div>
 
         {/* Couples Signatures — SVG stroke-draw handwriting reveal */}
-        <div className="flex items-center justify-center gap-4 w-full px-4 overflow-visible">
-          <SignatureReveal
-            name={primaryName}
-            delay={0.8}
-            color={textColor}
-            accentColor={accentColor}
-          />
-
-          <motion.span
-            initial={{ opacity: 0, scale: 0.6 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 2.0 }}
-            className="flex-shrink-0 text-3xl md:text-4xl font-light"
-            style={{ color: accentColor }}
-          >
-            &
-          </motion.span>
-
-          <SignatureReveal
-            name={secondaryName}
-            delay={2.2}
-            color={textColor}
-            accentColor={accentColor}
-          />
-        </div>
+        <UnifiedSignatures
+          primaryName={primaryName}
+          secondaryName={secondaryName}
+          color={textColor}
+          accentColor={accentColor}
+        />
 
         {/* Elegant Footer */}
         <motion.footer
@@ -437,7 +485,7 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.3 }}
         >
-          <p className={`text-[10px] uppercase tracking-[0.25em] opacity-45 font-medium ${theme.bodyFont} ${imageUrl ? 'text-white' : theme.bodyText}`}>
+          <p className={`text-[11px] md:text-[12px] uppercase tracking-[0.25em] opacity-45 font-medium ${theme.bodyFont} ${imageUrl ? 'text-white' : theme.bodyText}`}>
             Creado con{' '}
             <span className="hover:opacity-100 transition-opacity font-semibold tracking-widest cursor-pointer text-[#C5A880]">
               Kompralo

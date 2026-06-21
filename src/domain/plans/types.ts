@@ -1,30 +1,31 @@
 /** Canonical plan IDs. These are the only values that may be persisted. */
-export type PlanId = 'basic' | 'premium' | 'deluxe';
-export type LegacyPlanId = 'gold' | 'platinum';
+export type PlanId = 'basic' | 'gold' | 'deluxe';
+export type LegacyPlanId = 'premium' | 'platinum';
 
 /**
  * Maps any legacy or current plan ID to one of the canonical three.
- * gold → premium  (legacy alias)
+ * premium → gold  (from Stripe, maps to canonical gold)
+ * gold → gold  (legacy alias, already canonical)
  * platinum → deluxe  (legacy alias)
- * Anything unknown defaults to premium for read-time UI compatibility.
+ * Anything unknown defaults to gold for read-time UI compatibility.
  * Payment ingestion must use resolvePurchasedPlanId() instead so unknown
  * purchases are logged and recovered safely.
  */
 export function parsePlanId(planId?: string | null): PlanId | null {
   const value = planId?.trim().toLowerCase();
-  if (value === 'gold' || value === 'premium') return 'premium';
+  if (value === 'gold' || value === 'premium') return 'gold';
   if (value === 'platinum' || value === 'deluxe') return 'deluxe';
   if (value === 'basic') return 'basic';
   return null;
 }
 
 export function normalizePlanId(planId?: string | null): PlanId {
-  return parsePlanId(planId) ?? 'premium';
+  return parsePlanId(planId) ?? 'gold';
 }
 
 export function inferPlanIdFromAmount(amountTotal?: number | null): PlanId | null {
   if (amountTotal === 49900) return 'basic';
-  if (amountTotal === 89900) return 'premium';
+  if (amountTotal === 89900) return 'gold';
   if (amountTotal === 149900) return 'deluxe';
   return null;
 }

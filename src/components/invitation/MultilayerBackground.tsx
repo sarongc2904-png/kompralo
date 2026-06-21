@@ -538,19 +538,6 @@ function buildLayerContent(
       return {
         layer1: (
           <>
-            <div className="absolute inset-0 w-full" style={{ height: '350vh' }}>
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '0', left: '-4vw', width: '58vw', maxWidth: '680px', mixBlendMode: 'multiply', opacity: 0.35 }} />
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '190vh', right: '-6vw', width: '54vw', maxWidth: '640px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'rotate(180deg) scaleX(-1)' }} />
-            </div>
-            <div className="absolute w-full" style={{ top: '350vh', height: '650vh' }}>
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '60vh', left: '-5vw', width: '52vw', maxWidth: '620px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'scaleX(-1) rotate(15deg)' }} />
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '320vh', right: '-5vw', width: '50vw', maxWidth: '600px', mixBlendMode: 'multiply', opacity: 0.20, transform: 'rotate(-20deg)' }} />
-            </div>
-
             {/* Centered Golden Wedding Rings watermarks in background layer 1 (slow parallax) */}
             <div className="absolute inset-0 w-full pointer-events-none select-none" style={{ height: '1000vh' }}>
               <GoldenWeddingRings
@@ -576,13 +563,6 @@ function buildLayerContent(
         ),
         layer2: (
           <div className="absolute inset-0 w-full pointer-events-none select-none" style={{ height: '1000vh' }}>
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '40vh', right: '2vw', width: '38vw', maxWidth: '440px', mixBlendMode: 'multiply', opacity: 0.38 }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '340vh', left: '3vw', width: '34vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.30, transform: 'scaleX(-1) rotate(-10deg)' }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '680vh', right: '4vw', width: '36vw', maxWidth: '420px', mixBlendMode: 'multiply', opacity: 0.26, transform: 'rotate(15deg)' }} />
-
             {/* Alternating Golden Laurel Branches along the sides in layer 2 */}
             <GoldenBranch className="absolute left-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '90vh' }} />
             <GoldenBranch className="absolute right-0 opacity-[0.14] md:opacity-[0.20]" style={{ top: '200vh' }} flipped />
@@ -601,16 +581,7 @@ function buildLayerContent(
             <GoldenFloralCorner className="absolute left-0 opacity-[0.15]" style={{ top: '800vh' }} />
           </div>
         ),
-        layer3: (
-          <div className="absolute inset-0 w-full pointer-events-none select-none" style={{ height: '1000vh' }}>
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_10s_ease-in-out_infinite]"
-              style={{ top: '70vh', left: '8vw', width: '42vw', maxWidth: '500px', mixBlendMode: 'multiply', opacity: 0.26 }} />
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_8s_ease-in-out_infinite_1.5s]"
-              style={{ top: '400vh', right: '6vw', width: '40vw', maxWidth: '480px', mixBlendMode: 'multiply', opacity: 0.22, transform: 'scaleX(-1)' }} />
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_12s_ease-in-out_infinite_3s]"
-              style={{ top: '760vh', left: '12vw', width: '38vw', maxWidth: '460px', mixBlendMode: 'multiply', opacity: 0.18, transform: 'rotate(10deg)' }} />
-          </div>
-        ),
+        layer3: <></>,
       };
   }
 }
@@ -641,6 +612,19 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
 
         {/* Repeating premium organic floral/scroll pattern watermark */}
         <BackgroundPattern />
+
+        {/* Watercolor floral background reference backdrop */}
+        {(themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial') && (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url('/layers/wedding_floral_background.png')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              opacity: 0.95,
+            }}
+          />
+        )}
 
         {/* Subtle radial center brightening (makes content area feel lit) */}
         <div

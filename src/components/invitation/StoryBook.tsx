@@ -431,7 +431,7 @@ function DesktopBookSpread({
         <FloralDivider color={accent} />
         <h4
           style={{
-            fontSize: 22,
+            fontSize: 24,
             fontFamily: 'Georgia, "Times New Roman", serif',
             fontStyle: 'italic',
             fontWeight: 300,
@@ -454,7 +454,7 @@ function DesktopBookSpread({
         />
         <p
           style={{
-            fontSize: 13,
+            fontSize: 15,
             fontFamily: 'Georgia, serif',
             lineHeight: 1.78,
             color: textPrimary,
@@ -595,7 +595,7 @@ function MobileStoryCard({
           <FloralDivider color={accent} />
           <h4
             style={{
-              fontSize: 19,
+              fontSize: 21,
               fontFamily: 'Georgia, "Times New Roman", serif',
               fontStyle: 'italic',
               fontWeight: 300,
@@ -618,7 +618,7 @@ function MobileStoryCard({
           />
           <p
             style={{
-              fontSize: 13,
+              fontSize: 15,
               fontFamily: 'Georgia, serif',
               lineHeight: 1.72,
               color: textPrimary,
@@ -733,7 +733,7 @@ function FinalSpread({
 
         <h3
           style={{
-            fontSize: 26,
+            fontSize: 28,
             fontFamily: 'Georgia, "Times New Roman", serif',
             fontStyle: 'italic',
             fontWeight: 300,
@@ -757,7 +757,7 @@ function FinalSpread({
 
         <p
           style={{
-            fontSize: 13.5,
+            fontSize: 15.5,
             lineHeight: 1.7,
             opacity: 0.8,
             fontStyle: 'italic',
@@ -771,7 +771,7 @@ function FinalSpread({
         <div style={{ marginTop: 32 }}>
           <p
             style={{
-              fontSize: 22,
+              fontSize: 24,
               fontStyle: 'italic',
               fontFamily: 'Georgia, serif',
               color: accent,

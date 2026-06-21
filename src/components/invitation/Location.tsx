@@ -79,13 +79,13 @@ export default function Location({ location, theme }: LocationProps) {
         {/* Info Details */}
         <div className="md:col-span-5 flex flex-col justify-center text-center md:text-left">
           <h4 
-            className={`text-2xl font-normal tracking-wide mb-4 ${theme.headingFont}`}
+            className={`text-3xl md:text-4xl font-normal tracking-wide mb-4 ${theme.headingFont}`}
             style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
           >
             {location.venueName}
           </h4>
           <p 
-            className={`text-sm leading-relaxed opacity-85 mb-8 max-w-sm mx-auto md:mx-0 ${theme.bodyFont}`}
+            className={`text-base md:text-lg leading-relaxed opacity-85 mb-8 max-w-sm mx-auto md:mx-0 ${theme.bodyFont}`}
             style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
           >
             {location.address}
@@ -107,7 +107,7 @@ export default function Location({ location, theme }: LocationProps) {
                   }}
                 >
                   <MapPin className="w-4 h-4 transition-colors duration-300 flex-shrink-0 text-amber-800/60 group-hover:text-amber-800" style={{ color: 'var(--v2-color-accent, currentColor)' }} />
-                  <span className="text-[10px] uppercase tracking-[0.25em] font-semibold transition-colors duration-300" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
+                  <span className="text-[12px] md:text-[13px] uppercase tracking-[0.25em] font-semibold transition-colors duration-300" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
                     Abrir Google Maps
                   </span>
                 </a>
@@ -126,7 +126,7 @@ export default function Location({ location, theme }: LocationProps) {
                   }}
                 >
                   <Navigation className="w-4 h-4 transition-colors duration-300 flex-shrink-0 text-amber-800/60 group-hover:text-amber-800" style={{ color: 'var(--v2-color-accent, currentColor)' }} />
-                  <span className="text-[10px] uppercase tracking-[0.25em] font-semibold transition-colors duration-300" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
+                  <span className="text-[12px] md:text-[13px] uppercase tracking-[0.25em] font-semibold transition-colors duration-300" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
                     Abrir Waze GPS
                   </span>
                 </a>

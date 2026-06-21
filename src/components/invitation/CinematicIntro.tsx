@@ -30,82 +30,88 @@ function GoldenHeart({ onClick, showConjunction = true }: { onClick: () => void;
   return (
     <motion.button
       onClick={onClick}
-      className="relative cursor-pointer select-none flex items-center justify-center my-1"
-      style={{ background: 'none', border: 'none', outline: 'none', padding: 0, width: 90, height: 84 }}
+      className="relative cursor-pointer select-none flex items-center justify-center my-2"
+      style={{ background: 'none', border: 'none', outline: 'none', padding: 0, width: 90, height: 90 }}
       initial={{ opacity: 1, scale: 1 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      whileTap={{ scale: 0.88 }}
+      whileTap={{ scale: 0.92 }}
       title="Entrar a la invitación"
     >
-      {/* Outer glow pulse */}
+      {/* Outer gold glow pulse */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
-        style={{ filter: 'blur(10px)' }}
-        animate={{ opacity: [0.35, 0.75, 0.35], scale: [1, 1.15, 1] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ filter: 'blur(12px)' }}
+        animate={{ opacity: [0.25, 0.55, 0.25], scale: [0.95, 1.1, 0.95] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <svg viewBox="0 0 90 84" width="90" height="84" xmlns="http://www.w3.org/2000/svg">
-          <path d="M45 76 C45 76 6 50 6 26 C6 14 15 6 26 6 C34 6 41 11 45 18 C49 11 56 6 64 6 C75 6 84 14 84 26 C84 50 45 76 45 76Z"
-            fill="#D4AF37" />
+        <svg viewBox="0 0 100 100" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M50 82 C50 82 15 56 15 32 C15 19 25 10 37 10 C44 10 48 14 50 18 C52 14 56 10 63 10 C75 10 85 19 85 32 C85 56 50 82 50 82Z"
+            fill="#C8A75D"
+            opacity="0.3"
+          />
         </svg>
       </motion.div>
 
       {/* Heart beat animation wrapper */}
       <motion.div
-        animate={{ scale: [1, 1.08, 1, 1.05, 1] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', times: [0, 0.2, 0.4, 0.6, 1] }}
+        animate={{ scale: [1, 1.05, 1, 1.03, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', times: [0, 0.25, 0.45, 0.65, 1] }}
         className="relative"
       >
-        <svg viewBox="0 0 90 84" width="90" height="84" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 100 100" width="90" height="90" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="heartGold" x1="20%" y1="0%" x2="80%" y2="100%">
-              <stop offset="0%"   stopColor="#F7E06A" />
-              <stop offset="30%"  stopColor="#D4AF37" />
-              <stop offset="65%"  stopColor="#B8860B" />
-              <stop offset="100%" stopColor="#8B6914" />
+            <linearGradient id="goldOutline" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FAF0D7" />
+              <stop offset="50%" stopColor="#C8A75D" />
+              <stop offset="100%" stopColor="#A88538" />
             </linearGradient>
-            <linearGradient id="heartShine" x1="20%" y1="0%" x2="60%" y2="50%">
-              <stop offset="0%"   stopColor="white" stopOpacity="0.45" />
-              <stop offset="100%" stopColor="white" stopOpacity="0" />
-            </linearGradient>
-            <filter id="heartShadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#8B6914" floodOpacity="0.5" />
+            <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="1.5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
 
           {/* Shadow */}
           <path
-            d="M45 76 C45 76 6 50 6 26 C6 14 15 6 26 6 C34 6 41 11 45 18 C49 11 56 6 64 6 C75 6 84 14 84 26 C84 50 45 76 45 76Z"
-            fill="#6B4E0A" opacity="0.35" transform="translate(2,4)"
+            d="M50 82 C50 82 15 56 15 32 C15 19 25 10 37 10 C44 10 48 14 50 18 C52 14 56 10 63 10 C75 10 85 19 85 32 C85 56 50 82 50 82Z"
+            fill="#5C4A3E" opacity="0.1" transform="translate(1,3)"
           />
 
-          {/* Main heart */}
+          {/* Outer thin heart */}
           <path
-            d="M45 76 C45 76 6 50 6 26 C6 14 15 6 26 6 C34 6 41 11 45 18 C49 11 56 6 64 6 C75 6 84 14 84 26 C84 50 45 76 45 76Z"
-            fill="url(#heartGold)"
-            filter="url(#heartShadow)"
+            d="M50 82 C50 82 15 56 15 32 C15 19 25 10 37 10 C44 10 48 14 50 18 C52 14 56 10 63 10 C75 10 85 19 85 32 C85 56 50 82 50 82Z"
+            stroke="url(#goldOutline)"
+            strokeWidth="1.5"
+            fill="rgba(255,250,238,0.3)"
+            filter="url(#goldGlow)"
           />
 
-          {/* Shine overlay */}
+          {/* Inner thinner heart */}
           <path
-            d="M45 76 C45 76 6 50 6 26 C6 14 15 6 26 6 C34 6 41 11 45 18 C49 11 56 6 64 6 C75 6 84 14 84 26 C84 50 45 76 45 76Z"
-            fill="url(#heartShine)"
+            d="M50 78 C50 78 19 53 19 32 C19 21 27 13 37 13 C43 13 47 16 50 20 C53 16 57 13 63 13 C73 13 81 21 81 32 C81 53 50 78 50 78Z"
+            stroke="url(#goldOutline)"
+            strokeWidth="0.8"
+            fill="none"
+            opacity="0.5"
           />
 
-          {/* Highlight glint top-left */}
-          <ellipse cx="28" cy="22" rx="9" ry="6" fill="white" opacity="0.18" transform="rotate(-30 28 22)" />
+          {/* Sparkle star */}
+          <path d="M30 22 Q30 25 33 25 Q30 25 30 28 Q30 25 27 25 Q30 25 30 22 Z" fill="#FFF" />
+          <circle cx="30" cy="25" r="0.8" fill="#C8A75D" />
 
-          {/* Conjunction glyph — only shown for couples */}
+          {/* Conjunction glyph */}
           {showConjunction && (
             <text
-              x="45" y="50"
+              x="50" y="47"
               textAnchor="middle"
-              fontFamily='Georgia, "Times New Roman", serif'
-              fontSize="26"
+              dominantBaseline="middle"
+              fontFamily='var(--v2-font-heading, "Cormorant Garamond", Georgia, serif)'
+              fontSize="24"
               fontStyle="italic"
-              fill="#1A1008"
-              opacity="0.88"
+              fill="#000000"
+              fontWeight="normal"
               style={{ userSelect: 'none' }}
             >y</text>
           )}
@@ -220,6 +226,7 @@ export default function CinematicIntro({
   onEnter,
 }: CinematicIntroProps) {
   const [isDismissed, setIsDismissed] = useState(false);
+  const isOpeningRef = useRef(false);
   const containerRef    = useRef<HTMLDivElement>(null);
   const contentRef      = useRef<HTMLDivElement>(null);
   const leftCurtainRef  = useRef<HTMLDivElement>(null);
@@ -241,7 +248,13 @@ export default function CinematicIntro({
     }, 50);
   }, []);
 
-  const handleOpen = () => {
+  const handleOpen = (e?: React.SyntheticEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    if (isOpeningRef.current) return;
+    isOpeningRef.current = true;
+
     if (!containerRef.current || !contentRef.current) return;
 
     onEnter();
@@ -270,7 +283,12 @@ export default function CinematicIntro({
   if (isDismissed) return null;
 
   return (
-    <div ref={containerRef} className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden">
+    <div 
+      ref={containerRef} 
+      onClick={handleOpen}
+      onTouchStart={handleOpen}
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden cursor-pointer"
+    >
       {/* Curtains */}
       <div ref={leftCurtainRef}  className={`absolute inset-y-0 left-0 w-1/2 ${theme.bodyBg} border-r ${theme.cardBorder}`} />
       <div ref={rightCurtainRef} className={`absolute inset-y-0 right-0 w-1/2 ${theme.bodyBg}`} />
@@ -325,14 +343,16 @@ export default function CinematicIntro({
         <PremiumButton onClick={handleOpen} />
 
         <motion.p
-          initial={{ opacity: 0.35 }}
-          animate={{ opacity: 0.35 }}
+          initial={{ opacity: 0.45 }}
+          animate={{ opacity: 0.45 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-5 text-[9px] tracking-[0.3em] uppercase"
-          style={{ color: '#8B7355', fontFamily: 'Georgia, serif' }}
+          className="mt-5 text-[10px] tracking-[0.25em] uppercase font-medium"
+          style={{ color: '#8A7665', fontFamily: 'var(--v2-font-body, inherit)' }}
         >
           {protagonists.length >= 2 ? 'o toca el corazón para entrar' : 'toca el corazón para entrar'}
         </motion.p>
+
+
       </div>
     </div>
   );

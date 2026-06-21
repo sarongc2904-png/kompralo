@@ -67,7 +67,7 @@ export default function Itinerary({ items, theme }: ItineraryProps) {
               </div>
 
               {/* Time Badge */}
-              <span className="text-[13px] font-mono font-semibold tracking-[0.2em] mb-3" style={{ color: 'var(--v2-color-accent, inherit)' }}>
+              <span className="text-[14px] md:text-[15px] font-mono font-semibold tracking-[0.2em] mb-3" style={{ color: 'var(--v2-color-accent, inherit)' }}>
                 {item.time}
               </span>
 
@@ -76,14 +76,14 @@ export default function Itinerary({ items, theme }: ItineraryProps) {
 
               {/* Title */}
               <h4 
-                className={`text-lg font-normal tracking-wide mb-3 ${theme.headingFont}`}
+                className={`text-xl md:text-2xl font-normal tracking-wide mb-3 ${theme.headingFont}`}
                 style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
               >
                 {item.title}
               </h4>
 
               {/* Location */}
-              <p className={`text-[13px] leading-relaxed opacity-75 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
+              <p className={`text-sm md:text-base leading-relaxed opacity-75 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
                 {item.location}
               </p>
 

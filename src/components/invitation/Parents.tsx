@@ -49,7 +49,7 @@ function FamilyCard({
       {/* Whose side label */}
       <div className="relative z-10 text-center mb-6">
         <span
-          className="text-[11px] uppercase tracking-[0.25em] font-semibold"
+          className="text-[13px] md:text-[14px] uppercase tracking-[0.25em] font-semibold"
           style={{ color: `var(--v2-color-accent, #C5A880)` }}
         >
           {cardTitle}
@@ -80,13 +80,13 @@ function FamilyCard({
           </div>
           <div>
             <p
-              className="text-[9px] uppercase tracking-[0.2em] mb-1 font-semibold"
+              className="text-[11px] md:text-[12px] uppercase tracking-[0.2em] mb-1 font-semibold"
               style={{ color: `var(--v2-color-text-muted, #8A7665)` }}
             >
               Padre
             </p>
             <p 
-              className="text-lg md:text-xl font-normal tracking-wide leading-snug" 
+              className="text-xl md:text-2xl font-normal tracking-wide leading-snug" 
               style={{ 
                 fontFamily: 'var(--v2-font-heading, inherit)', 
                 color: `var(--v2-color-text-primary, #1F1A16)` 
@@ -124,13 +124,13 @@ function FamilyCard({
           </div>
           <div>
             <p
-              className="text-[9px] uppercase tracking-[0.2em] mb-1 font-semibold"
+              className="text-[11px] md:text-[12px] uppercase tracking-[0.2em] mb-1 font-semibold"
               style={{ color: `var(--v2-color-text-muted, #8A7665)` }}
             >
               Madre
             </p>
             <p 
-              className="text-lg md:text-xl font-normal tracking-wide leading-snug" 
+              className="text-xl md:text-2xl font-normal tracking-wide leading-snug" 
               style={{ 
                 fontFamily: 'var(--v2-font-heading, inherit)', 
                 color: `var(--v2-color-text-primary, #1F1A16)` 

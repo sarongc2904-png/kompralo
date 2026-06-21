@@ -35,7 +35,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
       {/* Header */}
       <SectionHeader eyebrow="Detalles" title="Mesa de Regalos" theme={theme} className="mb-0" />
       <p 
-        className={`text-sm opacity-85 mt-6 mb-16 max-w-md mx-auto text-center ${theme.bodyFont}`}
+        className={`text-base md:text-lg opacity-85 mt-6 mb-16 max-w-md mx-auto text-center ${theme.bodyFont}`}
         style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
       >
         Su presencia es nuestro mayor regalo, pero si desean tener un detalle con nosotros, les compartimos nuestras opciones:
@@ -67,7 +67,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                 </div>
 
                 <h4 
-                  className={`text-xl font-normal tracking-wide mb-3 ${theme.headingFont}`}
+                  className={`text-2xl font-normal tracking-wide mb-3 ${theme.headingFont}`}
                   style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
                 >
                   {item.provider}
@@ -76,7 +76,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                 {/* Bank Details (Hidden by default, reveals on toggle) */}
                 {item.logoType === 'bank' && item.bankDetails && (
                   <div className="w-full">
-                    <p className={`text-[12px] opacity-75 mb-2 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
+                    <p className={`text-[13px] md:text-[14px] opacity-75 mb-2 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
                       Información bancaria para realizar transferencias.
                     </p>
                     
@@ -90,7 +90,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                           className="w-full overflow-hidden"
                         >
                           <div 
-                            className="w-full text-[11px] text-left p-4 rounded-xl space-y-3 relative overflow-hidden shadow-inner"
+                            className="w-full text-[12px] md:text-[13px] text-left p-4 rounded-xl space-y-3 relative overflow-hidden shadow-inner"
                             style={{ 
                               background: 'linear-gradient(180deg, rgba(245, 236, 217, 0.4) 0%, rgba(245, 236, 217, 0.7) 100%)', 
                               border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))' 
@@ -101,7 +101,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                             <div className="flex items-start gap-2.5">
                               <Building className="w-3.5 h-3.5 mt-0.5 opacity-60 flex-shrink-0" style={{ color: 'var(--v2-color-accent, #C8A75D)' }} />
                               <div>
-                                <span className="block opacity-60 font-semibold uppercase text-[9px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>Banco</span>
+                                <span className="block opacity-60 font-semibold uppercase text-[10px] md:text-[11px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>Banco</span>
                                 <span className="font-semibold" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>{item.bankDetails.bankName}</span>
                               </div>
                             </div>
@@ -109,7 +109,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                             <div className="flex items-start gap-2.5">
                               <User className="w-3.5 h-3.5 mt-0.5 opacity-60 flex-shrink-0" style={{ color: 'var(--v2-color-accent, #C8A75D)' }} />
                               <div>
-                                <span className="block opacity-60 font-semibold uppercase text-[9px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>Titular</span>
+                                <span className="block opacity-60 font-semibold uppercase text-[10px] md:text-[11px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>Titular</span>
                                 <span className="font-semibold" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>{item.bankDetails.accountOwner}</span>
                               </div>
                             </div>
@@ -117,8 +117,8 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                             <div className="flex items-start gap-2.5">
                               <CreditCard className="w-3.5 h-3.5 mt-0.5 opacity-60 flex-shrink-0" style={{ color: 'var(--v2-color-accent, #C8A75D)' }} />
                               <div className="w-full">
-                                <span className="block opacity-60 font-semibold uppercase text-[9px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>CLABE</span>
-                                <span className="font-bold font-mono break-all block text-xs select-all mt-0.5" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
+                                <span className="block opacity-60 font-semibold uppercase text-[10px] md:text-[11px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>CLABE</span>
+                                <span className="font-bold font-mono break-all block text-sm md:text-base select-all mt-0.5" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
                                   {item.bankDetails.clabe}
                                 </span>
                               </div>
@@ -132,7 +132,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
 
                 {/* Standard description for normal links */}
                 {item.logoType !== 'bank' && (
-                  <p className={`text-[12px] opacity-75 mb-4 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
+                  <p className={`text-[13px] md:text-[14px] opacity-75 mb-4 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
                     Haz clic abajo para ver la mesa de regalos directamente.
                   </p>
                 )}
@@ -145,7 +145,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                     {!isRevealed ? (
                       <button
                         onClick={() => toggleReveal(item.id)}
-                        className={`w-full py-3 border text-[10px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
+                        className={`w-full py-3 border text-[12px] md:text-[13px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
                         style={{ 
                           borderRadius: '30px', 
                           borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.35))', 
@@ -161,7 +161,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                       <div className="flex flex-col gap-2.5 w-full">
                         <button
                           onClick={() => copyToClipboard(item.bankDetails!.clabe, item.id)}
-                          className={`w-full py-3 border text-[10px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
+                          className={`w-full py-3 border text-[12px] md:text-[13px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
                           style={{ 
                             borderRadius: '30px', 
                             borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.35))', 
@@ -197,7 +197,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-full py-3 border text-[10px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
+                    className={`w-full py-3 border text-[12px] md:text-[13px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
                     style={{ 
                       borderRadius: '30px', 
                       borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.35))', 
