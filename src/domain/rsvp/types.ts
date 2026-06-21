@@ -11,6 +11,9 @@ export interface RSVPResponse {
   guestCount: number;
   message?: string;
   status: RSVPStatus;
+  passToken?: string;
+  passCreatedAt?: string;
+  checkedInAt?: string;
   createdAt: string;
   updatedAt: string;
 }

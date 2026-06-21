@@ -112,8 +112,8 @@ function PageStyles() {
         white-space: nowrap;
       }
       .rsvp-table td {
-        padding: .75rem 1rem; border-bottom: 1px solid rgba(234,215,163,0.45);
-        color: ${T.mid}; vertical-align: top;
+        padding: .625rem 1rem; border-bottom: 1px solid rgba(234,215,163,0.45);
+        color: ${T.mid}; vertical-align: middle;
       }
       .rsvp-table tr:last-child td { border-bottom: none; }
       .rsvp-table tr:hover td { background: rgba(234,215,163,0.12); }
@@ -156,7 +156,7 @@ function StatCard({ label, value, sub, accent }: { label: string; value: number;
 
 // ─── RSVP mobile card ─────────────────────────────────────────────────────────
 
-function RsvpCard({ r }: { r: RSVPResponse }) {
+function RsvpCard({ r, appUrl }: { r: RSVPResponse; appUrl: string }) {
   const companions = Number(r.guestCount ?? 0);
   const validComp  = Number.isFinite(companions) && companions > 0 ? companions : 0;
   const total      = isAttending(r) ? validComp + 1 : 0;
@@ -206,6 +206,27 @@ function RsvpCard({ r }: { r: RSVPResponse }) {
       <p style={{ margin: '.5rem 0 0', fontSize: '.75rem', color: T.light }}>
         {formatDateTime(r.createdAt)}
       </p>
+
+      {r.passToken && (
+        <div style={{ marginTop: '.625rem', paddingTop: '.5rem', borderTop: `1px solid ${T.border}` }}>
+          <a
+            href={`${appUrl}/pass/${r.passToken}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '.375rem',
+              padding: '.4rem .875rem',
+              background: r.checkedInAt ? '#E6F4EA' : T.dark,
+              color: r.checkedInAt ? '#238636' : T.cream,
+              border: `1px solid ${r.checkedInAt ? '#A7D7B0' : 'transparent'}`,
+              borderRadius: '.625rem', fontSize: '.8125rem', fontWeight: 700,
+              textDecoration: 'none',
+            }}
+          >
+            {r.checkedInAt ? '✓ Pase usado' : '🎫 Ver pase de entrada'}
+          </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -245,7 +266,7 @@ export default async function InvitationDashboard({ params }: Props) {
   // 3. Fetch RSVP responses
   const { data: rsvpRows } = await svc
     .from('rsvp_responses')
-    .select('id, invitation_id, name, phone, attendance, guest_count, message, status, created_at, updated_at')
+    .select('id, invitation_id, name, phone, attendance, guest_count, message, status, pass_token, pass_created_at, checked_in_at, created_at, updated_at')
     .eq('invitation_id', id)
     .order('created_at', { ascending: false });
 
@@ -258,6 +279,9 @@ export default async function InvitationDashboard({ params }: Props) {
     guestCount:   Number(r.guest_count ?? 0),
     message:      r.message ?? undefined,
     status:       r.status,
+    passToken:    r.pass_token ?? undefined,
+    passCreatedAt: r.pass_created_at ?? undefined,
+    checkedInAt:  r.checked_in_at ?? undefined,
     createdAt:    r.created_at,
     updatedAt:    r.updated_at,
   }));
@@ -405,6 +429,7 @@ export default async function InvitationDashboard({ params }: Props) {
                         <th>Teléfono</th>
                         <th>Mensaje</th>
                         <th>Fecha</th>
+                        <th>Pase</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -437,6 +462,28 @@ export default async function InvitationDashboard({ params }: Props) {
                             <td style={{ fontSize: '.75rem', whiteSpace: 'nowrap', color: T.light }}>
                               {formatDateTime(r.createdAt)}
                             </td>
+                            <td>
+                              {r.passToken ? (
+                                <a
+                                  href={`${appUrl}/pass/${r.passToken}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex', alignItems: 'center', gap: '.25rem',
+                                    padding: '.3rem .625rem',
+                                    background: r.checkedInAt ? '#E6F4EA' : T.cream,
+                                    color: r.checkedInAt ? '#238636' : T.dark,
+                                    border: `1px solid ${r.checkedInAt ? '#A7D7B0' : T.border}`,
+                                    borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700,
+                                    textDecoration: 'none', whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  {r.checkedInAt ? '✓ Usado' : '🎫 Ver pase'}
+                                </a>
+                              ) : (
+                                <span style={{ fontSize: '.75rem', color: T.light, opacity: 0.5 }}>—</span>
+                              )}
+                            </td>
                           </tr>
                         );
                       })}
@@ -446,7 +493,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
                 {/* Mobile cards */}
                 <div className="rsvp-cards-wrap">
-                  {responses.map((r) => <RsvpCard key={r.id} r={r} />)}
+                  {responses.map((r) => <RsvpCard key={r.id} r={r} appUrl={appUrl} />)}
                 </div>
               </>
             )}

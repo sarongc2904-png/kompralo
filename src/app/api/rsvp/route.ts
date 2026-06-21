@@ -88,5 +88,9 @@ export async function POST(request: NextRequest) {
     return errorResponse(result.error, 500);
   }
 
-  return NextResponse.json(result, { status: 201 });
+  const passToken = result.response.passToken;
+  const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? '';
+  const passUrl   = passToken ? `${appUrl}/pass/${passToken}` : undefined;
+
+  return NextResponse.json({ ...result, passUrl }, { status: 201 });
 }

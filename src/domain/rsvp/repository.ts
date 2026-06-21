@@ -24,18 +24,21 @@ class LocalRSVPRepository implements IRSVPRepository {
   }
 
   async submit(input: RSVPSubmissionInput): Promise<RSVPSubmissionResult> {
-    const now = new Date().toISOString();
+    const now       = new Date().toISOString();
+    const passToken = crypto.randomUUID();
     const response: RSVPResponse = {
-      id: generateId(),
+      id:           generateId(),
       invitationId: input.invitationId,
-      name: input.name,
-      phone: input.phone,
-      attendance: input.attendance,
-      guestCount: input.guestCount,
-      message: input.message,
-      status: 'pending',
-      createdAt: now,
-      updatedAt: now,
+      name:         input.name,
+      phone:        input.phone,
+      attendance:   input.attendance,
+      guestCount:   input.guestCount,
+      message:      input.message,
+      status:       'pending',
+      passToken,
+      passCreatedAt: now,
+      createdAt:    now,
+      updatedAt:    now,
     };
     this.store.push(response);
     return { success: true, response };

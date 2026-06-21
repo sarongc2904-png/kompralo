@@ -173,7 +173,13 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showRSVP" features={features}>
-        <RSVPForm invitationId={invitation.id} rsvpWhatsAppNumber={invitation.rsvpWhatsAppNumber} theme={theme} />
+        <RSVPForm
+          invitationId={invitation.id}
+          rsvpWhatsAppNumber={invitation.rsvpWhatsAppNumber}
+          theme={theme}
+          eventTitle={invitation.title}
+          eventDate={invitation.eventDate}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showWhatsApp" features={features}>

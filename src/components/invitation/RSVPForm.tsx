@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Theme } from '@/domain/themes/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, MessageSquare, Copy, Check } from 'lucide-react';
+import QRCode from 'react-qr-code';
 import LiquidCard from './LiquidCard';
 import SectionShell from './SectionShell';
 import { ThemeDivider } from '@/components/theme-v2';
@@ -41,6 +42,8 @@ interface RSVPFormProps {
   invitationId: string;
   rsvpWhatsAppNumber: string;
   theme: Theme;
+  eventTitle?: string;
+  eventDate?: string;
 }
 
 // ─── SVG GOOEY FILTER ─────────────────────────────────────────────────────────
@@ -240,7 +243,7 @@ function GlassInput({
 }
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
-export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RSVPFormProps) {
+export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme, eventTitle, eventDate }: RSVPFormProps) {
   const [name,        setName]        = useState('');
   const [phone,       setPhone]       = useState('');
   const [attending,   setAttending]   = useState<boolean | null>(null);
@@ -250,6 +253,9 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
   const [errorMsg,    setErrorMsg]    = useState('');
   const [noteFocused, setNoteFocused] = useState(false);
   const [copied,      setCopied]      = useState(false);
+  const [passCopied,  setPassCopied]  = useState(false);
+  const [passUrl,     setPassUrl]     = useState<string | null>(null);
+  const passCardRef                   = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -273,6 +279,8 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
       });
 
       if (res.ok) {
+        const data = await res.json().catch(() => ({})) as { passUrl?: string };
+        setPassUrl(data.passUrl ?? null);
         setFormState('success');
       } else {
         const data = await res.json().catch(() => ({}));
@@ -318,6 +326,50 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
     } catch {
       // clipboard not available — silent fail
     }
+  };
+
+  const handleCopyPass = async () => {
+    if (!passUrl) return;
+    try {
+      await navigator.clipboard.writeText(passUrl);
+      setPassCopied(true);
+      setTimeout(() => setPassCopied(false), 2500);
+    } catch {
+      window.prompt('Copia el link de tu pase:', passUrl);
+    }
+  };
+
+  const handleDownloadPass = async () => {
+    if (!passCardRef.current) return;
+    try {
+      const { toPng } = await import('html-to-image');
+      const dataUrl = await toPng(passCardRef.current, {
+        cacheBust: true,
+        backgroundColor: '#ffffff',
+        pixelRatio: 2,
+      });
+      const a    = document.createElement('a');
+      a.download = `pase-${name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
+      a.href     = dataUrl;
+      a.click();
+    } catch (err) {
+      console.error('Error al descargar pase:', err);
+    }
+  };
+
+  const buildPassWhatsAppMessage = () => {
+    const total = attending ? guests : 0;
+    return [
+      `Hola, este es mi pase de entrada al evento:`,
+      ``,
+      `Nombre: ${name}`,
+      attending ? `Personas confirmadas: ${total}` : null,
+      ``,
+      `Ver pase:`,
+      passUrl ?? '',
+    ]
+      .filter((l) => l !== null)
+      .join('\n');
   };
 
   return (
@@ -524,27 +576,130 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="relative z-10 text-center py-8 flex flex-col items-center"
+                className="relative z-10 text-center flex flex-col items-center"
               >
                 <motion.div
                   initial={{ scale: 0, rotate: -30 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.1 }}
-                  className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+                  className="w-16 h-16 rounded-full flex items-center justify-center mb-4 mt-4"
                   style={{ background: theme.colors.accentSoft, color: theme.colors.accent }}
                 >
                   <CheckCircle2 className="w-10 h-10" />
                 </motion.div>
 
-                <h4 className={`text-2xl font-light tracking-wide mb-3 ${theme.headingFont}`} style={{ color: theme.colors.textPrimary }}>
+                <h4 className={`text-2xl font-light tracking-wide mb-2 ${theme.headingFont}`} style={{ color: theme.colors.textPrimary }}>
                   ¡Confirmación Recibida!
                 </h4>
-                <p className="text-sm opacity-70 mb-8 max-w-sm leading-relaxed" style={{ color: theme.colors.textSecondary }}>
+                <p className="text-sm opacity-70 mb-6 max-w-sm leading-relaxed" style={{ color: theme.colors.textSecondary }}>
                   Muchas gracias por responder. Tu asistencia ha sido registrada.
                 </p>
 
-                <div className="w-full max-w-sm space-y-3">
-                  {/* Primary: open WhatsApp with pre-filled message */}
+                {/* ── Pass card ── */}
+                {passUrl && (
+                  <div className="w-full max-w-sm mb-6">
+                    <p className="text-[10px] uppercase tracking-[0.2em] font-semibold mb-3" style={{ color: theme.colors.textSecondary }}>
+                      Tu pase de entrada
+                    </p>
+
+                    {/* Card captured for PNG download */}
+                    <div
+                      ref={passCardRef}
+                      style={{
+                        background:   '#ffffff',
+                        border:       '1px solid #EAD7A3',
+                        borderRadius: '1.125rem',
+                        overflow:     'hidden',
+                        textAlign:    'center',
+                      }}
+                    >
+                      {/* Gold header */}
+                      <div style={{ background: 'linear-gradient(135deg, #C4A962 0%, #B4966E 100%)', padding: '.875rem 1.25rem' }}>
+                        <p style={{ margin: 0, fontSize: '.5625rem', fontWeight: 800, letterSpacing: '.28em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.75)' }}>KOMPRALO</p>
+                        <p style={{ margin: '.125rem 0 0', fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: '#ffffff' }}>Pase de entrada</p>
+                      </div>
+
+                      <div style={{ padding: '1.25rem' }}>
+                        {eventTitle && (
+                          <p style={{ margin: '0 0 .875rem', fontSize: '.625rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#C4A962' }}>
+                            {eventTitle}
+                          </p>
+                        )}
+
+                        <p style={{ margin: '0 0 .125rem', fontSize: '.5625rem', fontWeight: 700, letterSpacing: '.16em', textTransform: 'uppercase', color: '#6B4A35' }}>Invitado</p>
+                        <p style={{ margin: '0 0 1rem', fontSize: '1.125rem', fontWeight: 700, color: '#0D0A07', lineHeight: 1.2, wordBreak: 'break-word' }}>
+                          {name}
+                        </p>
+
+                        {attending && (
+                          <p style={{ margin: '0 0 1rem', fontSize: '.8125rem', color: '#238636', fontWeight: 600 }}>
+                            {guests} persona{guests !== 1 ? 's' : ''} confirmada{guests !== 1 ? 's' : ''}
+                          </p>
+                        )}
+
+                        <div style={{ display: 'inline-flex', background: '#fff', padding: '.75rem', border: '1px solid #EAD7A3', borderRadius: '.625rem', marginBottom: '.75rem' }}>
+                          <QRCode value={passUrl} size={140} level="M" />
+                        </div>
+
+                        <p style={{ margin: 0, fontSize: '.5625rem', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#C4A962' }}>
+                          Presenta este pase en la entrada
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Pass action buttons */}
+                    <div className="space-y-2 mt-3">
+                      <button
+                        type="button"
+                        onClick={handleDownloadPass}
+                        className="w-full min-h-[46px] px-4 py-3 rounded-xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-semibold leading-tight whitespace-normal break-words"
+                        style={{
+                          background: '#0D0A07',
+                          color: '#F1E3C8',
+                          border: 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ⬇ Descargar pase
+                      </button>
+
+                      <a
+                        href={buildWhatsAppUrl(buildPassWhatsAppMessage(), undefined)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full min-h-[46px] px-4 py-3 rounded-xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-semibold leading-tight whitespace-normal break-words no-underline"
+                        style={{ background: '#25D366', color: '#fff', textDecoration: 'none' }}
+                      >
+                        <MessageSquare className="w-4 h-4 flex-shrink-0" />
+                        Enviar pase por WhatsApp
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={handleCopyPass}
+                        className="w-full min-h-[46px] px-4 py-3 rounded-xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest font-semibold leading-tight whitespace-normal break-words"
+                        style={{
+                          background: passCopied ? '#E6F4EA' : `var(--v2-glass-bg, ${theme.colors.surface})`,
+                          color: passCopied ? '#238636' : `var(--v2-color-text-secondary, ${theme.colors.textSecondary})`,
+                          border: `1px solid ${passCopied ? '#A7D7B0' : `var(--v2-color-border, ${theme.borders.subtle})`}`,
+                          cursor: 'pointer',
+                          transition: 'background .2s, color .2s, border-color .2s',
+                        }}
+                      >
+                        {passCopied
+                          ? <><Check className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#238636' }} /> Link copiado</>
+                          : <><Copy className="w-3.5 h-3.5 flex-shrink-0" /> Copiar link del pase</>
+                        }
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Divider */}
+                <div className="w-full max-w-sm" style={{ height: '1px', background: `var(--v2-color-border, ${theme.borders.subtle})`, marginBottom: '1.25rem' }} />
+
+                {/* Secondary actions */}
+                <div className="w-full max-w-sm space-y-2">
                   <a
                     href={buildWhatsAppUrl(buildRsvpMessage(), rsvpWhatsAppNumber)}
                     target="_blank"
@@ -560,10 +715,9 @@ export default function RSVPForm({ invitationId, rsvpWhatsAppNumber, theme }: RS
                     }}
                   >
                     <MessageSquare className="w-4 h-4 flex-shrink-0" style={{ color: '#25D366' }} />
-                    Enviar Copia por WhatsApp
+                    Enviar confirmación por WhatsApp
                   </a>
 
-                  {/* Secondary: copy message to clipboard */}
                   <button
                     type="button"
                     onClick={handleCopyMessage}
