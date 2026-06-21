@@ -284,66 +284,12 @@ function buildLayerContent(
   switch (themeId) {
 
     case 'luxury-gold':
-      // Dark theme — screen blend at low opacity so elements glow against deep background
-      return {
-        layer1: (
-          <div className="absolute inset-0 w-full" style={{ height: '700vh' }}>
-            <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '2vh', left: '-5vw', width: '55vw', maxWidth: '640px', mixBlendMode: 'screen', opacity: 0.18 }} />
-            <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '200vh', right: '-8vw', width: '50vw', maxWidth: '580px', mixBlendMode: 'screen', opacity: 0.13, transform: 'rotate(180deg) scaleX(-1)' }} />
-            <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '500vh', left: '-5vw', width: '48vw', maxWidth: '560px', mixBlendMode: 'screen', opacity: 0.11, transform: 'scaleX(-1) rotate(15deg)' }} />
-          </div>
-        ),
-        layer2: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '40vh', right: '2vw', width: '35vw', maxWidth: '400px', mixBlendMode: 'screen', opacity: 0.16 }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '350vh', left: '3vw', width: '30vw', maxWidth: '360px', mixBlendMode: 'screen', opacity: 0.13, transform: 'scaleX(-1) rotate(-10deg)' }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '650vh', right: '4vw', width: '32vw', maxWidth: '380px', mixBlendMode: 'screen', opacity: 0.11, transform: 'rotate(15deg)' }} />
-          </div>
-        ),
-        layer3: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_10s_ease-in-out_infinite]"
-              style={{ top: '70vh', left: '8vw', width: '42vw', maxWidth: '500px', mixBlendMode: 'screen', opacity: 0.10 }} />
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_8s_ease-in-out_infinite_1.5s]"
-              style={{ top: '420vh', right: '6vw', width: '40vw', maxWidth: '480px', mixBlendMode: 'screen', opacity: 0.09, transform: 'scaleX(-1)' }} />
-          </div>
-        ),
-      };
+      // Pastel light theme — layer images designed for dark bg; render empty to keep background clean
+      return { layer1: <></>, layer2: <></>, layer3: <></> };
 
     case 'modern-dark':
-      // High-contrast dark — very subtle screen-mode geometry
-      return {
-        layer1: (
-          <div className="absolute inset-0 w-full" style={{ height: '700vh' }}>
-            <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '0', left: '-5vw', width: '60vw', maxWidth: '700px', mixBlendMode: 'screen', opacity: 0.09 }} />
-            <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '180vh', right: '-8vw', width: '55vw', maxWidth: '640px', mixBlendMode: 'screen', opacity: 0.07, transform: 'rotate(90deg)' }} />
-            <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '500vh', left: '-5vw', width: '52vw', maxWidth: '620px', mixBlendMode: 'screen', opacity: 0.08, transform: 'rotate(-45deg)' }} />
-          </div>
-        ),
-        layer2: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '60vh', right: '5vw', width: '25vw', maxWidth: '300px', mixBlendMode: 'screen', opacity: 0.08, transform: 'rotate(45deg)' }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '480vh', left: '6vw', width: '22vw', maxWidth: '260px', mixBlendMode: 'screen', opacity: 0.06, transform: 'rotate(-30deg)' }} />
-          </div>
-        ),
-        layer3: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_7s_ease-in-out_infinite]"
-              style={{ top: '110vh', left: '20vw', width: '30vw', maxWidth: '360px', mixBlendMode: 'screen', opacity: 0.05 }} />
-          </div>
-        ),
-      };
+      // Pastel light theme — layer images designed for dark bg; render empty to keep background clean
+      return { layer1: <></>, layer2: <></>, layer3: <></> };
 
     case 'floral':
       // Blush botanical — multiply blend for soft petal depth
