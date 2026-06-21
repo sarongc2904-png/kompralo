@@ -2,14 +2,11 @@
 
 import React from 'react';
 import { Theme } from '@/domain/themes/types';
-import { InvitationProtagonist, ParentCouple } from '@/domain/invitations/types';
+import { ParentCouple } from '@/domain/invitations/types';
 import { motion } from 'framer-motion';
 
 interface ParentsProps {
   parents: ParentCouple[];
-  protagonists?: InvitationProtagonist[];
-  brideName?: string;
-  groomName?: string;
   theme: Theme;
 }
 
@@ -33,13 +30,12 @@ function Ornament({ flip = false }: { flip?: boolean }) {
 // Single parent couple card
 function FamilyCard({
   couple,
-  coupleName,
   index,
 }: {
   couple: ParentCouple;
-  coupleName: string;
   index: number;
 }) {
+  const cardTitle = couple.side === 'bride' ? 'Padres de la Novia' : 'Padres del Novio';
   const fromLeft = index % 2 === 0;
 
   return (
@@ -79,7 +75,7 @@ function FamilyCard({
           className="text-[9px] uppercase tracking-[0.28em] font-semibold"
           style={{ color: `var(--v2-color-accent, #C5A880)` }}
         >
-          Familia {coupleName}
+          {cardTitle}
         </span>
         <div className="flex justify-center mt-2">
           <Ornament />
@@ -158,14 +154,11 @@ function FamilyCard({
   );
 }
 
-export default function Parents({ parents, protagonists, brideName, groomName, theme }: ParentsProps) {
+export default function Parents({ parents, theme }: ParentsProps) {
   if (!parents || parents.length === 0) return null;
 
   const groomParents = parents.find((p) => p.side === 'groom');
   const brideParents = parents.find((p) => p.side === 'bride');
-  const protagonistNameById = new Map(protagonists?.map((person) => [person.id, person.familyLabel ?? person.name]) ?? []);
-  const groomFamilyName = groomParents ? protagonistNameById.get(groomParents.protagonistId) ?? groomName ?? '' : '';
-  const brideFamilyName = brideParents ? protagonistNameById.get(brideParents.protagonistId) ?? brideName ?? '' : '';
 
   return (
     <section className="py-20 md:py-28 px-6 md:px-8 bg-transparent select-none">
@@ -202,10 +195,10 @@ export default function Parents({ parents, protagonists, brideName, groomName, t
         {/* Cards grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {groomParents && (
-            <FamilyCard couple={groomParents} coupleName={groomFamilyName} index={0} />
+            <FamilyCard couple={groomParents} index={0} />
           )}
           {brideParents && (
-            <FamilyCard couple={brideParents} coupleName={brideFamilyName} index={1} />
+            <FamilyCard couple={brideParents} index={1} />
           )}
         </div>
 

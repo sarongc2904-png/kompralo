@@ -176,7 +176,7 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showParents" features={features}>
-        <Parents parents={invitation.parents} protagonists={protagonists} theme={theme} />
+        <Parents parents={invitation.parents} theme={theme} />
       </FeatureGate>
 
       <FeatureGate feature="showStoryBook" features={features}>
