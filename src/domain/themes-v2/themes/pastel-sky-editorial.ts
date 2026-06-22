@@ -103,8 +103,8 @@ export const pastelSkyEditorialTheme: InvitationThemeV2 = {
   },
 
   assets: {
-    backgroundLayer1: '/layers/bg_layer1_champagne.png',
-    backgroundLayer2: '/layers/bg_layer2_champagne.png',
+    backgroundLayer1: '/layers/bg_layer1_floral.png',
+    backgroundLayer2: '/layers/bg_layer2_floral.png',
     backgroundLayer3: '/layers/bg_layer3_champagne.png',
   },
 
@@ -148,8 +148,8 @@ export const pastelSkyEditorialTheme: InvitationThemeV2 = {
     '--v2-background-final':       'linear-gradient(160deg, #EEF4FC 0%, #F5FAFF 100%)',
     '--v2-font-heading':           '"Playfair Display", "Georgia", serif',
     '--v2-font-body':              '"Inter", system-ui, sans-serif',
-    '--v2-bg-layer-1':             '/layers/bg_layer1_champagne.png',
-    '--v2-bg-layer-2':             '/layers/bg_layer2_champagne.png',
+    '--v2-bg-layer-1':             '/layers/bg_layer1_floral.png',
+    '--v2-bg-layer-2':             '/layers/bg_layer2_floral.png',
     '--v2-bg-layer-3':             '/layers/bg_layer3_champagne.png',
   },
 };
@@ -227,8 +227,8 @@ export const pastelSkyEditorialThemeV1: InvitationTheme = {
   },
 
   assets: {
-    backgroundLayer1: '/layers/bg_layer1_champagne.png',
-    backgroundLayer2: '/layers/bg_layer2_champagne.png',
+    backgroundLayer1: '/layers/bg_layer1_floral.png',
+    backgroundLayer2: '/layers/bg_layer2_floral.png',
     backgroundLayer3: '/layers/bg_layer3_champagne.png',
   },
 

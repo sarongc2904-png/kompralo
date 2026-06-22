@@ -103,8 +103,8 @@ export const pastelRoseEditorialTheme: InvitationThemeV2 = {
   },
 
   assets: {
-    backgroundLayer1: '/layers/bg_layer1_champagne.png',
-    backgroundLayer2: '/layers/bg_layer2_champagne.png',
+    backgroundLayer1: '/layers/bg_layer1_floral.png',
+    backgroundLayer2: '/layers/bg_layer2_floral.png',
     backgroundLayer3: '/layers/bg_layer3_champagne.png',
   },
 
@@ -148,8 +148,8 @@ export const pastelRoseEditorialTheme: InvitationThemeV2 = {
     '--v2-background-final':       'linear-gradient(160deg, #F5E8EB 0%, #FFF7F8 100%)',
     '--v2-font-heading':           '"Cormorant Garamond", "Georgia", serif',
     '--v2-font-body':              '"Inter", system-ui, sans-serif',
-    '--v2-bg-layer-1':             '/layers/bg_layer1_champagne.png',
-    '--v2-bg-layer-2':             '/layers/bg_layer2_champagne.png',
+    '--v2-bg-layer-1':             '/layers/bg_layer1_floral.png',
+    '--v2-bg-layer-2':             '/layers/bg_layer2_floral.png',
     '--v2-bg-layer-3':             '/layers/bg_layer3_champagne.png',
   },
 };
