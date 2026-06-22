@@ -285,7 +285,7 @@ export default async function AdminDashboardPage() {
 
       {/* Plan breakdown */}
       <SectionLabel>Ventas por plan</SectionLabel>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div className="adm-plans-grid">
         <PlanCard
           label="Invitación Elegante"
           sublabel="basic"
@@ -320,7 +320,7 @@ export default async function AdminDashboardPage() {
 
       {/* Recent activity */}
       <SectionLabel>Actividad reciente</SectionLabel>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
+      <div className="adm-activity-grid">
 
         {/* Recent orders */}
         <div style={{ background: '#1A1A22', border: '1px solid rgba(226, 88, 34, 0.15)', borderRadius: 12, overflow: 'hidden' }}>

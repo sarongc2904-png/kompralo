@@ -161,7 +161,7 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showMusic" features={features}>
-        <BackgroundMusicPlayer music={invitation.music} />
+        <BackgroundMusicPlayer key={invitation.music?.audioUrl} music={invitation.music} />
       </FeatureGate>
 
       <FeatureGate feature="showHero" features={features}>

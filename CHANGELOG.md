@@ -20,14 +20,18 @@ Fecha: 2026-06-22
 - `src/app/admin/layout.tsx`:
   - Actualización del fondo del contenedor general a carbón ultra oscuro (`#131316`).
   - Inyección de una hoja de estilos global mediante un bloque `<style>` de React que automatiza el tema en tablas, celdas (`td`, `th`), formularios, inputs de filtrado y botones secundarios, garantizando 100% de coherencia visual en todas las rutas administrativas secundarias.
+  - Corrección de contraste global: se inyectaron reglas CSS para forzar que textos y elementos con colores oscuros hardcodeados (como `#1A1510`, `#8A8580` o `#4a4742`) se visualicen en tonos claros (#FFFFFF / #C2C2CB) en fondo oscuro, y que filas de cabecera claras se oscurezcan a `#16161E`.
+  - Agregado espaciado superior adaptativo en móviles (`padding-top: 5rem`) para despejar el nuevo header de navegación móvil.
 - `src/app/admin/_components/AdminSidebar.tsx`:
   - Se modificó el fondo del aside a `#0D0D10` y los bordes divisores a `rgba(226, 88, 34, 0.1)`.
   - El logotipo y las marcas adquieren el acento naranja neón brillante (`#E25822` con sombra de luz).
   - Los enlaces activos muestran ahora un indicador de borde izquierdo en color cobrizo de `3px solid #E25822`, tipografía en blanco e íconos iluminados (`#E25822` con brillo radial).
+  - Implementación responsiva: se incorporó un estado de React (`isMobileOpen`), una barra de cabecera móvil (`adm-mobile-header`) con botón hamburguesa (☰) y un fondo difuso/backdrop interactivo que permite desplegar lateralmente el panel como un cajón deslizante (drawer) en pantallas menores a 768px.
 - `src/app/admin/page.tsx`:
   - **Tarjeta Hero de Estado**: Modificación del fondo a un degradado metálico de lujo (`linear-gradient(135deg, #1A0D07 0%, #2E1305 50%, #170701 100%)`), borde cobrizo fino, y badge de "Producción" en naranja translúcido.
   - **Badges de Estatus y Planes**: Actualizados a variaciones translúcidas con textos brillantes de alta visibilidad (ej. *Published* en verde esmeralda y *Deluxe Plan* en naranja cobrizo).
   - **Tarjetas y Listas**: Re-estilización a color base `#1A1A22` y bordes cobrizos difusos (`rgba(226, 88, 34, 0.15)`).
+  - **Grillas adaptables**: Se cambiaron las grillas rígidas de columnas por las clases responsivas `.adm-plans-grid` y `.adm-activity-grid` que se adaptan automáticamente a 1 columna en pantallas de celular.
   - **Resiliencia local**: Creación de un condicional `hasSupabase` que inyecta automáticamente colecciones mock de órdenes, logs, invitaciones y métricas si las credenciales de Supabase no están presentes.
 - `src/lib/supabase/env.ts` y `src/lib/admin/index.ts`:
   - Modificación temporal y posterior restauración de las validaciones de inicialización de Supabase y redirecciones de sesión de administración para completar de manera exitosa la auditoría visual mediante el subagente de navegación local.

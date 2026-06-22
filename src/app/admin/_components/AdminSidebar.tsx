@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 const NAV = [
   { href: '/admin',                 label: 'Resumen',          icon: '⊞' },
@@ -20,6 +21,7 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ email, role }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   function isActive(href: string): boolean {
     if (href === '/admin') return pathname === '/admin';
@@ -32,12 +34,97 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
         .adm-nav-link:hover { background: rgba(255,255,255,0.06) !important; color: rgba(255,255,255,0.85) !important; }
         .adm-footer-link:hover { color: rgba(255,255,255,0.7) !important; }
         @media (max-width: 768px) {
-          .adm-sidebar { display: none !important; }
+          .adm-sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            z-index: 1000 !important;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            display: flex !important;
+          }
+          .adm-sidebar.open {
+            transform: translateX(0) !important;
+          }
+          .adm-mobile-header {
+            display: flex !important;
+          }
+          .adm-mobile-backdrop {
+            display: block !important;
+          }
+          .adm-close-btn {
+            display: block !important;
+          }
+        }
+        
+        .adm-mobile-header {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 56px;
+          background: #0D0D10;
+          border-bottom: 1px solid rgba(226, 88, 34, 0.15);
+          z-index: 999;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 1.25rem;
+        }
+        
+        .adm-mobile-backdrop {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0,0,0,0.6);
+          backdrop-filter: blur(4px);
+          z-index: 998;
         }
       `}</style>
 
+      {/* Mobile Top Header */}
+      <div className="adm-mobile-header">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontSize: '.55rem', fontWeight: 900, letterSpacing: '.2em', textTransform: 'uppercase', color: '#E25822' }}>
+            Kompralo
+          </span>
+          <span style={{ fontSize: '.85rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.1 }}>
+            Admin
+          </span>
+        </div>
+        <button
+          onClick={() => setIsMobileOpen(true)}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#E25822',
+            fontSize: '1.5rem',
+            cursor: 'pointer',
+            padding: '.25rem .5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          aria-label="Abrir menú"
+        >
+          ☰
+        </button>
+      </div>
+
+      {/* Backdrop (mobile only) */}
+      {isMobileOpen && (
+        <div
+          className="adm-mobile-backdrop"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
       <aside
-        className="adm-sidebar"
+        className={`adm-sidebar ${isMobileOpen ? 'open' : ''}`}
         style={{
           width: 260,
           flexShrink: 0,
@@ -55,34 +142,56 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
         <div style={{
           padding: '1.5rem 1.25rem 1.25rem',
           borderBottom: '1px solid rgba(226, 88, 34, 0.1)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
         }}>
-          <p style={{
-            fontSize: '.6rem',
-            fontWeight: 900,
-            letterSpacing: '.28em',
-            textTransform: 'uppercase',
-            color: '#E25822',
-            textShadow: '0 0 10px rgba(226, 88, 34, 0.25)',
-            margin: '0 0 .375rem',
-          }}>
-            Kompralo
-          </p>
-          <p style={{
-            fontSize: '1rem',
-            fontWeight: 700,
-            color: '#FFFFFF',
-            margin: '0 0 .125rem',
-            lineHeight: 1.2,
-          }}>
-            Admin
-          </p>
-          <p style={{
-            fontSize: '.7rem',
-            color: 'rgba(255,255,255,0.35)',
-            margin: 0,
-          }}>
-            Centro de control
-          </p>
+          <div>
+            <p style={{
+              fontSize: '.6rem',
+              fontWeight: 900,
+              letterSpacing: '.28em',
+              textTransform: 'uppercase',
+              color: '#E25822',
+              textShadow: '0 0 10px rgba(226, 88, 34, 0.25)',
+              margin: '0 0 .375rem',
+            }}>
+              Kompralo
+            </p>
+            <p style={{
+              fontSize: '1rem',
+              fontWeight: 700,
+              color: '#FFFFFF',
+              margin: '0 0 .125rem',
+              lineHeight: 1.2,
+            }}>
+              Admin
+            </p>
+            <p style={{
+              fontSize: '.7rem',
+              color: 'rgba(255,255,255,0.35)',
+              margin: 0,
+            }}>
+              Centro de control
+            </p>
+          </div>
+          <button
+            className="adm-close-btn"
+            onClick={() => setIsMobileOpen(false)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'rgba(255,255,255,0.4)',
+              fontSize: '1.25rem',
+              cursor: 'pointer',
+              padding: 0,
+              lineHeight: 1,
+              display: 'none',
+            }}
+            aria-label="Cerrar menú"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Nav */}
@@ -94,6 +203,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
                 key={href}
                 href={href}
                 className="adm-nav-link"
+                onClick={() => setIsMobileOpen(false)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

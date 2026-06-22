@@ -73,7 +73,14 @@ class LocalInvitationRepository implements IInvitationRepository {
 
   async getPreviewById(id: string): Promise<InvitationContent | null> {
     const resolvedId = previewAliases[id] ?? id;
-    return localInvitations.find((inv) => inv.id === resolvedId) ?? null;
+    const invitation = localInvitations.find((inv) => inv.id === resolvedId) ?? null;
+    console.log('[LocalRepository] getPreviewById:', {
+      requestedId: id,
+      resolvedId,
+      found: !!invitation,
+      musicUrl: invitation?.music?.audioUrl,
+    });
+    return invitation;
   }
 
   async updateBasicInfo(id: string, input: InvitationBasicInfoInput): Promise<InvitationContent> {

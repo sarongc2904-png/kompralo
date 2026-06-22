@@ -30,6 +30,35 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           color: #E5E5EB;
         }
         
+        /* Mobile Layout Spacing */
+        @media (max-width: 768px) {
+          main {
+            padding: 5rem 1rem 2rem !important;
+          }
+        }
+        
+        /* Responsive grids */
+        .adm-plans-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+        .adm-activity-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.25rem;
+          margin-bottom: 1.5rem;
+        }
+        @media (max-width: 768px) {
+          .adm-plans-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .adm-activity-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        
         /* Form inputs, selects, labels */
         form {
           background-color: #1A1A22 !important;
@@ -72,8 +101,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         /* Standard White Containers & Cards (fallback targeting) */
         div[style*="background: rgb(255, 255, 255)"],
         div[style*="background: #fff"],
+        div[style*="background: white"],
         div[style*="background-color: rgb(255, 255, 255)"],
-        div[style*="background-color: #fff"] {
+        div[style*="background-color: #fff"],
+        div[style*="background-color: white"] {
           background-color: #1A1A22 !important;
           border: 1px solid rgba(226, 88, 34, 0.15) !important;
           color: #F5F0E8 !important;
@@ -83,13 +114,32 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         td p, td span {
           color: #F5F0E8 !important;
         }
-        td p[style*="color: rgb(138, 133, 128)"],
-        td span[style*="color: rgb(138, 133, 128)"],
-        td p[style*="color: #8A8580"],
-        td span[style*="color: #8A8580"],
-        td p[style*="color: #B0A898"],
-        td span[style*="color: #B0A898"] {
-          color: #A5A5AB !important;
+        
+        /* Global Overrides for hardcoded low-contrast inline styling colors */
+        *[style*="color: #1A1510"],
+        *[style*="color: rgb(26, 21, 16)"],
+        *[style*="color: #1a1510"] {
+          color: #FFFFFF !important;
+        }
+        *[style*="color: #8A8580"],
+        *[style*="color: rgb(138, 133, 128)"],
+        *[style*="color: #8a8580"],
+        *[style*="color: #B0A898"],
+        *[style*="color: #b0a898"] {
+          color: #C2C2CB !important;
+        }
+        *[style*="color: #4a4742"],
+        *[style*="color: rgb(74, 71, 66)"],
+        *[style*="color: #4a4742"] {
+          color: #E5E5EB !important;
+        }
+        
+        /* Header rows and backgrounds in lists */
+        tr[style*="background: #F8F5F1"],
+        tr[style*="background-color: #F8F5F1"],
+        tr[style*="background: rgb(248, 245, 241)"],
+        tr[style*="background-color: rgb(248, 245, 241)"] {
+          background-color: #16161E !important;
         }
         
         /* Darker subtle borders for tables and dividers */

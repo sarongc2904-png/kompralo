@@ -17,8 +17,15 @@ export default function BackgroundMusicPlayer({ music }: BackgroundMusicPlayerPr
   const isEnabled = music.enabled !== false;
   const audioUrl  = music.audioUrl?.trim() ?? '';
 
+  // Diagnostics: log audio resolution
+  if (typeof window !== 'undefined') {
+    console.log('[BackgroundMusicPlayer] enabled:', isEnabled, '| audioUrl:', audioUrl);
+  }
+
   useEffect(() => {
     if (!isEnabled || !audioUrl) return;
+
+    console.log('[BackgroundMusicPlayer] Creating Audio element with URL:', audioUrl);
 
     const audio = new Audio(audioUrl);
     audio.loop    = true;
@@ -27,6 +34,7 @@ export default function BackgroundMusicPlayer({ music }: BackgroundMusicPlayerPr
     audioRef.current = audio;
 
     return () => {
+      console.log('[BackgroundMusicPlayer] Cleanup: pausing audio');
       audio.pause();
       audioRef.current = null;
     };
