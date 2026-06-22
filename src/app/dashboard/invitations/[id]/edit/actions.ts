@@ -1365,8 +1365,34 @@ export interface StartWeddingQuickStartInput {
   brideName: string;
   groomName: string;
   weddingDate: string;
-  weddingTime?: string;
+  ceremonyTime?: string;
+  receptionTime?: string;
   selectedStyle: WeddingStyle;
+  venueName?: string;
+  address?: string;
+  googleMapsUrl?: string;
+  wazeUrl?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  galleryTitle?: string;
+  galleryDescription?: string;
+  storyQuestion1?: string;
+  storyQuestion2?: string;
+  storyQuestion3?: string;
+  itineraryItems?: Array<{ time: string; activity: string }>;
+  dressCodeType?: string;
+  dressCodeNote?: string;
+  dressCodeColors?: string[];
+  giftRegistryItems?: Array<{ name: string; link: string; note: string }>;
+  parents?: { brideSide: string; groomSide: string };
+  padrinos?: string;
+  hotels?: Array<{ name: string; address: string; link: string; note: string }>;
+  hashtag?: string;
+  instagramHandle?: string;
+  tiktokHandle?: string;
+  whatsappNumber?: string;
+  finalMessage?: string;
+  skippedSteps?: number[];
 }
 
 export interface StartWeddingQuickStartResult {
@@ -1391,7 +1417,7 @@ function validateQuickStartInput(input: StartWeddingQuickStartInput): string | n
   if (!input.weddingDate?.trim()) {
     return 'Fecha de la boda requerida.';
   }
-  if (!WEDDING_STYLES.includes(input.selectedStyle)) {
+  if (!input.selectedStyle || !WEDDING_STYLES.includes(input.selectedStyle)) {
     return `Estilo de boda no válido. Opciones: ${WEDDING_STYLES.join(', ')}`;
   }
   return null;
@@ -1423,7 +1449,40 @@ export async function startWeddingQuickStart(
     return { success: false, message: validationError };
   }
 
-  const { invitationId, brideName, groomName, weddingDate, weddingTime, selectedStyle } = input;
+  const {
+    invitationId,
+    brideName,
+    groomName,
+    weddingDate,
+    ceremonyTime,
+    receptionTime,
+    selectedStyle,
+    venueName,
+    address,
+    googleMapsUrl,
+    wazeUrl,
+    heroTitle,
+    heroSubtitle,
+    galleryTitle,
+    galleryDescription,
+    storyQuestion1,
+    storyQuestion2,
+    storyQuestion3,
+    itineraryItems,
+    dressCodeType,
+    dressCodeNote,
+    dressCodeColors,
+    giftRegistryItems,
+    parents,
+    padrinos,
+    hotels,
+    hashtag,
+    instagramHandle,
+    tiktokHandle,
+    whatsappNumber,
+    finalMessage,
+    skippedSteps = [],
+  } = input;
 
   try {
     // ─── 2. Get authorized repository ─────────────────────────────────────
@@ -1449,7 +1508,7 @@ export async function startWeddingQuickStart(
       brideName: brideName.trim(),
       groomName: groomName.trim(),
       weddingDate,
-      weddingTime: weddingTime?.trim(),
+      weddingTime: ceremonyTime?.trim(),
       selectedStyle,
       planId,
       existingContent: {
@@ -1489,54 +1548,45 @@ export async function startWeddingQuickStart(
       console.log('[QuickStart] Saved protagonists');
     }
 
-    if (generatedContent.event_time !== undefined) {
-      // event_time is saved via updateBasicInfo or as part of invitation_content
-      // We'll use updateBasicInfo which handles event_time
-      const basicInput = {
-        title: current.title,
-        subtitle: current.subtitle,
+    // Always save basic info with wizard data
+    const basicInput = {
+      title: current.title,
+      subtitle: current.subtitle,
+      slug: current.slug,
+      eventDate: normalizeDateForSave(weddingDate),
+      eventTime: ceremonyTime?.trim() || generatedContent.event_time || '',
+      venueName: venueName || generatedContent.location?.venueName || current.location?.venueName || '',
+      address: address || generatedContent.location?.address || current.location?.address || '',
+      rsvpWhatsAppNumber: whatsappNumber || current.rsvpWhatsAppNumber || '',
+      finalMessageQuote: finalMessage || generatedContent.final_message?.quote || current.finalMessage?.quote || '',
+    };
+    await repo.updateBasicInfo(invitationId, basicInput);
+    console.log('[QuickStart] Saved basic info with wizard data');
+
+    // Update hero with wizard-provided data or generated defaults
+    if (heroTitle || heroSubtitle || generatedContent.hero) {
+      const mediaInput: UpdateInvitationMediaInput = {
+        id: invitationId,
         slug: current.slug,
-        eventDate: normalizeDateForSave(weddingDate),
-        eventTime: generatedContent.event_time,
-        venueName: generatedContent.location?.venueName || current.location?.venueName || '',
-        address: generatedContent.location?.address || current.location?.address || '',
-        rsvpWhatsAppNumber: current.rsvpWhatsAppNumber || '',
-        finalMessageQuote: generatedContent.final_message?.quote || current.finalMessage?.quote || '',
+        heroImageUrl: current.hero?.imageUrl || '',
+        heroVideoUrl: current.hero?.videoUrl || '',
+        musicUrl: current.music?.audioUrl || '',
+        musicTitle: current.music?.title || '',
+        youtubeUrl: current.hero?.youtubeUrl || '',
+        googleMapsUrl: googleMapsUrl || current.location?.googleMapsLink || '',
+        wazeUrl: wazeUrl || current.location?.wazeLink || '',
       };
-      await repo.updateBasicInfo(invitationId, basicInput);
-      console.log('[QuickStart] Saved event_time and basic info');
+      await repo.updateMediaInfo(invitationId, mediaInput);
+      console.log('[QuickStart] Updated hero and media info');
     }
 
-    if (generatedContent.hero !== undefined) {
-      // Only update hero if we have meaningful data to avoid overwriting
-      const hasGeneratedHero =
-        (generatedContent.hero.emotionalPhrase || generatedContent.hero.eventLabel) &&
-        (!current.hero?.emotionalPhrase || !current.hero?.eventLabel);
-
-      if (hasGeneratedHero || !current.hero) {
-        const mediaInput: UpdateInvitationMediaInput = {
-          id: invitationId,
-          slug: current.slug,
-          heroImageUrl: current.hero?.imageUrl || '',
-          heroVideoUrl: current.hero?.videoUrl || '',
-          musicUrl: current.music?.audioUrl || '',
-          musicTitle: current.music?.title || '',
-          youtubeUrl: current.hero?.youtubeUrl || '',
-          googleMapsUrl: current.location?.googleMapsLink || '',
-          wazeUrl: current.location?.wazeLink || '',
-        };
-        await repo.updateMediaInfo(invitationId, mediaInput);
-        console.log('[QuickStart] Updated hero via mediaInfo');
-      }
-    }
-
-    if (generatedContent.final_message !== undefined && planId !== 'basic') {
+    if (finalMessage || (generatedContent.final_message !== undefined && planId !== 'basic')) {
       const finalMessageInput: InvitationFinalMessageInput = {
-        title: generatedContent.final_message.title || '',
-        message: generatedContent.final_message.message || '',
-        quote: generatedContent.final_message.quote || '',
-        imageUrl: generatedContent.final_message.imageUrl || '',
-        signature: generatedContent.final_message.signature || '',
+        title: generatedContent.final_message?.title || '',
+        message: finalMessage || generatedContent.final_message?.message || '',
+        quote: generatedContent.final_message?.quote || '',
+        imageUrl: generatedContent.final_message?.imageUrl || '',
+        signature: generatedContent.final_message?.signature || '',
       };
       await repo.updateFinalMessage(invitationId, finalMessageInput);
       console.log('[QuickStart] Saved final_message');
@@ -1589,6 +1639,56 @@ export async function startWeddingQuickStart(
         // (handled in basicInfo step above)
         console.log('[QuickStart] Location data handled via basicInfo');
       }
+
+      // Premium+ wizard sections (override generated content if provided)
+      if (galleryTitle || galleryDescription) {
+        // Update gallery metadata only (photos to be uploaded separately)
+        console.log('[QuickStart] Gallery metadata from wizard noted');
+      }
+
+      if (hashtag || instagramHandle || tiktokHandle) {
+        const socialInput: InvitationSocialInput = {
+          hashtag: hashtag || generatedContent.social?.hashtag || '',
+          instagramHandle: instagramHandle || generatedContent.social?.instagramHandle || '',
+          tiktokHandle: tiktokHandle || generatedContent.social?.tiktokHandle || '',
+          facebookUrl: generatedContent.social?.facebookUrl || '',
+          youtubeUrl: generatedContent.social?.youtubeUrl || '',
+          note: generatedContent.social?.note || '',
+        };
+        await repo.updateSocial(invitationId, socialInput);
+        console.log('[QuickStart] Saved social from wizard');
+      }
+    }
+
+    // Handle Itinerary and DressCode for all plans (not just Premium)
+    if (itineraryItems && itineraryItems.length > 0 && !skippedSteps.includes(8)) {
+      const itineraryInput: InvitationItineraryInput = {
+        items: itineraryItems.map((item, idx) => ({
+          id: `itinerary-${idx}`,
+          time: item.time,
+          title: item.activity,
+          location: '',
+          icon: 'rings' as const,
+          description: '',
+        })),
+      };
+      await repo.updateItinerary(invitationId, itineraryInput);
+      console.log('[QuickStart] Saved itinerary from wizard');
+    }
+
+    if ((dressCodeType || dressCodeNote || dressCodeColors?.length) && !skippedSteps.includes(9)) {
+      const dressCodeInput: InvitationDressCodeInput = {
+        type: dressCodeType || '',
+        title: dressCodeType || '',
+        description: dressCodeNote || '',
+        observations: dressCodeNote || '',
+        primaryColor: '',
+        secondaryColor: '',
+        suggestionsList: [],
+        colors: dressCodeColors && dressCodeColors.length > 0 ? dressCodeColors : undefined,
+      };
+      await repo.updateDressCode(invitationId, dressCodeInput);
+      console.log('[QuickStart] Saved dress_code from wizard');
     }
 
     // Deluxe+ sections
@@ -1675,6 +1775,56 @@ export async function startWeddingQuickStart(
         };
         await repo.updateSocial(invitationId, socialInput);
         console.log('[QuickStart] Saved social');
+      }
+
+      // Deluxe+ wizard sections
+      if (giftRegistryItems && giftRegistryItems.length > 0 && !skippedSteps.includes(10)) {
+        const giftRegistryInput: InvitationGiftRegistryInput = {
+          items: giftRegistryItems.map((item, idx) => ({
+            id: `gift-${idx}`,
+            provider: item.name,
+            logoType: 'custom' as const,
+            link: item.link || '',
+            description: item.note || '',
+            bankName: '',
+            clabe: '',
+            accountOwner: '',
+          })),
+        };
+        await repo.updateGiftRegistry(invitationId, giftRegistryInput);
+        console.log('[QuickStart] Saved gift_registry from wizard');
+      }
+
+      if ((parents?.brideSide || parents?.groomSide) && !skippedSteps.includes(11)) {
+        const parentsInput: InvitationParentsInput = {
+          parents: [
+            ...(parents?.brideSide ? [{ side: 'bride' as const, protagonistId: '', fatherName: parents.brideSide, motherName: '' }] : []),
+            ...(parents?.groomSide ? [{ side: 'groom' as const, protagonistId: '', fatherName: parents.groomSide, motherName: '' }] : []),
+          ],
+        };
+        if (parentsInput.parents.length > 0) {
+          await repo.updateParents(invitationId, parentsInput);
+          console.log('[QuickStart] Saved parents from wizard');
+        }
+      }
+
+      if (hotels && hotels.length > 0 && !skippedSteps.includes(12)) {
+        const hotelsInput: InvitationAccommodationInput = {
+          hotels: hotels.map((hotel, idx) => ({
+            id: `hotel-${idx}`,
+            name: hotel.name,
+            stars: 3,
+            address: hotel.address,
+            distance: '',
+            priceRange: '',
+            phone: '',
+            bookingLink: hotel.link || '',
+            imageUrl: '',
+            description: hotel.note || '',
+          })),
+        };
+        await repo.updateAccommodation(invitationId, hotelsInput);
+        console.log('[QuickStart] Saved hotels from wizard');
       }
     }
 

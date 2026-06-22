@@ -43,6 +43,7 @@ export function WeddingQuickStartSetup({
       {shouldShow && (
         <WeddingQuickStartBanner
           invitationId={invitation.id}
+          planId={invitation.planId}
           onDismiss={handleDismiss}
         />
       )}

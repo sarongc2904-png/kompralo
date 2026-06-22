@@ -5,6 +5,7 @@ import { WeddingQuickStartWizard } from './WeddingQuickStartWizard';
 
 export interface WeddingQuickStartBannerProps {
   invitationId: string;
+  planId: string;
   onDismiss?: () => void;
 }
 
@@ -15,6 +16,7 @@ export interface WeddingQuickStartBannerProps {
  */
 export function WeddingQuickStartBanner({
   invitationId,
+  planId,
   onDismiss,
 }: WeddingQuickStartBannerProps) {
   const [showWizard, setShowWizard] = useState(false);
@@ -102,6 +104,7 @@ export function WeddingQuickStartBanner({
       {showWizard && (
         <WeddingQuickStartWizard
           invitationId={invitationId}
+          planId={planId}
           onClose={handleWizardClose}
         />
       )}
