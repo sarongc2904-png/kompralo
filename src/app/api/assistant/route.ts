@@ -1,6 +1,7 @@
 import { getAssistantResponse } from '@/features/virtual-assistant/assistantRules';
 import { shouldUseAssistantAI } from '@/features/virtual-assistant/assistantAiRouting';
 import { canUseAssistantAI, getAssistantAIResponse } from '@/features/virtual-assistant/assistantAiService';
+import { VIRTUAL_ASSISTANT_ENABLED, ASSISTANT_AI_ENABLED } from '@/features/virtual-assistant/assistantConfig';
 import type {
   AssistantApiError,
   AssistantApiRequest,
@@ -54,6 +55,11 @@ function parseAssistantRequest(body: unknown): AssistantApiRequest | AssistantAp
 }
 
 export async function POST(request: Request) {
+  // Feature gate: Virtual assistant disabled
+  if (!VIRTUAL_ASSISTANT_ENABLED) {
+    return jsonError('assistant_error', 403);
+  }
+
   try {
     let body: unknown;
 
