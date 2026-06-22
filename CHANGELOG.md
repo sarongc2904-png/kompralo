@@ -7,6 +7,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - FASE 1B+2 Redesign: 5-Step Quick Start Wizard (Time to First WOW)
+
+Replaced the 15-step comprehensive wizard with a focused 5-step flow that generates
+a complete first draft using intelligent defaults. Goal: maximize Time to First WOW.
+
+#### Modified Files
+
+1. **`src/domain/themes-v2/style-to-theme-map.ts`**
+   - Added `WIZARD_THEME_OPTIONS` constant — 6 visual theme cards with `ThemeIdV2`, label, description, accent color, and background color
+   - Themes: pastel-rose-editorial, pastel-sage-editorial, pastel-sky-editorial, ivory-editorial, luxury-champagne, modern-pastel
+   - Existing `WEDDING_STYLE_TO_THEME_MAP` and `resolveWeddingThemeId()` preserved unchanged
+
+2. **`src/lib/invitations/generators/wedding-template-generator.ts`**
+   - Added `receptionTime?: string` to `GenerateWeddingTemplateParams`; made `selectedStyle` optional
+   - Changed hero `eventLabel` from `'Nuestra boda'` to `'Nos casamos'`
+   - Added `addHoursToTime(base, hours)` helper — calculates HH:MM offsets
+   - Updated `generateItinerary(ceremonyTime?, receptionTime?)` — auto-calculates reception (+2h), dinner (+3h), dance (+4h) from ceremony time; uses explicit `receptionTime` if provided
+   - Added `normalizeForHashtag(name)` — removes accents, spaces, special chars
+   - Updated `generateSocial(brideName?, groomName?)` — auto-generates `#NombreYNombre` hashtag from protagonist names
+   - Generator now passes `receptionTime` to itinerary and `brideName/groomName` to social
+
+3. **`src/app/dashboard/invitations/[id]/edit/actions.ts`**
+   - Simplified `StartWeddingQuickStartInput` — removed 15-step wizard fields (`finalMessage`, `galleryTitle`, `itineraryItems`, `dressCodeType`, `dressCodeColors`, `giftRegistryItems`, `parents`, `hotels`, `hashtag`, `instagramHandle`, `tiktokHandle`, `skippedSteps`); retained 14 clean fields
+   - Added `themeId?: string` and `locationSkipped?: boolean` to input; removed `selectedStyle` requirement from validation
+   - Removed ~250 lines of dead code referencing deleted wizard variables
+   - Theme resolution updated: `inputThemeId ?? resolveWeddingThemeId(selectedStyle ?? 'elegante')` — direct `ThemeIdV2` from wizard takes priority
+   - Anti-destruction: location fields preserved when `locationSkipped === true`
+   - All save logic now uses only `generatedContent.*` (no manual overrides)
+
+4. **`src/components/editor/setup/WeddingQuickStartWizard.tsx`**
+   - Complete rewrite: 1399 lines → ~490 lines
+   - **Step 1 · Nombres** — bride + groom names (required); live `#HashtagPreview` below inputs
+   - **Step 2 · Fecha** — date (required), ceremony time, reception time with "+2h auto" hint
+   - **Step 3 · Lugar** (Premium/Deluxe only, skippable) — venue name, address, Google Maps URL, Waze URL; "Omitir por ahora" toggle
+   - **Step 4 · Estilo** (Basic: Step 3) — 6 visual theme cards with color swatch + accent dot; default `pastel-rose-editorial`
+   - **Step 5 · WhatsApp** (Basic: Step 4) — optional; shows summary card of entered data
+   - **Pantalla de éxito** — celebration icon, pending-tasks checklist, "Ver vista previa" + "Seguir editando" buttons
+
+#### UX Design (5-Step Wizard)
+
+**Plan gating:**
+- Basic: 4 steps (no Location step)
+- Premium/Deluxe: 5 steps (includes Location step)
+
+**Progress indicator:** animated dot-bar (pill expands on current step) + progress bar
+
+**Anti-destruction rules:**
+- Never overwrites sections with existing real data
+- `locationSkipped: true` → preserves current `venueName` / `address` in DB
+
+**Success screen actions:**
+- "Ver vista previa" → navigates to `/dashboard/invitations/{id}/preview` + `router.refresh()`
+- "Seguir editando" → closes modal + `router.refresh()`
+
+**Pending checklist items shown after success:**
+1. Subir fotos de portada y galería
+2. Personalizar el mensaje de bienvenida
+3. Revisar el itinerario del día
+4. Compartir el link con tus invitados
+
+#### Validation Status
+- ✅ `tsc --noEmit` — 0 errors
+- ✅ No breaking changes to existing editor functionality
+- ✅ No Stripe / checkout / auth / RSVP / QR / admin code touched
+- ✅ `updateThemeSelection` preserved — only called from Quick Start action
+
+#### Code Metrics
+- **Files modified**: 4
+- **Net lines removed**: ~642 (1356 deleted, 714 added)
+- **New dependencies**: 0
+- **Breaking changes**: 0
+- **Commit**: `fea3b69`
+
+---
+
+
 ### Added - FASE 1A: Quick Start Generator Foundation
 
 #### New Files Created
