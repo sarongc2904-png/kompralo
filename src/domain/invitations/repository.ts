@@ -125,8 +125,8 @@ class LocalInvitationRepository implements IInvitationRepository {
       hero: {
         ...existing.hero,
         imageUrl:   input.heroImageUrl  || existing.hero?.imageUrl  || '',
-        videoUrl:   input.heroVideoUrl  || undefined,
-        youtubeUrl: input.youtubeUrl    || undefined,
+        videoUrl:   input.heroVideoUrl !== undefined ? input.heroVideoUrl : existing.hero?.videoUrl,
+        youtubeUrl: input.youtubeUrl    !== undefined ? input.youtubeUrl    : existing.hero?.youtubeUrl,
       },
       music: {
         audioUrl:        input.clearMusicUrl ? '' : (input.musicUrl || existing.music?.audioUrl || ''),
