@@ -495,6 +495,9 @@ function buildLayerContent(
       return { layer1: <></>, layer2: <></>, layer3: <></> };
 
     case 'floral':
+    case 'pastel-rose-editorial':
+    case 'pastel-sage-editorial':
+    case 'pastel-sky-editorial':
       return {
         layer1: (
           <>
