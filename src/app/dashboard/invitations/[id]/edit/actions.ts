@@ -1001,24 +1001,24 @@ function stripAt(handle: string): string {
 export async function updateSocial(
   input: UpdateInvitationSocialInput,
 ): Promise<UpdateInvitationResult> {
-  const planError = await checkPlanAccess(input.id, 'deluxe');
-  if (planError) return planError;
-
-  const s = input.social;
-
-  if (!s.hashtag.trim()) {
-    return { success: false, error: 'El hashtag es requerido.' };
-  }
-  if (s.facebookUrl.trim() && !isValidUrl(s.facebookUrl.trim())) {
-    return { success: false, error: 'La URL de Facebook no es válida.' };
-  }
-  if (s.youtubeUrl.trim() && !isValidUrl(s.youtubeUrl.trim())) {
-    return { success: false, error: 'La URL de YouTube no es válida.' };
-  }
-
-  const { id } = input;
-
   try {
+    const planError = await checkPlanAccess(input.id, 'deluxe');
+    if (planError) return planError;
+
+    const s = input.social;
+
+    if (!s.hashtag.trim()) {
+      return { success: false, error: 'El hashtag es requerido.' };
+    }
+    if (s.facebookUrl.trim() && !isValidUrl(s.facebookUrl.trim())) {
+      return { success: false, error: 'La URL de Facebook no es válida.' };
+    }
+    if (s.youtubeUrl.trim() && !isValidUrl(s.youtubeUrl.trim())) {
+      return { success: false, error: 'La URL de YouTube no es válida.' };
+    }
+
+    const { id } = input;
+
     await invitationRepository.updateSocial(id, {
       hashtag:         s.hashtag.trim().replace(/^#/, ''),
       instagramHandle: stripAt(s.instagramHandle.trim()),
@@ -1027,17 +1027,17 @@ export async function updateSocial(
       youtubeUrl:      s.youtubeUrl.trim(),
       note:            s.note.trim(),
     });
+
+    revalidatePath(`/i/${input.slug}`);
+    revalidatePath(`/preview/${id}`);
+    revalidatePath(`/dashboard/invitations/${id}/edit`);
+
+    return { success: true, message: 'Hashtag y redes guardados correctamente.' };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error('[Editor] updateSocial error:', message);
     return { success: false, error: `Error al guardar redes sociales: ${message}` };
   }
-
-  revalidatePath(`/i/${input.slug}`);
-  revalidatePath(`/preview/${id}`);
-  revalidatePath(`/dashboard/invitations/${id}/edit`);
-
-  return { success: true, message: 'Hashtag y redes guardados correctamente.' };
 }
 
 // =============================================================================

@@ -85,11 +85,20 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
     setSaving(true);
     setResult(null);
 
-    const res = await updateSocial({ id: invitationId, slug, social: form });
-
-    setSaving(false);
-    if (res.success) notifyPreviewRefresh();
-    setResult({ success: res.success, message: res.success ? res.message : res.error });
+    try {
+      const res = await updateSocial({ id: invitationId, slug, social: form });
+      if (res.success) {
+        notifyPreviewRefresh();
+        setResult({ success: true, message: res.message });
+      } else {
+        setResult({ success: false, message: res.error });
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error inesperado al guardar.';
+      setResult({ success: false, message });
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
