@@ -14,6 +14,7 @@ import {
 import { CheckoutButton } from '@/components/checkout/CheckoutButton';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
 import Hero3D from '@/components/public/Hero3D';
+import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
 import { availableProducts } from '@/domain/products';
 import type { Product } from '@/domain/products';
 
@@ -59,8 +60,8 @@ function LandingStyles() {
       .cro-btn-cyan:hover { color: ${T.cyan}; background: transparent; border: 1px solid ${T.cyan}; box-shadow: 0 0 40px rgba(166,123,91,0.6); }
       .cro-btn-cyan::before { background: ${T.black}; }
 
-      .cro-section-vh { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; padding: 8rem 0; }
-      .cro-section { padding: clamp(6rem, 15vw, 12rem) 0; position: relative; border-bottom: 1px solid ${T.border}; }
+      .cro-section-vh { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; padding: 8rem 0; scroll-margin-top: 80px; }
+      .cro-section { padding: clamp(6rem, 15vw, 12rem) 0; position: relative; border-bottom: 1px solid ${T.border}; scroll-margin-top: 80px; }
       .cro-glass { background: ${T.glass}; backdrop-filter: blur(30px); border: 1px solid ${T.border}; border-radius: 2px; }
 
       .cro-mobile-sticky-cta { display: none; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 999; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); border-top: 1px solid ${T.border}; padding: 1rem; align-items: center; justify-content: space-between; text-decoration: none; color: ${T.ink}; transition: transform 0.5s; }
@@ -72,6 +73,12 @@ function LandingStyles() {
       .cro-nav-links { display: flex; align-items: center; gap: 3rem; }
       .cro-nav-link { color: ${T.silver}; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: color 0.3s; }
       .cro-nav-link:hover { color: ${T.ink}; }
+
+      /* Mobile menu button & menu */
+      .cro-mobile-menu-btn { display: none; background: none; border: none; color: ${T.ink}; cursor: pointer; padding: 0.5rem; z-index: 1001; }
+      .cro-mobile-menu { display: none; position: fixed; top: 70px; left: 0; right: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid ${T.border}; flex-direction: column; z-index: 1000; padding: 1rem 0; }
+      .cro-mobile-menu-link { display: block; padding: 1rem 20px; color: ${T.silver}; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: color 0.3s; }
+      .cro-mobile-menu-link:hover { color: ${T.ink}; background: rgba(255,255,255,0.02); }
 
       .cro-hero-bg { position: absolute; inset: 0; z-index: -2; background: #000; }
       .cro-hero-img { object-fit: cover; opacity: 0.6; transform: scale(1.05); animation: tagHeuerZoom 30s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
@@ -180,11 +187,16 @@ function LandingStyles() {
       @media (max-width: 780px) {
         .cro-mobile-sticky-cta { display: flex; animation: slideUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
         .cro-nav-links { display: none; }
+        .cro-mobile-menu-btn { display: flex; }
+        .cro-mobile-menu { display: flex; }
+        body { padding-bottom: 100px; }
         .cro-grid-3 { grid-template-columns: 1fr; }
         .cro-hero-actions { flex-direction: column; width: 100%; max-width: 300px; }
         .cro-hero-actions .cro-btn { width: 100%; }
         .cro-events-gallery { grid-template-columns: 1fr; }
         .cro-gallery-item { aspect-ratio: 16/9; }
+        .cro-hero-actions { gap: 1rem; }
+        .cro-hero-actions .cro-btn { padding: 0.8rem 1.5rem; }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -195,19 +207,7 @@ function LandingStyles() {
 }
 
 function Header() {
-  return (
-    <nav className="cro-nav">
-      <div className="cro-shell cro-nav-inner">
-        <Link href="/invitaciones" className="cro-logo">KOMPRALO</Link>
-        <div className="cro-nav-links">
-          <Link href="#como-funciona" className="cro-nav-link">Cómo funciona</Link>
-          <Link href="/sofia-y-alejandro" className="cro-nav-link">Demo real</Link>
-          <Link href="#planes" className="cro-nav-link" data-cta="nav-planes">Ver planes</Link>
-          <Link href="/login" className="cro-nav-link" style={{ color: T.ink }}>Acceder</Link>
-        </div>
-      </div>
-    </nav>
-  );
+  return <InvitacionesHeader />;
 }
 
 function MobileStickyCTA() {
