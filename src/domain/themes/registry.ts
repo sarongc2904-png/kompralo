@@ -11,6 +11,11 @@ export const themesById: Record<ThemeId, InvitationTheme> = {
   floral: floralTheme,
   modern: modernTheme,
   azure: azureTheme,
+  // V2 theme mappings to V1 (for backwards compatibility and new ivory-editorial)
+  'ivory-editorial': champagneTheme, // ivory-editorial is premium champagne, uses same V1 base
+  'luxury-gold': champagneTheme,     // legacy gold maps to champagne
+  'luxury-champagne': champagneTheme,
+  'editorial': champagneTheme,
 };
 
 export function getThemeById(themeId?: string | null): InvitationTheme {

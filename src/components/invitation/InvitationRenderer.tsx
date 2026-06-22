@@ -104,22 +104,29 @@ export default function InvitationRenderer({
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
 
-  // When a preview theme is active, swap the V1 theme so all components pick up the new palette.
-  const effectiveTheme = themePreviewId === 'ivory-editorial' ? ivoryEditorialThemeV1 : theme;
-  const themeVariables = createThemeCssVariables(effectiveTheme);
-
   // V2 theme — resolved from the preview override (if any) or the invitation's saved themeId.
+  // Priority: preview override > saved invitation theme > fallback to 'editorial'
   const resolvedThemeId = themePreviewId ?? invitation.themeId;
   const themeV2 = resolveTheme(resolvedThemeId);
+
+  // For V1 compatibility: if resolved theme is ivory-editorial, use V1 ivory version.
+  // Otherwise use the passed-in theme (which was resolved from invitation.planId).
+  const effectiveTheme = resolvedThemeId === 'ivory-editorial' || themeV2.id === 'ivory-editorial'
+    ? ivoryEditorialThemeV1
+    : theme;
+
+  const themeVariables = createThemeCssVariables(effectiveTheme);
 
   const handleEnterInvitation = () => {
     // Platinum: CinematicIntro calls this when user taps "Entrar"
   };
 
-  // Temporary diagnostic logs — safe to remove after confirming sections render
+  // Diagnostic logs for debugging theme resolution
   if (typeof window !== 'undefined') {
     console.log('[theme] input themeId:', invitation.themeId, '| preview override:', themePreviewId);
-    console.log('[theme] resolved to:', themeV2.id, '| expected:', 'ivory-editorial');
+    console.log('[theme] resolved themeId:', resolvedThemeId);
+    console.log('[theme] V2 theme resolved to:', themeV2.id, '| expected: ivory-editorial');
+    console.log('[theme] effectiveTheme (V1):', effectiveTheme.id);
     console.log('[features] plan:', plan.id);
     console.log('[features] showTimeline:', features.showTimeline, '| items:', invitation.timeline?.length ?? 0);
     console.log('[features] showStoryBook:', features.showStoryBook, '| slides:', invitation.story?.slides?.length ?? 0);
