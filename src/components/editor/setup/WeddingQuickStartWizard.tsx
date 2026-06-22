@@ -69,6 +69,9 @@ export function WeddingQuickStartWizard({
     whatsappNumber: '',
   });
 
+  // Marker visible in browser console to confirm v2 is loaded in production
+  console.info('[KOMPRALO] Quick Start Wizard v2 loaded — planId:', planId);
+
   const update = (field: keyof WizardData, value: string | boolean | ThemeIdV2) => {
     setData((prev) => ({ ...prev, [field]: value }));
     setError(null);
