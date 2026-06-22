@@ -29,6 +29,7 @@ import {
   isDashboardAssistantEnabled,
 } from '@/features/dashboard-assistant/dashboardAssistantConfig';
 import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
+import { WeddingQuickStartSetup } from '@/components/editor/setup/WeddingQuickStartSetup';
 
 function isAdminMode(): boolean {
   return process.env.ADMIN_ACCESS_ENABLED === 'true';
@@ -207,7 +208,8 @@ export default async function EditInvitationPage({ params }: Props) {
           </p>
         </div>
 
-        {/* ── 1. Datos del evento ──────────────────────────────────────────── */}
+        <WeddingQuickStartSetup invitation={invitation}>
+          {/* ── 1. Datos del evento ──────────────────────────────────────────── */}
         <Section title="Datos del evento">
           <EditForm invitation={invitation} />
         </Section>
@@ -457,6 +459,7 @@ export default async function EditInvitationPage({ params }: Props) {
             ✨ Previsualiza tu invitación
           </a>
         </div>
+        </WeddingQuickStartSetup>
       </div>{/* end editor column */}
 
       {/* ── Preview panel ───────────────────────────────────────────────────── */}

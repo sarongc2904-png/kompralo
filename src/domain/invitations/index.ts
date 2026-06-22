@@ -21,6 +21,7 @@ export type {
   InvitationFinalMessageInput,
   InvitationTimelineEventInput,
   InvitationTimelineInput,
+  InvitationParentsInput,
   PadrinoIcon,
   InvitationSponsorInput,
   InvitationSponsorsInput,

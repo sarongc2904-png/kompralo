@@ -15,13 +15,22 @@ import type {
   InvitationGiftProviderInput,
   InvitationDressCodeInput,
   InvitationSponsorInput,
+  InvitationSponsorsInput,
   InvitationStorySlideInput,
   InvitationHotelInput,
   InvitationSocialInput,
   InvitationFinalMessageInput,
   InvitationTimelineEventInput,
+  InvitationGalleryInput,
+  InvitationItineraryInput,
+  InvitationTimelineInput,
+  InvitationGiftRegistryInput,
+  InvitationParentsInput,
+  InvitationAccommodationInput,
 } from '@/domain/invitations';
 import type { InvitationHeroVideoInput, ParentCouple } from '@/domain/invitations/types';
+import { generateWeddingTemplate } from '@/lib/invitations/generators/wedding-template-generator';
+import { resolveWeddingThemeId, type WeddingStyle, WEDDING_STYLES } from '@/domain/themes-v2/style-to-theme-map';
 
 // ─── Shared result type ───────────────────────────────────────────────────────
 
@@ -1178,6 +1187,8 @@ const VALID_THEME_IDS = new Set([
   'luxury-gold', 'editorial', 'floral', 'modern-dark',
   // V2 Wedding Premium (Phase 1)
   'ivory-editorial', 'luxury-champagne', 'modern-pastel', 'garden-romance', 'boho-terracotta', 'black-tie',
+  // V2 Wedding Premium (Phase 2 - Pastel Editorial variants)
+  'pastel-rose-editorial', 'pastel-sage-editorial', 'pastel-sky-editorial',
   // V1 legacy — still accepted so existing invitations don't break
   'champagne', 'modern', 'azure',
 ]);
@@ -1332,4 +1343,358 @@ export async function updateInvitationParents(
   revalidatePath(`/dashboard/invitations/${id}/edit`);
 
   return { success: true, message: 'Padres guardados correctamente.' };
+}
+
+// =============================================================================
+// startWeddingQuickStart
+// =============================================================================
+
+export interface StartWeddingQuickStartInput {
+  invitationId: string;
+  brideName: string;
+  groomName: string;
+  weddingDate: string;
+  weddingTime?: string;
+  selectedStyle: WeddingStyle;
+}
+
+export interface StartWeddingQuickStartResult {
+  success: boolean;
+  message: string;
+  invitationId?: string;
+  previewUrl?: string;
+  publicUrl?: string;
+  error?: string;
+}
+
+function validateQuickStartInput(input: StartWeddingQuickStartInput): string | null {
+  if (!input.invitationId?.trim()) {
+    return 'ID de invitación requerido.';
+  }
+  if (!input.brideName?.trim()) {
+    return 'Nombre de la novia requerido.';
+  }
+  if (!input.groomName?.trim()) {
+    return 'Nombre del novio requerido.';
+  }
+  if (!input.weddingDate?.trim()) {
+    return 'Fecha de la boda requerida.';
+  }
+  if (!WEDDING_STYLES.includes(input.selectedStyle)) {
+    return `Estilo de boda no válido. Opciones: ${WEDDING_STYLES.join(', ')}`;
+  }
+  return null;
+}
+
+/**
+ * FASE 1B: Start a quick-start wizard for wedding invitations.
+ *
+ * Generates initial invitation_content based on plan tier and user inputs,
+ * preserving any existing real data. Sets theme_id via updateThemeSelection.
+ *
+ * Workflow:
+ * 1. Validate input
+ * 2. Authorize access (ownership + admin override)
+ * 3. Confirm category === 'wedding'
+ * 4. Read existing content from DB
+ * 5. Call generateWeddingTemplate() with plan-aware logic
+ * 6. Save generated sections using existing repository methods (RMW pattern)
+ * 7. Update theme_id on invitations table
+ * 8. Revalidate all relevant routes
+ * 9. Return success with preview/public URLs
+ */
+export async function startWeddingQuickStart(
+  input: StartWeddingQuickStartInput,
+): Promise<StartWeddingQuickStartResult> {
+  // ─── 1. Validate input ────────────────────────────────────────────────────
+  const validationError = validateQuickStartInput(input);
+  if (validationError) {
+    return { success: false, message: validationError };
+  }
+
+  const { invitationId, brideName, groomName, weddingDate, weddingTime, selectedStyle } = input;
+
+  try {
+    // ─── 2. Get authorized repository ─────────────────────────────────────
+    const repo = await getAuthorizedInvitationRepository(invitationId);
+
+    // ─── 3. Fetch current invitation to verify category & plan ────────────
+    const current = await repo.getById(invitationId);
+    if (!current) {
+      return { success: false, message: 'Invitación no encontrada.' };
+    }
+
+    if (current.category !== 'wedding') {
+      return {
+        success: false,
+        message: 'El asistente Quick Start solo funciona para invitaciones de bodas.',
+      };
+    }
+
+    const planId = normalizePlanId(current.planId);
+
+    // ─── 4. Generate template content using FASE 1A logic ────────────────
+    const generatedContent = generateWeddingTemplate({
+      brideName: brideName.trim(),
+      groomName: groomName.trim(),
+      weddingDate,
+      weddingTime: weddingTime?.trim(),
+      selectedStyle,
+      planId,
+      existingContent: {
+        protagonists: current.protagonists,
+        event_time: current.eventTime,
+        hero: current.hero,
+        final_message: current.finalMessage,
+        gallery: current.gallery,
+        itinerary: current.itinerary,
+        dress_code: current.dressCode,
+        location: current.location,
+        timeline: current.timeline,
+        gift_registry: current.giftRegistry,
+        parents: current.parents,
+        padrinos: current.padrinos,
+        hotels: current.hotels,
+        social: current.social,
+      },
+    });
+
+    // ─── 5. Save generated content using repository update methods ───────
+    // Use the existing RMW pattern for each section
+    // Only save fields that were generated for this plan tier
+
+    if (generatedContent.protagonists !== undefined) {
+      const protagonistInputs: InvitationProtagonistInput[] = generatedContent.protagonists.map(
+        (p) => ({
+          id: p.id,
+          name: p.name,
+          role: p.role || '',
+          familyLabel: p.familyLabel || '',
+          imageUrl: p.imageUrl || '',
+          quote: p.quote || '',
+        }),
+      );
+      await repo.updateProtagonists(invitationId, { protagonists: protagonistInputs });
+      console.log('[QuickStart] Saved protagonists');
+    }
+
+    if (generatedContent.event_time !== undefined) {
+      // event_time is saved via updateBasicInfo or as part of invitation_content
+      // We'll use updateBasicInfo which handles event_time
+      const basicInput = {
+        title: current.title,
+        subtitle: current.subtitle,
+        slug: current.slug,
+        eventDate: normalizeDateForSave(weddingDate),
+        eventTime: generatedContent.event_time,
+        venueName: generatedContent.location?.venueName || current.location?.venueName || '',
+        address: generatedContent.location?.address || current.location?.address || '',
+        rsvpWhatsAppNumber: current.rsvpWhatsAppNumber || '',
+        finalMessageQuote: generatedContent.final_message?.quote || current.finalMessage?.quote || '',
+      };
+      await repo.updateBasicInfo(invitationId, basicInput);
+      console.log('[QuickStart] Saved event_time and basic info');
+    }
+
+    if (generatedContent.hero !== undefined) {
+      // Only update hero if we have meaningful data to avoid overwriting
+      const hasGeneratedHero =
+        (generatedContent.hero.emotionalPhrase || generatedContent.hero.eventLabel) &&
+        (!current.hero?.emotionalPhrase || !current.hero?.eventLabel);
+
+      if (hasGeneratedHero || !current.hero) {
+        const mediaInput: UpdateInvitationMediaInput = {
+          id: invitationId,
+          slug: current.slug,
+          heroImageUrl: current.hero?.imageUrl || '',
+          heroVideoUrl: current.hero?.videoUrl || '',
+          musicUrl: current.music?.audioUrl || '',
+          musicTitle: current.music?.title || '',
+          youtubeUrl: current.hero?.youtubeUrl || '',
+          googleMapsUrl: current.location?.googleMapsLink || '',
+          wazeUrl: current.location?.wazeLink || '',
+        };
+        await repo.updateMediaInfo(invitationId, mediaInput);
+        console.log('[QuickStart] Updated hero via mediaInfo');
+      }
+    }
+
+    if (generatedContent.final_message !== undefined && planId !== 'basic') {
+      const finalMessageInput: InvitationFinalMessageInput = {
+        title: generatedContent.final_message.title || '',
+        message: generatedContent.final_message.message || '',
+        quote: generatedContent.final_message.quote || '',
+        imageUrl: generatedContent.final_message.imageUrl || '',
+        signature: generatedContent.final_message.signature || '',
+      };
+      await repo.updateFinalMessage(invitationId, finalMessageInput);
+      console.log('[QuickStart] Saved final_message');
+    }
+
+    // Premium+ sections
+    if (planId === 'premium' || planId === 'deluxe') {
+      if (generatedContent.gallery !== undefined && !current.gallery?.images?.length) {
+        const galleryInput: InvitationGalleryInput = {
+          items: generatedContent.gallery.images.map((url, idx) => ({
+            url,
+            caption: generatedContent.gallery?.captions?.[idx] || '',
+          })),
+        };
+        await repo.updateGallery(invitationId, galleryInput);
+        console.log('[QuickStart] Saved gallery');
+      }
+
+      if (generatedContent.itinerary !== undefined && !current.itinerary?.length) {
+        const itineraryInput: InvitationItineraryInput = {
+          items: generatedContent.itinerary.map((item) => ({
+            id: item.id,
+            time: item.time,
+            title: item.title,
+            location: item.location,
+            icon: item.icon,
+            description: item.description || '',
+          })),
+        };
+        await repo.updateItinerary(invitationId, itineraryInput);
+        console.log('[QuickStart] Saved itinerary');
+      }
+
+      if (generatedContent.dress_code !== undefined && !current.dressCode?.type) {
+        const dressCodeInput: InvitationDressCodeInput = {
+          type: generatedContent.dress_code.type,
+          title: generatedContent.dress_code.title || '',
+          description: generatedContent.dress_code.description,
+          observations: generatedContent.dress_code.observations || '',
+          primaryColor: generatedContent.dress_code.primaryColor || '',
+          secondaryColor: generatedContent.dress_code.secondaryColor || '',
+          suggestionsList: generatedContent.dress_code.suggestionsList || [],
+        };
+        await repo.updateDressCode(invitationId, dressCodeInput);
+        console.log('[QuickStart] Saved dress_code');
+      }
+
+      if (generatedContent.location !== undefined && !current.location?.venueName) {
+        // Location already saved via updateBasicInfo, but ensure maps links exist
+        // (handled in basicInfo step above)
+        console.log('[QuickStart] Location data handled via basicInfo');
+      }
+    }
+
+    // Deluxe+ sections
+    if (planId === 'deluxe') {
+      if (generatedContent.timeline !== undefined && !current.timeline?.length) {
+        const timelineInput: InvitationTimelineInput = {
+          events: generatedContent.timeline.map((event) => ({
+            id: event.id,
+            year: event.year,
+            title: event.title,
+            description: event.description,
+            imageUrl: event.imageUrl || '',
+          })),
+        };
+        await repo.updateTimeline(invitationId, timelineInput);
+        console.log('[QuickStart] Saved timeline');
+      }
+
+      if (generatedContent.gift_registry !== undefined && !current.giftRegistry?.items?.length) {
+        const giftRegistryInput: InvitationGiftRegistryInput = {
+          items: generatedContent.gift_registry.items.map((item) => ({
+            id: item.id,
+            provider: item.provider,
+            logoType: item.logoType,
+            link: item.link || '',
+            description: item.description || '',
+            bankName: item.bankDetails?.bankName || '',
+            clabe: item.bankDetails?.clabe || '',
+            accountOwner: item.bankDetails?.accountOwner || '',
+          })),
+        };
+        await repo.updateGiftRegistry(invitationId, giftRegistryInput);
+        console.log('[QuickStart] Saved gift_registry');
+      }
+
+      if (generatedContent.parents !== undefined && !current.parents?.length) {
+        const parentsInput: InvitationParentsInput = {
+          parents: generatedContent.parents,
+        };
+        await repo.updateParents(invitationId, parentsInput);
+        console.log('[QuickStart] Saved parents');
+      }
+
+      if (generatedContent.padrinos !== undefined && !current.padrinos?.length) {
+        const padrinosInput: InvitationSponsorsInput = {
+          padrinos: generatedContent.padrinos.map((p) => ({
+            id: p.id,
+            rubro: p.rubro,
+            icon: p.icon,
+            names: p.names,
+          })),
+        };
+        await repo.updatePadrinos(invitationId, padrinosInput);
+        console.log('[QuickStart] Saved padrinos');
+      }
+
+      if (generatedContent.hotels !== undefined && !current.hotels?.length) {
+        const hotelsInput: InvitationAccommodationInput = {
+          hotels: generatedContent.hotels.map((h) => ({
+            id: h.id,
+            name: h.name,
+            stars: h.stars,
+            address: h.address,
+            distance: h.distance,
+            priceRange: h.priceRange,
+            phone: h.phone || '',
+            bookingLink: h.bookingLink || '',
+            imageUrl: h.imageUrl || '',
+            description: h.description || '',
+          })),
+        };
+        await repo.updateAccommodation(invitationId, hotelsInput);
+        console.log('[QuickStart] Saved hotels');
+      }
+
+      if (generatedContent.social !== undefined && !current.social?.hashtag) {
+        const socialInput: InvitationSocialInput = {
+          hashtag: generatedContent.social.hashtag,
+          instagramHandle: generatedContent.social.instagramHandle || '',
+          tiktokHandle: generatedContent.social.tiktokHandle || '',
+          facebookUrl: generatedContent.social.facebookUrl || '',
+          youtubeUrl: generatedContent.social.youtubeUrl || '',
+          note: generatedContent.social.note || '',
+        };
+        await repo.updateSocial(invitationId, socialInput);
+        console.log('[QuickStart] Saved social');
+      }
+    }
+
+    // ─── 6. Update theme_id in invitations table ──────────────────────────
+    const themeId = resolveWeddingThemeId(selectedStyle);
+    await repo.updateThemeSelection(invitationId, { themeId });
+    console.log('[QuickStart] Set theme_id to:', themeId);
+
+    // ─── 7. Revalidate all relevant routes ────────────────────────────────
+    revalidatePath(`/dashboard/invitations/${invitationId}/edit`);
+    revalidatePath(`/preview/${invitationId}`);
+    revalidatePath(`/i/${current.slug}`);
+    revalidatePath(`/${current.slug}`);
+    revalidatePath(`/invitaciones/${current.slug}`);
+
+    console.log('[QuickStart] Wedding quick start completed for invitation:', invitationId);
+
+    return {
+      success: true,
+      message: 'Tu invitación fue creada correctamente.',
+      invitationId,
+      previewUrl: `/preview/${invitationId}`,
+      publicUrl: `/i/${current.slug}`,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[QuickStart] Error:', message);
+    return {
+      success: false,
+      message: `Error al generar la invitación: ${message}`,
+      error: message,
+    };
+  }
 }
