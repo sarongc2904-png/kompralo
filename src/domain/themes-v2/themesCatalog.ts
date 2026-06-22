@@ -69,6 +69,34 @@ export const weddingThemesCatalog: ThemeCatalogEntry[] = [
     accentColor: '#E8D4A0',
     isNewTheme: true,
   },
+  // Pastel editorial variants
+  {
+    id: 'pastel-rose-editorial',
+    label: 'Pastel Rose Editorial',
+    description: 'Romántico con tonos pastel: suave, elegante y delicado',
+    category: 'traditional',
+    previewColor: '#FFF7F8',
+    accentColor: '#B76E79',
+    isNewTheme: true,
+  },
+  {
+    id: 'pastel-sage-editorial',
+    label: 'Pastel Sage Editorial',
+    description: 'Natural con tonos verdes: jardín, fresco y sereno',
+    category: 'traditional',
+    previewColor: '#F6FAF6',
+    accentColor: '#6F8F72',
+    isNewTheme: true,
+  },
+  {
+    id: 'pastel-sky-editorial',
+    label: 'Pastel Sky Editorial',
+    description: 'Moderno con tonos celestes: limpio, luminoso y fresco',
+    category: 'modern',
+    previewColor: '#F5FAFF',
+    accentColor: '#6F8FBF',
+    isNewTheme: true,
+  },
   // Legacy themes (kept for backwards compatibility, not featured in wedding selector)
   {
     id: 'editorial',
@@ -98,10 +126,12 @@ export function getThemeCatalogEntry(themeId: ThemeIdV2 | null | undefined): The
 
 /**
  * Get all featured wedding themes for editor UI
- * Currently only ivory-editorial is available.
+ * Currently showing: ivory-editorial + 3 pastel variants
  * TODO: Enable 'luxury-champagne' when ready (modern classic variant)
- * TODO: Enable 'garden-romance' or another variant when ready (romantic floral)
+ * TODO: Enable 'garden-romance' when ready (romantic floral)
  */
 export function getFeaturedWeddingThemes(): ThemeCatalogEntry[] {
-  return weddingThemesCatalog.filter((theme) => theme.id === 'ivory-editorial');
+  return weddingThemesCatalog.filter((theme) =>
+    ['ivory-editorial', 'pastel-rose-editorial', 'pastel-sage-editorial', 'pastel-sky-editorial'].includes(theme.id)
+  );
 }

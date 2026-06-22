@@ -1,28 +1,34 @@
 import type { InvitationThemeV2, ThemeIdV2 } from '@/domain/themes-v2/types';
-import { luxuryGoldTheme }      from '@/domain/themes-v2/themes/luxury-gold';
-import { editorialTheme }       from '@/domain/themes-v2/themes/editorial';
-import { floralTheme }          from '@/domain/themes-v2/themes/floral';
-import { modernDarkTheme }      from '@/domain/themes-v2/themes/modern-dark';
-import { ivoryEditorialTheme }  from '@/domain/themes-v2/themes/ivory-editorial';
-import { luxuryChampagneTheme } from '@/domain/themes-v2/themes/luxury-champagne';
-import { modernPastelTheme }    from '@/domain/themes-v2/themes/modern-pastel';
-import { gardenRomanceTheme }   from '@/domain/themes-v2/themes/garden-romance';
-import { bohoTerracottaTheme }  from '@/domain/themes-v2/themes/boho-terracotta';
-import { blackTieTheme }        from '@/domain/themes-v2/themes/black-tie';
+import { luxuryGoldTheme }           from '@/domain/themes-v2/themes/luxury-gold';
+import { editorialTheme }            from '@/domain/themes-v2/themes/editorial';
+import { floralTheme }               from '@/domain/themes-v2/themes/floral';
+import { modernDarkTheme }           from '@/domain/themes-v2/themes/modern-dark';
+import { ivoryEditorialTheme }       from '@/domain/themes-v2/themes/ivory-editorial';
+import { luxuryChampagneTheme }      from '@/domain/themes-v2/themes/luxury-champagne';
+import { modernPastelTheme }         from '@/domain/themes-v2/themes/modern-pastel';
+import { gardenRomanceTheme }        from '@/domain/themes-v2/themes/garden-romance';
+import { bohoTerracottaTheme }       from '@/domain/themes-v2/themes/boho-terracotta';
+import { blackTieTheme }             from '@/domain/themes-v2/themes/black-tie';
+import { pastelRoseEditorialTheme }  from '@/domain/themes-v2/themes/pastel-rose-editorial';
+import { pastelSageEditorialTheme }  from '@/domain/themes-v2/themes/pastel-sage-editorial';
+import { pastelSkyEditorialTheme }   from '@/domain/themes-v2/themes/pastel-sky-editorial';
 
-export const defaultThemeIdV2: ThemeIdV2 = 'editorial';
+export const defaultThemeIdV2: ThemeIdV2 = 'ivory-editorial';
 
 export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = {
-  'luxury-gold':         luxuryGoldTheme,
-  'editorial':           editorialTheme,
-  'floral':              floralTheme,
-  'modern-dark':         modernDarkTheme,
-  'ivory-editorial':     ivoryEditorialTheme,
-  'luxury-champagne':    luxuryChampagneTheme,
-  'modern-pastel':       modernPastelTheme,
-  'garden-romance':      gardenRomanceTheme,
-  'boho-terracotta':     bohoTerracottaTheme,
-  'black-tie':           blackTieTheme,
+  'luxury-gold':           luxuryGoldTheme,
+  'editorial':             editorialTheme,
+  'floral':                floralTheme,
+  'modern-dark':           modernDarkTheme,
+  'ivory-editorial':       ivoryEditorialTheme,
+  'luxury-champagne':      luxuryChampagneTheme,
+  'modern-pastel':         modernPastelTheme,
+  'garden-romance':        gardenRomanceTheme,
+  'boho-terracotta':       bohoTerracottaTheme,
+  'black-tie':             blackTieTheme,
+  'pastel-rose-editorial': pastelRoseEditorialTheme,
+  'pastel-sage-editorial': pastelSageEditorialTheme,
+  'pastel-sky-editorial':  pastelSkyEditorialTheme,
 };
 
 /**

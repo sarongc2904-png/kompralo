@@ -108,7 +108,7 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
     backgroundLayer3: '/layers/bg_layer3_champagne.png',
   },
 
-  dressCodeSwatches: ['#FBF7EF', '#F2E4C8', '#C8A75D', '#E8C5B8', '#C8D1C1'],
+  dressCodeSwatches: ['#111111', '#1F2A44', '#6B1E2D', '#4F5D4A', '#C9A646'],
 
   cssVariables: {
     '--v2-color-page-bg':          '#FBF7EF',
@@ -259,7 +259,7 @@ export const ivoryEditorialThemeV1: InvitationTheme = {
   paperTexture:      true,
   bgSolid:           '#FBF7EF',
   bgGlows:           ['#C8A75D', 'rgba(200,167,93,0.25)', '#F2E4C8'],
-  dressCodeSwatches: ['#FBF7EF', '#F2E4C8', '#C8A75D', '#E8C5B8', '#C8D1C1'],
+  dressCodeSwatches: ['#111111', '#1F2A44', '#6B1E2D', '#4F5D4A', '#C9A646'],
 
   cssVariables: {
     '--color-page-bg':        '#FBF7EF',

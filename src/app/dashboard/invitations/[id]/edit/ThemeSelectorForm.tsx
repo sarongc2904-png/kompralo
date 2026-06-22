@@ -7,12 +7,14 @@ import { updateThemeSelection } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
 
 // ─── Theme visibility ────────────────────────────────────────────────────────
-// Only show ivory-editorial to users. Other themes are in development.
-// TODO: Enable 2 additional themes when ready:
-// - TODO: Add 1 modern minimal theme
-// - TODO: Add 1 romantic bohemian theme
+// Show ivory-editorial + 3 pastel editorial variants to users
 
-const VISIBLE_THEME_IDS = new Set(['ivory-editorial']);
+const VISIBLE_THEME_IDS = new Set([
+  'ivory-editorial',
+  'pastel-rose-editorial',
+  'pastel-sage-editorial',
+  'pastel-sky-editorial',
+]);
 
 function getVisibleThemes() {
   return availableThemesV2.filter((theme) => VISIBLE_THEME_IDS.has(theme.id));
@@ -36,6 +38,9 @@ const V1_TO_V2_DISPLAY: Record<string, string> = {
   'boho-terracotta': 'ivory-editorial',
   'black-tie': 'ivory-editorial',
   'modern-pastel': 'ivory-editorial',
+  'pastel-rose-editorial': 'pastel-rose-editorial',
+  'pastel-sage-editorial': 'pastel-sage-editorial',
+  'pastel-sky-editorial': 'pastel-sky-editorial',
 };
 
 function resolveDisplayId(themeId: string): string {

@@ -2,7 +2,8 @@ import type { CSSProperties } from 'react';
 import type { EventCategory } from '@/domain/invitations/types';
 
 export type ThemeId = 'champagne' | 'floral' | 'modern' | 'azure'
-  | 'ivory-editorial' | 'luxury-gold' | 'luxury-champagne' | 'editorial'; // V2 theme aliases mapped to V1
+  | 'ivory-editorial' | 'pastel-rose-editorial' | 'pastel-sage-editorial' | 'pastel-sky-editorial'
+  | 'luxury-gold' | 'luxury-champagne' | 'editorial'; // V2 theme aliases mapped to V1
 
 export type ThemeAnimationPreset =
   | 'cinematic-soft'

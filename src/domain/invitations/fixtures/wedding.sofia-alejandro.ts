@@ -41,31 +41,31 @@ export const sofiaAlejandroWeddingInvitation: InvitationContent = {
     eventLabel: 'Nuestra Boda',
   },
   music: {
-    audioUrl: '/audio/wedding-background.mp3',
+    audioUrl: '/audio/demo/boda-elegante.mp3',
   },
   story: {
     slides: [
       {
         id: 'story-1',
-        imageUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800',
+        imageUrl: '/images/invitaciones/demo/moments/moment-1.png',
         title: 'Así nos conocimos',
         text: 'Todo comenzó una tarde lluviosa de otoño. Lo que empezó como un café casual para hablar de proyectos se convirtió en una conversación de cuatro horas sobre el universo, libros y sueños. Ese día supimos que algo especial había comenzado.',
       },
       {
         id: 'story-2',
-        imageUrl: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800',
+        imageUrl: '/images/invitaciones/demo/moments/moment-2.png',
         title: 'Nuestra primera conversación',
         text: 'Hablamos durante horas sobre el universo, los libros y los sueños. Ese día supimos que había algo especial entre nosotros, algo que ninguno de los dos quería dejar escapar.',
       },
       {
         id: 'story-3',
-        imageUrl: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?q=80&w=800',
+        imageUrl: '/images/invitaciones/demo/moments/moment-3.png',
         title: 'Nuestro primer viaje',
         text: 'Esa aventura nos enseñó que juntos todo es mejor, cada camino es más bonito. Descubrimos que viajar no es solo cambiar de lugar, sino aprender a mirar el mundo a través de los ojos del otro.',
       },
       {
         id: 'story-4',
-        imageUrl: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800',
+        imageUrl: '/images/invitaciones/demo/moments/moment-4.png',
         title: 'El momento perfecto',
         text: 'Y así llegamos al día en que decidimos escribir nuestro para siempre. Frente al mar y bajo un cielo teñido de atardecer, supimos que este era el momento más perfecto de nuestras vidas.',
       },
@@ -73,10 +73,10 @@ export const sofiaAlejandroWeddingInvitation: InvitationContent = {
   },
   gallery: {
     images: [
-      'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800',
-      'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=800',
-      'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=800',
-      'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800',
+      '/images/invitaciones/demo/moments/moment-1.png',
+      '/images/invitaciones/demo/moments/moment-2.png',
+      '/images/invitaciones/demo/moments/moment-3.png',
+      '/images/invitaciones/demo/moments/moment-4.png',
     ],
   },
   timeline: [
