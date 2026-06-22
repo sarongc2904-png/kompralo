@@ -109,7 +109,8 @@ export default function InvitationRenderer({
   const themeVariables = createThemeCssVariables(effectiveTheme);
 
   // V2 theme — resolved from the preview override (if any) or the invitation's saved themeId.
-  const themeV2 = resolveTheme(themePreviewId ?? invitation.themeId);
+  const resolvedThemeId = themePreviewId ?? invitation.themeId;
+  const themeV2 = resolveTheme(resolvedThemeId);
 
   const handleEnterInvitation = () => {
     // Platinum: CinematicIntro calls this when user taps "Entrar"
@@ -117,6 +118,8 @@ export default function InvitationRenderer({
 
   // Temporary diagnostic logs — safe to remove after confirming sections render
   if (typeof window !== 'undefined') {
+    console.log('[theme] input themeId:', invitation.themeId, '| preview override:', themePreviewId);
+    console.log('[theme] resolved to:', themeV2.id, '| expected:', 'ivory-editorial');
     console.log('[features] plan:', plan.id);
     console.log('[features] showTimeline:', features.showTimeline, '| items:', invitation.timeline?.length ?? 0);
     console.log('[features] showStoryBook:', features.showStoryBook, '| slides:', invitation.story?.slides?.length ?? 0);

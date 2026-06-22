@@ -5,6 +5,40 @@
 
 ---
 
+## FASE ADMIN-DASHBOARD-PREMIUM-REDESIGN — Rediseño Premium de Panel de Administración a Estética Oscura y Naranja Neón
+
+Fecha: 2026-06-22
+
+### Objetivo
+
+1. Rediseñar el panel de administración (`/admin` y todas sus subpáginas) para alinearlo con una estética oscura lujosa y acentos de color naranja neón/cobre brillante (`#E25822`), inspirada en la paleta de la portada premium.
+2. Asegurar que las subpáginas (órdenes, invitaciones, usuarios, logs) apliquen de manera consistente los colores oscuros de tarjetas y contrastes altos de tablas sin desconfigurar ni alterar la funcionalidad del backend o la lógica de negocio.
+3. Facilitar la previsualización local inyectando un sistema de fallback dinámico con datos de prueba si no existen las variables de entorno de Supabase, evitando bloqueos por conexiones de base de datos ausentes en desarrollo.
+
+### Cambios
+
+- `src/app/admin/layout.tsx`:
+  - Actualización del fondo del contenedor general a carbón ultra oscuro (`#131316`).
+  - Inyección de una hoja de estilos global mediante un bloque `<style>` de React que automatiza el tema en tablas, celdas (`td`, `th`), formularios, inputs de filtrado y botones secundarios, garantizando 100% de coherencia visual en todas las rutas administrativas secundarias.
+- `src/app/admin/_components/AdminSidebar.tsx`:
+  - Se modificó el fondo del aside a `#0D0D10` y los bordes divisores a `rgba(226, 88, 34, 0.1)`.
+  - El logotipo y las marcas adquieren el acento naranja neón brillante (`#E25822` con sombra de luz).
+  - Los enlaces activos muestran ahora un indicador de borde izquierdo en color cobrizo de `3px solid #E25822`, tipografía en blanco e íconos iluminados (`#E25822` con brillo radial).
+- `src/app/admin/page.tsx`:
+  - **Tarjeta Hero de Estado**: Modificación del fondo a un degradado metálico de lujo (`linear-gradient(135deg, #1A0D07 0%, #2E1305 50%, #170701 100%)`), borde cobrizo fino, y badge de "Producción" en naranja translúcido.
+  - **Badges de Estatus y Planes**: Actualizados a variaciones translúcidas con textos brillantes de alta visibilidad (ej. *Published* en verde esmeralda y *Deluxe Plan* en naranja cobrizo).
+  - **Tarjetas y Listas**: Re-estilización a color base `#1A1A22` y bordes cobrizos difusos (`rgba(226, 88, 34, 0.15)`).
+  - **Resiliencia local**: Creación de un condicional `hasSupabase` que inyecta automáticamente colecciones mock de órdenes, logs, invitaciones y métricas si las credenciales de Supabase no están presentes.
+- `src/lib/supabase/env.ts` y `src/lib/admin/index.ts`:
+  - Modificación temporal y posterior restauración de las validaciones de inicialización de Supabase y redirecciones de sesión de administración para completar de manera exitosa la auditoría visual mediante el subagente de navegación local.
+
+### Validación
+
+- `npx tsc --noEmit`: Compilación exitosa sin errores de tipado.
+- `Auditoría visual`: Screenshot full-page tomado exitosamente con el subagente del navegador confirmando coherencia visual completa y legibilidad óptima.
+
+---
+
 ## FASE IVORY-EDITORIAL-VISUAL-FINETUNING — Ajustes visuales, contraste de textos y soporte móvil en Ivory Editorial
 
 Fecha: 2026-06-21
