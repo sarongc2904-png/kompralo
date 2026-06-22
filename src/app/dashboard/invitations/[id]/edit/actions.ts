@@ -25,12 +25,11 @@ import type {
   InvitationItineraryInput,
   InvitationTimelineInput,
   InvitationGiftRegistryInput,
-  InvitationParentsInput,
   InvitationAccommodationInput,
 } from '@/domain/invitations';
 import type { InvitationHeroVideoInput, ParentCouple } from '@/domain/invitations/types';
 import { generateWeddingTemplate } from '@/lib/invitations/generators/wedding-template-generator';
-import { resolveWeddingThemeId, type WeddingStyle, WEDDING_STYLES } from '@/domain/themes-v2/style-to-theme-map';
+import { resolveWeddingThemeId, type WeddingStyle } from '@/domain/themes-v2/style-to-theme-map';
 
 // ─── Shared result type ───────────────────────────────────────────────────────
 

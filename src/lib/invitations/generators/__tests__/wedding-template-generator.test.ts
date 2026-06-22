@@ -208,7 +208,7 @@ function test_6_event_time_always_string(): void {
 // ─── Test 7: No theme_id or sections in result ────────────────────────────
 
 function test_7_no_theme_or_sections(): void {
-  const result = generateWeddingTemplate(DELUXE_PARAMS) as any;
+  const result = generateWeddingTemplate(DELUXE_PARAMS) as Record<string, unknown>;
 
   assert(result.theme_id === undefined, 'theme_id should not be in result');
   assert(result.sections === undefined, 'sections should not exist');
