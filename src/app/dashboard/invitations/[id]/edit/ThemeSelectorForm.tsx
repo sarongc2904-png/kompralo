@@ -6,19 +6,40 @@ import type { InvitationThemeV2 } from '@/domain/themes-v2';
 import { updateThemeSelection } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
 
+// ─── Theme visibility ────────────────────────────────────────────────────────
+// Only show ivory-editorial to users. Other themes are in development.
+// TODO: Enable 2 additional themes when ready:
+// - TODO: Add 1 modern minimal theme
+// - TODO: Add 1 romantic bohemian theme
+
+const VISIBLE_THEME_IDS = new Set(['ivory-editorial']);
+
+function getVisibleThemes() {
+  return availableThemesV2.filter((theme) => VISIBLE_THEME_IDS.has(theme.id));
+}
+
 // ─── V1 → V2 display map ─────────────────────────────────────────────────────
 // If the invitation currently has a legacy v1 themeId, map it to the
 // nearest v2 equivalent for the "currently selected" highlight.
+// All legacy themes now resolve to ivory-editorial.
 
 const V1_TO_V2_DISPLAY: Record<string, string> = {
-  champagne: 'editorial',
-  modern:    'modern-dark',
-  azure:     'editorial',
-  floral:    'floral',
+  champagne: 'ivory-editorial',    // Was 'editorial', now ivory-editorial
+  modern:    'ivory-editorial',    // Was 'modern-dark', now ivory-editorial
+  azure:     'ivory-editorial',    // Was 'editorial', now ivory-editorial
+  floral:    'ivory-editorial',    // Was 'floral', now ivory-editorial
+  editorial: 'ivory-editorial',    // Map all old themes to ivory-editorial
+  'modern-dark': 'ivory-editorial',
+  'luxury-gold': 'ivory-editorial',
+  'luxury-champagne': 'ivory-editorial',
+  'garden-romance': 'ivory-editorial',
+  'boho-terracotta': 'ivory-editorial',
+  'black-tie': 'ivory-editorial',
+  'modern-pastel': 'ivory-editorial',
 };
 
 function resolveDisplayId(themeId: string): string {
-  return V1_TO_V2_DISPLAY[themeId] ?? themeId;
+  return V1_TO_V2_DISPLAY[themeId] ?? 'ivory-editorial';
 }
 
 // ─── Color swatches preview ───────────────────────────────────────────────────
@@ -81,7 +102,7 @@ export function ThemeSelectorForm({ invitationId, slug, currentThemeId }: Props)
     <div className="space-y-6">
       {/* Theme grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {availableThemesV2.map((theme) => {
+        {getVisibleThemes().map((theme) => {
           const isSelected = selected === theme.id;
           const isCurrent  = displayCurrent === theme.id && selected === displayCurrent;
 

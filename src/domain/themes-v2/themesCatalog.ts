@@ -97,8 +97,11 @@ export function getThemeCatalogEntry(themeId: ThemeIdV2 | null | undefined): The
 }
 
 /**
- * Get all featured wedding themes (new themes + notable legacy ones)
+ * Get all featured wedding themes for editor UI
+ * Currently only ivory-editorial is available.
+ * TODO: Enable 'luxury-champagne' when ready (modern classic variant)
+ * TODO: Enable 'garden-romance' or another variant when ready (romantic floral)
  */
 export function getFeaturedWeddingThemes(): ThemeCatalogEntry[] {
-  return weddingThemesCatalog.filter((theme) => theme.isNewTheme || theme.id === 'editorial' || theme.id === 'luxury-gold');
+  return weddingThemesCatalog.filter((theme) => theme.id === 'ivory-editorial');
 }
