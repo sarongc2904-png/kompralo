@@ -495,9 +495,6 @@ function buildLayerContent(
       return { layer1: <></>, layer2: <></>, layer3: <></> };
 
     case 'floral':
-    case 'pastel-rose-editorial':
-    case 'pastel-sage-editorial':
-    case 'pastel-sky-editorial':
       return {
         layer1: (
           <>
@@ -534,6 +531,11 @@ function buildLayerContent(
           </div>
         ),
       };
+
+    case 'pastel-rose-editorial':
+    case 'pastel-sage-editorial':
+    case 'pastel-sky-editorial':
+      return { layer1: <></>, layer2: <></>, layer3: <></> };
 
     case 'ivory-editorial':
     case 'editorial':
@@ -617,7 +619,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
         <BackgroundPattern />
 
         {/* Watercolor floral background reference backdrop */}
-        {(themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial') && (
+        {(themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial' || themeV2.id === 'pastel-rose-editorial' || themeV2.id === 'pastel-sage-editorial' || themeV2.id === 'pastel-sky-editorial') && (
           <div
             className="absolute inset-0"
             style={{
