@@ -1,6 +1,55 @@
 import type { ThemeIdV2 } from '@/domain/themes-v2/types';
 
 /**
+ * Wizard theme options — shown as visual cards in the Quick Start wizard.
+ * Maps to valid ThemeIdV2 values.
+ */
+export const WIZARD_THEME_OPTIONS = [
+  {
+    id: 'pastel-rose-editorial' as ThemeIdV2,
+    label: 'Romántico floral',
+    desc: 'Flores y rosas pastel',
+    accent: '#D4829A',
+    bg: '#FDF5F7',
+  },
+  {
+    id: 'pastel-sage-editorial' as ThemeIdV2,
+    label: 'Natural elegante',
+    desc: 'Verde y eucalipto',
+    accent: '#7A9E7E',
+    bg: '#F5FAF6',
+  },
+  {
+    id: 'pastel-sky-editorial' as ThemeIdV2,
+    label: 'Cielo pastel',
+    desc: 'Azul celeste',
+    accent: '#6F8FBF',
+    bg: '#F5FAFF',
+  },
+  {
+    id: 'ivory-editorial' as ThemeIdV2,
+    label: 'Editorial clásico',
+    desc: 'Dorado y marfil',
+    accent: '#B99752',
+    bg: '#FAF7F2',
+  },
+  {
+    id: 'luxury-champagne' as ThemeIdV2,
+    label: 'Champagne elegante',
+    desc: 'Champagne y oro',
+    accent: '#C9A84C',
+    bg: '#FBF8F1',
+  },
+  {
+    id: 'modern-pastel' as ThemeIdV2,
+    label: 'Minimalista moderno',
+    desc: 'Limpio y fresco',
+    accent: '#8B9BB4',
+    bg: '#F8F9FC',
+  },
+] as const;
+
+/**
  * Wedding style options — user-facing friendly names.
  * Mapped to concrete ThemeIdV2 values for rendering.
  */

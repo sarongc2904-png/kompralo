@@ -43,7 +43,8 @@ export interface GenerateWeddingTemplateParams {
   groomName: string;
   weddingDate: string;
   weddingTime?: string;
-  selectedStyle: WeddingStyle;
+  receptionTime?: string;
+  selectedStyle?: WeddingStyle;
   planId: PlanId;
   existingContent?: Partial<GeneratedWeddingTemplateContent>;
 }
@@ -251,7 +252,7 @@ function generateHero(): InvitationHero {
     emotionalPhrase:
       'Con mucha ilusión queremos compartir este día tan especial contigo.',
     imageUrl: '',
-    eventLabel: 'Nuestra boda',
+    eventLabel: 'Nos casamos',
   };
 }
 
@@ -278,13 +279,30 @@ function generateGallery(): InvitationGallery {
 }
 
 /**
- * Generate itinerary template with ceremony, cocktail, dinner, dance.
+ * Add hours to an HH:MM time string. Returns '' if no base time.
  */
-function generateItinerary(): ItineraryItem[] {
+function addHoursToTime(base: string, hours: number): string {
+  if (!base) return '';
+  const [h, m] = base.split(':').map(Number);
+  const totalMinutes = (h || 0) * 60 + (m || 0) + hours * 60;
+  const newH = Math.floor(totalMinutes / 60) % 24;
+  const newM = totalMinutes % 60;
+  return `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`;
+}
+
+/**
+ * Generate itinerary template with ceremony, reception, dinner, dance.
+ * Uses provided times to populate each event.
+ */
+function generateItinerary(ceremonyTime?: string, receptionTime?: string): ItineraryItem[] {
+  const recep = receptionTime || (ceremonyTime ? addHoursToTime(ceremonyTime, 2) : '');
+  const dinner = ceremonyTime ? addHoursToTime(ceremonyTime, 3) : '';
+  const dance = ceremonyTime ? addHoursToTime(ceremonyTime, 4) : '';
+
   return [
     {
       id: 'ceremony',
-      time: '',
+      time: ceremonyTime || '',
       title: 'Ceremonia',
       location: '',
       icon: 'church',
@@ -293,7 +311,7 @@ function generateItinerary(): ItineraryItem[] {
     },
     {
       id: 'reception',
-      time: '',
+      time: recep,
       title: 'Recepción',
       location: '',
       icon: 'glass',
@@ -302,8 +320,8 @@ function generateItinerary(): ItineraryItem[] {
     },
     {
       id: 'dinner',
-      time: '',
-      title: 'Banquete',
+      time: dinner,
+      title: 'Cena',
       location: '',
       icon: 'utensils',
       description:
@@ -311,7 +329,7 @@ function generateItinerary(): ItineraryItem[] {
     },
     {
       id: 'dance',
-      time: '',
+      time: dance,
       title: 'Baile',
       location: '',
       icon: 'music',
@@ -386,12 +404,24 @@ function generateHotels(): Hotel[] {
 }
 
 /**
- * Generate social config (empty hashtag for deluxe).
+ * Normalize a name for hashtag: remove accents, spaces, special chars.
  */
-function generateSocial(): SocialConfig {
-  return {
-    hashtag: '',
-  };
+function normalizeForHashtag(name: string): string {
+  return name
+    .trim()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-zA-Z0-9]/g, '');
+}
+
+/**
+ * Generate social config with hashtag from bride & groom names.
+ */
+function generateSocial(brideName?: string, groomName?: string): SocialConfig {
+  const b = brideName ? normalizeForHashtag(brideName) : '';
+  const g = groomName ? normalizeForHashtag(groomName) : '';
+  const hashtag = b && g ? `#${b}Y${g}` : '';
+  return { hashtag };
 }
 
 // ─── Main generator ────────────────────────────────────────────────────────────
@@ -411,11 +441,11 @@ function generateSocial(): SocialConfig {
 export function generateWeddingTemplate(
   params: GenerateWeddingTemplateParams,
 ): GeneratedWeddingTemplateContent {
-  // weddingDate: reserved for FASE 1B (countdown generation)
   const {
     brideName,
     groomName,
     weddingTime,
+    receptionTime,
     planId,
     existingContent = {},
   } = params;
@@ -468,7 +498,7 @@ export function generateWeddingTemplate(
     if (hasRealItinerary(existingContent.itinerary)) {
       result.itinerary = existingContent.itinerary as ItineraryItem[];
     } else {
-      result.itinerary = generateItinerary();
+      result.itinerary = generateItinerary(weddingTime, receptionTime);
     }
 
     // dress_code — premium
@@ -524,11 +554,11 @@ export function generateWeddingTemplate(
       result.hotels = generateHotels();
     }
 
-    // social — deluxe
+    // social — deluxe (hashtag auto from names for all plans)
     if (hasRealSocial(existingContent.social)) {
       result.social = existingContent.social as SocialConfig;
     } else {
-      result.social = generateSocial();
+      result.social = generateSocial(brideName, groomName);
     }
   }
 
