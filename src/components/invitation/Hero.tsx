@@ -80,24 +80,25 @@ export default function Hero({
     >
       <style dangerouslySetInnerHTML={{ __html: `
         .hero-card-container {
-          background: rgba(255, 245, 224, 0.22) !important;
-          backdrop-filter: blur(20px) !important;
-          -webkit-backdrop-filter: blur(20px) !important;
-          border: 1px solid rgba(255, 239, 205, 0.35) !important;
-          box-shadow: 0 28px 90px rgba(0,0,0,0.35) !important;
+          background: transparent !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
         }
         .hero-title-text {
           color: #F8E7C6 !important;
-          text-shadow: 0 5px 28px rgba(0,0,0,0.75) !important;
+          text-shadow: 0 8px 28px rgba(0,0,0,0.45) !important;
         }
         .hero-text-champagne {
           color: #F4DFC0 !important;
-          text-shadow: 0 5px 28px rgba(0,0,0,0.75) !important;
+          text-shadow: 0 8px 28px rgba(0,0,0,0.45) !important;
         }
         @media (max-width: 768px) {
           .hero-card-container {
-            background: rgba(20, 15, 10, 0.48) !important;
-            border-color: rgba(255, 235, 200, 0.28) !important;
+            background: transparent !important;
+            border: none !important;
           }
           .hero-title-text {
             color: #F8E7C6 !important;
@@ -240,7 +241,7 @@ export default function Hero({
           animate={{ opacity: 1.0, y: 0 }}
           transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className={`text-sm md:text-base font-semibold uppercase tracking-[0.28em] mb-5 text-center max-w-md px-6 ${theme.bodyFont} hero-text-champagne`}
-          style={{ textShadow: '0 5px 28px rgba(0,0,0,0.75)', color: '#F4DFC0' }}
+          style={{ textShadow: '0 8px 28px rgba(0,0,0,0.45)', color: '#F4DFC0' }}
         >
           {emotionalPhrase}
         </motion.p>
@@ -257,32 +258,11 @@ export default function Hero({
           }}
         />
 
-        {/* Names */}
+        {/* Names — floating elegantly without card background */}
         <div
           className="relative select-none px-8 py-10 md:px-14 md:py-12 mx-auto"
           style={{ overflow: 'visible', textAlign: 'center', lineHeight: 1.1 }}
         >
-          {/* Sibling glass background to avoid clipping WebKit cursive text */}
-          <div
-            className="absolute inset-0 rounded-[2rem] md:rounded-[3rem] pointer-events-none hero-card-container"
-            style={{
-              background: 'rgba(255, 245, 224, 0.22)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 239, 205, 0.35)',
-              boxShadow: '0 28px 90px rgba(0,0,0,0.35)',
-              zIndex: -1,
-            }}
-          >
-            {/* Inner Border for the glass plate */}
-            <div
-              className="absolute inset-1.5 rounded-[1.6rem] md:rounded-[2.6rem] pointer-events-none"
-              style={{
-                border: '1px solid rgba(255, 239, 205, 0.15)',
-                opacity: 0.15,
-              }}
-            />
-          </div>
 
           <motion.span
             initial={{ opacity: 0, y: 22 }}
@@ -292,7 +272,7 @@ export default function Hero({
             style={{
               fontSize: 'clamp(3.5rem, 10vw, 6.5rem)',
               fontFamily: 'var(--v2-font-heading, inherit)',
-              textShadow: '0 5px 28px rgba(0,0,0,0.75)',
+              textShadow: '0 8px 28px rgba(0,0,0,0.45)',
               overflow: 'visible',
               color: '#F8E7C6',
             }}
@@ -305,7 +285,7 @@ export default function Hero({
             animate={{ opacity: 0.9, scale: 1 }}
             transition={{ duration: 0.8, delay: 1.3, ease: [0.34, 1.56, 0.64, 1] }}
             className="block font-calligraphy italic my-0.5 hero-text-champagne"
-            style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#F4DFC0', textShadow: '0 5px 28px rgba(0,0,0,0.75)' }}
+            style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#F4DFC0', textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
           >
             y
           </motion.span>
@@ -318,7 +298,7 @@ export default function Hero({
             style={{
               fontSize: 'clamp(3.5rem, 10vw, 6.5rem)',
               fontFamily: 'var(--v2-font-heading, inherit)',
-              textShadow: '0 5px 28px rgba(0,0,0,0.75)',
+              textShadow: '0 8px 28px rgba(0,0,0,0.45)',
               overflow: 'visible',
               color: '#F8E7C6',
             }}
@@ -336,13 +316,13 @@ export default function Hero({
         >
           <p
             className={`text-[13px] md:text-[14px] font-semibold uppercase tracking-[0.25em] mb-1.5 ${theme.bodyFont} hero-text-champagne`}
-            style={{ color: '#F4DFC0', textShadow: '0 5px 28px rgba(0,0,0,0.75)' }}
+            style={{ color: '#F4DFC0', textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
           >
             {eventLabel}
           </p>
           <p
             className={`text-[16px] md:text-[18px] font-semibold tracking-[0.06em] ${theme.bodyFont} hero-text-champagne`}
-            style={{ color: '#F4DFC0', fontWeight: 600, textShadow: '0 5px 28px rgba(0,0,0,0.75)' }}
+            style={{ color: '#F4DFC0', fontWeight: 600, textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
           >
             {formattedDate}
           </p>
@@ -355,9 +335,9 @@ export default function Hero({
           transition={{ delay: 2.8, duration: 1 }}
           className="mt-10 flex flex-col items-center gap-2 select-none"
         >
-          <span 
-            className={`text-[10px] font-semibold uppercase tracking-[0.3em] ${theme.bodyFont} hero-text-champagne`} 
-            style={{ color: '#F4DFC0', textShadow: '0 5px 28px rgba(0,0,0,0.75)' }}
+          <span
+            className={`text-[10px] font-semibold uppercase tracking-[0.3em] ${theme.bodyFont} hero-text-champagne`}
+            style={{ color: '#F4DFC0', textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
           >
             Deslizar
           </span>

@@ -21,6 +21,7 @@ function buildInitialState(dc: InvitationContent['dressCode']) {
       : dc?.suggestions
         ? [dc.suggestions]
         : [],
+    colors:         dc?.colors         ?? [],
   };
 }
 
@@ -122,6 +123,80 @@ function ColorField({
           Formato inválido. Usa #RGB o #RRGGBB.
         </p>
       )}
+    </div>
+  );
+}
+
+// ─── Colors list ──────────────────────────────────────────────────────────────
+
+function ColorsList({
+  items, onChange,
+}: {
+  items: string[]; onChange: (list: string[]) => void;
+}) {
+  function update(index: number, value: string) {
+    onChange(items.map((item, i) => i === index ? value : item));
+  }
+  function remove(index: number) {
+    onChange(items.filter((_, i) => i !== index));
+  }
+  function add() {
+    onChange([...items, '']);
+  }
+
+  return (
+    <div>
+      <Label>Paleta de colores</Label>
+      <div
+        className="mb-3 px-3 py-2 rounded-lg text-xs"
+        style={{ background: '#FFF8E1', color: '#B8860B', border: '1px solid #FFE082' }}
+      >
+        Los colores aqui aparecen en la invitacion publica. Si los dejas en blanco, se usara la paleta del tema visual.
+      </div>
+      <div className="flex flex-col gap-2 mb-2">
+        {items.length === 0 && (
+          <p className="text-xs py-2" style={{ color: '#B0A090' }}>
+            Sin colores. Agrega uno para mostrar en la paleta de dress code.
+          </p>
+        )}
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              type="color"
+              value={HEX_RE.test(item) ? item : '#C5A880'}
+              onChange={(e) => update(i, e.target.value)}
+              className="w-10 h-10 rounded cursor-pointer flex-shrink-0"
+              style={{ border: '1px solid #E8E2DA', padding: 2 }}
+            />
+            <input
+              type="text"
+              value={item}
+              onChange={(e) => update(i, e.target.value)}
+              placeholder="#C5A880"
+              maxLength={7}
+              className="flex-1 px-2.5 py-1.5 rounded text-sm font-mono"
+              style={{
+                background: '#FFFFFF',
+                border: `1px solid ${!HEX_RE.test(item) && item ? '#FFCDD2' : '#E8E2DA'}`,
+                color: '#1A1410', outline: 'none',
+              }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = '#C5A880'; }}
+              onBlur={(e)  => { e.currentTarget.style.borderColor = !HEX_RE.test(item) && item ? '#FFCDD2' : '#E8E2DA'; }}
+            />
+            <button type="button" onClick={() => remove(i)}
+              className="px-2 py-1 rounded text-xs"
+              style={{ background: '#FFEBEE', color: '#C62828' }}>X</button>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={add}
+        className="px-3 py-1.5 rounded-lg text-xs"
+        style={{ background: '#F0EBE4', color: '#3D2B1A', border: '1px dashed #C5A880' }}
+      >
+        + Agregar color
+      </button>
     </div>
   );
 }
@@ -314,16 +389,19 @@ export default function DressCodeForm({ invitation }: DressCodeFormProps) {
         </div>
 
         {/* Colors */}
+        <ColorsList
+          items={state.colors}
+          onChange={(list) => set('colors', list)}
+        />
+
+        {/* Legacy color fields */}
         <div>
           <p className="text-[10px] uppercase tracking-widest mb-3" style={{ color: '#C5A880', borderBottom: '1px solid #F0EBE4', paddingBottom: '0.5rem' }}>
-            Colores sugeridos
+            Colores heredados (legacy)
           </p>
-          <div
-            className="mb-3 px-3 py-2 rounded-lg text-xs"
-            style={{ background: '#FFF8E1', color: '#B8860B', border: '1px solid #FFE082' }}
-          >
-            Los colores se almacenan en la invitación. La visualización de swatches en la invitación pública depende del tema activo.
-          </div>
+          <p className="text-xs mb-3" style={{ color: '#B0A090' }}>
+            Estos campos se mantienen por compatibilidad. Usa la paleta de colores arriba en su lugar.
+          </p>
           <div className="grid grid-cols-2 gap-4">
             <ColorField
               label="Color principal"

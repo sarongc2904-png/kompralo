@@ -13,6 +13,7 @@ interface DressCodeProps {
     type: string;
     description: string;
     suggestions: string;
+    colors?: string[];
   };
   theme: Theme;
 }
@@ -63,41 +64,47 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
           {dressCode.description}
         </p>
 
-        {/* Color Swatches */}
-        {theme.dressCodeSwatches && theme.dressCodeSwatches.length > 0 && (
-          <div className="mt-8">
-            <p className={`text-[13px] md:text-[14px] uppercase tracking-[0.22em] mb-4 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-muted, #8A7665)' }}>
-              Sugerencia de Colores
-            </p>
-            
-            <div className="flex flex-wrap gap-4 justify-center items-center">
-              {theme.dressCodeSwatches.map((color, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 150,
-                    damping: 15,
-                    delay: index * 0.08,
-                  }}
-                  className="flex-shrink-0 flex flex-col items-center gap-1.5"
-                >
-                  <div
-                    className="w-10 h-10 rounded-full border border-black/10 shadow-sm"
-                    style={{ backgroundColor: color }}
-                    title={color}
-                  />
-                  <span className="text-[11px] md:text-[12px] uppercase tracking-wider font-mono" style={{ color: 'var(--v2-color-text-muted, #8A7665)', opacity: 0.75 }}>
-                    {getColorLabel(color)}
-                  </span>
-                </motion.div>
-              ))}
+        {/* Color Swatches — Priority: user colors > theme fallback */}
+        {(() => {
+          const colorsToDisplay = dressCode.colors && dressCode.colors.length > 0
+            ? dressCode.colors
+            : (theme.dressCodeSwatches && theme.dressCodeSwatches.length > 0 ? theme.dressCodeSwatches : null);
+
+          return colorsToDisplay ? (
+            <div className="mt-8">
+              <p className={`text-[13px] md:text-[14px] uppercase tracking-[0.22em] mb-4 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-muted, #8A7665)' }}>
+                {dressCode.colors && dressCode.colors.length > 0 ? 'Paleta de Colores' : 'Sugerencia de Colores'}
+              </p>
+
+              <div className="flex flex-wrap gap-4 justify-center items-center">
+                {colorsToDisplay.map((color, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 150,
+                      damping: 15,
+                      delay: index * 0.08,
+                    }}
+                    className="flex-shrink-0 flex flex-col items-center gap-1.5"
+                  >
+                    <div
+                      className="w-10 h-10 rounded-full border border-black/10 shadow-sm"
+                      style={{ backgroundColor: color }}
+                      title={color}
+                    />
+                    <span className="text-[11px] md:text-[12px] uppercase tracking-wider font-mono" style={{ color: 'var(--v2-color-text-muted, #8A7665)', opacity: 0.75 }}>
+                      {getColorLabel(color)}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          ) : null;
+        })()}
 
         {/* Important notes */}
         {dressCode.suggestions && (

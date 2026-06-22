@@ -754,6 +754,15 @@ export async function updateInvitationDressCode(
       return { success: false, error: `La sugerencia #${i + 1} está vacía.` };
     }
   }
+  // Validate colors if provided
+  if (dc.colors && Array.isArray(dc.colors)) {
+    for (let i = 0; i < dc.colors.length; i++) {
+      const color = dc.colors[i]?.trim();
+      if (color && !HEX_RE.test(color)) {
+        return { success: false, error: `El color #${i + 1} debe ser un valor hex válido (ej. #C5A880).` };
+      }
+    }
+  }
 
   const { id } = input;
 
@@ -766,6 +775,7 @@ export async function updateInvitationDressCode(
       primaryColor:   dc.primaryColor.trim(),
       secondaryColor: dc.secondaryColor.trim(),
       suggestionsList: dc.suggestionsList.map((s) => s.trim()).filter(Boolean),
+      colors:         dc.colors ? dc.colors.map((c) => c.trim()).filter(Boolean) : undefined,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
@@ -1209,6 +1219,7 @@ export async function updateThemeSelection(
 
   try {
     await invitationRepository.updateThemeSelection(id, { themeId });
+    console.log('[theme-change] updateThemeSelection complete', { invitationId: id, themeId, onlyUpdatedThemeId: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error('[Editor] updateThemeSelection error:', message);

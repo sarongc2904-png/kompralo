@@ -265,6 +265,7 @@ export interface InvitationDressCode {
   primaryColor?: string;
   secondaryColor?: string;
   suggestionsList?: string[];
+  colors?: string[];
 }
 
 export interface InvitationDressCodeInput {
@@ -275,6 +276,7 @@ export interface InvitationDressCodeInput {
   primaryColor: string;
   secondaryColor: string;
   suggestionsList: string[];
+  colors?: string[];
 }
 
 export interface InvitationGiftRegistry {
