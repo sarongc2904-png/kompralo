@@ -29,5 +29,5 @@ export function isDashboardAssistantAllowedForPlan(planId?: string | null): bool
 }
 
 export function isDashboardAssistantEnabled(): boolean {
-  return process.env.NEXT_PUBLIC_DASHBOARD_ASSISTANT_ENABLED === 'true';
+  return false;
 }

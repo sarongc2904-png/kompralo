@@ -69,14 +69,14 @@ function ImageRow({
       </div>
 
       {/* Inputs */}
-      <div className="flex-1 flex flex-col gap-1.5">
-        <div className="flex gap-2 items-center">
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
           <input
             type="url"
             value={item.url}
             onChange={(e) => { setImgError(false); onChange('url', e.target.value); }}
             placeholder="https://..."
-            className="flex-1 px-2.5 py-1.5 rounded text-sm"
+            className="flex-1 min-w-0 px-2.5 py-1.5 rounded text-sm"
             style={{
               background: '#FFFFFF',
               border: `1px solid ${item.url && !isValidUrl ? '#FFCDD2' : '#E8E2DA'}`,
@@ -88,6 +88,7 @@ function ImageRow({
             folder="gallery"
             invitationId={invitationId}
             onUpload={(url) => { setImgError(false); onChange('url', url); }}
+            className="w-full sm:w-auto"
           />
         </div>
         <input
@@ -255,11 +256,11 @@ export default function GalleryForm({ invitation }: GalleryFormProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <button
           type="button"
           onClick={handleAdd}
-          className="px-4 py-2 rounded-lg text-sm transition-colors"
+          className="w-full sm:w-auto px-4 py-3 sm:py-2 rounded-lg text-sm transition-colors"
           style={{ background: '#F0EBE4', color: '#3D2B1A', border: '1px dashed #C5A880' }}
         >
           + Agregar imagen
@@ -268,7 +269,7 @@ export default function GalleryForm({ invitation }: GalleryFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity"
+          className="w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-lg text-sm font-medium transition-opacity"
           style={{ background: '#1A1410', color: '#F5F3F0', opacity: isPending ? 0.6 : 1 }}
         >
           {isPending ? 'Guardando…' : `Guardar galería (${items.length})`}

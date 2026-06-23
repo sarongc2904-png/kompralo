@@ -9,6 +9,8 @@ interface ImageUploadButtonProps {
   /** Called with the Supabase public URL once the upload succeeds */
   onUpload: (url: string) => void;
   label?: string;
+  /** Extra classes applied to the trigger button — e.g. "w-full sm:w-auto" for mobile stacking */
+  className?: string;
 }
 
 export function ImageUploadButton({
@@ -16,6 +18,7 @@ export function ImageUploadButton({
   invitationId,
   onUpload,
   label = 'Subir imagen',
+  className = '',
 }: ImageUploadButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading]   = useState(false);
@@ -57,7 +60,7 @@ export function ImageUploadButton({
         type="button"
         onClick={() => { setError(null); inputRef.current?.click(); }}
         disabled={loading}
-        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+        className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60${className ? ` ${className}` : ''}`}
         style={{
           background:  success ? '#E8F5E9' : '#F0EBE4',
           color:       success ? '#2E7D32' : '#2B1A0E',

@@ -120,18 +120,19 @@ export function StoryBookForm({ invitationId, slug, initialSlides }: Props) {
               <label className="block text-xs font-medium text-gray-600 mb-1">
                 URL de imagen <span className="text-red-500">*</span>
               </label>
-              <div className="flex gap-2 items-center">
+              <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
                 <input
                   type="url"
                   value={slide.imageUrl}
                   onChange={(e) => updateSlide(i, { imageUrl: e.target.value })}
                   placeholder="https://…"
-                  className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="flex-1 min-w-0 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
                 <ImageUploadButton
                   folder="storybook"
                   invitationId={invitationId}
                   onUpload={(url) => updateSlide(i, { imageUrl: url })}
+                  className="w-full sm:w-auto"
                 />
               </div>
               {slide.imageUrl && (() => { try { new URL(slide.imageUrl); return true; } catch { return false; } })() && (

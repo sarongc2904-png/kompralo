@@ -234,7 +234,7 @@ function ProtagonistCard({
       </div>
 
       {/* Fields grid */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <Label>Nombre *</Label>
           <InlineInput
@@ -261,8 +261,8 @@ function ProtagonistCard({
         </div>
         <div>
           <Label>Foto (URL)</Label>
-          <div className="flex gap-2 items-center">
-            <div className="flex-1">
+          <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+            <div className="flex-1 min-w-0">
               <InlineInput
                 value={protagonist.imageUrl}
                 onChange={(v) => { setImgError(false); onChange('imageUrl', v); }}
@@ -274,6 +274,7 @@ function ProtagonistCard({
               folder="protagonists"
               invitationId={invitationId}
               onUpload={(url) => { setImgError(false); onChange('imageUrl', url); }}
+              className="w-full sm:w-auto"
             />
           </div>
         </div>
@@ -398,11 +399,11 @@ export default function ProtagonistsForm({ invitation }: ProtagonistsFormProps) 
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <button
           type="button"
           onClick={handleAdd}
-          className="px-4 py-2 rounded-lg text-sm transition-colors"
+          className="w-full sm:w-auto px-4 py-3 sm:py-2 rounded-lg text-sm transition-colors"
           style={{ background: '#F0EBE4', color: '#3D2B1A', border: '1px dashed #C5A880' }}
         >
           {getAddButtonLabel(category, protagonists.length)}
@@ -410,7 +411,7 @@ export default function ProtagonistsForm({ invitation }: ProtagonistsFormProps) 
         <button
           type="submit"
           disabled={isPending}
-          className="px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity"
+          className="w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-lg text-sm font-medium transition-opacity"
           style={{ background: '#1A1410', color: '#F5F3F0', opacity: isPending ? 0.6 : 1 }}
         >
           {isPending ? 'Guardando…' : `Guardar (${protagonists.length})`}
