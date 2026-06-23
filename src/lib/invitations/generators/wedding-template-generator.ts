@@ -287,11 +287,14 @@ function generateHero(): InvitationHero {
  * Generate final message with title, quote, and signature.
  */
 function generateFinalMessage(brideName: string, groomName: string): InvitationFinalMessage {
+  const b = brideName.trim();
+  const g = groomName.trim();
+  const signature = b && g ? `Con cariño, ${b} & ${g}` : 'Con cariño, los novios';
   return {
     title: 'Gracias por acompañarnos',
     quote:
-      'Gracias por formar parte de nuestra historia. Nos hará muy felices compartir este día contigo.',
-    signature: `${brideName.trim()} & ${groomName.trim()}`,
+      'Gracias por acompañarnos en uno de los días más importantes de nuestra vida. Su presencia hará este momento aún más especial.',
+    signature,
   };
 }
 
@@ -377,7 +380,10 @@ function generateDressCode(): InvitationDressCode {
       'Te sugerimos asistir con atuendo formal para acompañarnos en esta celebración.',
     suggestions:
       'Elige colores y prendas que te hagan sentir cómodo y elegante.',
-    suggestionsList: [],
+    suggestionsList: [
+      'Elige colores que te hagan sentir cómodo y elegante.',
+      'Agradecemos evitar tonos blancos e ivory.',
+    ],
   };
 }
 

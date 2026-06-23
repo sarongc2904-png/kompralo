@@ -525,6 +525,9 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
       ...(input.primaryColor   ? { primaryColor: input.primaryColor }     : {}),
       ...(input.secondaryColor ? { secondaryColor: input.secondaryColor } : {}),
       suggestionsList: input.suggestionsList.filter(Boolean),
+      ...(input.colors && input.colors.length > 0
+        ? { colors: input.colors.map((c) => c.trim()).filter(Boolean) }
+        : {}),
     };
 
     const { error } = await this.supabase

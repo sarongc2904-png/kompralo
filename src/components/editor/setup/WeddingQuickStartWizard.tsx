@@ -752,6 +752,18 @@ function SuccessScreen({
             : `Creamos la base de la invitación de ${brideName} & ${groomName}. Ahora puedes personalizarla.`}
         </p>
 
+        {/* Reopen hint */}
+        <div
+          className="rounded-xl px-4 py-3 mb-4 text-left"
+          style={{ background: '#F0EBE4', border: '1px solid #DDD0BE' }}
+        >
+          <p className="text-xs" style={{ color: '#6B5B4E' }}>
+            💡 Puedes volver a usar este asistente cuando quieras desde el botón{' '}
+            <strong style={{ color: '#5C4A32' }}>"Editar con asistente rápido"</strong>{' '}
+            en la parte superior del editor.
+          </p>
+        </div>
+
         {/* Pending checklist */}
         <div
           className="rounded-xl px-4 py-4 text-left mb-6"

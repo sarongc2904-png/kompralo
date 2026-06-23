@@ -5,6 +5,7 @@ import type { InvitationContent } from '@/domain/invitations/types';
 import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WeddingQuickStartBanner } from './WeddingQuickStartBanner';
 import type { WizardInitialData } from './WeddingQuickStartBanner';
+import { EditorWelcomeModal } from './EditorWelcomeModal';
 import type { ThemeIdV2 } from '@/domain/themes-v2/types';
 
 export interface WeddingQuickStartSetupProps {
@@ -55,6 +56,11 @@ export function WeddingQuickStartSetup({
 
   return (
     <>
+      <EditorWelcomeModal
+        invitationId={invitation.id}
+        planId={invitation.planId}
+        existingData={existingData}
+      />
       <WeddingQuickStartBanner
         invitationId={invitation.id}
         planId={invitation.planId}

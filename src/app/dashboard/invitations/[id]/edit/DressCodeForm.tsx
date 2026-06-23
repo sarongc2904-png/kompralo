@@ -337,7 +337,7 @@ export default function DressCodeForm({ invitation }: DressCodeFormProps) {
       <div className="grid grid-cols-1 gap-5">
 
         {/* Etiqueta + Título */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label required>Etiqueta principal</Label>
             <TextField
@@ -402,7 +402,7 @@ export default function DressCodeForm({ invitation }: DressCodeFormProps) {
           <p className="text-xs mb-3" style={{ color: '#B0A090' }}>
             Estos campos se mantienen por compatibilidad. Usa la paleta de colores arriba en su lugar.
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <ColorField
               label="Color principal"
               value={state.primaryColor}
@@ -427,8 +427,13 @@ export default function DressCodeForm({ invitation }: DressCodeFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="px-5 py-2.5 rounded-lg text-sm font-medium transition-opacity"
-          style={{ background: '#1A1410', color: '#F5F3F0', opacity: isPending ? 0.6 : 1 }}
+          className="w-full sm:w-auto px-5 py-3 rounded-lg text-sm font-medium transition-opacity"
+          style={{
+            background: '#1A1410',
+            color: '#F5F3F0',
+            opacity: isPending ? 0.6 : 1,
+            minHeight: 44,
+          }}
         >
           {isPending ? 'Guardando…' : 'Guardar dress code'}
         </button>
