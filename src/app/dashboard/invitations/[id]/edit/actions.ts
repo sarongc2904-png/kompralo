@@ -1315,6 +1315,12 @@ export async function updateInvitationParents(
 ): Promise<UpdateInvitationResult> {
   const { id } = input;
 
+  // Plan guard — parents is Deluxe-only
+  const inv = await invitationRepository.getById(id);
+  if (!inv || inv.planId !== 'deluxe') {
+    return { success: false, error: 'La sección Padres está disponible únicamente en el plan Deluxe.' };
+  }
+
   const parents: ParentCouple[] = [];
 
   const hasBride = input.brideFather.trim() || input.brideMother.trim();

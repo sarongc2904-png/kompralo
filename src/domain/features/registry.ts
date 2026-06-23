@@ -378,7 +378,7 @@ export const featureRegistry: FeatureDescriptor[] = [
     description: 'Sección con los nombres de los padres de los novios, padres del bebé, etc.',
     category: 'content',
     status: 'active',
-    minimumPlan: 'premium',
+    minimumPlan: 'deluxe',
     iconName: 'users',
     requiresPersistence: false,
     editableByCustomer: true,
