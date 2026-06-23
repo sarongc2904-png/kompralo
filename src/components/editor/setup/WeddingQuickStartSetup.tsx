@@ -4,6 +4,8 @@ import { useState } from 'react';
 import type { InvitationContent } from '@/domain/invitations/types';
 import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WeddingQuickStartBanner } from './WeddingQuickStartBanner';
+import type { WizardInitialData } from './WeddingQuickStartBanner';
+import type { ThemeIdV2 } from '@/domain/themes-v2/types';
 
 export interface WeddingQuickStartSetupProps {
   invitation: InvitationContent;
@@ -11,42 +13,55 @@ export interface WeddingQuickStartSetupProps {
 }
 
 /**
- * Client wrapper que decide si mostrar el banner Quick Start.
- * Valida:
- * - category === 'wedding'
- * - invitación incompleta
- * - no fue descartada en localStorage
+ * Client wrapper para el Quick Start de bodas.
+ * - Muestra el banner completo cuando la invitación está incompleta y no fue descartada.
+ * - Siempre muestra el botón "Editar con asistente rápido" para invitaciones de boda.
  */
 export function WeddingQuickStartSetup({
   invitation,
   children,
 }: WeddingQuickStartSetupProps) {
-  // Inicializar desde localStorage de forma lazy
   const [isDismissed, setIsDismissed] = useState(() => {
     if (typeof window === 'undefined') return true;
     const dismissKey = `kompralo:quickstart-dismissed:${invitation.id}`;
     return localStorage.getItem(dismissKey) === 'true';
   });
 
-  // Decidir si mostrar banner
-  const shouldShow =
-    invitation.category === 'wedding' &&
-    !isDismissed &&
-    shouldShowWeddingWizard(invitation, invitation.planId);
+  const isWedding = invitation.category === 'wedding';
+
+  if (!isWedding) {
+    return <>{children}</>;
+  }
+
+  const showFullBanner =
+    !isDismissed && shouldShowWeddingWizard(invitation, invitation.planId);
 
   const handleDismiss = () => {
     setIsDismissed(true);
   };
 
+  const existingData: WizardInitialData = {
+    brideName:     invitation.protagonists?.[0]?.name || '',
+    groomName:     invitation.protagonists?.[1]?.name || '',
+    weddingDate:   invitation.eventDate || '',
+    ceremonyTime:  invitation.eventTime || '',
+    venueName:     invitation.location?.venueName || '',
+    address:       invitation.location?.address || '',
+    googleMapsUrl: invitation.location?.googleMapsLink || '',
+    wazeUrl:       invitation.location?.wazeLink || '',
+    themeId:       (invitation.themeId as ThemeIdV2) || undefined,
+    whatsappNumber: invitation.rsvpWhatsAppNumber || '',
+  };
+
   return (
     <>
-      {shouldShow && (
-        <WeddingQuickStartBanner
-          invitationId={invitation.id}
-          planId={invitation.planId}
-          onDismiss={handleDismiss}
-        />
-      )}
+      <WeddingQuickStartBanner
+        invitationId={invitation.id}
+        planId={invitation.planId}
+        onDismiss={handleDismiss}
+        existingData={existingData}
+        showFullBanner={showFullBanner}
+      />
       {children}
     </>
   );

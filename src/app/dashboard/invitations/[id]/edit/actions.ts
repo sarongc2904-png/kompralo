@@ -1374,6 +1374,7 @@ export interface StartWeddingQuickStartInput {
   selectedStyle?: WeddingStyle;
   whatsappNumber?: string;
   locationSkipped?: boolean;
+  mode?: 'initial' | 'update';
 }
 
 export interface StartWeddingQuickStartResult {
@@ -1442,6 +1443,7 @@ export async function startWeddingQuickStart(
     wazeUrl,
     whatsappNumber,
     locationSkipped = false,
+    mode = 'initial',
   } = input;
 
   try {
@@ -1462,6 +1464,8 @@ export async function startWeddingQuickStart(
     const planId = normalizePlanId(current.planId);
 
     // ─── 4. Generate template content with defaults ────────────────────────
+    // Note: protagonists and event_time are NOT passed as existingContent —
+    // the wizard always provides them explicitly, so we always regenerate.
     const generatedContent = generateWeddingTemplate({
       brideName: brideName.trim(),
       groomName: groomName.trim(),
@@ -1471,8 +1475,8 @@ export async function startWeddingQuickStart(
       selectedStyle,
       planId,
       existingContent: {
-        protagonists: current.protagonists,
-        event_time: current.eventTime,
+        // protagonists intentionally omitted → always regenerated from wizard input
+        // event_time intentionally omitted → updateBasicInfo always writes ceremonyTime
         hero: current.hero,
         final_message: current.finalMessage,
         gallery: current.gallery,
@@ -1485,6 +1489,7 @@ export async function startWeddingQuickStart(
         padrinos: current.padrinos,
         hotels: current.hotels,
         social: current.social,
+        music: current.music,
       },
     });
 
@@ -1529,21 +1534,30 @@ export async function startWeddingQuickStart(
     await repo.updateBasicInfo(invitationId, basicInput);
     console.log('[QuickStart] Saved basic info with wizard data');
 
-    // Update maps links if provided and not skipped
-    if (!locationSkipped && (googleMapsUrl || wazeUrl || generatedContent.hero)) {
-      const mediaInput: UpdateInvitationMediaInput = {
-        id: invitationId,
-        slug: current.slug,
+    // Update media info: maps links + default music for premium+
+    // Always runs for premium/deluxe to set music; conditionally for basic.
+    const needsMusicInit = (planId === 'premium' || planId === 'deluxe')
+      && generatedContent.music !== undefined
+      && !current.music?.audioUrl;
+    const needsMapsUpdate = !locationSkipped && (googleMapsUrl || wazeUrl);
+
+    if (needsMusicInit || needsMapsUpdate) {
+      const resolvedMusicUrl   = needsMusicInit ? generatedContent.music!.audioUrl : (current.music?.audioUrl || '');
+      const resolvedMusicTitle = needsMusicInit ? (generatedContent.music!.title || '') : (current.music?.title || '');
+      const resolvedTrackId    = needsMusicInit ? generatedContent.music!.selectedTrackId : current.music?.selectedTrackId;
+
+      await repo.updateMediaInfo(invitationId, {
         heroImageUrl: current.hero?.imageUrl || '',
         heroVideoUrl: current.hero?.videoUrl ?? '',
-        musicUrl: current.music?.audioUrl || '',
-        musicTitle: current.music?.title || '',
-        youtubeUrl: current.hero?.youtubeUrl || '',
-        googleMapsUrl: googleMapsUrl || current.location?.googleMapsLink || '',
-        wazeUrl: wazeUrl || current.location?.wazeLink || '',
-      };
-      await repo.updateMediaInfo(invitationId, mediaInput);
-      console.log('[QuickStart] Updated maps links');
+        musicUrl:     resolvedMusicUrl,
+        musicTitle:   resolvedMusicTitle,
+        musicTrackId: resolvedTrackId,
+        clearMusicUrl: false,
+        youtubeUrl:   current.hero?.youtubeUrl || '',
+        googleMapsUrl: !locationSkipped ? (googleMapsUrl || current.location?.googleMapsLink || '') : (current.location?.googleMapsLink || ''),
+        wazeUrl:       !locationSkipped ? (wazeUrl || current.location?.wazeLink || '') : (current.location?.wazeLink || ''),
+      });
+      console.log('[QuickStart] Updated media info (maps/music). musicInit:', needsMusicInit);
     }
 
     if (generatedContent.final_message !== undefined) {
@@ -1674,17 +1688,21 @@ export async function startWeddingQuickStart(
     }
 
     // Premium+ sections — social (hashtag auto-generated)
-    if ((planId === 'premium' || planId === 'deluxe') && generatedContent.social !== undefined && !current.social?.hashtag) {
+    // In update mode: also refresh hashtag if it was auto-generated from old names
+    const shouldSaveSocial = (planId === 'premium' || planId === 'deluxe')
+      && generatedContent.social !== undefined
+      && (!current.social?.hashtag || mode === 'update');
+    if (shouldSaveSocial) {
       const socialInput: InvitationSocialInput = {
-        hashtag: generatedContent.social.hashtag,
-        instagramHandle: generatedContent.social.instagramHandle || '',
-        tiktokHandle: generatedContent.social.tiktokHandle || '',
-        facebookUrl: generatedContent.social.facebookUrl || '',
-        youtubeUrl: generatedContent.social.youtubeUrl || '',
-        note: generatedContent.social.note || '',
+        hashtag: generatedContent.social!.hashtag,
+        instagramHandle: current.social?.instagramHandle || '',
+        tiktokHandle: current.social?.tiktokHandle || '',
+        facebookUrl: current.social?.facebookUrl || '',
+        youtubeUrl: current.social?.youtubeUrl || '',
+        note: current.social?.note || '',
       };
       await repo.updateSocial(invitationId, socialInput);
-      console.log('[QuickStart] Saved social');
+      console.log('[QuickStart] Saved social (hashtag)');
     }
 
     // ─── 6. Update theme_id in invitations table ──────────────────────────

@@ -10,6 +10,8 @@ export interface WeddingQuickStartWizardProps {
   planId: string;
   onClose: () => void;
   onComplete?: () => void;
+  mode?: 'initial' | 'update';
+  initialData?: Partial<WizardData>;
 }
 
 interface WizardData {
@@ -41,8 +43,11 @@ export function WeddingQuickStartWizard({
   planId,
   onClose,
   onComplete,
+  mode = 'initial',
+  initialData,
 }: WeddingQuickStartWizardProps) {
   const isBasic = planId === 'basic';
+  const isUpdateMode = mode === 'update';
 
   // Steps: Basic = 4, Premium/Deluxe = 5
   // Basic:            1=Names, 2=DateTime, 3=Style, 4=WhatsApp
@@ -54,23 +59,24 @@ export function WeddingQuickStartWizard({
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
+  // Preload existing data when reopening in update mode
   const [data, setData] = useState<WizardData>({
-    brideName: '',
-    groomName: '',
-    weddingDate: '',
-    ceremonyTime: '',
-    receptionTime: '',
-    venueName: '',
-    address: '',
-    googleMapsUrl: '',
-    wazeUrl: '',
-    locationSkipped: false,
-    themeId: DEFAULT_THEME,
-    whatsappNumber: '',
+    brideName: initialData?.brideName ?? '',
+    groomName: initialData?.groomName ?? '',
+    weddingDate: initialData?.weddingDate ?? '',
+    ceremonyTime: initialData?.ceremonyTime ?? '',
+    receptionTime: initialData?.receptionTime ?? '',
+    venueName: initialData?.venueName ?? '',
+    address: initialData?.address ?? '',
+    googleMapsUrl: initialData?.googleMapsUrl ?? '',
+    wazeUrl: initialData?.wazeUrl ?? '',
+    locationSkipped: initialData?.locationSkipped ?? false,
+    themeId: initialData?.themeId ?? DEFAULT_THEME,
+    whatsappNumber: initialData?.whatsappNumber ?? '',
   });
 
   // Marker visible in browser console to confirm v2 is loaded in production
-  console.info('[KOMPRALO] Quick Start Wizard v2 loaded — planId:', planId);
+  console.info('[KOMPRALO] Quick Start Wizard v2 loaded — planId:', planId, '— mode:', mode);
 
   const update = (field: keyof WizardData, value: string | boolean | ThemeIdV2) => {
     setData((prev) => ({ ...prev, [field]: value }));
@@ -139,6 +145,7 @@ export function WeddingQuickStartWizard({
         themeId: data.themeId,
         whatsappNumber: data.whatsappNumber || undefined,
         locationSkipped: isBasic ? true : data.locationSkipped,
+        mode,
       });
       if (result.success) {
         onComplete?.();
@@ -176,6 +183,7 @@ export function WeddingQuickStartWizard({
             brideName={data.brideName}
             groomName={data.groomName}
             invitationId={invitationId}
+            isUpdate={isUpdateMode}
           />
         ) : (
           <>
@@ -299,9 +307,7 @@ export function WeddingQuickStartWizard({
                 {submitting
                   ? 'Guardando…'
                   : step === totalSteps
-                  ? 'Crear mi invitación'
-                  : step === (isBasic ? 3 : 4) && !isBasic
-                  ? 'Siguiente'
+                  ? (isUpdateMode ? 'Actualizar invitación' : 'Crear mi invitación')
                   : 'Siguiente →'}
               </button>
             </div>
@@ -718,10 +724,12 @@ function SuccessScreen({
   brideName,
   groomName,
   invitationId,
+  isUpdate,
 }: {
   brideName: string;
   groomName: string;
   invitationId: string;
+  isUpdate?: boolean;
 }) {
   return (
     <div className="flex flex-col h-full">
@@ -732,14 +740,16 @@ function SuccessScreen({
           className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl"
           style={{ background: '#FBF8F2', border: '1px solid #E8DFD5' }}
         >
-          🎉
+          {isUpdate ? '✏️' : '🎉'}
         </div>
 
         <h2 className="text-xl font-semibold mb-2" style={{ color: '#1A1410' }}>
-          ¡Tu invitación está lista!
+          {isUpdate ? '¡Invitación actualizada!' : '¡Tu invitación está lista!'}
         </h2>
         <p className="text-sm mb-6" style={{ color: '#746B62' }}>
-          Creamos la base de la invitación de {brideName} &amp; {groomName}. Ahora puedes personalizarla.
+          {isUpdate
+            ? `Actualizamos la invitación de ${brideName} & ${groomName}.`
+            : `Creamos la base de la invitación de ${brideName} & ${groomName}. Ahora puedes personalizarla.`}
         </p>
 
         {/* Pending checklist */}

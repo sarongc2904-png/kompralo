@@ -96,6 +96,10 @@ function test_2_premium_plan_adds_fields(): void {
   assert(result.hotels === undefined, 'hotels should not exist in premium');
   // social is now premium+ (hashtag auto-generated)
   assert(result.social !== undefined, 'social should exist in premium');
+  // music is now premium+ (default track)
+  assert(result.music !== undefined, 'music should exist in premium');
+  assert(result.music!.enabled === true, 'music should be enabled in premium');
+  assert(typeof result.music!.audioUrl === 'string' && result.music!.audioUrl.length > 0, 'music.audioUrl should be non-empty');
 
   // Check structure
   assert(Array.isArray(result.itinerary), 'itinerary should be array');
@@ -118,6 +122,8 @@ function test_3_deluxe_plan_includes_all(): void {
   assert(result.padrinos !== undefined, 'padrinos should exist in deluxe');
   assert(result.hotels !== undefined, 'hotels should exist in deluxe');
   assert(result.social !== undefined, 'social should exist in deluxe');
+  assert(result.music !== undefined, 'music should exist in deluxe');
+  assert(result.music!.enabled === true, 'music should be enabled in deluxe');
 
   // Check types
   assert(Array.isArray(result.timeline), 'timeline should be array');

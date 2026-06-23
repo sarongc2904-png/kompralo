@@ -13,8 +13,10 @@ import type {
   Padrino,
   Hotel,
   SocialConfig,
+  InvitationMusic,
 } from '@/domain/invitations/types';
 import type { WeddingStyle } from '@/domain/themes-v2/style-to-theme-map';
+import { MUSIC_LIBRARY } from '@/lib/music/musicLibrary';
 
 /**
  * Generated content for invitation_content table.
@@ -36,6 +38,7 @@ export interface GeneratedWeddingTemplateContent {
   padrinos?: Padrino[];
   hotels?: Hotel[];
   social?: SocialConfig;
+  music?: InvitationMusic;
 }
 
 export interface GenerateWeddingTemplateParams {
@@ -210,6 +213,30 @@ function hasRealSocial(social: unknown): boolean {
     return isRealString(s.hashtag) || isRealString(s.instagramHandle);
   }
   return false;
+}
+
+/**
+ * Check if music has a real audio URL (not empty, not disabled placeholder).
+ */
+function hasRealMusic(music: unknown): boolean {
+  if (music && typeof music === 'object') {
+    const m = music as Record<string, unknown>;
+    return isRealString(m.audioUrl) && m.audioUrl !== '';
+  }
+  return false;
+}
+
+/**
+ * Generate default music using the first real library track (boda-elegante).
+ */
+function generateDefaultMusic(): InvitationMusic {
+  const track = MUSIC_LIBRARY.find((t) => t.id === 'boda-elegante' && t.url !== null)!;
+  return {
+    audioUrl: track.url!,
+    selectedTrackId: track.id,
+    title: track.title,
+    enabled: true,
+  };
 }
 
 // ─── Template generators by field ──────────────────────────────────────────────
@@ -561,6 +588,13 @@ export function generateWeddingTemplate(
       result.social = existingContent.social as SocialConfig;
     } else {
       result.social = generateSocial(brideName, groomName);
+    }
+  }
+
+  // music — premium+ (default track if empty)
+  if (planId === 'premium' || planId === 'deluxe') {
+    if (!hasRealMusic(existingContent.music)) {
+      result.music = generateDefaultMusic();
     }
   }
 
