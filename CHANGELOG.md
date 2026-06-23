@@ -7,6 +7,93 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.8.0] — 2026-06-23
+
+### Fixed
+
+#### `fix(cliente)` — Acceso al editor por `user_id`, no solo por email (`37dddf5`)
+
+El editor de invitaciones solo verificaba `customer_email` para confirmar propiedad de la invitación. Si el `user_id` del cliente coincidía pero el email de la orden difería (ej. compra con un email, login con otro), el cliente veía "Acceso no autorizado" aunque fuera el dueño legítimo.
+
+**Causa raíz:** `emailMismatch` en `edit/page.tsx` evaluaba únicamente `invitation.customerEmail` vs `sessionUser.email`, sin considerar `invitation.user_id` vs `sessionUser.id`.
+
+**Archivos modificados:**
+- `src/domain/invitations/types.ts` — Añadido campo `ownerUserId?: string | null` a `InvitationContent`
+- `src/domain/invitations/supabase.repository.ts` — Mapeado `row.user_id → ownerUserId` en `rowToContent`
+- `src/app/dashboard/invitations/[id]/edit/page.tsx` — Ownership check ahora otorga acceso con `user_id` match OR `customer_email` match OR cookie de acceso firmado
+
+---
+
+## [0.7.0] — 2026-06-22
+
+### Fixed
+
+#### `fix(auth)` — Sesión de admin se perdía al navegar entre páginas (`98ef2cc`)
+
+Al navegar dentro del panel de admin, el JWT podía expirar y el middleware intentaba refrescarlo. Sin embargo, el token refrescado nunca llegaba a los Server Components porque el `Cookie` header en `requestHeaders` se creaba antes de que `setAll` actualizara `request.cookies`. La API Web `Headers` es inmutable respecto a cambios posteriores.
+
+**Causa raíz:** `new Headers(request.headers)` captura una snapshot; `request.cookies.set()` actualiza el store mutable de `RequestCookies` pero no modifica el objeto `Headers` ya creado.
+
+**Fix:** Dentro de `setAll`, reconstruir la cadena cookie desde `request.cookies.getAll()` (que sí es mutable) y actualizar `requestHeaders` antes de crear el nuevo `NextResponse`.
+
+**Archivos modificados:**
+- `src/middleware.ts` — Reconstrucción del header `cookie` dentro del callback `setAll`
+- `src/lib/admin/index.ts` — `requireAdmin()` lee `x-pathname` para redirect correcto post-login; usuarios autenticados sin fila en `admin_users` redirigen a `/cliente` (no a `/login`, que causaba bucle infinito)
+- `src/app/admin/invitations/[id]/edit/page.tsx` — Añade `?from=admin` al redirect al editor
+- `src/app/dashboard/invitations/[id]/edit/page.tsx` — Muestra "← Volver al admin" cuando `?from=admin` está presente
+
+---
+
+## [0.6.0] — 2026-06-21
+
+### Fixed
+
+#### `fix(gating)` — Social/hashtag accesible en Premium; `updateFeatureOverrides` con guarda de plan (`27a41e3`)
+
+**Inconsistencias encontradas y corregidas:**
+
+| Feature | Antes | Después |
+|---|---|---|
+| `showHashtag` en `registry.ts` | `minimumPlan: 'deluxe'` | `'premium'` |
+| `updateSocial` acción server | `checkPlanAccess('deluxe')` | `checkPlanAccess('premium')` |
+| `updateFeatureOverrides` | Sin guarda de plan | Filtra overrides contra defaults del plan |
+
+**`updateFeatureOverrides` hardening:** Clientes sin modo admin ya no pueden habilitar features de plan superior vía override. La acción ahora filtra cualquier override `true` que no esté incluido en el plan de la invitación. Admins conservan acceso irrestricto.
+
+**Archivos modificados:**
+- `src/domain/features/registry.ts`
+- `src/domain/plans/registry.ts`
+- `src/app/dashboard/invitations/[id]/edit/actions.ts`
+
+#### `fix(gating)` — `showParents` visible en Premium siendo exclusivo de Deluxe (`23d1321`)
+
+`registry.ts` tenía `minimumPlan: 'premium'` para la sección Padres cuando la regla es Basic=NO, Premium=NO, Deluxe=SÍ. Corregido a `'deluxe'`. La acción `updateInvitationParents` también recibió guarda server-side.
+
+---
+
+## [0.5.0] — 2026-06-20
+
+### Added
+
+#### Admin: soft delete / restore de invitaciones
+
+- **Tab de filtro** en `/admin/invitations`: Activas / Eliminadas / Todas (filtro por `deleted_at`)
+- **Botón "Eliminar"** con confirmación inline de 2 pasos (¡Eliminar? Sí / No)
+- **Botón "Recuperar"** con contador de días desde eliminación; deshabilitado si han pasado más de 30 días
+- **Server actions** `softDeleteInvitation` / `restoreInvitation` usando service-role; ambas llaman `revalidatePath`
+- **Responsive**: tabla en desktop, cards en móvil (360–390 px) usando clases CSS `.adm-inv-table` / `.adm-inv-cards`
+
+**Archivos nuevos:**
+- `src/app/admin/invitations/actions.ts`
+- `src/app/admin/invitations/_components/AdminInvitationActions.tsx`
+
+**Archivos modificados:**
+- `src/app/admin/invitations/page.tsx`
+
+---
+
 ### Changed - FASE 1B+2 Redesign: 5-Step Quick Start Wizard (Time to First WOW)
 
 Replaced the 15-step comprehensive wizard with a focused 5-step flow that generates
