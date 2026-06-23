@@ -532,6 +532,47 @@ function buildLayerContent(
         ),
       };
 
+    case 'luxury-champagne':
+      return {
+        layer1: (
+          <>
+            <div className="absolute inset-0 w-full" style={{ height: '300vh' }}>
+              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
+                style={{ top: '5vh', left: '-4vw', width: '50vw', maxWidth: '580px', mixBlendMode: 'multiply', opacity: 0.45 }} />
+              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
+                style={{ top: '150vh', right: '-6vw', width: '46vw', maxWidth: '540px', mixBlendMode: 'multiply', opacity: 0.35, transform: 'rotate(180deg) scaleX(-1)' }} />
+            </div>
+            <div className="absolute w-full" style={{ top: '300vh', height: '700vh' }}>
+              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
+                style={{ top: '80vh', left: '-4vw', width: '44vw', maxWidth: '520px', mixBlendMode: 'multiply', opacity: 0.38, transform: 'scaleX(-1)' }} />
+              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
+                style={{ top: '400vh', right: '-5vw', width: '48vw', maxWidth: '560px', mixBlendMode: 'multiply', opacity: 0.32, transform: 'rotate(90deg)' }} />
+            </div>
+          </>
+        ),
+        layer2: (
+          <div className="absolute inset-0 w-full" style={{ height: '1000vh' }}>
+            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
+              style={{ top: '40vh', right: '1vw', width: '32vw', maxWidth: '380px', mixBlendMode: 'multiply', opacity: 0.55 }} />
+            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
+              style={{ top: '330vh', left: '2vw', width: '28vw', maxWidth: '340px', mixBlendMode: 'multiply', opacity: 0.45, transform: 'scaleX(-1)' }} />
+            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
+              style={{ top: '650vh', right: '4vw', width: '30vw', maxWidth: '360px', mixBlendMode: 'multiply', opacity: 0.42 }} />
+          </div>
+        ),
+        layer3: (
+          <div className="absolute inset-0 w-full" style={{ height: '1000vh' }}>
+            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_12s_ease-in-out_infinite]"
+              style={{ top: '80vh', left: '8vw', width: '36vw', maxWidth: '420px', mixBlendMode: 'multiply', opacity: 0.30 }} />
+            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_9s_ease-in-out_infinite_3s]"
+              style={{ top: '480vh', right: '6vw', width: '34vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.25, transform: 'scaleX(-1)' }} />
+          </div>
+        ),
+      };
+
+    case 'modern-pastel':
+      return { layer1: <></>, layer2: <></>, layer3: <></> };
+
     case 'pastel-rose-editorial':
     case 'pastel-sage-editorial':
     case 'pastel-sky-editorial':

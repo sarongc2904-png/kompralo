@@ -7,13 +7,15 @@ import { updateThemeSelection } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
 
 // ─── Theme visibility ────────────────────────────────────────────────────────
-// Show ivory-editorial + 3 pastel editorial variants to users
+// Show all 6 selectable themes: 4 editorial/pastel + luxury-champagne + modern-pastel
 
 const VISIBLE_THEME_IDS = new Set([
   'ivory-editorial',
   'pastel-rose-editorial',
   'pastel-sage-editorial',
   'pastel-sky-editorial',
+  'luxury-champagne',
+  'modern-pastel',
 ]);
 
 function getVisibleThemes() {
@@ -33,11 +35,11 @@ const V1_TO_V2_DISPLAY: Record<string, string> = {
   editorial: 'ivory-editorial',    // Map all old themes to ivory-editorial
   'modern-dark': 'ivory-editorial',
   'luxury-gold': 'ivory-editorial',
-  'luxury-champagne': 'ivory-editorial',
+  'luxury-champagne': 'luxury-champagne',
+  'modern-pastel': 'modern-pastel',
   'garden-romance': 'ivory-editorial',
   'boho-terracotta': 'ivory-editorial',
   'black-tie': 'ivory-editorial',
-  'modern-pastel': 'ivory-editorial',
   'pastel-rose-editorial': 'pastel-rose-editorial',
   'pastel-sage-editorial': 'pastel-sage-editorial',
   'pastel-sky-editorial': 'pastel-sky-editorial',
