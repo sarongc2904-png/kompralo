@@ -149,7 +149,7 @@ export async function getAdminUserForApiRoute(): Promise<AdminUser | null> {
  * Quick boolean check — use when you just need to know, not to block.
  * Also accepts an optional email for ADMIN_EMAILS fallback.
  */
-export async function isAdminUser(userId: string, email?: string | null): Promise<boolean> {
+export async function isAdminUser(userId: string, email: string | null | undefined): Promise<boolean> {
   // Fast path via ADMIN_EMAILS env var (no DB).
   if (email) {
     const adminEmailList = (process.env.ADMIN_EMAILS ?? '')
@@ -176,10 +176,11 @@ export async function isAdminUser(userId: string, email?: string | null): Promis
  */
 export async function canEditInvitation(
   userId: string,
+  email: string | null | undefined,
   invitationUserId: string | null,
 ): Promise<boolean> {
   if (userId === invitationUserId) return true;
-  return isAdminUser(userId);
+  return isAdminUser(userId, email);
 }
 
 // ─── Audit log ────────────────────────────────────────────────────────────────
@@ -265,4 +266,3 @@ export async function generateUniqueSlug(
   // Fallback with timestamp
   return `invitacion-${Date.now().toString(36)}`;
 }
-

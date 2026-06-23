@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { invitationRepository } from '@/domain/invitations';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { isAdminUser } from '@/lib/admin';
-import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import { normalizePlanId } from '@/domain/plans/types';
 import EditForm from './EditForm';
 import MediaForm from './MediaForm';
@@ -130,8 +129,6 @@ export default async function EditInvitationPage({ params, searchParams }: Props
       // Supabase not configured — fall through to redirect
     }
 
-    const hasScopedAccess = await verifyInvitationAccess(id);
-
     const ownerEmail  = invitation.customerEmail ?? null;
     const ownerUserId = invitation.ownerUserId ?? null;
 
@@ -139,10 +136,8 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     console.log('[editPage] route=/dashboard/invitations/%s/edit', id);
     console.log('[editPage] sessionUserId=%s sessionEmail=%s', sessionUser?.id ?? 'null', sessionUser?.email ?? 'null');
     console.log('[editPage] invitationOwnerUserId=%s invitationCustomerEmail=%s', ownerUserId ?? 'null', ownerEmail ?? 'null');
-    console.log('[editPage] hasScopedAccess=%s', hasScopedAccess);
-
-    if (!sessionUser && !hasScopedAccess) {
-      console.log('[editPage] no session and no scoped access → redirect to login');
+    if (!sessionUser) {
+      console.log('[editPage] no session → redirect to login');
       redirect(`/login?redirect=/dashboard/invitations/${id}/edit`);
     }
 
@@ -153,20 +148,8 @@ export default async function EditInvitationPage({ params, searchParams }: Props
 
     console.log('[editPage] isOwnerByUserId=%s isOwnerByEmail=%s', isOwnerByUserId, isOwnerByEmail);
 
-    const emailMismatch =
-      !hasScopedAccess &&
-      !isOwnerByUserId &&
-      !isOwnerByEmail &&
-      // If both ownerEmail and ownerUserId are null any authenticated user passes — admins only.
-      (ownerEmail !== null || ownerUserId !== null);
-
-    console.log('[editPage] emailMismatch=%s', emailMismatch);
-
-    if (emailMismatch) {
-      // Admin users can edit any invitation — check before showing error
-      const adminCheck = sessionUser?.id
-        ? await isAdminUser(sessionUser.id, sessionUser.email)
-        : false;
+    if (!isOwnerByUserId && !isOwnerByEmail) {
+      const adminCheck = await isAdminUser(sessionUser.id, sessionUser.email);
       console.log('[editPage] adminCheck=%s', adminCheck);
       if (!adminCheck) {
         console.log('[editPage] authorization result=DENIED (not owner, not admin)');

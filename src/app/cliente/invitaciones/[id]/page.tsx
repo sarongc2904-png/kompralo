@@ -292,7 +292,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
   if (!hasAccess) {
     // Admin users are redirected to the admin panel instead of getting a 404
-    const adminCheck = await isAdminUser(userId);
+    const adminCheck = await isAdminUser(userId, email);
     if (adminCheck) {
       redirect(`/admin/invitations/${id}`);
     }

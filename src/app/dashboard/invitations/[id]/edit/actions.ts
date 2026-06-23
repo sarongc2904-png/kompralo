@@ -5,7 +5,6 @@ import type { IInvitationRepository } from '@/domain/invitations';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { isAdminUser } from '@/lib/admin';
-import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
 import { getFeaturesForPlan } from '@/domain/plans/registry';
@@ -38,10 +37,6 @@ export type UpdateInvitationResult =
   | { success: true; message: string }
   | { success: false; error: string };
 
-function isAdminMode(): boolean {
-  return process.env.ADMIN_ACCESS_ENABLED === 'true';
-}
-
 async function getAuthorizedInvitationRepository(invitationId: string): Promise<IInvitationRepository> {
   const serviceSupabase = createServiceRoleSupabaseClient();
   const repository = new SupabaseInvitationRepository(serviceSupabase);
@@ -49,10 +44,6 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
 
   if (!invitation) {
     throw new Error('Invitación no encontrada.');
-  }
-
-  if (isAdminMode()) {
-    return repository;
   }
 
   let sessionEmail: string | null = null;
@@ -65,18 +56,18 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
   } catch {
     sessionEmail = null;
   }
-  const ownerEmail = invitation.customerEmail?.toLowerCase() ?? null;
-  const hasScopedAccess = await verifyInvitationAccess(invitationId);
-
-  if (!sessionEmail && !hasScopedAccess) {
+  if (!sessionUserId) {
     throw new Error('Sesión requerida para guardar cambios.');
   }
-  if (!hasScopedAccess && ownerEmail && ownerEmail !== sessionEmail) {
-    // Admin users can save changes to any invitation
-    const adminCheck = sessionUserId ? await isAdminUser(sessionUserId) : false;
-    if (!adminCheck) {
-      throw new Error('No tienes permiso para editar esta invitación.');
-    }
+
+  const ownerEmail = invitation.customerEmail?.toLowerCase() ?? null;
+  const ownerUserId = invitation.ownerUserId ?? null;
+  const isOwnerByUserId = ownerUserId !== null && ownerUserId === sessionUserId;
+  const isOwnerByEmail = ownerEmail !== null && sessionEmail !== null && ownerEmail === sessionEmail;
+  const adminCheck = await isAdminUser(sessionUserId, sessionEmail);
+
+  if (!isOwnerByUserId && !isOwnerByEmail && !adminCheck) {
+    throw new Error('No tienes permiso para editar esta invitación.');
   }
 
   return repository;
@@ -1164,19 +1155,16 @@ export async function updateFeatureOverrides(
     Object.entries(input.overrides).filter(([, v]) => v !== undefined),
   ) as FeatureOverrides;
 
-  // Non-admin: strip any override that tries to enable a feature the plan doesn't include.
-  // Admins (ADMIN_ACCESS_ENABLED=true) may override any feature for customization.
-  if (!isAdminMode()) {
-    const inv = await invitationRepository.getById(id);
-    if (inv) {
-      const planDefaults = getFeaturesForPlan(normalizePlanId(inv.planId));
-      overrides = Object.fromEntries(
-        Object.entries(overrides).filter(([key, value]) => {
-          if (value !== true) return true; // allow disabling any feature
-          return planDefaults[key as InvitationFeatureKey] === true;
-        }),
-      ) as FeatureOverrides;
-    }
+  // Never enable features outside the invitation's purchased plan.
+  const inv = await invitationRepository.getById(id);
+  if (inv) {
+    const planDefaults = getFeaturesForPlan(normalizePlanId(inv.planId));
+    overrides = Object.fromEntries(
+      Object.entries(overrides).filter(([key, value]) => {
+        if (value !== true) return true; // allow disabling any feature
+        return planDefaults[key as InvitationFeatureKey] === true;
+      }),
+    ) as FeatureOverrides;
   }
 
   try {
