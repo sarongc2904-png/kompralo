@@ -366,6 +366,7 @@ export interface InvitationContent {
   /** Controls whether the public invitation shows the open RSVP form or a "use your pass" notice. */
   rsvpMode: 'open' | 'passes_only';
   customerEmail?: string | null;
+  ownerUserId?: string | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string | null;

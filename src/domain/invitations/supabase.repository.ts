@@ -111,6 +111,7 @@ export function mapSupabaseInvitationToInvitationContent(
     updatedAt: row.updated_at,
     publishedAt: row.published_at ?? null,
     customerEmail: row.customer_email ?? null,
+    ownerUserId:   row.user_id ?? null,
     // ── From invitation_content ──
     featureOverrides: c.feature_overrides ?? undefined,
     protagonists: c.protagonists ?? [],

@@ -139,9 +139,14 @@ export default async function EditInvitationPage({ params, searchParams }: Props
       redirect(`/login?redirect=/dashboard/invitations/${id}/edit`);
     }
 
-    const ownerEmail = invitation.customerEmail ?? null;
+    const ownerEmail  = invitation.customerEmail ?? null;
+    const ownerUserId = invitation.ownerUserId ?? null;
+
+    // Grant access if: cookie-based access, user_id match, or customer_email match.
+    const userIdMatch   = ownerUserId && sessionUser?.id && ownerUserId === sessionUser.id;
     const emailMismatch =
       !hasScopedAccess &&
+      !userIdMatch &&
       ownerEmail &&
       ownerEmail.toLowerCase() !== (sessionUser?.email ?? '').toLowerCase();
 
