@@ -23,7 +23,7 @@ const STEPS = [
   },
   {
     title: 'Confirmaciones y ayuda',
-    text: 'Desde tu invitación tus invitados pueden confirmar asistencia. Si necesitas recordar cómo funciona el panel, vuelve a abrir este manual desde el botón "Manual de uso".',
+    text: 'Desde tu invitación tus invitados pueden confirmar asistencia. Si necesitas recordar cómo funciona el panel, vuelve a abrir este manual desde el botón "Manual de uso" en el menú superior.',
   },
 ];
 
@@ -32,15 +32,14 @@ const STORAGE_KEY = 'kompralo:dashboard-manual-seen';
 // ─── Component ───────────────────────────────────────────────────────────────
 
 interface Props {
-  /** Pass user id or email to scope the seen-key per user. Optional. */
   userId?: string;
 }
 
 export function DashboardManualTour({ userId }: Props) {
   const storageKey = userId ? `${STORAGE_KEY}:${userId}` : STORAGE_KEY;
 
-  const [open, setOpen]     = useState(false);
-  const [step, setStep]     = useState(0);
+  const [open, setOpen]       = useState(false);
+  const [step, setStep]       = useState(0);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -52,16 +51,21 @@ export function DashboardManualTour({ userId }: Props) {
     }
   }, [storageKey]);
 
+  // Listen for open-manual event dispatched by DashboardManualNavButton
+  useEffect(() => {
+    function handleOpen() {
+      setStep(0);
+      setOpen(true);
+    }
+    window.addEventListener('kompralo:open-manual', handleOpen);
+    return () => window.removeEventListener('kompralo:open-manual', handleOpen);
+  }, []);
+
   const close = useCallback(() => {
     localStorage.setItem(storageKey, '1');
     setOpen(false);
     setStep(0);
   }, [storageKey]);
-
-  const openManual = () => {
-    setStep(0);
-    setOpen(true);
-  };
 
   const next = () => {
     if (step < STEPS.length - 1) {
@@ -80,11 +84,11 @@ export function DashboardManualTour({ userId }: Props) {
 
   return (
     <>
-      {/* ── Floating "Manual de uso" button ────────────────────── */}
+      {/* ── Floating button — desktop only (hidden on mobile to avoid covering actions) ── */}
       <button
-        onClick={openManual}
+        onClick={() => { setStep(0); setOpen(true); }}
         aria-label="Abrir manual de uso"
-        className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg transition-transform hover:scale-105 active:scale-95 sm:bottom-6 sm:right-6"
+        className="hidden sm:flex fixed bottom-6 right-6 z-40 items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold shadow-lg transition-transform hover:scale-105 active:scale-95"
         style={{
           background: 'linear-gradient(135deg, #C8A75D, #B8972D)',
           color: '#0D0A07',
@@ -93,8 +97,7 @@ export function DashboardManualTour({ userId }: Props) {
         }}
       >
         <span style={{ fontSize: 16 }}>📖</span>
-        <span className="hidden sm:inline">Manual de uso</span>
-        <span className="sm:hidden">Manual</span>
+        Manual de uso
       </button>
 
       {/* ── Modal overlay ───────────────────────────────────────── */}
@@ -176,7 +179,6 @@ export function DashboardManualTour({ userId }: Props) {
                 {current.text}
               </p>
 
-              {/* Final screen extra */}
               {isLast && (
                 <div style={{
                   marginTop: '1.25rem', padding: '1rem',
@@ -184,9 +186,9 @@ export function DashboardManualTour({ userId }: Props) {
                   border: '1px solid #E8E2DA',
                 }}>
                   <p style={{ fontSize: '0.8125rem', color: '#9B8878', margin: 0 }}>
-                    Puedes volver a abrir este manual cuando quieras desde el botón{' '}
-                    <strong style={{ color: '#C8A75D' }}>&ldquo;Manual de uso&rdquo;</strong>{' '}
-                    que aparece en la esquina inferior derecha.
+                    Puedes volver a abrir este manual desde el botón{' '}
+                    <strong style={{ color: '#C8A75D' }}>&ldquo;Manual&rdquo;</strong>{' '}
+                    en la barra de navegación superior.
                   </p>
                 </div>
               )}

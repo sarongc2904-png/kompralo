@@ -5,6 +5,7 @@ import { SupabaseOrderRepository } from '@/domain/orders';
 import type { Order } from '@/domain/orders';
 import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/lib/supabase/server';
 import { DashboardManualTour } from '@/components/dashboard/DashboardManualTour';
+import { DashboardManualNavButton } from '@/components/dashboard/DashboardManualNavButton';
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
 
@@ -422,15 +423,18 @@ export default async function ClientePage({ searchParams }: Props) {
         }}>
           Kompralo
         </Link>
-        {isAuthenticated && (
-          <Link href="/auth/signout" style={{
-            fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500,
-          }}
-          className="pr2-nav-link"
-          >
-            Cerrar sesión
-          </Link>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <DashboardManualNavButton />
+          {isAuthenticated && (
+            <Link href="/auth/signout" style={{
+              fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500,
+            }}
+            className="pr2-nav-link"
+            >
+              Cerrar sesión
+            </Link>
+          )}
+        </div>
       </nav>
 
       <div style={{ maxWidth: '640px', margin: '2rem auto 0', position:'relative', zIndex:2 }}>
