@@ -256,7 +256,7 @@ export const featureRegistry: FeatureDescriptor[] = [
     description: 'Muestra el hashtag personalizado e Instagram handle para que los invitados compartan fotos.',
     category: 'social',
     status: 'active',
-    minimumPlan: 'deluxe',
+    minimumPlan: 'premium',
     iconName: 'hash',
     requiresPersistence: false,
     editableByCustomer: true,

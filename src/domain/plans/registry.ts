@@ -19,7 +19,7 @@ export const plansById: Record<PlanId, InvitationPlan> = {
   premium: {
     id: 'premium',
     name: 'Premium',
-    description: 'Todo Basic más música, galería, video de portada y código QR.',
+    description: 'Todo Basic más música, galería, video de portada, código QR y redes sociales / hashtag.',
     features: premiumFeatures,
   },
   deluxe: {

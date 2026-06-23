@@ -8,6 +8,7 @@ import { isAdminUser } from '@/lib/admin';
 import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
+import { getFeaturesForPlan } from '@/domain/plans/registry';
 import type {
   GalleryImageItem,
   InvitationProtagonistInput,
@@ -1002,14 +1003,11 @@ export async function updateSocial(
   input: UpdateInvitationSocialInput,
 ): Promise<UpdateInvitationResult> {
   try {
-    const planError = await checkPlanAccess(input.id, 'deluxe');
+    const planError = await checkPlanAccess(input.id, 'premium');
     if (planError) return planError;
 
     const s = input.social;
 
-    if (!s.hashtag.trim()) {
-      return { success: false, error: 'El hashtag es requerido.' };
-    }
     if (s.facebookUrl.trim() && !isValidUrl(s.facebookUrl.trim())) {
       return { success: false, error: 'La URL de Facebook no es válida.' };
     }
@@ -1162,9 +1160,24 @@ export async function updateFeatureOverrides(
   const { id } = input;
 
   // Strip undefined values to keep the JSONB clean.
-  const overrides: FeatureOverrides = Object.fromEntries(
+  let overrides: FeatureOverrides = Object.fromEntries(
     Object.entries(input.overrides).filter(([, v]) => v !== undefined),
   ) as FeatureOverrides;
+
+  // Non-admin: strip any override that tries to enable a feature the plan doesn't include.
+  // Admins (ADMIN_ACCESS_ENABLED=true) may override any feature for customization.
+  if (!isAdminMode()) {
+    const inv = await invitationRepository.getById(id);
+    if (inv) {
+      const planDefaults = getFeaturesForPlan(normalizePlanId(inv.planId));
+      overrides = Object.fromEntries(
+        Object.entries(overrides).filter(([key, value]) => {
+          if (value !== true) return true; // allow disabling any feature
+          return planDefaults[key as InvitationFeatureKey] === true;
+        }),
+      ) as FeatureOverrides;
+    }
+  }
 
   try {
     await invitationRepository.updateFeatureOverrides(id, overrides);
