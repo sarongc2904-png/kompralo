@@ -30,12 +30,12 @@ export function InvitacionesHeader() {
 
           {/* Desktop navigation */}
           <div className="cro-nav-links">
-            <Link href="#como-funciona" className="cro-nav-link">Cómo funciona</Link>
-            <Link href="/sofia-y-alejandro" className="cro-nav-link">Demo real</Link>
-            <Link href="#planes" className="cro-nav-link" data-cta="nav-planes">Ver planes</Link>
+            <Link href="#como-funciona" className="cro-nav-link" data-event="click-header-como-funciona">Cómo funciona</Link>
+            <Link href="/sofia-y-alejandro" className="cro-nav-link" data-event="click-header-demo">Demo real</Link>
+            <Link href="#planes" className="cro-nav-link" data-cta="nav-planes" data-event="click-header-planes">Ver planes</Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-              <Link href="/dashboard" className="cro-nav-link" style={{ color: T.ink }}>Acceso cliente</Link>
-              <Link href="/admin" className="cro-nav-link" style={{ fontSize: '0.65rem', opacity: 0.6 }}>Admin</Link>
+              <Link href="/dashboard" className="cro-nav-link" style={{ color: T.ink }} data-event="click-header-acceso-cliente">Acceso cliente</Link>
+              <Link href="/admin" className="cro-nav-link" style={{ fontSize: '0.65rem', opacity: 0.6 }} data-event="click-header-admin">Admin</Link>
             </div>
           </div>
 
@@ -53,14 +53,14 @@ export function InvitacionesHeader() {
       {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
         <div className="cro-mobile-menu">
-          <Link href="#como-funciona" className="cro-mobile-menu-link" onClick={handleNavClick}>Cómo funciona</Link>
-          <Link href="/sofia-y-alejandro" className="cro-mobile-menu-link" onClick={handleNavClick}>Demo real</Link>
-          <Link href="#planes" className="cro-mobile-menu-link" onClick={handleNavClick}>Ver planes</Link>
+          <Link href="#como-funciona" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-como-funciona">Cómo funciona</Link>
+          <Link href="/sofia-y-alejandro" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-demo">Demo real</Link>
+          <Link href="#planes" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-planes">Ver planes</Link>
           <div style={{ borderTop: `1px solid ${T.border}`, marginTop: '1rem', paddingTop: '1rem' }}>
-            <Link href="/dashboard" className="cro-mobile-menu-link" onClick={handleNavClick}>
+            <Link href="/dashboard" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-acceso-cliente">
               Acceso cliente
             </Link>
-            <Link href="/admin" className="cro-mobile-menu-link" style={{ opacity: 0.7 }} onClick={handleNavClick}>
+            <Link href="/admin" className="cro-mobile-menu-link" style={{ opacity: 0.7 }} onClick={handleNavClick} data-event="click-mobile-header-admin">
               Admin
             </Link>
           </div>

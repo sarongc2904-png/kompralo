@@ -16,6 +16,9 @@ export const VIRTUAL_ASSISTANT_ALLOWED_ROUTES = [
 ];
 
 export function isVirtualAssistantRoute(pathname: string): boolean {
+  if (pathname === '/invitaciones' || pathname === '/invitaciones/') {
+    return false;
+  }
   return VIRTUAL_ASSISTANT_ALLOWED_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );

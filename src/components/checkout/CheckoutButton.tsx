@@ -8,6 +8,7 @@ export type CheckoutButtonProps = {
   invitationId?: string;
   className?: string;
   label?: string;
+  'data-event'?: string;
 };
 
 type State = 'idle' | 'loading' | 'error';
@@ -17,6 +18,7 @@ export function CheckoutButton({
   invitationId,
   className,
   label = 'Comprar',
+  'data-event': dataEvent,
 }: CheckoutButtonProps) {
   const [state, setState] = useState<State>('idle');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -82,6 +84,7 @@ export function CheckoutButton({
         onClick={handleClick}
         disabled={state === 'loading'}
         className={className}
+        data-event={dataEvent}
         style={
           !className
             ? {

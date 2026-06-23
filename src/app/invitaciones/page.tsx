@@ -19,9 +19,9 @@ import { availableProducts } from '@/domain/products';
 import type { Product } from '@/domain/products';
 
 export const metadata: Metadata = {
-  title: 'Organiza tu evento desde un solo enlace | Kompralo',
+  title: 'Invitaciones Digitales Premium con RSVP Automático | Kompralo',
   description:
-    'Crea una invitación premium, confirma asistentes y comparte ubicación, horarios, galería y más desde un solo enlace. Planes desde $499 MXN.',
+    'Crea tu invitación web premium en minutos. Confirmación de asistencia (RSVP) en tiempo real, mapas, mesa de regalos y música en un solo enlace elegante.',
 };
 
 const T = {
@@ -175,6 +175,14 @@ function LandingStyles() {
       /* ── Editions reassurance ─────────────────────────────── */
       .cro-reassurance { text-align: center; margin-top: 2.5rem; padding: 1.5rem 2rem; border: 1px solid ${T.border}; border-radius: 2px; background: rgba(255,255,255,0.02); }
 
+      /* ── Process Section ──────────────────────────────────── */
+      .cro-process-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; }
+      .cro-process-card { padding: 3rem 2.5rem; border: 1px solid ${T.border}; border-radius: 2px; background: rgba(255,255,255,0.02); display: flex; flex-direction: column; height: 100%; transition: background 0.4s; }
+      .cro-process-card:hover { background: rgba(166,123,91,0.02); }
+      .cro-process-step { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 50%; border: 1px solid ${T.cyan}; color: ${T.cyan}; font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; }
+      .cro-process-card h3 { margin: 0 0 1rem; font-size: 1.25rem; font-weight: 600; letter-spacing: 0.05em; }
+      .cro-process-card p { margin: 0; color: ${T.muted}; font-size: 0.95rem; line-height: 1.6; font-weight: 300; }
+
       @media (max-width: 1024px) {
         .cro-block-split { grid-template-columns: 1fr; min-height: auto; }
         .cro-block-media { height: 50vh; }
@@ -183,13 +191,13 @@ function LandingStyles() {
         .cro-problem-grid { grid-template-columns: 1fr; }
         .cro-compare-grid { grid-template-columns: 1fr; }
         .cro-compare-col-bad { border-right: 0; border-bottom: 1px solid ${T.border}; }
+        .cro-process-grid { grid-template-columns: 1fr; max-width: 500px; margin-inline: auto; }
       }
       @media (max-width: 780px) {
         .cro-mobile-sticky-cta { display: flex; animation: slideUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
         .cro-nav-links { display: none; }
         .cro-mobile-menu-btn { display: flex; }
         .cro-mobile-menu { display: flex; }
-        body { padding-bottom: 100px; }
         .cro-grid-3 { grid-template-columns: 1fr; }
         .cro-hero-actions { flex-direction: column; width: 100%; max-width: 300px; }
         .cro-hero-actions .cro-btn { width: 100%; }
@@ -210,25 +218,13 @@ function Header() {
   return <InvitacionesHeader />;
 }
 
-function MobileStickyCTA() {
-  return (
-    <div className="cro-mobile-sticky-cta">
-      <div>
-        <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: T.cyan }}>Invitaciones Premium</div>
-        <div style={{ fontSize: '1rem', fontWeight: 600 }}>Desde $499 MXN</div>
-      </div>
-      <Link href="#planes" className="cro-btn cro-btn-cyan" style={{ padding: '0.8rem 1.5rem', fontSize: '0.75rem' }} data-cta="sticky-cta">Comenzar ahora</Link>
-    </div>
-  );
-}
-
 // ─── Problem Section ──────────────────────────────────────────────────────────
 
 const PAIN_POINTS = [
-  'Tu invitación se pierde en el hilo de mensajes de WhatsApp.',
-  '"¿Cuándo es?" y "¿Dónde es?" — las mismas preguntas una y otra vez.',
-  'No sabes quién confirmó asistencia ni cuántos invitados son en total.',
-  'Persigues a cada invitado uno por uno para recopilar confirmaciones.',
+  'Se pierden en el chat: Los invitados olvidan descargar la imagen y esta se pierde entre miles de mensajes.',
+  'Preguntas repetitivas: "¿A qué hora empieza?", "¿Dónde es la ubicación?" — respondes lo mismo decenas de veces.',
+  'Caos de confirmación: Tienes que registrar de forma manual en papel o Excel a cada persona que te escribe.',
+  'Cuentas inciertas: No sabes cuántos invitados reales asistirán, lo que causa desperdicio o falta de platillos.',
 ];
 
 function ProblemSection() {
@@ -236,12 +232,12 @@ function ProblemSection() {
     <section className="cro-section" style={{ background: T.onyx }}>
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
-          <p className="cro-eyebrow">El problema real</p>
+          <p className="cro-eyebrow">El problema de las invitaciones tradicionales</p>
           <h2 className="cro-title-xl">
-            Cuando tu evento crece,<br />WhatsApp se vuelve un caos.
+            ¿Por qué las invitaciones en imagen o PDF ya no funcionan?
           </h2>
           <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
-            ¿Te suena familiar?
+            Enviar una imagen estática por WhatsApp genera fricción y desorganización en tu evento:
           </p>
         </Reveal>
         <Stagger className="cro-problem-grid" gap={0.08}>
@@ -302,11 +298,11 @@ function DiscoverBlock2() {
 // ─── Comparison Section ───────────────────────────────────────────────────────
 
 const COMPARE_ROWS: [string, string][] = [
-  ['Imagen estática perdida en el chat',        'Página interactiva que siempre funciona'],
-  ['Confirmaciones manuales una por una',       'RSVP automático — tú solo miras los números'],
-  ['"¿Dónde es?" una y otra vez',               'Mapa integrado visible en todo momento'],
-  ['Información obsoleta, imposible de editar', 'Edita en tiempo real, sin rediseñar nada'],
-  ['Repartida en 20 chats distintos',           'Un solo enlace elegante para todo'],
+  ['Imagen borrosa o PDF pesado de abrir',     'Invitación web ultra-rápida y adaptable a móviles'],
+  ['Tú registras y sumas cada confirmación',    'RSVP inteligente con panel de asistencia en vivo'],
+  ['Ubicaciones que no abren o confunden',      'Mapa interactivo con botones directos a Google Maps y Waze'],
+  ['Si hay cambios, debes reenviar la imagen',  'Ediciones instantáneas e itinerarios siempre actualizados'],
+  ['Mesa de regalos dispersa o incómoda',       'Sección elegante con enlaces a tiendas o datos bancarios'],
 ];
 
 function ComparisonSection() {
@@ -314,9 +310,9 @@ function ComparisonSection() {
     <section className="cro-section" style={{ background: T.black }}>
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
-          <p className="cro-eyebrow">La diferencia</p>
+          <p className="cro-eyebrow">El contraste</p>
           <h2 className="cro-title-xl">
-            Una imagen por WhatsApp se olvida.<br />Kompralo organiza.
+            Compara la experiencia tradicional<br />frente a una invitación inteligente.
           </h2>
         </Reveal>
         <Reveal delay={0.2}>
@@ -346,38 +342,84 @@ function ComparisonSection() {
   );
 }
 
+// ─── Process Section (Cómo funciona) ──────────────────────────────────────────
+
+const PROCESS_STEPS = [
+  {
+    num: '1',
+    title: 'Eliges tu invitación',
+    text: 'Selecciona el plan ideal para tu evento y realiza tu pago de forma segura.',
+  },
+  {
+    num: '2',
+    title: 'Completas la información',
+    text: 'Te pedimos nombres, fecha, ubicación, fotos y detalles importantes para preparar tu invitación.',
+  },
+  {
+    num: '3',
+    title: 'Recibes y compartes tu enlace',
+    text: 'Te entregamos una invitación lista para compartir por WhatsApp. Tus invitados pueden ver los detalles y confirmar asistencia desde su celular.',
+  },
+];
+
+function ProcessSection() {
+  return (
+    <section id="como-funciona" className="cro-section" style={{ background: T.onyx }}>
+      <div className="cro-shell">
+        <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
+          <p className="cro-eyebrow">Paso a paso</p>
+          <h2 className="cro-title-xl">
+            Cómo funciona en 3 simples pasos
+          </h2>
+        </Reveal>
+        <Stagger className="cro-process-grid" gap={0.12}>
+          {PROCESS_STEPS.map(({ num, title, text }) => (
+            <Item key={num} style={{ display: 'flex' }}>
+              <div className="cro-process-card">
+                <span className="cro-process-step">{num}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            </Item>
+          ))}
+        </Stagger>
+      </div>
+    </section>
+  );
+}
+
 // ─── Values Grid (6 features with benefit copy) ───────────────────────────────
 
 const VALUES = [
   {
     icon: Smartphone,
-    title: 'Invitación premium',
-    text: 'Una página interactiva y elegante que tus invitados recordarán — no una imagen perdida en WhatsApp.',
+    title: 'Diseño Exclusivo y Premium',
+    text: 'Una página web interactiva con tipografía elegante y animaciones fluidas que se adapta a cualquier pantalla.',
   },
   {
     icon: Users,
-    title: 'RSVP automático',
-    text: 'Tus invitados confirman desde el enlace. Tú ves en tiempo real quién va y quién no — sin perseguir a nadie.',
+    title: 'Confirmaciones RSVP en Vivo',
+    text: 'Tus invitados confirman su asistencia y de sus acompañantes. Tu lista se actualiza al instante en tu panel.',
   },
   {
     icon: MapPin,
-    title: 'Ubicación siempre visible',
-    text: 'Mapa integrado con dirección exacta. Nadie llegará tarde ni preguntará dónde es.',
+    title: 'Guía GPS Integrada',
+    text: 'Ubicaciones interactivas con botones directos para abrir en Waze, Google Maps y Apple Maps con un toque.',
   },
   {
     icon: Gift,
-    title: 'Mesa de regalos',
-    text: 'Comparte tu lista de regalos en la invitación. Sin mensajes extra, sin confusiones.',
+    title: 'Mesa de Regalos Elegante',
+    text: 'Vincula tus mesas de regalos (Amazon, Liverpool, etc.) o agrega tus datos bancarios y buzón de efectivo.',
   },
   {
     icon: CalendarClock,
-    title: 'Itinerario del evento',
-    text: 'Ceremonia, recepción, cena: todo el programa visible para tus invitados desde el mismo enlace.',
+    title: 'Cronograma y Detalles',
+    text: 'Informa sobre horarios de misa, recepción y fiesta para que tus invitados disfruten cada momento del evento.',
   },
   {
     icon: Images,
-    title: 'Galería de momentos',
-    text: 'Cuenta tu historia antes del evento. Comparte fotos y crea expectativa entre tus invitados.',
+    title: 'Galería y Música',
+    text: 'Sube tus mejores fotografías y añade una melodía de fondo para crear expectativa antes del gran día.',
   },
 ];
 
@@ -435,13 +477,13 @@ function GuaranteeSection() {
         <Reveal className="cro-guarantee">
           <div className="cro-guarantee-badge">
             <ShieldCheck size={18} />
-            Garantía Invitación Lista
+            Garantía de Satisfacción y Entrega Rápida
           </div>
           <h2 className="cro-title-xl" style={{ marginBottom: '1.5rem' }}>
-            Si no queda lista en 48 horas,<br />te devolvemos el dinero.
+            Tu invitación lista en menos de 48 horas<br />o te devolvemos el 100% de tu dinero.
           </h2>
-          <p className="cro-copy" style={{ maxWidth: 560, margin: '0 auto' }}>
-            Nuestro equipo revisa cada invitación antes de entregarla. Tu evento no puede esperar — nosotros tampoco.
+          <p className="cro-copy" style={{ maxWidth: 640, margin: '0 auto' }}>
+            Sabemos que los tiempos de tu boda o evento son sagrados. Nuestro equipo de soporte premium revisa y optimiza cada detalle para asegurar que tu invitación funcione a la perfección desde el primer día.
           </p>
         </Reveal>
       </div>
@@ -458,9 +500,9 @@ const PLAN_NAMES: Record<string, string> = {
 };
 
 const PLAN_DESCS: Record<string, string> = {
-  basic:   'Todo lo esencial para tu evento: invitación elegante, confirmaciones automáticas, ubicación y cuenta regresiva.',
-  premium: 'Olvídate de preguntar quién va. RSVP, galería, música y mesa de regalos — todo organizado solo.',
-  deluxe:  'La experiencia más completa. Video cinemático, Libro de visitas y StoryBook premium incluidos.',
+  basic:   'La opción perfecta para eventos sencillos que buscan elegancia, claridad y confirmación básica sin complicaciones.',
+  premium: 'La favorita de las parejas y organizadores. Agrega música, galería de fotos e itinerario para una experiencia inolvidable y controlada.',
+  deluxe:  'Para quienes buscan el máximo nivel de distinción. Incluye StoryBook animado, intro cinemática y funciones avanzadas.',
 };
 
 function formatPrice(product: Product) {
@@ -505,6 +547,7 @@ function Editions() {
                     productId={product.id}
                     label={`Comenzar — ${marketingName}`}
                     className={`cro-checkout ${isPro ? 'cro-checkout-pro' : 'cro-checkout-std'}`}
+                    data-event={`click-pricing-${product.id}`}
                   />
                 </div>
               </Item>
@@ -603,6 +646,14 @@ const FAQ_ITEMS = [
     a: 'No. La invitación funciona directamente en el navegador del celular o computadora. Sin apps, sin registros, sin complicaciones para tus invitados.',
   },
   {
+    q: '¿Cómo recibo mi acceso y comienzo a crear?',
+    a: 'Inmediatamente después de tu pago seguro, recibirás un correo con tus credenciales de acceso a tu panel. Desde ahí podrás llenar los datos del evento paso a paso. Si tienes dudas, nuestro equipo de soporte te asistirá de inmediato.',
+  },
+  {
+    q: '¿Los datos de mis invitados están seguros?',
+    a: 'Totalmente. La privacidad es nuestra prioridad. Las confirmaciones de asistencia y datos de contacto de tus invitados se almacenan de forma segura y solo tú tienes acceso a ellos desde tu panel privado.',
+  },
+  {
     q: '¿Qué pasa si quiero más funciones después de comprar?',
     a: 'Puedes escribirnos y hacemos el upgrade por ti. Solo pagas la diferencia entre planes — sin perder nada de lo que ya tienes.',
   },
@@ -652,13 +703,13 @@ function CallToAction() {
       <div className="cro-shell">
         <Reveal className="cro-hero-content">
           <h2 className="cro-title-mega" style={{ fontSize: 'clamp(1.8rem, 5vw, 4.5rem)' }}>
-            Tu evento merece<br />algo más que una imagen<br />perdida en WhatsApp.
+            Comienza hoy a organizar<br />el evento de tus sueños
           </h2>
           <p className="cro-copy" style={{ marginTop: '2rem', maxWidth: 600 }}>
-            Organiza con elegancia. Sorprende a tus invitados. Vive tu evento sin caos.
+            Únete a las cientos de parejas y organizadores que eliminaron las confirmaciones manuales y el desorden de WhatsApp.
           </p>
           <div className="cro-hero-actions" style={{ justifyContent: 'center', marginTop: '2rem' }}>
-            <Link href="#planes" className="cro-btn cro-btn-cyan" data-cta="cta-final">Crear mi invitación</Link>
+            <Link href="#planes" className="cro-btn cro-btn-cyan" data-cta="cta-final" data-event="click-cta-final">Crear mi invitación ahora</Link>
           </div>
         </Reveal>
       </div>
@@ -698,6 +749,7 @@ export default function InvitacionesPage() {
       <DiscoverBlock1 />
       <DiscoverBlock2 />
       <ComparisonSection />
+      <ProcessSection />
       <ValuesGrid />
       <EventsGallery />
       <GuaranteeSection />
@@ -706,7 +758,6 @@ export default function InvitacionesPage() {
       <FAQ />
       <CallToAction />
       <Footer />
-      <MobileStickyCTA />
     </main>
   );
 }
