@@ -31,9 +31,6 @@ import {
 import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
 import { WeddingQuickStartSetup } from '@/components/editor/setup/WeddingQuickStartSetup';
 
-function isAdminMode(): boolean {
-  return process.env.ADMIN_ACCESS_ENABLED === 'true';
-}
 
 function getDashboardAssistantEventType(category: string): DashboardAssistantEventType {
   switch (category) {
@@ -122,8 +119,8 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     notFound();
   }
 
-  // Ownership check
-  if (!isAdminMode()) {
+  // Ownership check (always enforced — ADMIN_ACCESS_ENABLED removed)
+  {
     let sessionUser = null;
     try {
       const supabase = await createServerSupabaseClient();
@@ -135,25 +132,44 @@ export default async function EditInvitationPage({ params, searchParams }: Props
 
     const hasScopedAccess = await verifyInvitationAccess(id);
 
-    if (!sessionUser && !hasScopedAccess) {
-      redirect(`/login?redirect=/dashboard/invitations/${id}/edit`);
-    }
-
     const ownerEmail  = invitation.customerEmail ?? null;
     const ownerUserId = invitation.ownerUserId ?? null;
 
+    // Server-side debug log (no secrets logged).
+    console.log('[editPage] route=/dashboard/invitations/%s/edit', id);
+    console.log('[editPage] sessionUserId=%s sessionEmail=%s', sessionUser?.id ?? 'null', sessionUser?.email ?? 'null');
+    console.log('[editPage] invitationOwnerUserId=%s invitationCustomerEmail=%s', ownerUserId ?? 'null', ownerEmail ?? 'null');
+    console.log('[editPage] hasScopedAccess=%s', hasScopedAccess);
+
+    if (!sessionUser && !hasScopedAccess) {
+      console.log('[editPage] no session and no scoped access → redirect to login');
+      redirect(`/login?redirect=/dashboard/invitations/${id}/edit`);
+    }
+
     // Grant access if: cookie-based access, user_id match, or customer_email match.
-    const userIdMatch   = ownerUserId && sessionUser?.id && ownerUserId === sessionUser.id;
+    const isOwnerByUserId = !!(ownerUserId && sessionUser?.id && ownerUserId === sessionUser.id);
+    const isOwnerByEmail  = !!(ownerEmail && sessionUser?.email &&
+      ownerEmail.toLowerCase() === sessionUser.email.toLowerCase());
+
+    console.log('[editPage] isOwnerByUserId=%s isOwnerByEmail=%s', isOwnerByUserId, isOwnerByEmail);
+
     const emailMismatch =
       !hasScopedAccess &&
-      !userIdMatch &&
-      ownerEmail &&
-      ownerEmail.toLowerCase() !== (sessionUser?.email ?? '').toLowerCase();
+      !isOwnerByUserId &&
+      !isOwnerByEmail &&
+      // If both ownerEmail and ownerUserId are null any authenticated user passes — admins only.
+      (ownerEmail !== null || ownerUserId !== null);
+
+    console.log('[editPage] emailMismatch=%s', emailMismatch);
 
     if (emailMismatch) {
       // Admin users can edit any invitation — check before showing error
-      const adminCheck = sessionUser?.id ? await isAdminUser(sessionUser.id) : false;
+      const adminCheck = sessionUser?.id
+        ? await isAdminUser(sessionUser.id, sessionUser.email)
+        : false;
+      console.log('[editPage] adminCheck=%s', adminCheck);
       if (!adminCheck) {
+        console.log('[editPage] authorization result=DENIED (not owner, not admin)');
         return (
           <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
             <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#C62828', marginBottom: '0.5rem' }}>
@@ -172,6 +188,8 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         );
       }
     }
+
+    console.log('[editPage] authorization result=GRANTED');
   }
 
   const plan = normalizePlanId(invitation.planId);

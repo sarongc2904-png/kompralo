@@ -102,10 +102,13 @@ function isAdminMode(): boolean {
 async function getSession(): Promise<{ email: string; userId: string } | null> {
   try {
     const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    console.log('[cliente] getSession userId=%s email=%s error=%s',
+      user?.id ?? 'null', user?.email ?? 'null', error?.message ?? 'none');
     if (!user?.email || !user?.id) return null;
     return { email: user.email, userId: user.id };
-  } catch {
+  } catch (e) {
+    console.error('[cliente] getSession threw:', e);
     return null;
   }
 }
@@ -364,7 +367,8 @@ export default async function ClientePage({ searchParams }: Props) {
   const adminMode = isAdminMode();
 
   if (!session && !adminMode) {
-    redirect('/login?redirect=/cliente');
+    console.log('[cliente] no session → redirect to login');
+    redirect('/login?redirect=%2Fcliente');
   }
 
   const sessionEmail = session?.email ?? null;

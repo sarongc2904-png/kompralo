@@ -48,37 +48,65 @@ async function getCurrentAuthUser() {
 /**
  * Verifies the current request is from an admin.
  * Throws a redirect to /login if not authenticated,
- * or renders "not authorized" if authenticated but not admin.
- * Use in Server Components and Server Actions (not API routes).
+ * or redirects to /cliente if authenticated but not admin.
+ *
+ * Admin check order:
+ *   1. ADMIN_EMAILS env var (comma-separated list, no DB round-trip).
+ *   2. admin_users table (requires SUPABASE_SERVICE_ROLE_KEY).
+ *
+ * In Vercel: set ADMIN_EMAILS=sarongc2904@gmail.com to grant admin access
+ * without needing a row in admin_users.
  */
 export async function requireAdmin(): Promise<AdminUser> {
   const user = await getCurrentAuthUser();
+
+  console.log('[requireAdmin] user:', user?.id ?? 'null', user?.email ?? 'no-email');
+
   if (!user) {
-    // Redirect to login, preserving the current path so the admin returns here after login.
     const hdrs = await headers();
     const currentPath = hdrs.get('x-pathname') ?? '/admin';
     const safeRedirect = currentPath.startsWith('/') ? currentPath : '/admin';
+    console.log('[requireAdmin] no session → redirect to login, redirectTo=%s', safeRedirect);
     redirect(`/login?redirect=${encodeURIComponent(safeRedirect)}`);
   }
 
-  const svc = createServiceRoleSupabaseClient();
-  const { data } = await svc
-    .from('admin_users')
-    .select('id, user_id, email, role')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  // 1. Fast path — ADMIN_EMAILS env var (no DB, works without admin_users table row).
+  const rawAdminEmails = process.env.ADMIN_EMAILS ?? '';
+  const adminEmailList = rawAdminEmails
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
 
-  if (!data) {
-    // Authenticated but not an admin — send to cliente, not back to login (avoids loop).
-    redirect('/cliente');
+  if (user.email && adminEmailList.includes(user.email.toLowerCase())) {
+    console.log('[requireAdmin] granted via ADMIN_EMAILS for', user.email);
+    return { id: user.id, userId: user.id, email: user.email, role: 'admin' };
   }
 
-  return {
-    id:     data.id,
-    userId: data.user_id,
-    email:  data.email,
-    role:   data.role as 'admin' | 'superadmin',
-  };
+  // 2. DB check — admin_users table (wrapped in try-catch: SUPABASE_SERVICE_ROLE_KEY may be absent).
+  try {
+    const svc = createServiceRoleSupabaseClient();
+    const { data } = await svc
+      .from('admin_users')
+      .select('id, user_id, email, role')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (data) {
+      console.log('[requireAdmin] granted via admin_users table for', user.email);
+      return {
+        id:     data.id,
+        userId: data.user_id,
+        email:  data.email,
+        role:   data.role as 'admin' | 'superadmin',
+      };
+    }
+  } catch (e) {
+    console.error('[requireAdmin] admin_users query failed (check SUPABASE_SERVICE_ROLE_KEY):', e);
+  }
+
+  // Authenticated but not an admin — send to /cliente to avoid login loop.
+  console.log('[requireAdmin] user %s is NOT admin → redirect /cliente', user.email);
+  redirect('/cliente');
 }
 
 /**
@@ -89,6 +117,13 @@ export async function getAdminUserForApiRoute(): Promise<AdminUser | null> {
   try {
     const user = await getCurrentAuthUser();
     if (!user) return null;
+
+    // Fast path via ADMIN_EMAILS env var.
+    const adminEmailList = (process.env.ADMIN_EMAILS ?? '')
+      .split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+    if (user.email && adminEmailList.includes(user.email.toLowerCase())) {
+      return { id: user.id, userId: user.id, email: user.email, role: 'admin' };
+    }
 
     const svc = createServiceRoleSupabaseClient();
     const { data } = await svc
@@ -112,8 +147,16 @@ export async function getAdminUserForApiRoute(): Promise<AdminUser | null> {
 
 /**
  * Quick boolean check — use when you just need to know, not to block.
+ * Also accepts an optional email for ADMIN_EMAILS fallback.
  */
-export async function isAdminUser(userId: string): Promise<boolean> {
+export async function isAdminUser(userId: string, email?: string | null): Promise<boolean> {
+  // Fast path via ADMIN_EMAILS env var (no DB).
+  if (email) {
+    const adminEmailList = (process.env.ADMIN_EMAILS ?? '')
+      .split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
+    if (adminEmailList.includes(email.toLowerCase())) return true;
+  }
+
   try {
     const svc = createServiceRoleSupabaseClient();
     const { data } = await svc
