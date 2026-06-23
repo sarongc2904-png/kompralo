@@ -12,5 +12,5 @@ interface Props { params: Promise<{ id: string }> }
 export default async function AdminEditInvitationPage({ params }: Props) {
   await requireAdmin();
   const { id } = await params;
-  redirect(`/dashboard/invitations/${id}/edit`);
+  redirect(`/dashboard/invitations/${id}/edit?from=admin`);
 }

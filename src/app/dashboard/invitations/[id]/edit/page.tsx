@@ -101,7 +101,8 @@ function UpsellBlock({ plan }: { plan: 'basic' | 'premium' }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params:       Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -111,8 +112,10 @@ export async function generateMetadata({ params }: Props) {
   return { title: `Editar: ${invitation.title} — Kompralo Admin` };
 }
 
-export default async function EditInvitationPage({ params }: Props) {
+export default async function EditInvitationPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const sp = await searchParams;
+  const fromAdmin = sp.from === 'admin';
   const invitation = await invitationRepository.getById(id);
 
   if (!invitation) {
@@ -197,6 +200,18 @@ export default async function EditInvitationPage({ params }: Props) {
 
         {/* Header */}
         <div className="mb-8">
+          {fromAdmin && (
+            <Link
+              href="/admin/invitations"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.375rem',
+                fontSize: '0.75rem', fontWeight: 600, color: '#E25822',
+                textDecoration: 'none', marginBottom: '0.75rem',
+              }}
+            >
+              ← Volver al admin
+            </Link>
+          )}
           <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#C5A880' }}>
             {invitation.category} · {plan} · {invitation.status}
           </p>
