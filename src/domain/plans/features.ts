@@ -47,7 +47,7 @@ export const premiumFeatures: InvitationFeatures = {
   showGallery: true,
   showVideo:   true,
   showQRCode:  true,
-  showParents: true,
+  showHashtag: true,
 };
 
 // ─── Deluxe ───────────────────────────────────────────────────────────────────
@@ -59,7 +59,7 @@ export const deluxeFeatures: InvitationFeatures = {
   showPadrinos:      true,
   showGiftRegistry:  true,
   showAccommodation: true,
-  showHashtag:       true,
+  showParents:       true,
   showIntro:         true,
   showGuestbook:     true,
   showMessages:      true,

@@ -239,8 +239,8 @@ export default async function EditInvitationPage({ params }: Props) {
           <ProtagonistsForm invitation={invitation} />
         </Section>
 
-        {/* ── 4. Nuestros padres — bodas (Premium+) ───────────────────────── */}
-        {invitation.category === 'wedding' && isPremiumOrDeluxe && (
+        {/* ── 4. Nuestros padres — bodas (Deluxe) ────────────────────────── */}
+        {invitation.category === 'wedding' && isDeluxe && (
           <Section
             title="Nuestros padres"
             hint="Nombres de los padres de los novios. Aparecerán en la sección 'Nuestras Familias' de la invitación."
@@ -378,8 +378,8 @@ export default async function EditInvitationPage({ params }: Props) {
           </Section>
         )}
 
-        {/* ── 12. Redes y Hashtag — Deluxe ─────────────────────────────────── */}
-        {isDeluxe && (
+        {/* ── 12. Redes y Hashtag — Premium+ ──────────────────────────────── */}
+        {isPremiumOrDeluxe && (
           <Section
             title="Redes y Hashtag"
             hint="Hashtag oficial del evento y redes sociales para que los invitados compartan."
