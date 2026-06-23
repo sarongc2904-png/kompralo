@@ -759,7 +759,7 @@ function SuccessScreen({
         >
           <p className="text-xs" style={{ color: '#6B5B4E' }}>
             💡 Puedes volver a usar este asistente cuando quieras desde el botón{' '}
-            <strong style={{ color: '#5C4A32' }}>"Editar con asistente rápido"</strong>{' '}
+            <strong style={{ color: '#5C4A32' }}>&ldquo;Editar con asistente rápido&rdquo;</strong>{' '}
             en la parte superior del editor.
           </p>
         </div>

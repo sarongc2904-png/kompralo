@@ -20,6 +20,7 @@ export function EditorWelcomeModal({ invitationId, planId, existingData }: Edito
     const key = `${STORAGE_KEY_PREFIX}${invitationId}`;
     const seen = localStorage.getItem(key) === 'true';
     if (!seen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVisible(true);
     }
   }, [invitationId]);

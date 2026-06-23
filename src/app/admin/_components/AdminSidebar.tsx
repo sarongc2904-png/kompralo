@@ -282,7 +282,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
             >
               <span style={{ fontSize: '.8rem' }}>↗</span> Ver sitio
             </a>
-            <a
+            <Link
               href="/auth/signout"
               className="adm-footer-link"
               style={{
@@ -296,7 +296,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
               }}
             >
               <span style={{ fontSize: '.8rem' }}>→</span> Cerrar sesión
-            </a>
+            </Link>
           </div>
         </div>
       </aside>
