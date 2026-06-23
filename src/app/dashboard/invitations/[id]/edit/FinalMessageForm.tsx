@@ -2,9 +2,65 @@
 
 import { useState } from 'react';
 import type { InvitationFinalMessageInput } from '@/domain/invitations';
+import type { InvitationProtagonistInput } from '@/domain/invitations';
 import { updateFinalMessage } from './actions';
 import { ImageUploadButton } from '@/components/dashboard/ImageUploadButton';
 import { notifyPreviewRefresh } from './previewRefresh';
+
+// ─── Smart defaults ───────────────────────────────────────────────────────────
+
+const DEFAULT_TITLE = 'Gracias por acompañarnos';
+const DEFAULT_QUOTE =
+  'Gracias por acompañarnos en uno de los días más importantes de nuestra vida. Su presencia hará este momento aún más especial.';
+
+const PLACEHOLDER_SIGNATURES = [
+  '',
+  'novia & novio',
+  'los novios',
+  'novios',
+  'con cariño, los novios',
+  'con cariño, novia & novio',
+  'con cariño, novios',
+];
+
+function formatPersonName(name: string): string {
+  return name
+    .trim()
+    .replace(/\s+/g, ' ')
+    .split(' ')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
+function buildDefaultSignature(protagonists: InvitationProtagonistInput[]): string {
+  const names = protagonists
+    .filter((p) => p.name?.trim())
+    .slice(0, 2)
+    .map((p) => formatPersonName(p.name));
+
+  if (names.length === 0) return 'Con cariño, los novios';
+  if (names.length === 1) return `Con cariño, ${names[0]}`;
+  return `Con cariño, ${names[0]} & ${names[1]}`;
+}
+
+function buildInitialForm(
+  initial: InvitationFinalMessageInput,
+  protagonists: InvitationProtagonistInput[],
+): InvitationFinalMessageInput {
+  const isPlaceholderSignature = PLACEHOLDER_SIGNATURES.includes(
+    (initial.signature ?? '').toLowerCase().trim(),
+  );
+
+  return {
+    title:     initial.title    || DEFAULT_TITLE,
+    message:   initial.message  ?? '',
+    quote:     initial.quote    || DEFAULT_QUOTE,
+    imageUrl:  initial.imageUrl ?? '',
+    signature: isPlaceholderSignature
+      ? buildDefaultSignature(protagonists)
+      : initial.signature,
+  };
+}
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -12,12 +68,15 @@ interface Props {
   invitationId: string;
   slug: string;
   initial: InvitationFinalMessageInput;
+  protagonists?: InvitationProtagonistInput[];
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function FinalMessageForm({ invitationId, slug, initial }: Props) {
-  const [form, setForm]     = useState<InvitationFinalMessageInput>(initial);
+export function FinalMessageForm({ invitationId, slug, initial, protagonists = [] }: Props) {
+  const [form, setForm]     = useState<InvitationFinalMessageInput>(
+    () => buildInitialForm(initial, protagonists),
+  );
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
 
@@ -33,12 +92,15 @@ export function FinalMessageForm({ invitationId, slug, initial }: Props) {
     e.preventDefault();
     setSaving(true);
     setResult(null);
-
-    const res = await updateFinalMessage({ id: invitationId, slug, finalMessage: form });
-
-    setSaving(false);
-    if (res.success) notifyPreviewRefresh();
-    setResult({ success: res.success, message: res.success ? res.message : res.error });
+    try {
+      const res = await updateFinalMessage({ id: invitationId, slug, finalMessage: form });
+      if (res.success) notifyPreviewRefresh();
+      setResult({ success: res.success, message: res.success ? res.message : res.error });
+    } catch {
+      setResult({ success: false, message: 'Error de red. Intenta de nuevo.' });
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -147,7 +209,7 @@ export function FinalMessageForm({ invitationId, slug, initial }: Props) {
       <button
         type="submit"
         disabled={saving}
-        className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60 transition-colors"
+        className="w-full sm:w-auto px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60 transition-colors"
       >
         {saving ? 'Guardando…' : 'Guardar mensaje final'}
       </button>

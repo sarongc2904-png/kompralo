@@ -111,6 +111,7 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
         placeholder="NuestraBoda2025"
         hint="Sin el símbolo # — se agrega automáticamente."
         onChange={(v) => patch('hashtag', v.replace(/^#/, ''))}
+        onClear={() => patch('hashtag', '')}
       />
 
       {/* Instagram + TikTok */}
@@ -180,7 +181,7 @@ export function SocialForm({ invitationId, slug, initialSocial }: Props) {
       <button
         type="submit"
         disabled={saving}
-        className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60 transition-colors"
+        className="w-full sm:w-auto px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60 transition-colors"
       >
         {saving ? 'Guardando…' : 'Guardar redes'}
       </button>

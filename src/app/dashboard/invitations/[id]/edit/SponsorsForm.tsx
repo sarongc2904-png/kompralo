@@ -29,7 +29,7 @@ function newSponsor(): InvitationSponsorInput {
 }
 
 function initSponsors(raw: InvitationSponsorInput[]): InvitationSponsorInput[] {
-  if (!raw || raw.length === 0) return [newSponsor()];
+  if (!raw || raw.length === 0) return [];
   return raw.map((s) => ({
     ...s,
     names: s.names.length > 0 ? s.names : [''],
@@ -145,21 +145,37 @@ export function SponsorsForm({ invitationId, slug, initialPadrinos }: Props) {
     setSaving(true);
     setResult(null);
 
-    const res = await updateInvitationPadrinos({
-      id:       invitationId,
-      slug,
-      padrinos: items,
-    });
-
-    setSaving(false);
-    if (res.success) notifyPreviewRefresh();
-    setResult({ success: res.success, message: res.success ? res.message : res.error });
+    try {
+      const res = await updateInvitationPadrinos({
+        id:       invitationId,
+        slug,
+        padrinos: items,
+      });
+      if (res.success) notifyPreviewRefresh();
+      setResult({ success: res.success, message: res.success ? res.message : res.error });
+    } catch {
+      setResult({ success: false, message: 'Error de red. Intenta de nuevo.' });
+    } finally {
+      setSaving(false);
+    }
   }
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {items.length === 0 && (
+        <div className="text-center py-8 text-sm text-gray-500">
+          <p className="mb-3">Aún no agregas padrinos o personas especiales.</p>
+          <button
+            type="button"
+            onClick={addCategory}
+            className="inline-flex items-center gap-1 px-4 py-2.5 text-sm font-medium rounded-lg border-2 border-dashed border-blue-300 text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors min-h-[44px]"
+          >
+            + Agregar padrino
+          </button>
+        </div>
+      )}
       {items.map((item, ci) => (
         <div key={item.id} className="border border-gray-200 rounded-lg p-4 space-y-4 bg-white">
           {/* Category header controls */}
@@ -185,9 +201,9 @@ export function SponsorsForm({ invitationId, slug, initialPadrinos }: Props) {
               <button
                 type="button"
                 onClick={() => removeCategory(ci)}
-                className="px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200"
+                className="inline-flex min-h-[36px] items-center justify-center px-3 py-1 text-xs font-semibold bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors"
               >
-                Eliminar
+                ✕ Eliminar
               </button>
             </div>
           </div>
@@ -277,13 +293,15 @@ export function SponsorsForm({ invitationId, slug, initialPadrinos }: Props) {
       ))}
 
       {/* Add category */}
-      <button
-        type="button"
-        onClick={addCategory}
-        className="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
-      >
-        + Agregar categoría
-      </button>
+      {items.length > 0 && (
+        <button
+          type="button"
+          onClick={addCategory}
+          className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors min-h-[44px]"
+        >
+          + Agregar categoría
+        </button>
+      )}
 
       {/* Feedback */}
       {result && (
@@ -295,13 +313,15 @@ export function SponsorsForm({ invitationId, slug, initialPadrinos }: Props) {
       )}
 
       {/* Submit */}
-      <button
-        type="submit"
-        disabled={saving}
-        className="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60 transition-colors"
-      >
-        {saving ? 'Guardando…' : 'Guardar padrinos'}
-      </button>
+      {items.length > 0 && (
+        <button
+          type="submit"
+          disabled={saving}
+          className="w-full sm:w-auto px-6 py-3 sm:py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-60 transition-colors"
+        >
+          {saving ? 'Guardando…' : 'Guardar padrinos'}
+        </button>
+      )}
     </form>
   );
 }

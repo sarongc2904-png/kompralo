@@ -414,6 +414,14 @@ export default async function EditInvitationPage({ params }: Props) {
               imageUrl:  invitation.finalMessage.imageUrl  ?? '',
               signature: invitation.finalMessage.signature ?? '',
             }}
+            protagonists={invitation.protagonists.map((p) => ({
+              id:          p.id,
+              name:        p.name,
+              role:        p.role        ?? '',
+              familyLabel: p.familyLabel ?? '',
+              imageUrl:    p.imageUrl    ?? '',
+              quote:       p.quote       ?? '',
+            }))}
           />
         </Section>
 
