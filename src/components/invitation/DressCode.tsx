@@ -18,17 +18,6 @@ interface DressCodeProps {
   theme: Theme;
 }
 
-function getColorLabel(hex: string): string {
-  const clean = hex.toUpperCase().trim();
-  if (clean.startsWith('#')) {
-    if (clean === '#F5ECD9' || clean === '#FAF6EE' || clean === '#FBF7EF' || clean === '#FFFDF8') return 'Ivory';
-    if (clean === '#C8A75D' || clean === '#D4B870' || clean === '#C5A880') return 'Dorado';
-    if (clean === '#5C4A3E' || clean === '#8A7665') return 'Marrón';
-    if (clean === '#1F1A16' || clean === '#0D0A07') return 'Oscuro';
-    return clean;
-  }
-  return hex;
-}
 
 export default function DressCode({ dressCode, theme }: DressCodeProps) {
   if (!dressCode) return null;
@@ -89,16 +78,13 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
                       damping: 15,
                       delay: index * 0.08,
                     }}
-                    className="flex-shrink-0 flex flex-col items-center gap-1.5"
+                    className="flex-shrink-0"
                   >
                     <div
                       className="w-10 h-10 rounded-full border border-black/10 shadow-sm"
                       style={{ backgroundColor: color }}
-                      title={color}
+                      title={`Color sugerido ${index + 1}`}
                     />
-                    <span className="text-[11px] md:text-[12px] uppercase tracking-wider font-mono" style={{ color: 'var(--v2-color-text-muted, #8A7665)', opacity: 0.75 }}>
-                      {getColorLabel(color)}
-                    </span>
                   </motion.div>
                 ))}
               </div>

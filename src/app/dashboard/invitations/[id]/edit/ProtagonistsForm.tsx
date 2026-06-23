@@ -352,14 +352,19 @@ export default function ProtagonistsForm({ invitation }: ProtagonistsFormProps) 
     e.preventDefault();
     setIsPending(true);
     setResult(null);
-    const res = await updateInvitationProtagonists({
-      id:   invitation.id,
-      slug: invitation.slug,
-      protagonists,
-    });
-    if (res.success) notifyPreviewRefresh();
-    setResult(res);
-    setIsPending(false);
+    try {
+      const res = await updateInvitationProtagonists({
+        id:   invitation.id,
+        slug: invitation.slug,
+        protagonists,
+      });
+      if (res.success) notifyPreviewRefresh();
+      setResult(res);
+    } catch {
+      setResult({ success: false, error: 'Error de red. Intenta de nuevo.' });
+    } finally {
+      setIsPending(false);
+    }
   }
 
   // ─────────────────────────────────────────────────────────────────────────────

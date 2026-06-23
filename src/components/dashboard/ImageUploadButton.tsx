@@ -9,7 +9,9 @@ interface ImageUploadButtonProps {
   /** Called with the Supabase public URL once the upload succeeds */
   onUpload: (url: string) => void;
   label?: string;
-  /** Extra classes applied to the trigger button — e.g. "w-full sm:w-auto" for mobile stacking */
+  /** Short label shown on mobile (≤sm). Falls back to label if not provided. */
+  shortLabel?: string;
+  /** Extra classes applied to the outer wrapper span — e.g. "w-full sm:w-auto" */
   className?: string;
 }
 
@@ -18,6 +20,7 @@ export function ImageUploadButton({
   invitationId,
   onUpload,
   label = 'Subir imagen',
+  shortLabel,
   className = '',
 }: ImageUploadButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +51,7 @@ export function ImageUploadButton({
   }
 
   return (
-    <span className="inline-flex flex-col gap-1">
+    <span className={`inline-flex flex-col gap-1${className ? ` ${className}` : ''}`}>
       <input
         ref={inputRef}
         type="file"
@@ -60,12 +63,11 @@ export function ImageUploadButton({
         type="button"
         onClick={() => { setError(null); inputRef.current?.click(); }}
         disabled={loading}
-        className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60${className ? ` ${className}` : ''}`}
+        className="flex w-full min-h-[44px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
         style={{
           background:  success ? '#E8F5E9' : '#F0EBE4',
           color:       success ? '#2E7D32' : '#2B1A0E',
           border:      `1px solid ${success ? '#A5D6A7' : '#C5A880'}`,
-          whiteSpace:  'nowrap',
         }}
       >
         {loading ? (
@@ -78,6 +80,11 @@ export function ImageUploadButton({
           </>
         ) : success ? (
           <>✓ Imagen cargada</>
+        ) : shortLabel ? (
+          <>
+            ↑ <span className="sm:hidden">{shortLabel}</span>
+            <span className="hidden sm:inline">{label}</span>
+          </>
         ) : (
           <>↑ {label}</>
         )}

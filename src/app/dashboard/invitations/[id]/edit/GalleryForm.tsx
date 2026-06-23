@@ -88,6 +88,7 @@ function ImageRow({
             folder="gallery"
             invitationId={invitationId}
             onUpload={(url) => { setImgError(false); onChange('url', url); }}
+            shortLabel="Subir"
             className="w-full sm:w-auto"
           />
         </div>
