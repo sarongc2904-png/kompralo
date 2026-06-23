@@ -12,10 +12,21 @@ export const VIRTUAL_ASSISTANT_ALLOWED_ROUTES = [
   '/invitaciones',
   '/invitaciones/precios',
   '/checkout/success',
-  '/cliente',
 ];
 
+function isPrivateAppRoute(pathname: string): boolean {
+  return (
+    pathname === '/dashboard' ||
+    pathname.startsWith('/dashboard/') ||
+    pathname === '/cliente' ||
+    pathname.startsWith('/cliente/') ||
+    pathname === '/admin' ||
+    pathname.startsWith('/admin/')
+  );
+}
+
 export function isVirtualAssistantRoute(pathname: string): boolean {
+  if (isPrivateAppRoute(pathname)) return false;
   if (pathname === '/invitaciones' || pathname === '/invitaciones/') {
     return false;
   }

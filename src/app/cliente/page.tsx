@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import type { Order } from '@/domain/orders';
 import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/lib/supabase/server';
+import { DashboardManualTour } from '@/components/dashboard/DashboardManualTour';
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
 
@@ -562,6 +563,9 @@ export default async function ClientePage({ searchParams }: Props) {
           </>
         )}
       </div>
+
+      {/* Manual interactivo del cliente */}
+      <DashboardManualTour />
     </main>
   );
 }

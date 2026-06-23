@@ -180,7 +180,7 @@ export default function InvitationRenderer({
               imageUrl={invitation.hero?.imageUrl ?? ''}
               videoUrl={invitation.hero?.videoUrl}
               heroVideoUrl={heroVideoUrl}
-              eventLabel={invitation.hero?.eventLabel ?? ''}
+              eventLabel={invitation.hero?.eventLabel || 'Nos casamos'}
               theme={effectiveTheme}
             />
           );

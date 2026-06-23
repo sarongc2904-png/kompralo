@@ -235,7 +235,7 @@ export default function Hero({
           willChange: 'transform, opacity',
         }}
       >
-        {/* Emotional phrase */}
+        {/* Event label — "Nos casamos" — principal headline above names */}
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1.0, y: 0 }}
@@ -243,7 +243,7 @@ export default function Hero({
           className={`text-sm md:text-base font-semibold uppercase tracking-[0.28em] mb-5 text-center max-w-md px-6 ${theme.bodyFont} hero-text-champagne`}
           style={{ textShadow: '0 8px 28px rgba(0,0,0,0.45)', color: '#F4DFC0' }}
         >
-          {emotionalPhrase}
+          {eventLabel}
         </motion.p>
 
         {/* Divider */}
@@ -307,19 +307,26 @@ export default function Hero({
           </motion.span>
         </div>
 
+        {/* Emotional phrase — subtitle below names */}
+        {emotionalPhrase && (
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 0.85, y: 0 }}
+            transition={{ duration: 1.0, delay: 1.8, ease: [0.16, 1, 0.3, 1] }}
+            className={`text-xs md:text-sm italic text-center max-w-xs px-6 mt-4 ${theme.bodyFont} hero-text-champagne`}
+            style={{ textShadow: '0 4px 16px rgba(0,0,0,0.4)', color: '#F4DFC0' }}
+          >
+            {emotionalPhrase}
+          </motion.p>
+        )}
+
         {/* Date */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.0, delay: 2.0, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-6 text-center"
+          className="mt-4 text-center"
         >
-          <p
-            className={`text-[13px] md:text-[14px] font-semibold uppercase tracking-[0.25em] mb-1.5 ${theme.bodyFont} hero-text-champagne`}
-            style={{ color: '#F4DFC0', textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
-          >
-            {eventLabel}
-          </p>
           <p
             className={`text-[16px] md:text-[18px] font-semibold tracking-[0.06em] ${theme.bodyFont} hero-text-champagne`}
             style={{ color: '#F4DFC0', fontWeight: 600, textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
