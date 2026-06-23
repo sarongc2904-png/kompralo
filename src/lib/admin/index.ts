@@ -9,6 +9,7 @@
 
 import 'server-only';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 
 // Re-export URL helpers so server components can keep using '@/lib/admin'.
@@ -53,7 +54,11 @@ async function getCurrentAuthUser() {
 export async function requireAdmin(): Promise<AdminUser> {
   const user = await getCurrentAuthUser();
   if (!user) {
-    redirect('/login?redirect=/admin');
+    // Redirect to login, preserving the current path so the admin returns here after login.
+    const hdrs = await headers();
+    const currentPath = hdrs.get('x-pathname') ?? '/admin';
+    const safeRedirect = currentPath.startsWith('/') ? currentPath : '/admin';
+    redirect(`/login?redirect=${encodeURIComponent(safeRedirect)}`);
   }
 
   const svc = createServiceRoleSupabaseClient();
@@ -64,7 +69,8 @@ export async function requireAdmin(): Promise<AdminUser> {
     .maybeSingle();
 
   if (!data) {
-    redirect('/login?redirect=/admin');
+    // Authenticated but not an admin — send to cliente, not back to login (avoids loop).
+    redirect('/cliente');
   }
 
   return {

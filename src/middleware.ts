@@ -3,10 +3,12 @@ import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 export async function middleware(request: NextRequest) {
-  // Forward the current pathname as a request header so Server Components
-  // (e.g. dashboard layout) can build accurate redirect URLs after auth.
+  const pathname = request.nextUrl.pathname;
+
+  // Build initial request headers — adds x-pathname so Server Components can
+  // read the current route without relying on searchParams or usePathname.
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-pathname', request.nextUrl.pathname);
+  requestHeaders.set('x-pathname', pathname);
 
   let response = NextResponse.next({ request: { headers: requestHeaders } });
 
@@ -20,8 +22,22 @@ export async function middleware(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
+        // 1. Update the mutable RequestCookies store on the request object.
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+
+        // 2. Rebuild the Cookie header so Server Components see the refreshed tokens.
+        //    request.cookies.getAll() now includes the newly set cookies.
+        //    We rebuild requestHeaders (which has x-pathname) with the fresh Cookie value
+        //    so the downstream NextResponse carries BOTH the custom header AND new tokens.
+        const freshCookieHeader = request.cookies
+          .getAll()
+          .map((c) => `${c.name}=${c.value}`)
+          .join('; ');
+        requestHeaders.set('cookie', freshCookieHeader);
+
         response = NextResponse.next({ request: { headers: requestHeaders } });
+
+        // 3. Also set cookies on the response so the browser stores them.
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options),
         );
