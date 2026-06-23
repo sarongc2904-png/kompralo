@@ -41,7 +41,10 @@ export const sofiaAlejandroWeddingInvitation: InvitationContent = {
     eventLabel: 'Nuestra Boda',
   },
   music: {
-    audioUrl: '/audio/demo/boda-elegante.mp3',
+    audioUrl: 'https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/music/boda-elegante.mp3',
+    selectedTrackId: 'boda-elegante',
+    title: 'Boda elegante',
+    enabled: true,
   },
   story: {
     slides: [

@@ -48,19 +48,20 @@ export default function Hero3D() {
   }, [mouseX, mouseY]);
 
   if (!isMounted) {
-    // Fallback for SSR to prevent hydration mismatch
+    // SSR skeleton — same background as mounted state to avoid flash
     return (
       <section className="cro-section-vh" style={{ minHeight: '100svh' }}>
         <div className="cro-hero-bg">
           <Image
             className="cro-hero-img"
-            src="/images/invitaciones/social-proof-event-1.webp"
-            alt="Kompralo Ultra Premium"
+            src="/images/invitaciones/hero-wedding-editorial.webp"
+            alt="Kompralo Invitaciones Premium"
             fill
             priority
             sizes="100vw"
+            style={{ objectFit: 'cover', opacity: 0.4 }}
           />
-          <div className="cro-hero-overlay"></div>
+          <div className="cro-hero-overlay" style={{ background: 'radial-gradient(circle at center, rgba(0,0,0,0.1) 0%, #000 100%)' }}></div>
         </div>
       </section>
     );
