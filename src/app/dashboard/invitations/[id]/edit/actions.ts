@@ -1424,7 +1424,7 @@ export async function startWeddingQuickStart(
   // ─── 1. Validate input ────────────────────────────────────────────────────
   const validationError = validateQuickStartInput(input);
   if (validationError) {
-    return { success: false, message: validationError };
+    return { success: false, message: validationError, error: validationError };
   }
 
   const {
@@ -1451,14 +1451,12 @@ export async function startWeddingQuickStart(
     // ─── 3. Fetch current invitation to verify category & plan ────────────
     const current = await repo.getById(invitationId);
     if (!current) {
-      return { success: false, message: 'Invitación no encontrada.' };
+      return { success: false, message: 'Invitación no encontrada.', error: 'Invitación no encontrada.' };
     }
 
     if (current.category !== 'wedding') {
-      return {
-        success: false,
-        message: 'El asistente Quick Start solo funciona para invitaciones de bodas.',
-      };
+      const msg = 'El asistente Quick Start solo funciona para invitaciones de bodas.';
+      return { success: false, message: msg, error: msg };
     }
 
     const planId = normalizePlanId(current.planId);
@@ -1673,18 +1671,20 @@ export async function startWeddingQuickStart(
         console.log('[QuickStart] Saved hotels');
       }
 
-      if (generatedContent.social !== undefined && !current.social?.hashtag) {
-        const socialInput: InvitationSocialInput = {
-          hashtag: generatedContent.social.hashtag,
-          instagramHandle: generatedContent.social.instagramHandle || '',
-          tiktokHandle: generatedContent.social.tiktokHandle || '',
-          facebookUrl: generatedContent.social.facebookUrl || '',
-          youtubeUrl: generatedContent.social.youtubeUrl || '',
-          note: generatedContent.social.note || '',
-        };
-        await repo.updateSocial(invitationId, socialInput);
-        console.log('[QuickStart] Saved social');
-      }
+    }
+
+    // Premium+ sections — social (hashtag auto-generated)
+    if ((planId === 'premium' || planId === 'deluxe') && generatedContent.social !== undefined && !current.social?.hashtag) {
+      const socialInput: InvitationSocialInput = {
+        hashtag: generatedContent.social.hashtag,
+        instagramHandle: generatedContent.social.instagramHandle || '',
+        tiktokHandle: generatedContent.social.tiktokHandle || '',
+        facebookUrl: generatedContent.social.facebookUrl || '',
+        youtubeUrl: generatedContent.social.youtubeUrl || '',
+        note: generatedContent.social.note || '',
+      };
+      await repo.updateSocial(invitationId, socialInput);
+      console.log('[QuickStart] Saved social');
     }
 
     // ─── 6. Update theme_id in invitations table ──────────────────────────

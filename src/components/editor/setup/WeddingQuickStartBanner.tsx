@@ -106,6 +106,7 @@ export function WeddingQuickStartBanner({
           invitationId={invitationId}
           planId={planId}
           onClose={handleWizardClose}
+          onComplete={handleDismiss}
         />
       )}
     </>

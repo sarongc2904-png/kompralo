@@ -553,8 +553,10 @@ export function generateWeddingTemplate(
     } else {
       result.hotels = generateHotels();
     }
+  }
 
-    // social — deluxe (hashtag auto from names for all plans)
+  // social — premium+ (hashtag auto from names)
+  if (planId === 'premium' || planId === 'deluxe') {
     if (hasRealSocial(existingContent.social)) {
       result.social = existingContent.social as SocialConfig;
     } else {

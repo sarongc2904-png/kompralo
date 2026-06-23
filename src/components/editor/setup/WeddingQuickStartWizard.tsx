@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { startWeddingQuickStart } from '@/app/dashboard/invitations/[id]/edit/actions';
 import { WIZARD_THEME_OPTIONS } from '@/domain/themes-v2/style-to-theme-map';
 import type { ThemeIdV2 } from '@/domain/themes-v2/types';
@@ -10,6 +9,7 @@ export interface WeddingQuickStartWizardProps {
   invitationId: string;
   planId: string;
   onClose: () => void;
+  onComplete?: () => void;
 }
 
 interface WizardData {
@@ -40,8 +40,8 @@ export function WeddingQuickStartWizard({
   invitationId,
   planId,
   onClose,
+  onComplete,
 }: WeddingQuickStartWizardProps) {
-  const router = useRouter();
   const isBasic = planId === 'basic';
 
   // Steps: Basic = 4, Premium/Deluxe = 5
@@ -124,6 +124,7 @@ export function WeddingQuickStartWizard({
     setSubmitting(true);
     setError(null);
     try {
+      console.info('[KOMPRALO] QuickStart submit data:', JSON.stringify(data));
       const result = await startWeddingQuickStart({
         invitationId,
         brideName: data.brideName.trim(),
@@ -140,6 +141,7 @@ export function WeddingQuickStartWizard({
         locationSkipped: isBasic ? true : data.locationSkipped,
       });
       if (result.success) {
+        onComplete?.();
         setDone(true);
       } else {
         setError(result.error ?? 'Ocurrió un error al guardar. Por favor intenta de nuevo.');
@@ -174,8 +176,6 @@ export function WeddingQuickStartWizard({
             brideName={data.brideName}
             groomName={data.groomName}
             invitationId={invitationId}
-            onClose={onClose}
-            router={router}
           />
         ) : (
           <>
@@ -718,14 +718,10 @@ function SuccessScreen({
   brideName,
   groomName,
   invitationId,
-  onClose,
-  router,
 }: {
   brideName: string;
   groomName: string;
   invitationId: string;
-  onClose: () => void;
-  router: ReturnType<typeof useRouter>;
 }) {
   return (
     <div className="flex flex-col h-full">
@@ -775,9 +771,7 @@ function SuccessScreen({
       >
         <button
           onClick={() => {
-            onClose();
-            router.refresh();
-            router.push(`/dashboard/invitations/${invitationId}/preview`);
+            window.location.href = `/preview/${invitationId}`;
           }}
           className="w-full rounded-xl font-semibold text-sm transition-colors"
           style={{
@@ -790,8 +784,7 @@ function SuccessScreen({
         </button>
         <button
           onClick={() => {
-            onClose();
-            router.refresh();
+            window.location.href = `/dashboard/invitations/${invitationId}/edit`;
           }}
           className="w-full rounded-xl font-semibold text-sm transition-colors"
           style={{

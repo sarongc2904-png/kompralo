@@ -94,7 +94,8 @@ function test_2_premium_plan_adds_fields(): void {
   assert(result.gift_registry === undefined, 'gift_registry should not exist in premium');
   assert(result.padrinos === undefined, 'padrinos should not exist in premium');
   assert(result.hotels === undefined, 'hotels should not exist in premium');
-  assert(result.social === undefined, 'social should not exist in premium');
+  // social is now premium+ (hashtag auto-generated)
+  assert(result.social !== undefined, 'social should exist in premium');
 
   // Check structure
   assert(Array.isArray(result.itinerary), 'itinerary should be array');
