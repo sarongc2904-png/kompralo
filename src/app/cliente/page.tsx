@@ -10,16 +10,18 @@ import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
 
-async function fetchInvitationSlugs(ids: string[]): Promise<Record<string, string>> {
+async function fetchInvitationData(ids: string[]): Promise<Record<string, { slug: string; status: string }>> {
   if (ids.length === 0) return {};
   try {
     const svc = createServiceRoleSupabaseClient();
     const { data } = await svc
       .from('invitations')
-      .select('id, slug')
+      .select('id, slug, status')
       .in('id', ids);
     if (!data) return {};
-    return Object.fromEntries(data.map((r) => [r.id, r.slug as string]));
+    return Object.fromEntries(
+      data.map((r) => [r.id, { slug: r.slug as string, status: r.status as string }]),
+    );
   } catch { return {}; }
 }
 
@@ -211,7 +213,7 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
   );
 }
 
-function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; isAuthenticated: boolean }) {
+function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthenticated }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; invitationStatus?: string | null; isAuthenticated: boolean }) {
   const statusColor: Record<string, string> = {
     pending:  '#8A6D3B',
     paid:     '#238636',
@@ -257,19 +259,36 @@ function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { orde
             {formatPrice(order.amountTotal, order.currency)} MXN · Adquirido el {formatDate(order.createdAt)}
           </p>
         </div>
-        <span
-          style={{
-            padding:      '0.35rem 0.875rem',
-            borderRadius: '2rem',
-            fontSize:     '0.75rem',
-            fontWeight:   700,
-            color:        statusColor[order.status] ?? T.mid,
-            background:   statusBg[order.status] ?? T.cream,
-            letterSpacing:'.02em',
-          }}
-        >
-          {statusLabels[order.status] ?? order.status}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '.375rem', alignItems: 'flex-end' }}>
+          <span
+            style={{
+              padding:      '0.35rem 0.875rem',
+              borderRadius: '2rem',
+              fontSize:     '0.75rem',
+              fontWeight:   700,
+              color:        statusColor[order.status] ?? T.mid,
+              background:   statusBg[order.status] ?? T.cream,
+              letterSpacing:'.02em',
+            }}
+          >
+            {statusLabels[order.status] ?? order.status}
+          </span>
+          {isPaid && (
+            <span
+              style={{
+                padding:      '0.25rem 0.75rem',
+                borderRadius: '2rem',
+                fontSize:     '0.7rem',
+                fontWeight:   700,
+                letterSpacing:'.02em',
+                color:        invitationStatus === 'published' ? '#238636' : '#8A6D3B',
+                background:   invitationStatus === 'published' ? '#E6F4EA' : '#FCF8E3',
+              }}
+            >
+              {invitationStatus === 'published' ? '🟢 Publicada' : '🟡 Borrador'}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Email confirmation */}
@@ -320,7 +339,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { orde
                   textDecoration: 'none', minHeight: '46px', textAlign: 'center',
                 }}
               >
-                📊 Administrar evento
+                📊 Ver respuestas RSVP
               </a>
               <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
                 <a
@@ -353,6 +372,23 @@ function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { orde
                   </a>
                 )}
               </div>
+              {publicUrl && (
+                <a
+                  href={publicUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cl-btn"
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+                    padding: '0.625rem 1rem', background: 'transparent', color: T.dark,
+                    borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 600,
+                    textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                    border: `1px solid ${T.border}`,
+                  }}
+                >
+                  👁️ Ver mi invitación →
+                </a>
+              )}
             </>
           ) : (
             <Link
@@ -399,9 +435,9 @@ export default async function ClientePage({ searchParams }: Props) {
   const paidInvitationIds = orders
     .filter((o) => o.status === 'paid' && !!o.invitationId)
     .map((o) => o.invitationId as string);
-  const [rsvpStatsMap, slugsMap] = await Promise.all([
+  const [rsvpStatsMap, invitationDataMap] = await Promise.all([
     fetchRsvpStats(paidInvitationIds),
-    fetchInvitationSlugs(paidInvitationIds),
+    fetchInvitationData(paidInvitationIds),
   ]);
 
   return (
@@ -480,6 +516,9 @@ export default async function ClientePage({ searchParams }: Props) {
           </div>
         )}
 
+        {/* Email search — only for unauthenticated users (authenticated users auto-load their orders above) */}
+        {!isAuthenticated && <EmailSearchForm currentEmail={emailParam} />}
+
         {/* Results */}
         {orders.length === 0 && (
           <div style={{
@@ -517,7 +556,8 @@ export default async function ClientePage({ searchParams }: Props) {
                 key={order.id}
                 order={order}
                 rsvpStats={order.invitationId ? rsvpStatsMap[order.invitationId] : undefined}
-                invitationSlug={order.invitationId ? slugsMap[order.invitationId] : null}
+                invitationSlug={order.invitationId ? invitationDataMap[order.invitationId]?.slug : null}
+                invitationStatus={order.invitationId ? invitationDataMap[order.invitationId]?.status : null}
                 isAuthenticated={isAuthenticated}
               />
             ))}
