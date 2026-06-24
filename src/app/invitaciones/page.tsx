@@ -218,22 +218,6 @@ function LandingStyles() {
 
       /* ── CSS Phone Mockup ────────────────────────────────── */
       .cro-phone-container { width: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
-      .cro-phone-frame { width: 280px; height: 560px; background: #1C1917; border: 8px solid #C5A880; border-radius: 36px; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(197, 168, 128, 0.15); overflow: hidden; display: flex; flex-direction: column; z-index: 10; border-color: ${T.cyan}; }
-      .cro-phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 18px; background: #1C1917; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; z-index: 20; }
-      .cro-phone-screen { flex: 1; background: #FCFAF6; color: #1C1917; overflow-y: auto; font-family: Georgia, serif; padding: 2rem 1.25rem 1.25rem; display: flex; flex-direction: column; gap: 1.25rem; font-size: 0.8rem; scrollbar-width: none; border-radius: 28px; }
-      .cro-phone-screen::-webkit-scrollbar { display: none; }
-      .cro-phone-hero { text-align: center; border-bottom: 1px solid rgba(197, 168, 128, 0.15); padding-bottom: 1.25rem; }
-      .cro-phone-names { font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 700; color: #1C1917; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
-      .cro-phone-sub { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: ${T.cyan}; font-weight: 600; margin-bottom: 0.5rem; display: block; }
-      .cro-phone-countdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; text-align: center; margin: 1rem 0; }
-      .cro-phone-countdown-val { background: #F5F3ED; padding: 0.5rem 0.25rem; border-radius: 4px; border: 1px solid rgba(197, 168, 128, 0.1); }
-      .cro-phone-countdown-val span { display: block; font-size: 1.1rem; font-weight: 700; color: #1C1917; }
-      .cro-phone-countdown-val small { font-size: 0.55rem; color: #78716C; text-transform: uppercase; }
-      .cro-phone-rsvp-btn { width: 100%; background: #C5A880; color: #FFFFFF; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.75rem; border-radius: 4px; border: none; box-shadow: 0 4px 10px rgba(197, 168, 128, 0.3); text-align: center; }
-      .cro-phone-map-preview { border-radius: 4px; background: #F5F3ED; border: 1px solid rgba(197, 168, 128, 0.1); padding: 0.75rem; display: flex; flex-direction: column; gap: 0.35rem; }
-      .cro-phone-map-img { width: 100%; height: 60px; background: #E5E7EB; border-radius: 2px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-      .cro-phone-qr-preview { border-radius: 4px; background: #F5F3ED; border: 1px solid rgba(197, 168, 128, 0.1); padding: 0.75rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
-      .cro-phone-qr-code { width: 40px; height: 40px; border: 1px solid #1C1917; padding: 2px; }
 
       @media (max-width: 1024px) {
         .cro-block-split { grid-template-columns: 1fr; min-height: auto; }
