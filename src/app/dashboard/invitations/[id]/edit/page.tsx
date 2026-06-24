@@ -29,6 +29,7 @@ import {
 } from '@/features/dashboard-assistant/dashboardAssistantConfig';
 import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
 import { WeddingQuickStartSetup } from '@/components/editor/setup/WeddingQuickStartSetup';
+import { WizardShell } from './WizardShell';
 
 // Always render fresh — prevents the router/prefetch cache from serving a stale
 // redirect-to-login response when navigating via <Link> from /cliente.
@@ -114,7 +115,10 @@ export async function generateMetadata({ params }: Props) {
 export default async function EditInvitationPage({ params, searchParams }: Props) {
   const { id } = await params;
   const sp = await searchParams;
-  const fromAdmin = sp.from === 'admin';
+  const fromAdmin    = sp.from  === 'admin';
+  const isWizardView = sp.view  === 'wizard';
+  const wizardHref   = fromAdmin ? '?from=admin&view=wizard' : '?view=wizard';
+  const scrollHref   = fromAdmin ? '?from=admin' : '?';
   const invitation = await invitationRepository.getById(id);
 
   if (!invitation) {
@@ -256,8 +260,35 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           <p className="text-sm mt-1 font-mono break-all" style={{ color: '#9B8878' }}>
             /{invitation.slug}
           </p>
+
+          {/* Wizard / scroll toggle */}
+          <div style={{ marginTop: 12 }}>
+            {isWizardView ? (
+              <Link
+                href={scrollHref}
+                style={{ fontSize: '0.75rem', fontWeight: 600, color: '#9B8878', textDecoration: 'none' }}
+              >
+                ← Ver todo el editor
+              </Link>
+            ) : (
+              <Link
+                href={wizardHref}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  fontSize: '0.75rem', fontWeight: 600,
+                  background: '#1A1410', color: '#F5F3F0',
+                  padding: '6px 14px', borderRadius: 8, textDecoration: 'none',
+                }}
+              >
+                ✦ Asistente paso a paso
+              </Link>
+            )}
+          </div>
         </div>
 
+        {isWizardView ? (
+          <WizardShell invitation={invitation} plan={plan} previewUrl={previewUrl} />
+        ) : (
         <WeddingQuickStartSetup invitation={invitation}>
           {/* ── 1. Datos del evento ──────────────────────────────────────────── */}
         <Section title="Datos del evento">
@@ -518,6 +549,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           </a>
         </div>
         </WeddingQuickStartSetup>
+        )}
       </div>{/* end editor column */}
 
       {/* ── Preview panel ───────────────────────────────────────────────────── */}
