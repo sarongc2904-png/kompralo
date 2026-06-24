@@ -51,6 +51,7 @@ async function fetchRsvpStats(invitationIds: string[]): Promise<Record<string, R
 }
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export const metadata: Metadata = { title: 'Mis invitaciones — Kompralo' };
 
 const T = {
@@ -305,9 +306,11 @@ function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { orde
         <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
           {isAuthenticated ? (
             <>
-              <Link
+              {/* Full page reload — ensures session cookies are sent fresh on the first
+                  request to a protected Server Component (client-side RSC nav can skip
+                  cookies or serve a stale Router Cache redirect when auth state changed). */}
+              <a
                 href={`/cliente/invitaciones/${order.invitationId}`}
-                prefetch={false}
                 className="cl-btn"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
@@ -317,11 +320,10 @@ function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { orde
                 }}
               >
                 📊 Administrar evento
-              </Link>
+              </a>
               <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
-                <Link
+                <a
                   href={`/dashboard/invitations/${order.invitationId}/edit`}
-                  prefetch={false}
                   className="cl-btn"
                   style={{
                     flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
@@ -332,7 +334,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { orde
                   }}
                 >
                   ✏️ Editar invitación
-                </Link>
+                </a>
                 {whatsappUrl && (
                   <a
                     href={whatsappUrl}

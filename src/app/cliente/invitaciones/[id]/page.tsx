@@ -433,14 +433,14 @@ export default async function InvitationDashboard({ params }: Props) {
 
           {/* Action buttons row */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.625rem' }}>
-            <Link href={editUrl} className="db-btn" style={{
+            <a href={editUrl} className="db-btn" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.375rem',
               padding: '.625rem 1.25rem', background: T.gold, color: T.dark,
               borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
               textDecoration: 'none', boxShadow: '0 4px 12px rgba(196,169,98,0.25)',
             }}>
               ✏️ Editar invitación
-            </Link>
+            </a>
             <a href={publicUrl ?? undefined} target="_blank" rel="noopener noreferrer" className="db-btn" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.375rem',
               padding: '.625rem 1.25rem', background: T.cream,

@@ -33,6 +33,8 @@ const CUSTOMER_NAV_LINKS = [
   { href: '/',        label: '<- Ver sitio' },
 ];
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const adminMode = isAdminMode();
 
@@ -40,12 +42,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const headersList = await headers();
     const pathname = headersList.get('x-pathname') ?? '/dashboard';
     const user = await getSessionUser();
+    console.log('[dashLayout] pathname=%s hasUser=%s userId=%s', pathname, !!user, user?.id ?? 'null');
     const editMatch = pathname.match(/^\/dashboard\/invitations\/([^/]+)\/edit\/?$/);
     const hasScopedAccess = !user && editMatch
       ? await verifyInvitationAccess(decodeURIComponent(editMatch[1]))
       : false;
 
     if (!user && !hasScopedAccess) {
+      console.log('[dashLayout] no session → redirect to login from %s', pathname);
       redirect(`/login?redirect=${encodeURIComponent(pathname)}`);
     }
   }
