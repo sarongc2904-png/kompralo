@@ -1,10 +1,11 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useRef, useState } from 'react';
 import type { InvitationContent } from '@/domain/invitations';
 import { updateInvitationBasicInfo } from './actions';
 import type { UpdateInvitationResult } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
+import { getAppUrl } from '@/lib/admin/urls';
 import Link from 'next/link';
 
 // ─── Initial state ────────────────────────────────────────────────────────────
@@ -71,6 +72,153 @@ function Field({
   );
 }
 
+// ─── Slug field ───────────────────────────────────────────────────────────────
+
+type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
+
+const SLUG_RE = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
+
+function SlugField({
+  value,
+  onChange,
+  invitationId,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  invitationId: string;
+}) {
+  const [status,  setStatus]  = useState<SlugStatus>('idle');
+  const [copied,  setCopied]  = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const baseUrl     = getAppUrl();
+  const displayHost = baseUrl.replace(/^https?:\/\//, '');
+  const fullLink    = `${baseUrl}/i/${value}`;
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    onChange(raw);
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    if (!raw || raw.length < 3 || !SLUG_RE.test(raw)) {
+      setStatus(raw.length > 0 ? 'invalid' : 'idle');
+      return;
+    }
+    setStatus('checking');
+    timerRef.current = setTimeout(async () => {
+      try {
+        const res  = await fetch(
+          `/api/invitations/check-slug?slug=${encodeURIComponent(raw)}&excludeId=${encodeURIComponent(invitationId)}`,
+        );
+        const body = await res.json() as { available: boolean };
+        setStatus(body.available ? 'available' : 'taken');
+      } catch {
+        setStatus('idle');
+      }
+    }, 700);
+  }
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(fullLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard not available */ }
+  }
+
+  const borderColor =
+    status === 'taken' || status === 'invalid'
+      ? '#C62828'
+      : status === 'available'
+        ? '#388E3C'
+        : '#E8E2DA';
+
+  return (
+    <div>
+      <label
+        htmlFor="slug"
+        className="block text-xs uppercase tracking-widest mb-1.5"
+        style={{ color: '#6B5B4E' }}
+      >
+        Link de tu invitación <span style={{ color: '#C5A880' }}>*</span>
+      </label>
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'stretch' }}>
+        <input
+          id="slug"
+          name="slug"
+          type="text"
+          value={value}
+          onChange={handleChange}
+          required
+          className="flex-1 px-3 py-2 rounded-lg text-sm transition-colors"
+          style={{
+            background: '#FAFAF8',
+            border:     `1px solid ${borderColor}`,
+            color:      '#1A1410',
+            outline:    'none',
+          }}
+          onFocus={(e)  => { e.currentTarget.style.borderColor = '#C5A880'; }}
+          onBlur={(e)   => { e.currentTarget.style.borderColor = borderColor; }}
+        />
+        <button
+          type="button"
+          onClick={handleCopy}
+          title="Copiar link completo"
+          style={{
+            padding:       '0 12px',
+            borderRadius:  8,
+            fontSize:      '0.75rem',
+            fontWeight:    500,
+            border:        '1px solid #E8E2DA',
+            background:    copied ? '#E8F5E9' : '#FAFAF8',
+            color:         copied ? '#388E3C' : '#9B8878',
+            cursor:        'pointer',
+            whiteSpace:    'nowrap',
+            flexShrink:    0,
+            transition:    'background 0.15s',
+          }}
+        >
+          {copied ? '✓ Copiado' : '⎘ Copiar'}
+        </button>
+      </div>
+
+      {/* Real-time link preview */}
+      {value && (
+        <p style={{ fontSize: '0.68rem', marginTop: 4, color: '#9B8878', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+          {displayHost}/i/<strong style={{ color: '#1A1410' }}>{value}</strong>
+        </p>
+      )}
+
+      {/* Validation / availability messages */}
+      {status === 'invalid' && (
+        <p style={{ fontSize: '0.68rem', marginTop: 3, color: '#C62828' }}>
+          Solo letras minúsculas, números y guiones. Mínimo 3 caracteres.
+        </p>
+      )}
+      {status === 'taken' && (
+        <p style={{ fontSize: '0.68rem', marginTop: 3, color: '#C62828' }}>
+          Este link ya está en uso, elige otro.
+        </p>
+      )}
+      {status === 'available' && (
+        <p style={{ fontSize: '0.68rem', marginTop: 3, color: '#388E3C' }}>
+          ✓ Link disponible.
+        </p>
+      )}
+      {status === 'checking' && (
+        <p style={{ fontSize: '0.68rem', marginTop: 3, color: '#9B8878' }}>
+          Verificando disponibilidad…
+        </p>
+      )}
+
+      <p style={{ fontSize: '0.65rem', marginTop: 5, color: '#B0A090' }}>
+        Este es el link que compartirás con tus invitados. Puedes personalizarlo.
+      </p>
+    </div>
+  );
+}
+
 // ─── Form ─────────────────────────────────────────────────────────────────────
 
 interface EditFormProps {
@@ -106,6 +254,8 @@ export default function EditForm({ invitation }: EditFormProps) {
     (key: keyof FormValues) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setValues((v) => ({ ...v, [key]: e.target.value }));
+
+  const setSlug = (v: string) => setValues((prev) => ({ ...prev, slug: v }));
 
   const [result, formAction, isPending] = useActionState(
     async (_prev: UpdateInvitationResult | null, formData: FormData) => {
@@ -163,13 +313,10 @@ export default function EditForm({ invitation }: EditFormProps) {
           />
         </div>
 
-        <Field
-          label="Slug"
-          name="slug"
+        <SlugField
           value={values.slug}
-          onChange={set('slug')}
-          hint="Solo minúsculas, números y guiones. Ej: jose-y-maria-2026"
-          required
+          onChange={setSlug}
+          invitationId={invitation.id}
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
