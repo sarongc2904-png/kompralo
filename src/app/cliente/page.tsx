@@ -432,6 +432,11 @@ export default async function ClientePage({ searchParams }: Props) {
   const hasValidEmail = isValidEmail(trimmedEmail);
   const orders = await fetchOrders(session.userId, session.email);
 
+  // Skip the listing and go straight to the only paid invitation.
+  if (orders.length === 1 && orders[0].status === 'paid' && orders[0].invitationId) {
+    redirect(`/cliente/invitaciones/${orders[0].invitationId}`);
+  }
+
   const paidInvitationIds = orders
     .filter((o) => o.status === 'paid' && !!o.invitationId)
     .map((o) => o.invitationId as string);

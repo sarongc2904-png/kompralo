@@ -28,7 +28,7 @@ import {
   isDashboardAssistantEnabled,
 } from '@/features/dashboard-assistant/dashboardAssistantConfig';
 import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
-import { WeddingQuickStartSetup } from '@/components/editor/setup/WeddingQuickStartSetup';
+import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WizardShell } from './WizardShell';
 
 // Always render fresh — prevents the router/prefetch cache from serving a stale
@@ -212,6 +212,13 @@ export default async function EditInvitationPage({ params, searchParams }: Props
   const isPremiumOrDeluxe = plan === 'premium' || plan === 'deluxe';
   const isDeluxe          = plan === 'deluxe';
 
+  // Auto-open wizard for wedding invitations that are empty or incomplete.
+  // Admins are excluded to preserve their full-editor access.
+  if (invitation.category === 'wedding' && !isWizardView && !fromAdmin &&
+      shouldShowWeddingWizard(invitation, plan)) {
+    redirect(wizardHref);
+  }
+
   const assistantEnabledByEnv   = isDashboardAssistantEnabled();
   const assistantAllowedForPlan = isDashboardAssistantAllowedForPlan(invitation.planId);
 
@@ -289,7 +296,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         {isWizardView ? (
           <WizardShell invitation={invitation} plan={plan} previewUrl={previewUrl} />
         ) : (
-        <WeddingQuickStartSetup invitation={invitation}>
+        <>
           {/* ── 1. Datos del evento ──────────────────────────────────────────── */}
         <Section title="Datos del evento">
           <EditForm invitation={invitation} />
@@ -548,7 +555,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
             ✨ Previsualiza tu invitación
           </a>
         </div>
-        </WeddingQuickStartSetup>
+        </>
         )}
       </div>{/* end editor column */}
 

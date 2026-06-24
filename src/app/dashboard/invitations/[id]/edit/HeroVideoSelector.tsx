@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { HERO_VIDEO_LIBRARY, getHeroVideoById } from '@/lib/video/heroVideoLibrary';
 import type { InvitationContent } from '@/domain/invitations';
 import { updateInvitationHeroVideo } from './actions';
@@ -47,11 +47,8 @@ function HeroVideoSelectorInner({ invitation }: HeroVideoSelectorProps) {
   const [result,         setResult]         = useState<{ success: boolean; message: string } | null>(null);
   // Expanded: show full video list. Collapsed when none selected or after save.
   const [expanded,       setExpanded]       = useState(initialId !== 'none');
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const stopPreview = () => {
-    const v = videoRef.current;
-    if (v) { v.pause(); v.currentTime = 0; }
     setPreviewVideoId(null);
   };
 
@@ -86,17 +83,10 @@ function HeroVideoSelectorInner({ invitation }: HeroVideoSelectorProps) {
   };
 
   const handleTogglePreview = (videoId: string) => {
-    const v = videoRef.current;
-    if (!v) return;
     if (previewVideoId === videoId) { stopPreview(); return; }
     const track = getHeroVideoById(videoId);
     if (!track || !track.url) return;
-    v.pause();
-    v.src         = track.url;
-    v.currentTime = 0;
-    v.play()
-      .then(() => setPreviewVideoId(videoId))
-      .catch((err) => console.warn('[HeroVideoSelector] preview error:', err));
+    setPreviewVideoId(videoId);
   };
 
   const selectedTrack    = getHeroVideoById(selectedId);
@@ -109,17 +99,6 @@ function HeroVideoSelectorInner({ invitation }: HeroVideoSelectorProps) {
         style={{ color: '#C5A880', borderBottom: '1px solid #F0EBE4' }}>
         Video de portada sugerido
       </p>
-
-      {/* Hidden video element for inline preview */}
-      <video
-        ref={videoRef}
-        muted
-        loop
-        playsInline
-        preload="none"
-        onEnded={() => setPreviewVideoId(null)}
-        style={{ display: 'none' }}
-      />
 
       {/* Feedback */}
       {result && (
