@@ -6,6 +6,7 @@ import type { Order } from '@/domain/orders';
 import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/lib/supabase/server';
 import { DashboardManualTour } from '@/components/dashboard/DashboardManualTour';
 import { DashboardManualNavButton } from '@/components/dashboard/DashboardManualNavButton';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
 
@@ -435,13 +436,9 @@ export default async function ClientePage({ searchParams }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <DashboardManualNavButton />
           {isAuthenticated && (
-            <Link href="/auth/signout" style={{
-              fontSize:'.8125rem', color:T.light, textDecoration:'none', fontWeight:500,
-            }}
-            className="pr2-nav-link"
-            >
+            <SignOutButton style={{ fontSize:'.8125rem', color:T.light, fontWeight:500 }} className="pr2-nav-link">
               Cerrar sesión
-            </Link>
+            </SignOutButton>
           )}
         </div>
       </nav>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 import { useState } from 'react';
 
 const NAV = [
@@ -282,13 +283,11 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
             >
               <span style={{ fontSize: '.8rem' }}>↗</span> Ver sitio
             </a>
-            <Link
-              href="/auth/signout"
+            <SignOutButton
               className="adm-footer-link"
               style={{
                 fontSize: '.75rem',
                 color: 'rgba(255,255,255,0.4)',
-                textDecoration: 'none',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '.5rem',
@@ -296,7 +295,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
               }}
             >
               <span style={{ fontSize: '.8rem' }}>→</span> Cerrar sesión
-            </Link>
+            </SignOutButton>
           </div>
         </div>
       </aside>

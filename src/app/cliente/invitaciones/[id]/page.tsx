@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { isAdminUser } from '@/lib/admin';
 import type { RSVPResponse } from '@/domain/rsvp/types';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
 import ShareButtons from './ShareButtons';
@@ -406,9 +407,9 @@ export default async function InvitationDashboard({ params }: Props) {
         <Link href="/cliente" style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.dark, textDecoration: 'none' }}>
           ← Mis invitaciones
         </Link>
-        <Link href="/auth/signout" style={{ fontSize: '.8125rem', color: T.light, textDecoration: 'none', fontWeight: 500 }}>
+        <SignOutButton style={{ fontSize: '.8125rem', color: T.light, fontWeight: 500 }}>
           Cerrar sesión
-        </Link>
+        </SignOutButton>
       </nav>
 
       <div style={{ maxWidth: '1100px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
