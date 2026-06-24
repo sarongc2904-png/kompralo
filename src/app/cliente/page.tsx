@@ -212,7 +212,7 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
   );
 }
 
-function OrderCard({ order, rsvpStats, invitationSlug }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null }) {
+function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; isAuthenticated: boolean }) {
   const statusColor: Record<string, string> = {
     pending:  '#8A6D3B',
     paid:     '#238636',
@@ -306,51 +306,68 @@ function OrderCard({ order, rsvpStats, invitationSlug }: { order: Order; rsvpSta
       {/* Actions */}
       {order.invitationId && isPaid && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-          <Link
-            href={`/cliente/invitaciones/${order.invitationId}`}
-            prefetch={false}
-            className="cl-btn"
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-              padding: '0.75rem 1.5rem', background: T.dark, color: T.cream,
-              borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-              textDecoration: 'none', minHeight: '46px', textAlign: 'center',
-            }}
-          >
-            📊 Administrar evento
-          </Link>
-          <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
-            <Link
-              href={`/dashboard/invitations/${order.invitationId}/edit`}
-              prefetch={false}
-              className="cl-btn"
-              style={{
-                flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-                padding: '0.625rem 1rem', background: T.gold, color: T.dark,
-                borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                textDecoration: 'none', minHeight: '44px', textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(184,150,106,0.2)',
-              }}
-            >
-              ✏️ Editar invitación
-            </Link>
-            {whatsappUrl && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+          {isAuthenticated ? (
+            <>
+              <Link
+                href={`/cliente/invitaciones/${order.invitationId}`}
+                prefetch={false}
                 className="cl-btn"
                 style={{
-                  flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-                  padding: '0.625rem 1rem', background: '#25D366', color: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+                  padding: '0.75rem 1.5rem', background: T.dark, color: T.cream,
                   borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                  textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                  textDecoration: 'none', minHeight: '46px', textAlign: 'center',
                 }}
               >
-                Compartir invitación
-              </a>
-            )}
-          </div>
+                📊 Administrar evento
+              </Link>
+              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+                <Link
+                  href={`/dashboard/invitations/${order.invitationId}/edit`}
+                  prefetch={false}
+                  className="cl-btn"
+                  style={{
+                    flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+                    padding: '0.625rem 1rem', background: T.gold, color: T.dark,
+                    borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+                    textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(184,150,106,0.2)',
+                  }}
+                >
+                  ✏️ Editar invitación
+                </Link>
+                {whatsappUrl && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cl-btn"
+                    style={{
+                      flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
+                      padding: '0.625rem 1rem', background: '#25D366', color: '#fff',
+                      borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+                      textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                    }}
+                  >
+                    Compartir invitación
+                  </a>
+                )}
+              </div>
+            </>
+          ) : (
+            <Link
+              href={`/login?redirect=${encodeURIComponent(`/cliente/invitaciones/${order.invitationId}`)}`}
+              className="cl-btn"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0.75rem 1.5rem', background: T.dark, color: T.cream,
+                borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+                textDecoration: 'none', minHeight: '46px', textAlign: 'center',
+              }}
+            >
+              Inicia sesión para administrar →
+            </Link>
+          )}
         </div>
       )}
     </div>
@@ -380,6 +397,7 @@ export default async function ClientePage({ searchParams }: Props) {
   const trimmedEmail = sessionEmail ?? adminEmail;
   const isAuthenticated = !!sessionEmail;
   const isAdminEmailFallback = !isAuthenticated && adminMode;
+  console.log('[cliente] isAuthenticated=%s adminMode=%s userId=%s', isAuthenticated, adminMode, session?.userId ?? 'null');
 
   const hasValidEmail = trimmedEmail && isValidEmail(trimmedEmail);
   const orders = (hasValidEmail && session)
@@ -550,6 +568,7 @@ export default async function ClientePage({ searchParams }: Props) {
                 order={order}
                 rsvpStats={order.invitationId ? rsvpStatsMap[order.invitationId] : undefined}
                 invitationSlug={order.invitationId ? slugsMap[order.invitationId] : null}
+                isAuthenticated={isAuthenticated}
               />
             ))}
 
