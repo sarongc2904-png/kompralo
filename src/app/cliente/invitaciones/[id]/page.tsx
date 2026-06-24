@@ -310,16 +310,20 @@ export default async function InvitationDashboard({ params }: Props) {
 
   const hasAccess = isOwnerByUserId || isOwnerByEmail;
 
-  console.log('[clienteInv] hasAccess=%s', hasAccess);
-
   if (!hasAccess) {
-    // Admin users are redirected to the admin panel instead of getting a 404
-    const adminCheck = await isAdminUser(userId, email);
-    if (adminCheck) {
+    const isAdmin = await isAdminUser(userId, email);
+    const authorized = isAdmin;
+    console.log('[clienteInv] isAdmin=%s authorized=%s', isAdmin, authorized);
+    if (isAdmin) {
+      console.log('[clienteInv] redirectTarget=/admin/invitations/%s reason=admin-redirect', id);
       redirect(`/admin/invitations/${id}`);
     }
+    console.log('[clienteInv] authorized=false reason=not-owner-not-admin');
     notFound();
   }
+
+  const grantReason = isOwnerByUserId ? 'user_id-match' : 'email-match';
+  console.log('[clienteInv] authorized=true reason=%s', grantReason);
 
   // 3. Fetch RSVP responses
   const { data: rsvpRows } = await svc

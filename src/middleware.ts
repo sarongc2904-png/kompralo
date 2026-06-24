@@ -46,7 +46,18 @@ export async function middleware(request: NextRequest) {
   });
 
   // Refresh session on every request — required by @supabase/ssr to keep tokens fresh.
-  await supabase.auth.getUser();
+  const { data: { user: mwUser } } = await supabase.auth.getUser();
+
+  // TEMP diagnostic — remove after auth bug is resolved.
+  const isProtectedRoute =
+    pathname.startsWith('/cliente/invitaciones/') ||
+    pathname.startsWith('/dashboard/invitations/');
+  if (isProtectedRoute) {
+    console.log('[middleware] route=%s hasUser=%s userId=%s',
+      pathname, !!mwUser, mwUser?.id ?? 'null');
+    // Middleware does NOT redirect — it only refreshes tokens.
+    // If you see "redirect to login" it is coming from page.tsx, not here.
+  }
 
   return response;
 }

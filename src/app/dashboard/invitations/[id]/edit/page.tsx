@@ -135,27 +135,33 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     const ownerEmail  = invitation.customerEmail ?? null;
     const ownerUserId = invitation.ownerUserId ?? null;
 
-    // Server-side debug log (no secrets logged).
+    // TEMP diagnostic logs — remove after auth bug is resolved.
+    const hasUser = !!sessionUser;
+    const redirectTarget = `/login?redirect=${encodeURIComponent(`/dashboard/invitations/${id}/edit`)}`;
     console.log('[editPage] route=/dashboard/invitations/%s/edit', id);
-    console.log('[editPage] sessionUserId=%s sessionEmail=%s', sessionUser?.id ?? 'null', sessionUser?.email ?? 'null');
-    console.log('[editPage] invitationOwnerUserId=%s invitationCustomerEmail=%s', ownerUserId ?? 'null', ownerEmail ?? 'null');
+    console.log('[editPage] hasUser=%s userId=%s userEmail=%s',
+      hasUser, sessionUser?.id ?? 'null', sessionUser?.email ?? 'null');
+    console.log('[editPage] invitationOwnerUserId=%s invitationCustomerEmail=%s',
+      ownerUserId ?? 'null', ownerEmail ?? 'null');
+
     if (!sessionUser) {
-      console.log('[editPage] no session → redirect to login');
-      redirect(`/login?redirect=/dashboard/invitations/${id}/edit`);
+      console.log('[editPage] redirectTarget=%s reason=no-session', redirectTarget);
+      redirect(redirectTarget);
     }
 
-    // Grant access if: cookie-based access, user_id match, or customer_email match.
-    const isOwnerByUserId = !!(ownerUserId && sessionUser?.id && ownerUserId === sessionUser.id);
-    const isOwnerByEmail  = !!(ownerEmail && sessionUser?.email &&
+    // Grant access if: user_id match OR customer_email match.
+    const isOwnerByUserId = !!(ownerUserId && sessionUser.id && ownerUserId === sessionUser.id);
+    const isOwnerByEmail  = !!(ownerEmail && sessionUser.email &&
       ownerEmail.toLowerCase() === sessionUser.email.toLowerCase());
 
     console.log('[editPage] isOwnerByUserId=%s isOwnerByEmail=%s', isOwnerByUserId, isOwnerByEmail);
 
     if (!isOwnerByUserId && !isOwnerByEmail) {
-      const adminCheck = await isAdminUser(sessionUser.id, sessionUser.email);
-      console.log('[editPage] adminCheck=%s', adminCheck);
-      if (!adminCheck) {
-        console.log('[editPage] authorization result=DENIED (not owner, not admin)');
+      const isAdmin = await isAdminUser(sessionUser.id, sessionUser.email);
+      const authorized = isAdmin;
+      console.log('[editPage] isAdmin=%s authorized=%s', isAdmin, authorized);
+      if (!authorized) {
+        console.log('[editPage] authorized=false reason=not-owner-not-admin');
         return (
           <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
             <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#C62828', marginBottom: '0.5rem' }}>
@@ -175,7 +181,9 @@ export default async function EditInvitationPage({ params, searchParams }: Props
       }
     }
 
-    console.log('[editPage] authorization result=GRANTED');
+    // Reaching here means access is granted (owner or admin passed above).
+    const grantReason = isOwnerByUserId ? 'user_id-match' : isOwnerByEmail ? 'email-match' : 'admin';
+    console.log('[editPage] authorized=true reason=%s', grantReason);
   }
 
   const plan = normalizePlanId(invitation.planId);
