@@ -1,11 +1,12 @@
 'use client';
 
-import { useActionState, useState, useEffect, useRef } from 'react';
+import { useActionState, useState, useEffect, useRef, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import { signInWithPassword, requestPasswordReset, sendMagicLink } from './actions';
-import type { SignInResult, ResetPasswordResult, SendMagicLinkResult } from './actions';
+import { requestPasswordReset, sendMagicLink } from './actions';
+import type { ResetPasswordResult, SendMagicLinkResult } from './actions';
+import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 
 const T = {
   ivory:     '#E8D7B8',
@@ -77,23 +78,45 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
   onMode: (m: Mode) => void;
   onInteract: () => void;
 }) {
-  const [state, formAction, pending] = useActionState<SignInResult | null, FormData>(
-    signInWithPassword, null,
-  );
+  const [error,   setError]   = useState('');
+  const [pending, setPending] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  // Full page reload after successful sign-in so the browser sends the new
-  // session cookies on the very next request (router.push would be client-nav
-  // and might not include cookies set by the Server Action response).
-  useEffect(() => {
-    if (state?.success && state.redirectTo) {
-      window.location.assign(state.redirectTo);
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd       = new FormData(e.currentTarget);
+    const email    = ((fd.get('email')    as string | null) ?? '').trim();
+    const password =  (fd.get('password') as string | null) ?? '';
+    if (!email || !password) return;
+
+    setPending(true);
+    setError('');
+
+    const supabase = createSupabaseBrowserClient();
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (authError) {
+      const msg = authError.message.includes('Invalid login credentials')
+        ? 'Correo o contraseña incorrectos.'
+        : authError.message;
+      setError(msg);
+      setPending(false);
+      return;
     }
-  }, [state]);
+
+    setSuccess(true);
+    const safeRedirect =
+      redirectParam.startsWith('/') &&
+      !redirectParam.startsWith('//') &&
+      !redirectParam.includes('http://') &&
+      !redirectParam.includes('https://')
+        ? redirectParam
+        : '/cliente';
+    window.location.assign(safeRedirect);
+  }
 
   return (
-    <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-      <input type="hidden" name="redirect" value={redirectParam} />
-
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <div>
         <label htmlFor="pw-email" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
           Correo electrónico
@@ -111,15 +134,15 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
           placeholder="Tu contraseña" className="lg2-input" />
       </div>
 
-      {state?.error && (
+      {error && (
         <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '.5rem', padding: '.75rem 1rem', color: '#991B1B', fontSize: '.8125rem' }}>
-          {state.error}
+          {error}
         </div>
       )}
 
-      <button type="submit" disabled={pending || !!state?.success} className="lg2-btn"
-        style={{ background: (pending || state?.success) ? T.light : T.dark, color: '#F1E3C8' }}>
-        {state?.success ? 'Redirigiendo…' : pending ? 'Entrando…' : 'Entrar'}
+      <button type="submit" disabled={pending || success} className="lg2-btn"
+        style={{ background: (pending || success) ? T.light : T.dark, color: '#F1E3C8' }}>
+        {success ? 'Redirigiendo…' : pending ? 'Entrando…' : 'Entrar'}
       </button>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem', alignItems: 'center' }}>
