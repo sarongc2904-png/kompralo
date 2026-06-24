@@ -30,6 +30,9 @@ import {
 import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
 import { WeddingQuickStartSetup } from '@/components/editor/setup/WeddingQuickStartSetup';
 
+// Always render fresh — prevents the router/prefetch cache from serving a stale
+// redirect-to-login response when navigating via <Link> from /cliente.
+export const dynamic = 'force-dynamic';
 
 function getDashboardAssistantEventType(category: string): DashboardAssistantEventType {
   switch (category) {

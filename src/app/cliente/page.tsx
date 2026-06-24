@@ -308,6 +308,7 @@ function OrderCard({ order, rsvpStats, invitationSlug }: { order: Order; rsvpSta
         <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
           <Link
             href={`/cliente/invitaciones/${order.invitationId}`}
+            prefetch={false}
             className="cl-btn"
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
@@ -321,6 +322,7 @@ function OrderCard({ order, rsvpStats, invitationSlug }: { order: Order; rsvpSta
           <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
             <Link
               href={`/dashboard/invitations/${order.invitationId}/edit`}
+              prefetch={false}
               className="cl-btn"
               style={{
                 flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
