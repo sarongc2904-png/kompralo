@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { canManageInvitation } from '@/lib/invitations/can-manage';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -24,24 +25,13 @@ function mapRow(row: Record<string, any>) {
   };
 }
 
-async function verifyInvitationOwner(invitationId: string, email: string): Promise<boolean> {
-  const svc = createServiceRoleSupabaseClient();
-  const { data } = await svc
-    .from('invitations')
-    .select('id')
-    .eq('id', invitationId)
-    .eq('customer_email', email)
-    .single();
-  return !!data;
-}
-
 export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email) return err('No autorizado.', 401);
+  if (!user?.id || !user?.email) return err('No autorizado.', 401);
 
-  if (!(await verifyInvitationOwner(id, user.email))) return err('Invitación no encontrada.', 404);
+  if (!(await canManageInvitation(id, user.id, user.email))) return err('Acceso denegado.', 403);
 
   const svc = createServiceRoleSupabaseClient();
   const { data, error } = await svc
@@ -58,9 +48,9 @@ export async function POST(request: NextRequest, { params }: Params) {
   const { id } = await params;
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email) return err('No autorizado.', 401);
+  if (!user?.id || !user?.email) return err('No autorizado.', 401);
 
-  if (!(await verifyInvitationOwner(id, user.email))) return err('Invitación no encontrada.', 404);
+  if (!(await canManageInvitation(id, user.id, user.email))) return err('Acceso denegado.', 403);
 
   let body: unknown;
   try { body = await request.json(); } catch { return err('Cuerpo inválido.', 400); }

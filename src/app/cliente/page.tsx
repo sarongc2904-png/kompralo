@@ -50,6 +50,7 @@ async function fetchRsvpStats(invitationIds: string[]): Promise<Record<string, R
   } catch { return {}; }
 }
 
+export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Mis invitaciones — Kompralo' };
 
 const T = {
@@ -93,10 +94,6 @@ function formatDate(iso: string): string {
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function isAdminMode(): boolean {
-  return process.env.ADMIN_ACCESS_ENABLED === 'true';
 }
 
 async function getSession(): Promise<{ email: string; userId: string } | null> {
@@ -230,7 +227,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, isAuthenticated }: { orde
   const isPaid = order.status === 'paid';
 
   const appUrl       = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
-  const publicUrl    = invitationSlug ? `${appUrl}/${invitationSlug}` : null;
+  const publicUrl    = invitationSlug ? `${appUrl}/i/${invitationSlug}` : null;
   const shareMessage = publicUrl
     ? `Hola, queremos invitarte a nuestro evento.\n\nAbre nuestra invitación digital aquí:\n${publicUrl}\n\nPor favor confirma tu asistencia desde la invitación. ¡Te esperamos!`
     : '';
@@ -383,32 +380,18 @@ interface Props {
 export default async function ClientePage({ searchParams }: Props) {
   const { email: emailParam } = await searchParams;
   const session = await getSession();
-  const adminMode = isAdminMode();
 
-  if (!session && !adminMode) {
+  if (!session) {
     console.log('[cliente] no session → redirect to login');
     redirect('/login?redirect=%2Fcliente');
   }
 
-  const sessionEmail = session?.email ?? null;
+  const trimmedEmail = session.email;
+  const isAuthenticated = true;
+  console.log('[cliente] isAuthenticated=true userId=%s email=%s', session.userId, session.email);
 
-  // Authenticated session always wins. Query email is only a local/admin fallback.
-  const adminEmail = adminMode ? emailParam?.trim() : undefined;
-  const trimmedEmail = sessionEmail ?? adminEmail;
-  const isAuthenticated = !!sessionEmail;
-  const isAdminEmailFallback = !isAuthenticated && adminMode;
-  console.log('[cliente] isAuthenticated=%s adminMode=%s userId=%s', isAuthenticated, adminMode, session?.userId ?? 'null');
-
-  const hasValidEmail = trimmedEmail && isValidEmail(trimmedEmail);
-  const orders = (hasValidEmail && session)
-    ? await fetchOrders(session.userId, session.email)
-    : (hasValidEmail && adminEmail)
-      ? await (async () => {
-          const svc  = createServiceRoleSupabaseClient();
-          const repo = new SupabaseOrderRepository(svc);
-          return repo.findByCustomerEmail(adminEmail);
-        })()
-      : [];
+  const hasValidEmail = isValidEmail(trimmedEmail);
+  const orders = await fetchOrders(session.userId, session.email);
 
   const paidInvitationIds = orders
     .filter((o) => o.status === 'paid' && !!o.invitationId)
@@ -475,26 +458,6 @@ export default async function ClientePage({ searchParams }: Props) {
           </p>
         </div>
 
-        {/* Admin/dev email lookup — disabled in production mode */}
-        {isAdminEmailFallback && (
-          <div style={{ background: T.white, border: `1.5px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.5rem', marginBottom: '2rem', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
-            <p
-              style={{
-                textAlign: 'center',
-                color: T.light,
-                fontSize: '0.8125rem',
-                marginBottom: '1rem',
-                fontWeight: 600,
-                letterSpacing: '.05em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Modo Administrador/Desarrollador
-            </p>
-            <EmailSearchForm currentEmail={trimmedEmail} />
-          </div>
-        )}
-
         {/* Authenticated identity badge */}
         {isAuthenticated && (
           <div style={{
@@ -519,19 +482,7 @@ export default async function ClientePage({ searchParams }: Props) {
         )}
 
         {/* Results */}
-        {!trimmedEmail && (
-          <p style={{ textAlign: 'center', color: T.light, fontSize: '0.9rem', marginTop:'2rem' }}>
-            Inicia sesión para poder visualizar tus invitaciones.
-          </p>
-        )}
-
-        {trimmedEmail && !hasValidEmail && (
-          <p style={{ textAlign: 'center', color: '#D32F2F', fontSize: '0.875rem', marginTop:'2rem' }}>
-            La dirección de correo electrónico es inválida. Verifica e intenta nuevamente.
-          </p>
-        )}
-
-        {hasValidEmail && orders.length === 0 && (
+        {orders.length === 0 && (
           <div style={{
             textAlign:'center', padding:'3rem 2rem',
             background: T.white, border:`1px solid ${T.border}`,
@@ -556,7 +507,7 @@ export default async function ClientePage({ searchParams }: Props) {
           </div>
         )}
 
-        {hasValidEmail && orders.length > 0 && (
+        {orders.length > 0 && (
           <>
             <p style={{ color: T.mid, fontSize: '0.8125rem', marginBottom: '1rem', fontWeight: 600, letterSpacing: '.02em' }}>
               {orders.length} {orders.length === 1 ? 'invitación encontrada' : 'invitaciones encontradas'} para{' '}

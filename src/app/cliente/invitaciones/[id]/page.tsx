@@ -370,7 +370,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
   // 4. Build URLs
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
-  const publicUrl = `${appUrl}/${inv.slug}`;
+  const publicUrl = inv.slug ? `${appUrl}/i/${inv.slug}` : null;
   const editUrl   = `/dashboard/invitations/${id}/edit`;
 
   // 5. Display helpers
@@ -441,7 +441,7 @@ export default async function InvitationDashboard({ params }: Props) {
             }}>
               ✏️ Editar invitación
             </Link>
-            <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{
+            <a href={publicUrl ?? undefined} target="_blank" rel="noopener noreferrer" className="db-btn" style={{
               display: 'inline-flex', alignItems: 'center', gap: '.375rem',
               padding: '.625rem 1.25rem', background: T.cream,
               border: `1px solid ${T.border}`, color: T.dark,
@@ -483,7 +483,7 @@ export default async function InvitationDashboard({ params }: Props) {
               <RsvpModeSelector
                 invitationId={id}
                 initialMode={rsvpMode}
-                publicUrl={publicUrl}
+                publicUrl={publicUrl ?? ''}
                 eventTitle={eventTitle}
               />
             </div>
@@ -594,14 +594,16 @@ export default async function InvitationDashboard({ params }: Props) {
 
           {/* Right sidebar: QR + share */}
           <div className="db-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
+            {publicUrl && <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />}
 
-            <div style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.25rem' }}>
-              <p style={{ margin: '0 0 .875rem', fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
-                Compartir invitación
-              </p>
-              <ShareButtons publicUrl={publicUrl} eventTitle={eventTitle} />
-            </div>
+            {publicUrl && (
+              <div style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.25rem' }}>
+                <p style={{ margin: '0 0 .875rem', fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
+                  Compartir invitación
+                </p>
+                <ShareButtons publicUrl={publicUrl} eventTitle={eventTitle} />
+              </div>
+            )}
           </div>
         </div>
 

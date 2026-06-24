@@ -8,7 +8,7 @@ export function getAppUrl(): string {
 }
 
 export function publicUrl(slug: string): string {
-  return `${getAppUrl()}/${slug}`;
+  return `${getAppUrl()}/i/${slug}`;
 }
 
 export function previewUrl(invitationId: string): string {

@@ -170,6 +170,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
         const j = await res.json().catch(() => ({}));
         throw new Error(j.error ?? 'Error al guardar');
       }
+      setForm(emptyForm);
       setShowForm(false);
       await fetchPasses();
     } catch (e: unknown) {
@@ -284,7 +285,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
           padding: '2rem 1.5rem', textAlign: 'center',
         }}>
           <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>🎟</div>
-          <p style={{ margin: '0 0 .375rem', fontWeight: 700, color: T.dark }}>Sin pases creados</p>
+          <p style={{ margin: '0 0 .375rem', fontWeight: 700, color: T.dark }}>Aún no hay pases creados.</p>
           <p style={{ margin: 0, fontSize: '.8125rem', color: T.light }}>Crea pases para invitados específicos con límite de personas.</p>
         </div>
       )}

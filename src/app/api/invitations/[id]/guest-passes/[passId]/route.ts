@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { canManageInvitation } from '@/lib/invitations/can-manage';
 
 type Params = { params: Promise<{ id: string; passId: string }> };
 
@@ -24,22 +25,13 @@ function mapRow(row: Record<string, any>) {
   };
 }
 
-async function verifyPassOwnership(passId: string, invitationId: string, email: string): Promise<boolean> {
-  const svc = createServiceRoleSupabaseClient();
-  const [{ data: pass }, { data: inv }] = await Promise.all([
-    svc.from('guest_passes').select('id, invitation_id').eq('id', passId).single(),
-    svc.from('invitations').select('id').eq('id', invitationId).eq('customer_email', email).single(),
-  ]);
-  return !!(pass && pass.invitation_id === invitationId && inv);
-}
-
 export async function PATCH(request: NextRequest, { params }: Params) {
   const { id, passId } = await params;
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email) return err('No autorizado.', 401);
+  if (!user?.id || !user?.email) return err('No autorizado.', 401);
 
-  if (!(await verifyPassOwnership(passId, id, user.email))) return err('Pase no encontrado.', 404);
+  if (!(await canManageInvitation(id, user.id, user.email))) return err('Acceso denegado.', 403);
 
   let body: unknown;
   try { body = await request.json(); } catch { return err('Cuerpo inválido.', 400); }
@@ -55,14 +47,16 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const svc = createServiceRoleSupabaseClient();
 
-  // Guard: if the pass already has a confirmed RSVP, do not reduce allowed_guests below confirmed total.
   const { data: current } = await svc
     .from('guest_passes')
-    .select('allowed_guests, status, rsvp_response_id')
+    .select('invitation_id, allowed_guests, status, rsvp_response_id')
     .eq('id', passId)
     .single();
 
-  if (current?.rsvp_response_id && current.status === 'confirmed') {
+  if (!current || current.invitation_id !== id) return err('Pase no encontrado.', 404);
+
+  // Guard: if the pass already has a confirmed RSVP, do not reduce allowed_guests below confirmed total.
+  if (current.rsvp_response_id && current.status === 'confirmed') {
     const { data: rsvpRow } = await svc
       .from('rsvp_responses')
       .select('guest_count')
@@ -97,20 +91,22 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const { id, passId } = await params;
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email) return err('No autorizado.', 401);
+  if (!user?.id || !user?.email) return err('No autorizado.', 401);
 
-  if (!(await verifyPassOwnership(passId, id, user.email))) return err('Pase no encontrado.', 404);
+  if (!(await canManageInvitation(id, user.id, user.email))) return err('Acceso denegado.', 403);
 
   const svc = createServiceRoleSupabaseClient();
 
-  // Guard: only pending passes can be deleted without explicit override.
   const { data: current } = await svc
     .from('guest_passes')
-    .select('status')
+    .select('invitation_id, status')
     .eq('id', passId)
     .single();
 
-  if (current && current.status !== 'pending') {
+  if (!current || current.invitation_id !== id) return err('Pase no encontrado.', 404);
+
+  // Guard: only pending passes can be deleted.
+  if (current.status !== 'pending') {
     return err(
       `No puedes eliminar un pase con estado "${current.status}". ` +
       `Solo se pueden eliminar pases pendientes.`,

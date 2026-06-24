@@ -1,6 +1,5 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export interface SendMagicLinkResult {
@@ -11,6 +10,7 @@ export interface SendMagicLinkResult {
 export interface SignInResult {
   success: boolean;
   error?: string;
+  redirectTo?: string;
 }
 
 export interface ResetPasswordResult {
@@ -43,9 +43,6 @@ export async function signInWithPassword(
   if (!email)    return { success: false, error: 'El correo es requerido.' };
   if (!password) return { success: false, error: 'La contraseña es requerida.' };
 
-  // Keep redirect() outside the try-catch.
-  // In Next.js 15 redirect() throws a special object that is NOT instanceof Error,
-  // so catching it and re-throwing via message check is unreliable.
   try {
     const supabase = await createServerSupabaseClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -60,8 +57,10 @@ export async function signInWithPassword(
     return { success: false, error: msg };
   }
 
-  // Only reached on successful sign-in — redirect outside try-catch.
-  redirect(safeRedirect);
+  // Return redirectTo instead of calling redirect() so that the browser receives
+  // the Set-Cookie headers from signInWithPassword before navigating.
+  // The PasswordForm component will do window.location.assign() for a full page reload.
+  return { success: true, redirectTo: safeRedirect };
 }
 
 // ─── Request password reset ───────────────────────────────────────────────────

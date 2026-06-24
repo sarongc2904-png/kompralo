@@ -81,6 +81,15 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
     signInWithPassword, null,
   );
 
+  // Full page reload after successful sign-in so the browser sends the new
+  // session cookies on the very next request (router.push would be client-nav
+  // and might not include cookies set by the Server Action response).
+  useEffect(() => {
+    if (state?.success && state.redirectTo) {
+      window.location.assign(state.redirectTo);
+    }
+  }, [state]);
+
   return (
     <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <input type="hidden" name="redirect" value={redirectParam} />
@@ -108,9 +117,9 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
         </div>
       )}
 
-      <button type="submit" disabled={pending} className="lg2-btn"
-        style={{ background: pending ? T.light : T.dark, color: '#F1E3C8' }}>
-        {pending ? 'Entrando…' : 'Entrar'}
+      <button type="submit" disabled={pending || !!state?.success} className="lg2-btn"
+        style={{ background: (pending || state?.success) ? T.light : T.dark, color: '#F1E3C8' }}>
+        {state?.success ? 'Redirigiendo…' : pending ? 'Entrando…' : 'Entrar'}
       </button>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem', alignItems: 'center' }}>

@@ -143,7 +143,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             )}
             {orders.map((o: Record<string, unknown>) => {
               const slug   = (o.invitations as Record<string, unknown> | null)?.slug as string | undefined;
-              const pubUrl = slug ? `${appUrl}/${slug}` : null;
+              const pubUrl = slug ? `${appUrl}/i/${slug}` : null;
               const emailOk  = !!o.confirmation_email_sent_at;
               const emailErr = !!o.confirmation_email_error;
 
