@@ -394,28 +394,6 @@ export default function DressCodeForm({ invitation }: DressCodeFormProps) {
           onChange={(list) => set('colors', list)}
         />
 
-        {/* Legacy color fields */}
-        <div>
-          <p className="text-[10px] uppercase tracking-widest mb-3" style={{ color: '#C5A880', borderBottom: '1px solid #F0EBE4', paddingBottom: '0.5rem' }}>
-            Colores heredados (legacy)
-          </p>
-          <p className="text-xs mb-3" style={{ color: '#B0A090' }}>
-            Estos campos se mantienen por compatibilidad. Usa la paleta de colores arriba en su lugar.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <ColorField
-              label="Color principal"
-              value={state.primaryColor}
-              onChange={(v) => set('primaryColor', v)}
-            />
-            <ColorField
-              label="Color secundario"
-              value={state.secondaryColor}
-              onChange={(v) => set('secondaryColor', v)}
-            />
-          </div>
-        </div>
-
         {/* Suggestions list */}
         <SuggestionsList
           items={state.suggestionsList}
