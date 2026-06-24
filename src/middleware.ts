@@ -33,14 +33,20 @@ export async function middleware(request: NextRequest) {
     // getUser() validates the session server-side and triggers token refresh
     // when needed (which calls setAll above). Must run BEFORE requestHeaders
     // is built so that any request.cookies.set() calls have already happened.
+    const rawCookieHeader = request.headers.get('cookie') ?? '';
     const allCookiesBefore = request.cookies.getAll();
     const sbCookies = allCookiesBefore.filter(({ name }) => name.startsWith('sb-'));
-    console.log('[mw] path=%s totalCookies=%d sbCookies=%d names=%s',
+    console.log('[mw] path=%s rawHeaderLen=%d totalCookies=%d sbCookies=%d names=%s',
       pathname,
+      rawCookieHeader.length,
       allCookiesBefore.length,
       sbCookies.length,
       sbCookies.map((c) => c.name).join(',') || '(none)',
     );
+    // Log ALL cookie names (not just sb-*) so we can see what the browser IS sending
+    if (allCookiesBefore.length > 0) {
+      console.log('[mw] allCookieNames=%s', allCookiesBefore.map((c) => c.name).join(','));
+    }
 
     const { data: { user }, error } = await supabase.auth.getUser();
     console.log('[mw] getUser → userId=%s email=%s error=%s',
