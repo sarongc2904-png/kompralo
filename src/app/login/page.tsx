@@ -1,6 +1,7 @@
 'use client';
 
 import { useActionState, useState, useEffect, useRef, type FormEvent } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -78,9 +79,10 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
   onMode: (m: Mode) => void;
   onInteract: () => void;
 }) {
-  const [error,   setError]   = useState('');
-  const [pending, setPending] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [error,       setError]       = useState('');
+  const [pending,     setPending]     = useState(false);
+  const [success,     setSuccess]     = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -142,8 +144,22 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
         <label htmlFor="pw-password" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
           Contraseña
         </label>
-        <input id="pw-password" name="password" type="password" required
-          placeholder="Tu contraseña" className="lg2-input" />
+        <div style={{ position: 'relative' }}>
+          <input id="pw-password" name="password" type={showPassword ? 'text' : 'password'} required
+            placeholder="Tu contraseña" className="lg2-input" style={{ paddingRight: '2.75rem' }} />
+          <button
+            type="button"
+            aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            onClick={() => setShowPassword((v) => !v)}
+            style={{
+              position: 'absolute', right: '.75rem', top: '50%', transform: 'translateY(-50%)',
+              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+              color: '#C5B0A0', display: 'flex', alignItems: 'center',
+            }}
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
       </div>
 
       {error && (
