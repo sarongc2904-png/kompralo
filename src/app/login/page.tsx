@@ -92,8 +92,20 @@ function PasswordForm({ redirectParam, emailParam, onMode, onInteract }: {
     setPending(true);
     setError('');
 
+    // DIAG — remove after confirming cookies work
+    console.log('[login] NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ?? '(undefined)');
+    console.log('[login] NEXT_PUBLIC_SUPABASE_ANON_KEY defined:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
     const supabase = createSupabaseBrowserClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: signInData, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+
+    // DIAG — remove after confirming cookies work
+    console.log('[login] signInWithPassword result — userId:', signInData?.user?.id ?? 'null', 'session:', !!signInData?.session, 'error:', authError?.message ?? 'none');
+    if (signInData?.session) {
+      console.log('[login] access_token prefix:', signInData.session.access_token.slice(0, 20));
+    }
+    const allCookies = document.cookie;
+    console.log('[login] document.cookie after signIn:', allCookies || '(empty)');
 
     if (authError) {
       const msg = authError.message.includes('Invalid login credentials')
