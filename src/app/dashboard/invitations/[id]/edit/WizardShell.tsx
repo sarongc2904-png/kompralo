@@ -166,6 +166,9 @@ export function WizardShell({ invitation, plan, previewUrl }: Props) {
       case 'protagonists':
         return <ProtagonistsForm invitation={invitation} />;
 
+      case 'parents':
+        return <ParentsForm invitation={invitation} />;
+
       case 'itinerary':
         return <ItineraryForm invitation={invitation} />;
 
@@ -214,21 +217,16 @@ export function WizardShell({ invitation, plan, previewUrl }: Props) {
 
       case 'sponsors':
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-            {(invitation.category === 'wedding' || !invitation.category) && (
-              <ParentsForm invitation={invitation} />
-            )}
-            <SponsorsForm
-              invitationId={invitation.id}
-              slug={invitation.slug}
-              initialPadrinos={invitation.padrinos.map((p) => ({
-                id:    p.id,
-                rubro: p.rubro,
-                icon:  p.icon,
-                names: p.names,
-              }))}
-            />
-          </div>
+          <SponsorsForm
+            invitationId={invitation.id}
+            slug={invitation.slug}
+            initialPadrinos={invitation.padrinos.map((p) => ({
+              id:    p.id,
+              rubro: p.rubro,
+              icon:  p.icon,
+              names: p.names,
+            }))}
+          />
         );
 
       case 'accommodation':
