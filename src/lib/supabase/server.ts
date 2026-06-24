@@ -19,9 +19,18 @@ export async function createServerSupabaseClient() {
         return cookieStore.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) =>
-          cookieStore.set(name, value, options),
+        console.log('[supabase-server] setAll called, count=%d names=%s',
+          cookiesToSet.length,
+          cookiesToSet.map((c) => c.name).join(',') || '(none)',
         );
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+          console.log('[supabase-server] setAll: cookieStore.set completed');
+        } catch (err) {
+          console.error('[supabase-server] setAll: cookieStore.set THREW:', err);
+        }
       },
     },
   });

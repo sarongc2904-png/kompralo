@@ -1,5 +1,6 @@
 'use server';
 
+import { cookies } from 'next/headers';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 export interface SendMagicLinkResult {
@@ -42,6 +43,15 @@ export async function signInWithPassword(
 
   if (!email)    return { success: false, error: 'El correo es requerido.' };
   if (!password) return { success: false, error: 'La contraseña es requerida.' };
+
+  // DIAG: confirm whether cookieStore.set() produces Set-Cookie headers in this action context
+  try {
+    const diagStore = await cookies();
+    diagStore.set('diag-action-cookie', '1', { path: '/', sameSite: 'lax', maxAge: 60 });
+    console.log('[login] DIAG: diag-action-cookie set');
+  } catch (diagErr) {
+    console.error('[login] DIAG: cookieStore.set threw:', diagErr);
+  }
 
   try {
     const supabase = await createServerSupabaseClient();
