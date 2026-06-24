@@ -315,6 +315,13 @@ export function WizardShell({ invitation, plan, previewUrl }: Props) {
 
   return (
     <div>
+      {/* Hide redundant form action buttons while inside wizard */}
+      <style>{`
+        [data-wizard-content] button[type="submit"] { display: none !important; }
+        [data-wizard-content] a[href*="/preview/"]  { display: none !important; }
+        [data-wizard-content] a[href*="/dashboard/invitations"] { display: none !important; }
+      `}</style>
+
       {/* ── Progress header ── */}
       <div
         style={{
@@ -325,7 +332,7 @@ export function WizardShell({ invitation, plan, previewUrl }: Props) {
           marginBottom: 24,
         }}
       >
-        {/* Title row + save status */}
+        {/* Title row + preview link */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
           <div>
             <p style={{ margin: 0, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#C5A880' }}>
@@ -334,12 +341,35 @@ export function WizardShell({ invitation, plan, previewUrl }: Props) {
             <h2 style={{ margin: '4px 0 0', fontSize: '1rem', fontWeight: 600, color: '#1A1410', lineHeight: 1.25 }}>
               {currentStep?.title}
             </h2>
+            {saveStatus !== 'idle' && (
+              <span style={{ fontSize: '0.68rem', fontWeight: 500, color: SAVE_COLORS[saveStatus], display: 'block', marginTop: 3 }}>
+                {SAVE_LABELS[saveStatus]}
+              </span>
+            )}
           </div>
-          {saveStatus !== 'idle' && (
-            <span style={{ fontSize: '0.7rem', fontWeight: 500, color: SAVE_COLORS[saveStatus], whiteSpace: 'nowrap', paddingTop: 2 }}>
-              {SAVE_LABELS[saveStatus]}
-            </span>
-          )}
+          <a
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Ver previsualización"
+            style={{
+              flexShrink: 0,
+              padding: '6px 10px',
+              borderRadius: 8,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              background: '#F5F0E8',
+              color: '#8A6D3B',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              border: '1px solid #E8DFD5',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            ✨ Preview
+          </a>
         </div>
 
         {/* Progress bar */}
@@ -382,7 +412,7 @@ export function WizardShell({ invitation, plan, previewUrl }: Props) {
       </div>
 
       {/* ── Step content — key remounts on step change ── */}
-      <div key={stepIndex} ref={stepContentRef}>
+      <div key={stepIndex} ref={stepContentRef} data-wizard-content="true">
         {renderContent()}
       </div>
 
@@ -432,25 +462,6 @@ export function WizardShell({ invitation, plan, previewUrl }: Props) {
           </button>
         )}
 
-        <a
-          href={previewUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            padding: '10px 16px',
-            borderRadius: 8,
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            background: '#C4A962',
-            color: '#0D0A07',
-            textDecoration: 'none',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-          }}
-        >
-          ✨ Preview
-        </a>
       </div>
     </div>
   );
