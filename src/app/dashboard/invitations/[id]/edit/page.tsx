@@ -126,10 +126,28 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     let sessionUser = null;
     try {
       const supabase = await createServerSupabaseClient();
-      const { data } = await supabase.auth.getUser();
+      const { data, error: getUserError } = await supabase.auth.getUser();
       sessionUser = data.user;
-    } catch {
-      // Supabase not configured — fall through to redirect
+      console.log('[session-debug]', JSON.stringify({
+        route:      `/dashboard/invitations/${id}/edit`,
+        methodUsed: 'getUser',
+        hasSession: !!sessionUser,
+        hasUser:    !!data.user,
+        userId:     data.user?.id ?? null,
+        userEmail:  data.user?.email ?? null,
+        error:      getUserError?.message ?? null,
+      }));
+    } catch (e) {
+      console.error('[editPage] createServerSupabaseClient threw:', e);
+      console.log('[session-debug]', JSON.stringify({
+        route:      `/dashboard/invitations/${id}/edit`,
+        methodUsed: 'getUser',
+        hasSession: false,
+        hasUser:    false,
+        userId:     null,
+        userEmail:  null,
+        error:      String(e),
+      }));
     }
 
     const ownerEmail  = invitation.customerEmail ?? null;

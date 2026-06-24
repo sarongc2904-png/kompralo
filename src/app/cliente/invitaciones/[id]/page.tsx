@@ -260,16 +260,34 @@ export default async function InvitationDashboard({ params }: Props) {
 
   // 1. Auth check — wrapped in try-catch so a Supabase config error shows a clean redirect.
   let sessionUser: { id: string; email: string } | null = null;
+  let _getUserError: string | null = null;
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error } = await supabase.auth.getUser();
-    console.log('[clienteInv] getUser id=%s email=%s error=%s',
-      user?.id ?? 'null', user?.email ?? 'null', error?.message ?? 'none');
+    _getUserError = error?.message ?? null;
     if (user?.id && user?.email) {
       sessionUser = { id: user.id, email: user.email };
     }
+    console.log('[session-debug]', JSON.stringify({
+      route:       `/cliente/invitaciones/${id}`,
+      methodUsed:  'getUser',
+      hasSession:  !!sessionUser,
+      hasUser:     !!user,
+      userId:      user?.id ?? null,
+      userEmail:   user?.email ?? null,
+      error:       _getUserError,
+    }));
   } catch (e) {
     console.error('[clienteInv] createServerSupabaseClient threw:', e);
+    console.log('[session-debug]', JSON.stringify({
+      route:      `/cliente/invitaciones/${id}`,
+      methodUsed: 'getUser',
+      hasSession: false,
+      hasUser:    false,
+      userId:     null,
+      userEmail:  null,
+      error:      String(e),
+    }));
   }
 
   if (!sessionUser) {
