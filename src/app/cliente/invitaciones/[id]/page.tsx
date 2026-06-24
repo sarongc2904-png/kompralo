@@ -258,17 +258,39 @@ interface Props {
 export default async function InvitationDashboard({ params }: Props) {
   const { id } = await params;
 
-  // 1. Auth check
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user?.email) {
-    redirect(`/login?redirect=/cliente/invitaciones/${id}`);
+  // 1. Auth check — wrapped in try-catch so a Supabase config error shows a clean redirect.
+  let sessionUser: { id: string; email: string } | null = null;
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    console.log('[clienteInv] getUser id=%s email=%s error=%s',
+      user?.id ?? 'null', user?.email ?? 'null', error?.message ?? 'none');
+    if (user?.id && user?.email) {
+      sessionUser = { id: user.id, email: user.email };
+    }
+  } catch (e) {
+    console.error('[clienteInv] createServerSupabaseClient threw:', e);
   }
 
-  const email  = user.email;
-  const userId = user.id;
-  const svc    = createServiceRoleSupabaseClient();
+  if (!sessionUser) {
+    const dest = encodeURIComponent(`/cliente/invitaciones/${id}`);
+    console.log('[clienteInv] no session → redirect /login?redirect=%s', dest);
+    redirect(`/login?redirect=${dest}`);
+  }
+
+  const email  = sessionUser.email;
+  const userId = sessionUser.id;
+
+  const svc = (() => {
+    try {
+      return createServiceRoleSupabaseClient();
+    } catch (e) {
+      console.error('[clienteInv] createServiceRoleSupabaseClient threw (check SUPABASE_SERVICE_ROLE_KEY):', e);
+      return null;
+    }
+  })();
+
+  if (!svc) notFound();
 
   // 2. Fetch invitation, verify ownership.
   // Ownership = Auth user ID matches (authoritative) OR customer_email matches (legacy/guest).
@@ -278,17 +300,17 @@ export default async function InvitationDashboard({ params }: Props) {
     .eq('id', id)
     .single();
 
-  console.log('[Client Dashboard] session user id:', userId);
-  console.log('[Client Dashboard] session email:', email);
-  console.log('[Client Dashboard] invitation owner user_id:', inv?.user_id ?? 'null');
-  console.log('[Client Dashboard] invitation customer_email:', inv?.customer_email ?? 'null');
+  const isOwnerByUserId = !!(inv && inv.user_id && inv.user_id === userId);
+  const isOwnerByEmail  = !!(inv && typeof inv.customer_email === 'string' &&
+    inv.customer_email.toLowerCase() === email.toLowerCase());
 
-  const hasAccess = inv && (
-    inv.user_id === userId ||
-    (typeof inv.customer_email === 'string' && inv.customer_email.toLowerCase() === email.toLowerCase())
-  );
+  console.log('[clienteInv] sessionUserId=%s sessionEmail=%s', userId, email);
+  console.log('[clienteInv] invOwnerUserId=%s invCustomerEmail=%s', inv?.user_id ?? 'null', inv?.customer_email ?? 'null');
+  console.log('[clienteInv] isOwnerByUserId=%s isOwnerByEmail=%s', isOwnerByUserId, isOwnerByEmail);
 
-  console.log('[Client Dashboard] access:', hasAccess ? 'granted' : 'denied');
+  const hasAccess = isOwnerByUserId || isOwnerByEmail;
+
+  console.log('[clienteInv] hasAccess=%s', hasAccess);
 
   if (!hasAccess) {
     // Admin users are redirected to the admin panel instead of getting a 404
