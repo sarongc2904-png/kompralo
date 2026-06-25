@@ -6,6 +6,8 @@ interface VisualEditorBottomSheetProps {
   element: EditableElement | null;
   open: boolean;
   targetId?: string;
+  title?: string;
+  description?: string;
   onEdit?: () => void;
   onClose: () => void;
 }
@@ -14,6 +16,8 @@ export function VisualEditorBottomSheet({
   element,
   open,
   targetId,
+  title,
+  description,
   onEdit,
   onClose,
 }: VisualEditorBottomSheetProps) {
@@ -57,13 +61,18 @@ export function VisualEditorBottomSheet({
           Elemento editable
         </p>
         <h2 className="mt-2 text-xl font-semibold" style={{ color: '#2F2419' }}>
-          {element.label}
+          {title ?? element.label}
         </h2>
+        {description && (
+          <p className="mt-2 text-sm" style={{ color: '#5F4B35' }}>
+            {description}
+          </p>
+        )}
         <p className="mt-2 text-sm" style={{ color: '#7A6A5B' }}>
           Abre la sección correspondiente del editor para ajustar este contenido.
         </p>
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-[0.8fr_1.2fr] gap-3">
           <button
             type="button"
             className="rounded-2xl px-4 py-3 text-sm font-semibold"
