@@ -581,8 +581,14 @@ class FallbackInvitationRepository implements IInvitationRepository {
   async getBySlug(slug: string): Promise<InvitationContent | null> {
     try {
       const result = await this.primary.getBySlug(slug);
-      console.log('[Supabase] invitations.getBySlug(%s) — %s', slug, result ? 'found' : 'null');
-      return result;
+      if (result) {
+        console.log('[Supabase] invitations.getBySlug(%s) — found', slug);
+        return result;
+      }
+      // Not in Supabase — try local fixtures (demo invitations)
+      const local = await this.fallback.getBySlug(slug);
+      console.log('[Fallback Local] invitations.getBySlug(%s) — %s', slug, local ? 'found in fixtures' : 'null');
+      return local;
     } catch (err) {
       console.warn('[Fallback Local] invitations.getBySlug(%s) — Supabase error:', slug, err);
       return this.fallback.getBySlug(slug);
