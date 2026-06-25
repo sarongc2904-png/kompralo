@@ -45,6 +45,21 @@ const attendanceBg: Record<string, string> = {
   yes: '#E6F4EA', no: '#FCE8E6', maybe: '#FCF8E3',
 };
 
+const quickAccessStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: '48px',
+  padding: '.8rem 1rem',
+  background: '#F1E3C8',
+  border: '1px solid #EAD7A3',
+  borderRadius: '.9rem',
+  color: '#0D0A07',
+  fontSize: '.9rem',
+  fontWeight: 800,
+  textDecoration: 'none',
+};
+
 function formatDate(iso?: string | null): string {
   if (!iso) return '—';
   try {
@@ -58,6 +73,65 @@ function formatDateTime(iso: string): string {
     return new Intl.DateTimeFormat('es-MX', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
       .format(new Date(iso));
   } catch { return iso; }
+}
+
+function getDaysUntil(iso?: string | null): number | null {
+  if (!iso) return null;
+  const [year, month, day] = iso.split('T')[0].split('-').map(Number);
+  if (!year || !month || !day) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(year, month - 1, day);
+  target.setHours(0, 0, 0, 0);
+  return Math.ceil((target.getTime() - today.getTime()) / 86_400_000);
+}
+
+function getEventStatus(input: { publicUrl: string | null; title?: string | null; eventDate?: string | null; status?: string | null }) {
+  if (!input.publicUrl || !input.status) {
+    return { label: '🔴 Requiere atención', color: '#9F2A2A', bg: '#FFF0F0', border: '#F0CACA' };
+  }
+
+  if (!input.title || !input.eventDate) {
+    return { label: '🟡 Faltan detalles', color: '#8A6D1D', bg: '#FFF8E1', border: '#EAD7A3' };
+  }
+
+  return { label: '🟢 Listo para compartir', color: '#1F7A3A', bg: '#E6F4EA', border: '#A7D7B0' };
+}
+
+function getNextRecommendation(input: { publicUrl: string | null; eventDate?: string | null; rsvpCount: number }) {
+  if (!input.publicUrl) {
+    return {
+      title: 'Termina de preparar tu invitación',
+      text: 'Revisa los datos principales antes de compartirla.',
+      cta: 'Editar invitación',
+      href: null,
+    };
+  }
+
+  if (!input.eventDate) {
+    return {
+      title: 'Agrega la fecha del evento',
+      text: 'La fecha ayuda a tus invitados a ubicarse y confirmar mejor.',
+      cta: 'Completar evento',
+      href: null,
+    };
+  }
+
+  if (input.rsvpCount === 0) {
+    return {
+      title: 'Comparte tu invitación',
+      text: 'Envía el enlace por WhatsApp para empezar a recibir confirmaciones.',
+      cta: 'Compartir ahora',
+      href: input.publicUrl,
+    };
+  }
+
+  return {
+    title: 'Revisa tus confirmaciones',
+    text: 'Ya tienes respuestas. Mantén tus invitados y pases al día.',
+    cta: 'Ver invitados',
+    href: '#invitados',
+  };
 }
 
 // ─── RSVP helpers ─────────────────────────────────────────────────────────────
@@ -94,6 +168,34 @@ function PageStyles() {
       .db-btn:active { transform: translateY(0); }
       .db-stat-card { transition: transform .2s ease, box-shadow .2s ease; }
       .db-stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,12,9,0.06); }
+      .event-card {
+        background: rgba(241,227,200,0.92);
+        border: 1px solid ${T.border};
+        border-radius: 1.35rem;
+        box-shadow: 0 18px 45px rgba(72,55,38,0.08);
+      }
+      .event-hero-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .event-actions-grid,
+      .quick-access-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: .75rem;
+      }
+      @media (min-width: 720px) {
+        .event-hero-grid {
+          grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
+        }
+        .event-actions-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .quick-access-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
 
       /* Main two-column layout — single column on mobile, sidebar on desktop */
       .db-main-grid {
@@ -381,6 +483,18 @@ export default async function InvitationDashboard({ params }: Props) {
   const categoryLabel = categoryLabels[inv.category] ?? inv.category ?? '—';
   const eventDate    = formatDate(inv.event_date);
   const rsvpMode     = (inv.rsvp_mode === 'passes_only' ? 'passes_only' : 'open') as 'open' | 'passes_only';
+  const daysUntilEvent = getDaysUntil(inv.event_date);
+  const eventStatus = getEventStatus({
+    publicUrl,
+    title: inv.title,
+    eventDate: inv.event_date,
+    status: inv.status,
+  });
+  const nextRecommendation = getNextRecommendation({
+    publicUrl,
+    eventDate: inv.event_date,
+    rsvpCount: responses.length,
+  });
 
   return (
     <main style={{
@@ -414,8 +528,85 @@ export default async function InvitationDashboard({ params }: Props) {
 
       <div style={{ maxWidth: '1100px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
 
+        <section style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1rem' }}>
+            <p style={{ fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.22em', color: T.gold, textTransform: 'uppercase', margin: '0 0 .375rem' }}>
+              Centro de Control
+            </p>
+            <h1 style={{ fontSize: 'clamp(2rem, 9vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .625rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.05 }}>
+              Mi Evento
+            </h1>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem', alignItems: 'center' }}>
+              {daysUntilEvent !== null && (
+                <span style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '2rem', padding: '.45rem .8rem', fontSize: '.8125rem', fontWeight: 800, color: T.dark }}>
+                  {daysUntilEvent > 0 ? `${daysUntilEvent} días restantes` : daysUntilEvent === 0 ? 'Hoy es el evento' : 'Evento realizado'}
+                </span>
+              )}
+              <span style={{ background: eventStatus.bg, border: `1px solid ${eventStatus.border}`, borderRadius: '2rem', padding: '.45rem .8rem', fontSize: '.8125rem', fontWeight: 800, color: eventStatus.color }}>
+                {eventStatus.label}
+              </span>
+            </div>
+          </div>
+
+          <div className="event-hero-grid" style={{ marginBottom: '1rem' }}>
+            <div className="event-card" style={{ padding: '1.25rem' }}>
+              <p style={{ margin: '0 0 .5rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: T.gold }}>
+                Vista previa
+              </p>
+              <h2 style={{ margin: '0 0 .5rem', color: T.dark, fontSize: 'clamp(1.4rem, 6vw, 2.15rem)', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.12 }}>
+                {eventTitle}
+              </h2>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.45rem .65rem', color: T.light, fontSize: '.875rem', marginBottom: '1rem' }}>
+                <span>{categoryLabel}</span>
+                <span>·</span>
+                <span>{eventDate}</span>
+                <span>·</span>
+                <span>Plan {planLabel}</span>
+              </div>
+              <div className="event-actions-grid">
+                <a href={publicUrl ?? undefined} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.dark, color: T.cream, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none', opacity: publicUrl ? 1 : .55, pointerEvents: publicUrl ? 'auto' : 'none' }}>
+                  Ver invitación
+                </a>
+                <a href="#compartir" className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.gold, color: T.dark, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
+                  Compartir
+                </a>
+                <a href={editUrl} className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.cream, border: `1px solid ${T.border}`, color: T.dark, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
+                  Editar invitación
+                </a>
+              </div>
+            </div>
+
+            <div className="event-card" style={{ padding: '1.25rem' }}>
+              <p style={{ margin: '0 0 .5rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: T.gold }}>
+                ¿Qué sigue?
+              </p>
+              <h2 style={{ margin: '0 0 .5rem', color: T.dark, fontSize: '1.2rem', fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+                {nextRecommendation.title}
+              </h2>
+              <p style={{ margin: '0 0 1rem', color: T.light, fontSize: '.9rem', lineHeight: 1.6 }}>
+                {nextRecommendation.text}
+              </p>
+              <a href={nextRecommendation.href ?? editUrl} className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.dark, color: T.cream, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
+                {nextRecommendation.cta}
+              </a>
+            </div>
+          </div>
+
+          <div className="event-card" style={{ padding: '1rem' }}>
+            <p style={{ margin: '0 0 .75rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: T.gold }}>
+              Accesos rápidos
+            </p>
+            <div className="quick-access-grid">
+              <a href={publicUrl ?? '#'} target={publicUrl ? '_blank' : undefined} rel={publicUrl ? 'noopener noreferrer' : undefined} style={quickAccessStyle}>Invitación</a>
+              <a href="#invitados" style={quickAccessStyle}>Invitados</a>
+              <a href={editUrl} style={quickAccessStyle}>Evento</a>
+              <a href="#configuracion" style={quickAccessStyle}>Configuración</a>
+            </div>
+          </div>
+        </section>
+
         {/* ── Header ── */}
-        <div style={{ marginBottom: '2rem' }}>
+        <div style={{ display: 'none', marginBottom: '2rem' }}>
           <p style={{ fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', color: T.gold, textTransform: 'uppercase', margin: '0 0 .375rem' }}>
             Dashboard del evento
           </p>
@@ -476,7 +667,7 @@ export default async function InvitationDashboard({ params }: Props) {
           {/* Left: mode selector + RSVP list + passes */}
           <div>
             {/* ── Confirmation mode selector ── */}
-            <div style={{
+            <div id="configuracion" style={{
               background: T.white, border: `1px solid ${T.border}`,
               borderRadius: '1.25rem', padding: '1.25rem 1.25rem .875rem',
               marginBottom: '1.5rem',
@@ -488,7 +679,7 @@ export default async function InvitationDashboard({ params }: Props) {
                 eventTitle={eventTitle}
               />
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
+            <div id="invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
                 Confirmaciones RSVP
               </h2>
@@ -598,7 +789,7 @@ export default async function InvitationDashboard({ params }: Props) {
             {publicUrl && <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />}
 
             {publicUrl && (
-              <div style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.25rem' }}>
+              <div id="compartir" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.25rem' }}>
                 <p style={{ margin: '0 0 .875rem', fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
                   Compartir invitación
                 </p>
