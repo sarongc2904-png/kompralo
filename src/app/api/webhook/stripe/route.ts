@@ -22,6 +22,9 @@ import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repo
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { sendOrderConfirmationEmail } from '@/lib/resend';
 import { createInvitationAccessToken } from '@/lib/access/createInvitationAccessToken';
+import { getResendClient, getFromEmail } from '@/lib/resend/resend';
+import { buildUnsubscribeUrl } from '@/lib/email/unsubscribe-token';
+import WelcomePostPayment, { subject as welcomeSubject } from '@/lib/email/templates/welcome-post-payment';
 
 function ok()  { return NextResponse.json({ received: true }, { status: 200 }); }
 function fail() { return NextResponse.json({ received: false }, { status: 400 }); }
@@ -248,6 +251,30 @@ export async function POST(request: NextRequest) {
           await orderRepo.markConfirmationEmailSent(session.id);
           console.log('[webhook/stripe] confirmation email sent to %s (session=%s)', emailRecipient, session.id);
           console.log('[Webhook] email sent:', emailRecipient, '| order:', freshOrder.id, '| invitation:', finalInvitationId);
+
+          // ── 3c. Email marketing: mark lead as customer + send welcome email ──
+          try {
+            await supabase.from('email_leads').upsert(
+              { email: emailRecipient, status: 'customer', source: 'post_payment', name: customerName ?? undefined },
+              { onConflict: 'email' },
+            );
+            const appUrlForMarketing = process.env.NEXT_PUBLIC_APP_URL ?? '';
+            const unsubUrl = buildUnsubscribeUrl(emailRecipient);
+            await getResendClient().emails.send({
+              from:    getFromEmail(),
+              to:      emailRecipient,
+              subject: welcomeSubject,
+              react:   WelcomePostPayment({
+                name:           customerName ?? undefined,
+                dashboardUrl:   `${appUrlForMarketing}/dashboard`,
+                plan:           planId,
+                unsubscribeUrl: unsubUrl,
+              }),
+            });
+          } catch (marketingErr) {
+            // Non-fatal: confirmation email already sent; just log
+            console.error('[webhook/stripe] marketing welcome email failed (session=%s):', session.id, marketingErr);
+          }
         } catch (emailErr) {
           const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
           console.error('[webhook/stripe] email failed (session=%s):', session.id, msg);
