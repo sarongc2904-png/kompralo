@@ -18,8 +18,8 @@ import {
   Hash,
   Sparkles,
 } from 'lucide-react';
-import { CheckoutButton } from '@/components/checkout/CheckoutButton';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
+import { PlanSelector } from '@/components/plans/PlanSelector';
 import Hero3D from '@/components/public/Hero3D';
 import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
 import { availableProducts } from '@/domain/products';
@@ -635,23 +635,6 @@ function GuaranteeSection() {
 
 // ─── Editions (Pricing) ───────────────────────────────────────────────────────
 
-const PLAN_NAMES: Record<string, string> = {
-  basic:   'Plan Basic / Esencial',
-  premium: 'Plan Premium / Control Total',
-  deluxe:  'Plan Deluxe / Experiencia Deluxe',
-};
-
-const PLAN_DESCS: Record<string, string> = {
-  basic:   'Para parejas que quieren una invitación bonita y funcional.',
-  premium: 'Para parejas que quieren confirmaciones, experiencia completa y mejor organización.',
-  deluxe:  'Para parejas que quieren una invitación más completa, emocional y premium.',
-};
-
-function formatPrice(product: Product) {
-  const amount = product.price / 100;
-  return '$' + amount.toLocaleString('es-MX', { maximumFractionDigits: 0 });
-}
-
 function Editions() {
   return (
     <section id="planes" className="cro-section" style={{ background: T.black }}>
@@ -662,45 +645,7 @@ function Editions() {
           <p className="cro-copy" style={{ marginTop: '1.5rem' }}>Un pago único para un evento inolvidable. Sin mensualidades.</p>
         </Reveal>
 
-        <Stagger className="cro-editions-wrapper" gap={0.2}>
-          {availableProducts.map(product => {
-            const isPro = product.id === 'premium';
-            const marketingName = PLAN_NAMES[product.id] ?? product.name;
-            const desc = PLAN_DESCS[product.id];
-            return (
-              <Item key={product.id} style={{ display: 'flex' }}>
-                <div className={`cro-glass cro-edition ${isPro ? 'cro-edition-pro' : ''}`}>
-                  {isPro && <span className="cro-edition-badge">Más popular</span>}
-                  <h3>{marketingName}</h3>
-                  <p className="cro-edition-desc">{desc}</p>
-
-                  <div className="cro-edition-price">
-                    {formatPrice(product)}
-                    <small>MXN · pago único</small>
-                  </div>
-
-                  <ul className="cro-edition-features">
-                    {product.features.map(f => (
-                      <li key={f}><Check size={16} color={isPro ? T.cyan : T.muted} /> {f}</li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-auto flex flex-col gap-2">
-                    <CheckoutButton
-                      productId={product.id}
-                      label="Elegir este plan"
-                      className={`cro-checkout ${isPro ? 'cro-checkout-pro' : 'cro-checkout-std'}`}
-                      data-event={`click-pricing-${product.id}`}
-                    />
-                    <span className="text-[11px] text-[#A8A29E] text-center mt-1.5 tracking-wider uppercase font-semibold">
-                      Pago único · Sin mensualidades
-                    </span>
-                  </div>
-                </div>
-              </Item>
-            );
-          })}
-        </Stagger>
+        <PlanSelector products={availableProducts} featuredId="premium" />
 
         <Reveal delay={0.3}>
           <div className="cro-reassurance">
