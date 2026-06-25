@@ -19,9 +19,10 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
-import { MultiEventCart } from '@/components/cart/MultiEventCart';
+import { PlanSelector } from '@/components/plans/PlanSelector';
 import Hero3D from '@/components/public/Hero3D';
 import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
+import { availableProducts } from '@/domain/products';
 import type { Product } from '@/domain/products';
 
 export const metadata: Metadata = {
@@ -644,7 +645,7 @@ function Editions() {
           <p className="cro-copy" style={{ marginTop: '1.5rem' }}>Un pago único para un evento inolvidable. Sin mensualidades.</p>
         </Reveal>
 
-        <MultiEventCart />
+        <PlanSelector products={availableProducts} featuredId="premium" />
 
         <Reveal delay={0.3}>
           <div className="cro-reassurance">
