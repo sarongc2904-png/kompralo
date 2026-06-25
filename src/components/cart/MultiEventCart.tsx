@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface CartItem {
@@ -212,7 +212,15 @@ const CSS = `
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function MultiEventCart() {
-  const [items, setItems]           = useState<CartItem[]>([]);
+  const [items, setItems]           = useState<CartItem[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const raw = localStorage.getItem(CART_KEY);
+      return raw ? JSON.parse(raw) as CartItem[] : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedEvent, setEvent]   = useState<string>(EVENT_TYPES[0].id);
   const [selectedPlan, setPlan]     = useState<PlanId>('premium');
   const [payState, setPayState]     = useState<'idle' | 'loading' | 'error'>('idle');
@@ -221,14 +229,6 @@ export function MultiEventCart() {
   const [saveEmail, setSaveEmail]   = useState('');
   const [saveState, setSaveState]   = useState<'idle' | 'loading' | 'done'>('idle');
   const [flash, setFlash]           = useState(false);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(CART_KEY);
-      if (raw) setItems(JSON.parse(raw) as CartItem[]);
-    } catch { /* ignore corrupt storage */ }
-  }, []);
 
   // Sync to localStorage on change
   const persist = useCallback((next: CartItem[]) => {

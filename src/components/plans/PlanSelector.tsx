@@ -343,7 +343,7 @@ function CartPanel({ product, onClear }: { product: Product; onClear: () => void
             <span style={{ fontSize: '.875rem', fontWeight: 700, color: T.dark }}>{review.name} · {review.city}</span>
             <span style={{ fontSize: '.875rem', color: '#BA7517', letterSpacing: 1 }}>★★★★★</span>
           </div>
-          <p style={{ margin: '0 0 .375rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.5 }}>"{review.text}"</p>
+          <p style={{ margin: '0 0 .375rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.5 }}>&ldquo;{review.text}&rdquo;</p>
           <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{review.event}</p>
           <p style={{ margin: '.75rem 0 0', fontSize: '.8125rem', color: T.mid, fontWeight: 500 }}>👥 +320 parejas ya compartieron su invitación con Kompralo</p>
         </div>

@@ -28,13 +28,16 @@ export default function Hero3D() {
   const bgY = useTransform(smoothY, [0, 1], ['-1%', '1%']);
 
   useEffect(() => {
-    setIsMounted(true);
+    const mountTimer = window.setTimeout(() => setIsMounted(true), 0);
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX / window.innerWidth);
       mouseY.set(e.clientY / window.innerHeight);
     };
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.clearTimeout(mountTimer);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, [mouseX, mouseY]);
 
   if (!isMounted) {

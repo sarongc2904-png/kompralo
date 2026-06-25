@@ -79,12 +79,19 @@ export async function POST(request: NextRequest) {
   let guestPassRow: { id: string; allowed_guests: number } | null = null;
 
   if (guestPassToken) {
-    const svc = createServiceRoleSupabaseClient();
-    const { data: gp } = await svc
-      .from('guest_passes')
-      .select('id, allowed_guests, invitation_id')
-      .eq('pass_token', guestPassToken)
-      .single();
+    let gp: { id: string; allowed_guests: number; invitation_id: string } | null = null;
+    try {
+      const svc = createServiceRoleSupabaseClient();
+      const { data: guestPass } = await svc
+        .from('guest_passes')
+        .select('id, allowed_guests, invitation_id')
+        .eq('pass_token', guestPassToken)
+        .single();
+      gp = guestPass;
+    } catch (err) {
+      console.error('[api/rsvp] guest pass lookup unavailable:', err);
+      return errorResponse('Servicio RSVP no disponible. Intenta más tarde.', 503);
+    }
 
     if (!gp || gp.invitation_id !== invitationId) {
       return errorResponse('Pase de invitado no válido.', 422);
@@ -113,12 +120,16 @@ export async function POST(request: NextRequest) {
 
   // Link the RSVP response to the guest pass and update its status
   if (guestPassRow && result.response?.id) {
-    const svc = createServiceRoleSupabaseClient();
-    const newStatus = attendance === 'no' ? 'declined' : 'confirmed';
-    await svc
-      .from('guest_passes')
-      .update({ rsvp_response_id: result.response.id, status: newStatus, updated_at: new Date().toISOString() })
-      .eq('id', guestPassRow.id);
+    try {
+      const svc = createServiceRoleSupabaseClient();
+      const newStatus = attendance === 'no' ? 'declined' : 'confirmed';
+      await svc
+        .from('guest_passes')
+        .update({ rsvp_response_id: result.response.id, status: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', guestPassRow.id);
+    } catch (err) {
+      console.error('[api/rsvp] guest pass update unavailable:', err);
+    }
   }
 
   const passToken = result.response.passToken;
