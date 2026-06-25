@@ -217,13 +217,16 @@ export default async function EditInvitationPage({ params, searchParams }: Props
   // Quick Setup Wizard gate — show for new wedding invitations that haven't
   // completed the 3-step quick setup yet. Admins bypass it.
   // Uses service role to avoid RLS issues reading the new column.
+  console.log('[wizard-gate] category=%s fromAdmin=%s id=%s', invitation.category, fromAdmin, id);
   if (invitation.category === 'wedding' && !fromAdmin) {
-    const { data: invRow } = await createServiceRoleSupabaseClient()
+    const { data: invRow, error: wizardQueryErr } = await createServiceRoleSupabaseClient()
       .from('invitations')
       .select('wizard_step_completed')
       .eq('id', id)
       .single();
-    const wizardCompleted = ((invRow as { wizard_step_completed?: number } | null)?.wizard_step_completed ?? 0) >= 3;
+    const raw = (invRow as { wizard_step_completed?: number } | null)?.wizard_step_completed;
+    const wizardCompleted = (raw ?? 0) >= 3;
+    console.log('[wizard-gate] invRow=%j raw=%s wizardCompleted=%s err=%s', invRow, raw, wizardCompleted, wizardQueryErr?.message ?? null);
     if (!wizardCompleted) {
       return (
         <div style={{ minHeight: '100vh', background: '#F6F2EC', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '3rem', paddingBottom: '3rem' }}>
