@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { wizardQuickSetup } from '@/app/actions/wizard-quick-setup';
 import type { WizardMinimalInput, WizardStyle } from '@/lib/invitations/generate-smart-defaults';
+import { WizardWhatsAppShareLink } from '@/components/wizard/WizardWhatsAppShareLink';
 
 interface Props {
   invitationId: string;
@@ -44,6 +45,7 @@ export function QuickSetupWizard({
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [savedPublicUrl, setSavedPublicUrl] = useState<string | null>(publicUrl ?? null);
 
   const [noviaName, setNoviaName] = useState('');
   const [novioName, setNovioName] = useState('');
@@ -106,6 +108,9 @@ export function QuickSetupWizard({
     startTransition(async () => {
       const result = await wizardQuickSetup(invitationId, input);
       if (result.ok) {
+        if (result.publicUrl) {
+          setSavedPublicUrl(result.publicUrl);
+        }
         setSaved(true);
         return;
       }
@@ -118,14 +123,6 @@ export function QuickSetupWizard({
   }
 
   if (saved) {
-    const shareText = encodeURIComponent('Te comparto nuestra invitación digital:');
-    const shareUrl = publicUrl && typeof window !== 'undefined'
-      ? new URL(publicUrl, window.location.origin).toString()
-      : publicUrl;
-    const shareHref = publicUrl
-      ? `https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl ?? publicUrl)}`
-      : dashboardUrl;
-
     return (
       <main style={shellStyle}>
         <section style={successCardStyle}>
@@ -134,8 +131,8 @@ export function QuickSetupWizard({
           <p style={mutedStyle}>Ya puedes verla, compartirla o seguir personalizando los detalles.</p>
 
           <div style={{ display: 'grid', gap: 12, marginTop: 24 }}>
-            {publicUrl && <Link href={publicUrl} style={primaryLinkStyle}>Ver invitación</Link>}
-            <Link href={shareHref} style={secondaryLinkStyle}>Compartir por WhatsApp</Link>
+            {savedPublicUrl && <Link href={savedPublicUrl} style={primaryLinkStyle}>Ver invitación</Link>}
+            <WizardWhatsAppShareLink publicPath={savedPublicUrl} style={secondaryLinkStyle} />
             <Link href={editorUrl} style={secondaryLinkStyle}>Personalizar detalles</Link>
           </div>
 

@@ -9,6 +9,7 @@ import { canWriteInvitation } from '@/lib/auth/invitation-ownership';
 export interface WizardQuickSetupResult {
   ok: boolean;
   redirectUrl?: string;
+  publicUrl?: string;
   error?: string;
 }
 
@@ -59,7 +60,7 @@ export async function wizardQuickSetup(
 
     const { data: invitation, error: invitationErr } = await db
       .from('invitations')
-      .select('id, user_id, customer_email, wizard_step_completed')
+      .select('id, user_id, customer_email, wizard_step_completed, slug')
       .eq('id', invitationId)
       .maybeSingle();
 
@@ -145,7 +146,11 @@ export async function wizardQuickSetup(
       return { ok: false, error: `Error actualizando invitación: ${updateErr.message}` };
     }
 
-    return { ok: true, redirectUrl: `/cliente/invitaciones/${invitationId}/preview-wizard` };
+    return {
+      ok: true,
+      redirectUrl: `/cliente/invitaciones/${invitationId}/preview-wizard`,
+      publicUrl: invitation.slug ? `/i/${invitation.slug}` : undefined,
+    };
   } catch (e) {
     console.error('[wizardQuickSetup] unexpected error:', e);
     return { ok: false, error: 'Error inesperado. Intenta de nuevo.' };

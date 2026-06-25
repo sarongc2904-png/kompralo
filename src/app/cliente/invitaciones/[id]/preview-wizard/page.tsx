@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { isAdminUser } from '@/lib/admin';
+import { WizardWhatsAppShareLink } from '@/components/wizard/WizardWhatsAppShareLink';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,11 +54,6 @@ export default async function PreviewWizardPage({ params }: Props) {
   const hero = (content?.hero as { emotionalPhrase?: string } | null) ?? {};
   const social = (content?.social as { hashtag?: string } | null) ?? {};
   const publicUrl = inv.slug ? `/i/${inv.slug}` : null;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? '';
-  const absolutePublicUrl = inv.slug ? `${siteUrl}/i/${inv.slug}` : '';
-  const whatsappHref = publicUrl
-    ? `https://wa.me/?text=${encodeURIComponent(`Te comparto nuestra invitación digital: ${absolutePublicUrl}`)}`
-    : `/cliente/invitaciones/${id}`;
   const editorUrl = `/dashboard/invitations/${id}/edit`;
 
   const names = protagonists
@@ -88,7 +84,7 @@ export default async function PreviewWizardPage({ params }: Props) {
 
         <div style={{ display: 'grid', gap: 12, marginTop: 22 }}>
           {publicUrl && <Link href={publicUrl} style={primaryLinkStyle}>Ver invitación</Link>}
-          <Link href={whatsappHref} style={secondaryLinkStyle}>Compartir por WhatsApp</Link>
+          <WizardWhatsAppShareLink publicPath={publicUrl} style={secondaryLinkStyle} />
           <Link href={editorUrl} style={secondaryLinkStyle}>Personalizar detalles</Link>
         </div>
 
