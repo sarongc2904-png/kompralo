@@ -2,7 +2,15 @@ import type { ItineraryItem, InvitationProtagonist, ItineraryIcon } from '@/doma
 
 export type CeremonyType = 'solo_civil' | 'civil_e_iglesia' | 'solo_religiosa';
 
-export type WizardStyle = 'jardin_secreto' | 'cielo_nocturno' | 'arena_y_miel';
+export type WizardStyle =
+  | 'editorial'
+  | 'romantico'
+  | 'minimalista'
+  | 'floral'
+  | 'moderno'
+  | 'jardin_secreto'
+  | 'cielo_nocturno'
+  | 'arena_y_miel';
 
 export interface WizardMinimalInput {
   novioName: string;
@@ -15,6 +23,15 @@ export interface WizardMinimalInput {
   ceremonyTime: string; // HH:MM
   receptionLocation: string;
   receptionTime: string; // HH:MM
+  venueName?: string;
+  venueAddress?: string;
+  googleMapsUrl?: string;
+  wazeUrl?: string;
+  coverImageUrl?: string;
+  heroMessage?: string;
+  dressCodeType?: string;
+  rsvpMode?: 'open' | 'passes_only';
+  whatsappMessage?: string;
   mesaRegalosType: 'sobres' | 'transferencia' | 'link' | 'ninguna';
   notasNinos: 'adultos' | 'bienvenidos' | null;
 }
@@ -88,6 +105,11 @@ export interface GeneratedDefaults {
 
 // Style → theme mapping
 const STYLE_THEME: Record<WizardStyle, string> = {
+  editorial:       'ivory-editorial',
+  romantico:       'pastel-rose-editorial',
+  minimalista:     'modern-pastel',
+  floral:          'garden-romance',
+  moderno:         'pastel-sky-editorial',
   jardin_secreto: 'ivory-editorial',
   cielo_nocturno: 'modern-dark',
   arena_y_miel:   'luxury-gold',
@@ -95,6 +117,11 @@ const STYLE_THEME: Record<WizardStyle, string> = {
 
 // Style → dress code colors
 const STYLE_COLORS: Record<WizardStyle, { primary: string; secondary: string }> = {
+  editorial:       { primary: '#B99752', secondary: '#F7EFE4' },
+  romantico:       { primary: '#B76E79', secondary: '#F8DDE2' },
+  minimalista:     { primary: '#BDAE9A', secondary: '#F7F2EC' },
+  floral:          { primary: '#7C9A79', secondary: '#F3D8D5' },
+  moderno:         { primary: '#6F8FBF', secondary: '#F5FAFF' },
   jardin_secreto: { primary: '#2D5016', secondary: '#C9A84C' },
   cielo_nocturno: { primary: '#0D1B2A', secondary: '#A8B8C8' },
   arena_y_miel:   { primary: '#8B4513', secondary: '#D4AF7A' },
@@ -244,9 +271,9 @@ export function generateSmartDefaults(input: WizardMinimalInput): GeneratedDefau
     { id: uid(), name: novioName, role: 'Novio' },
   ];
 
-  const heroPhrase = ceremonyType === 'solo_civil'
+  const heroPhrase = input.heroMessage?.trim() || (ceremonyType === 'solo_civil'
     ? 'Dos almas, un futuro'
-    : 'Dos almas, un destino';
+    : 'Dos almas, un destino');
 
   const signature = `Con amor, ${noviaName} & ${novioName}`;
 
@@ -267,14 +294,14 @@ export function generateSmartDefaults(input: WizardMinimalInput): GeneratedDefau
     protagonists,
     eventTime: input.ceremonyTime,
     location: {
-      venueName:      input.receptionLocation || 'Por confirmar',
-      address:        '',
-      googleMapsLink: '',
-      wazeLink:       '',
+      venueName:      input.venueName?.trim() || input.receptionLocation || input.ceremonyLocation || 'Por confirmar',
+      address:        input.venueAddress?.trim() || '',
+      googleMapsLink: input.googleMapsUrl?.trim() || '',
+      wazeLink:       input.wazeUrl?.trim() || '',
     },
     hero: {
       emotionalPhrase: heroPhrase,
-      imageUrl:        '',
+      imageUrl:        input.coverImageUrl?.trim() || '',
       videoUrl:        '',
       youtubeUrl:      '',
       eventLabel:      'Boda',
@@ -287,7 +314,7 @@ export function generateSmartDefaults(input: WizardMinimalInput): GeneratedDefau
       tiktokHandle:    '',
       facebookUrl:     '',
       youtubeUrl:      '',
-      note:            '',
+      note:            input.whatsappMessage?.trim() || '',
     },
     finalMessage: {
       title:    '¡Nos vemos pronto!',
@@ -298,8 +325,8 @@ export function generateSmartDefaults(input: WizardMinimalInput): GeneratedDefau
     },
     giftRegistry: buildGiftRegistry(input.mesaRegalosType, noviaName, novioName),
     dressCode: {
-      type:            'Formal',
-      description:     'Formal / Cocktail',
+      type:            input.dressCodeType?.trim() || 'Formal',
+      description:     input.dressCodeType?.trim() || 'Formal / Cocktail',
       suggestions:     'Agradecemos evitar tonos blancos e ivori.',
       title:           'Código de vestimenta',
       observations:    dressCodeObs,

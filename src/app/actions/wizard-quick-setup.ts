@@ -134,6 +134,7 @@ export async function wizardQuickSetup(
         ceremony_type: input.ceremonyType,
         civil_already_done: input.civilAlreadyDone,
         event_date: input.weddingDate,
+        rsvp_mode: input.rsvpMode === 'passes_only' ? 'passes_only' : 'open',
         theme_id: defaults.themeId,
         updated_at: now,
       })

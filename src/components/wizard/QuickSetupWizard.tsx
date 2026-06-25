@@ -1,426 +1,560 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
 import { wizardQuickSetup } from '@/app/actions/wizard-quick-setup';
-import type { WizardMinimalInput, WizardStyle, CeremonyType } from '@/lib/invitations/generate-smart-defaults';
+import type { WizardMinimalInput, WizardStyle } from '@/lib/invitations/generate-smart-defaults';
 
 interface Props {
   invitationId: string;
   invitationTitle?: string;
+  isCompleted?: boolean;
+  publicUrl?: string | null;
+  editorUrl?: string;
+  dashboardUrl?: string;
 }
 
-const STYLES: Array<{ id: WizardStyle; label: string; description: string; primary: string; accent: string }> = [
-  { id: 'jardin_secreto', label: 'Jardín Secreto',  description: 'Verde jardín, dorado suave',  primary: '#2D5016', accent: '#C9A84C' },
-  { id: 'cielo_nocturno', label: 'Cielo Nocturno',  description: 'Azul noche, plateado',         primary: '#0D1B2A', accent: '#A8B8C8' },
-  { id: 'arena_y_miel',   label: 'Arena y Miel',    description: 'Terracota, dorado cálido',     primary: '#8B4513', accent: '#D4AF7A' },
+const STYLES: Array<{ id: WizardStyle; label: string; description: string; swatches: [string, string] }> = [
+  { id: 'editorial', label: 'Editorial', description: 'Marfil, dorado suave', swatches: ['#FBF7EF', '#C8A75D'] },
+  { id: 'romantico', label: 'Romántico', description: 'Rosa pastel, champagne', swatches: ['#FFF7F8', '#B76E79'] },
+  { id: 'minimalista', label: 'Minimalista', description: 'Limpio y luminoso', swatches: ['#FAF8F6', '#BDAE9A'] },
+  { id: 'floral', label: 'Floral', description: 'Verde sage, blush', swatches: ['#F8FAF7', '#A8BFAA'] },
+  { id: 'moderno', label: 'Moderno', description: 'Celeste suave, editorial', swatches: ['#F5FAFF', '#6F8FBF'] },
 ];
 
-const CEREMONY_TYPES: Array<{ id: CeremonyType; label: string; icon: string }> = [
-  { id: 'solo_civil',       label: 'Solo civil',          icon: '📋' },
-  { id: 'civil_e_iglesia',  label: 'Civil e iglesia',     icon: '⛪' },
-  { id: 'solo_religiosa',   label: 'Solo religiosa',      icon: '🕊️' },
+const GIFT_OPTIONS: Array<{
+  id: WizardMinimalInput['mesaRegalosType'];
+  label: string;
+  description: string;
+}> = [
+  { id: 'ninguna', label: 'No mostrar aún', description: 'Puedes activarlo después.' },
+  { id: 'sobres', label: 'Lluvia de sobres', description: 'Mensaje elegante para sobres.' },
+  { id: 'link', label: 'Mesa después', description: 'Placeholder para configurar luego.' },
 ];
 
-export function QuickSetupWizard({ invitationId, invitationTitle }: Props) {
-  const router = useRouter();
-  const [step, setStep]       = useState(1);
+export function QuickSetupWizard({
+  invitationId,
+  invitationTitle,
+  isCompleted = false,
+  publicUrl,
+  editorUrl = `/dashboard/invitations/${invitationId}/edit`,
+  dashboardUrl = `/cliente/invitaciones/${invitationId}`,
+}: Props) {
+  const [step, setStep] = useState(1);
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
-  // Step 1 — Names & Style
-  const [noviaName, setNoviaName]   = useState('');
-  const [novioName, setNovioName]   = useState('');
+  const [noviaName, setNoviaName] = useState('');
+  const [novioName, setNovioName] = useState('');
   const [weddingDate, setWeddingDate] = useState('');
-  const [style, setStyle]           = useState<WizardStyle>('jardin_secreto');
+  const [eventTime, setEventTime] = useState('18:00');
+  const [venueName, setVenueName] = useState('');
+  const [venueAddress, setVenueAddress] = useState('');
+  const [googleMapsUrl, setGoogleMapsUrl] = useState('');
+  const [wazeUrl, setWazeUrl] = useState('');
 
-  // Step 2 — Ceremony
-  const [ceremonyType, setCeremonyType]       = useState<CeremonyType>('civil_e_iglesia');
-  const [civilAlreadyDone, setCivilAlreadyDone] = useState(false);
-  const [ceremonyLocation, setCeremonyLocation] = useState('');
-  const [ceremonyTime, setCeremonyTime]         = useState('12:00');
-  const [receptionLocation, setReceptionLocation] = useState('');
-  const [receptionTime, setReceptionTime]       = useState('14:00');
+  const [style, setStyle] = useState<WizardStyle>('editorial');
+  const [coverImageUrl, setCoverImageUrl] = useState('');
+  const [heroMessage, setHeroMessage] = useState('');
 
-  // Step 3 — Extras
-  const [mesaRegalosType, setMesaRegalosType] = useState<WizardMinimalInput['mesaRegalosType']>('sobres');
-  const [notasNinos, setNotasNinos]           = useState<WizardMinimalInput['notasNinos']>(null);
+  const [dressCodeType, setDressCodeType] = useState('Formal');
+  const [rsvpMode, setRsvpMode] = useState<'open' | 'passes_only'>('open');
+  const [whatsappMessage, setWhatsappMessage] = useState('');
+  const [mesaRegalosType, setMesaRegalosType] = useState<WizardMinimalInput['mesaRegalosType']>('ninguna');
 
-  const canNext1 = noviaName.trim().length > 0 && novioName.trim().length > 0 && weddingDate.length > 0;
-  const canNext2 = ceremonyTime.length > 0 && receptionTime.length > 0;
+  const canContinueEvent =
+    noviaName.trim().length > 0 &&
+    novioName.trim().length > 0 &&
+    weddingDate.length > 0 &&
+    eventTime.length > 0 &&
+    venueName.trim().length > 0 &&
+    venueAddress.trim().length > 0;
 
-  function handleSubmit() {
+  function submitWizard() {
+    if (!canContinueEvent) {
+      setErrorMsg('Completa nombres, fecha, hora, lugar y dirección para continuar.');
+      setStep(1);
+      return;
+    }
+
     const input: WizardMinimalInput = {
-      novioName:         novioName.trim(),
-      noviaName:         noviaName.trim(),
+      novioName: novioName.trim(),
+      noviaName: noviaName.trim(),
       weddingDate,
       style,
-      ceremonyType,
-      civilAlreadyDone,
-      ceremonyLocation:  ceremonyLocation.trim(),
-      ceremonyTime,
-      receptionLocation: receptionLocation.trim(),
-      receptionTime,
+      ceremonyType: 'civil_e_iglesia',
+      civilAlreadyDone: false,
+      ceremonyLocation: venueName.trim(),
+      ceremonyTime: eventTime,
+      receptionLocation: venueName.trim(),
+      receptionTime: eventTime,
+      venueName: venueName.trim(),
+      venueAddress: venueAddress.trim(),
+      googleMapsUrl: googleMapsUrl.trim(),
+      wazeUrl: wazeUrl.trim(),
+      coverImageUrl: coverImageUrl.trim(),
+      heroMessage: heroMessage.trim(),
+      dressCodeType: dressCodeType.trim(),
+      rsvpMode,
+      whatsappMessage: whatsappMessage.trim(),
       mesaRegalosType,
-      notasNinos,
+      notasNinos: null,
     };
+
     setErrorMsg(null);
     startTransition(async () => {
       const result = await wizardQuickSetup(invitationId, input);
-      if (result.ok && result.redirectUrl) {
-        router.push(result.redirectUrl);
-      } else if (!result.ok && result.redirectUrl) {
-        router.push(result.redirectUrl); // auth redirect (login)
-      } else {
-        setErrorMsg(result.error ?? 'Error desconocido. Intenta de nuevo.');
+      if (result.ok) {
+        setSaved(true);
+        return;
       }
+      if (result.redirectUrl) {
+        window.location.href = result.redirectUrl;
+        return;
+      }
+      setErrorMsg(result.error ?? 'No pudimos guardar el wizard. Intenta de nuevo.');
     });
   }
 
+  if (saved) {
+    const shareText = encodeURIComponent('Te comparto nuestra invitación digital:');
+    const shareUrl = publicUrl && typeof window !== 'undefined'
+      ? new URL(publicUrl, window.location.origin).toString()
+      : publicUrl;
+    const shareHref = publicUrl
+      ? `https://wa.me/?text=${shareText}%20${encodeURIComponent(shareUrl ?? publicUrl)}`
+      : dashboardUrl;
+
+    return (
+      <main style={shellStyle}>
+        <section style={successCardStyle}>
+          <p style={eyebrowStyle}>KOMPRALO</p>
+          <h1 style={successTitleStyle}>Tu invitación ya está lista.</h1>
+          <p style={mutedStyle}>Ya puedes verla, compartirla o seguir personalizando los detalles.</p>
+
+          <div style={{ display: 'grid', gap: 12, marginTop: 24 }}>
+            {publicUrl && <Link href={publicUrl} style={primaryLinkStyle}>Ver invitación</Link>}
+            <Link href={shareHref} style={secondaryLinkStyle}>Compartir por WhatsApp</Link>
+            <Link href={editorUrl} style={secondaryLinkStyle}>Personalizar detalles</Link>
+          </div>
+
+          <div style={quickActionsStyle}>
+            <Link href={editorUrl} style={miniActionStyle}>Agregar fotos</Link>
+            <Link href={editorUrl} style={miniActionStyle}>Agregar música</Link>
+            <Link href={dashboardUrl} style={miniActionStyle}>Agregar invitados</Link>
+            <Link href={dashboardUrl} style={miniActionStyle}>Configurar QR</Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
-    <div style={{ maxWidth: 520, margin: '0 auto', padding: '1rem' }}>
-      {/* Header */}
-      <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-        {invitationTitle && (
-          <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#C5A880', marginBottom: 6 }}>
-            {invitationTitle}
-          </p>
+    <main style={shellStyle}>
+      <section style={cardStyle}>
+        <div style={{ marginBottom: 22, textAlign: 'center' }}>
+          {invitationTitle && <p style={eyebrowStyle}>{invitationTitle}</p>}
+          <h1 style={titleStyle}>{isCompleted ? 'Actualizar datos' : 'Configura tu invitación'}</h1>
+          <p style={mutedStyle}>{isCompleted ? 'Ajusta la base de tu invitación.' : '3 pasos · menos de 3 minutos'}</p>
+          <Progress step={step} />
+        </div>
+
+        {step === 1 && (
+          <div>
+            <StepHeading title="Evento" subtitle="Lo esencial para mostrar tu boda correctamente." />
+            <div style={twoColumnStyle}>
+              <Field label="Novia" value={noviaName} onChange={setNoviaName} placeholder="Sofía" />
+              <Field label="Novio" value={novioName} onChange={setNovioName} placeholder="Alejandro" />
+            </div>
+            <div style={twoColumnStyle}>
+              <Field label="Fecha" type="date" value={weddingDate} onChange={setWeddingDate} />
+              <Field label="Hora" type="time" value={eventTime} onChange={setEventTime} />
+            </div>
+            <Field label="Lugar" value={venueName} onChange={setVenueName} placeholder="Hacienda, jardín o salón" />
+            <Field label="Dirección" value={venueAddress} onChange={setVenueAddress} placeholder="Calle, ciudad, estado" />
+            <Field label="Google Maps URL opcional" value={googleMapsUrl} onChange={setGoogleMapsUrl} placeholder="https://maps.google.com/..." />
+            <Field label="Waze URL opcional" value={wazeUrl} onChange={setWazeUrl} placeholder="https://waze.com/..." />
+            <button type="button" disabled={!canContinueEvent} onClick={() => setStep(2)} style={{ ...primaryButtonStyle, opacity: canContinueEvent ? 1 : 0.45 }}>
+              Continuar
+            </button>
+          </div>
         )}
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 300, color: '#1A1410', marginBottom: 4 }}>
-          Configuración rápida
-        </h1>
-        <p style={{ fontSize: '0.85rem', color: '#9B8878' }}>
-          3 pasos · menos de 2 minutos
-        </p>
 
-        {/* Progress dots */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 16 }}>
-          {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              style={{
-                width: s === step ? 24 : 8,
-                height: 8,
-                borderRadius: 4,
-                background: s === step ? '#C5A880' : s < step ? '#8B6F4E' : '#E8E2DA',
-                transition: 'all 0.3s',
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ── Step 1: Names & Style ─────────────────────────────────────────── */}
-      {step === 1 && (
-        <div>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#3D2B1A', marginBottom: 20 }}>
-            ¿Quiénes se casan?
-          </h2>
-
-          <label style={labelStyle}>Nombre de la novia</label>
-          <input
-            value={noviaName}
-            onChange={(e) => setNoviaName(e.target.value)}
-            placeholder="Sofía"
-            style={inputStyle}
-          />
-
-          <label style={{ ...labelStyle, marginTop: 14 }}>Nombre del novio</label>
-          <input
-            value={novioName}
-            onChange={(e) => setNovioName(e.target.value)}
-            placeholder="Carlos"
-            style={inputStyle}
-          />
-
-          <label style={{ ...labelStyle, marginTop: 14 }}>Fecha de la boda</label>
-          <input
-            type="date"
-            value={weddingDate}
-            onChange={(e) => setWeddingDate(e.target.value)}
-            style={inputStyle}
-          />
-
-          <label style={{ ...labelStyle, marginTop: 20, marginBottom: 10 }}>Estilo visual</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-            {STYLES.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setStyle(s.id)}
-                style={{
-                  border: `2px solid ${style === s.id ? s.primary : '#E8E2DA'}`,
-                  borderRadius: 12,
-                  padding: '14px 8px',
-                  background: style === s.id ? '#FAF7F2' : '#FFF',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  transition: 'all 0.2s',
-                }}
-              >
-                {/* Color swatches */}
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginBottom: 8 }}>
-                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: s.primary }} />
-                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: s.accent }} />
-                </div>
-                <p style={{ fontSize: '0.7rem', fontWeight: 600, color: '#3D2B1A', marginBottom: 2 }}>
-                  {s.label}
-                </p>
-                <p style={{ fontSize: '0.6rem', color: '#9B8878', lineHeight: 1.3 }}>
-                  {s.description}
-                </p>
-              </button>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            disabled={!canNext1}
-            onClick={() => setStep(2)}
-            style={{ ...ctaStyle, opacity: canNext1 ? 1 : 0.4, marginTop: 28 }}
-          >
-            Siguiente →
-          </button>
-        </div>
-      )}
-
-      {/* ── Step 2: Ceremony ──────────────────────────────────────────────── */}
-      {step === 2 && (
-        <div>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#3D2B1A', marginBottom: 20 }}>
-            ¿Cómo es la ceremonia?
-          </h2>
-
-          <label style={labelStyle}>Tipo de ceremonia</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 18 }}>
-            {CEREMONY_TYPES.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => setCeremonyType(c.id)}
-                style={{
-                  border: `2px solid ${ceremonyType === c.id ? '#C5A880' : '#E8E2DA'}`,
-                  borderRadius: 10,
-                  padding: '12px 6px',
-                  background: ceremonyType === c.id ? '#FAF7F2' : '#FFF',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                }}
-              >
-                <div style={{ fontSize: '1.4rem', marginBottom: 4 }}>{c.icon}</div>
-                <p style={{ fontSize: '0.65rem', fontWeight: 600, color: '#3D2B1A', lineHeight: 1.3 }}>
-                  {c.label}
-                </p>
-              </button>
-            ))}
-          </div>
-
-          {ceremonyType === 'solo_religiosa' && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18,
-                          padding: '10px 14px', background: '#F6F2EC', borderRadius: 10 }}>
-              <input
-                type="checkbox"
-                id="civil-done"
-                checked={civilAlreadyDone}
-                onChange={(e) => setCivilAlreadyDone(e.target.checked)}
-                style={{ width: 16, height: 16, cursor: 'pointer' }}
-              />
-              <label htmlFor="civil-done" style={{ fontSize: '0.8rem', color: '#3D2B1A', cursor: 'pointer' }}>
-                El civil ya se realizó previamente
-              </label>
+        {step === 2 && (
+          <div>
+            <StepHeading title="Estilo" subtitle="Elige una dirección visual. Podrás cambiarla después." />
+            <div style={styleGridStyle}>
+              {STYLES.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setStyle(item.id)}
+                  style={{
+                    ...styleButtonStyle,
+                    borderColor: style === item.id ? '#B99752' : '#E8DED2',
+                    background: style === item.id ? '#FFF9EF' : '#FFFFFF',
+                  }}
+                >
+                  <span style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 8 }}>
+                    <span style={{ ...swatchStyle, background: item.swatches[0] }} />
+                    <span style={{ ...swatchStyle, background: item.swatches[1] }} />
+                  </span>
+                  <strong style={{ display: 'block', color: '#3D2B1A', fontSize: 13 }}>{item.label}</strong>
+                  <span style={{ color: '#8A7663', fontSize: 11 }}>{item.description}</span>
+                </button>
+              ))}
             </div>
-          )}
+            <Field label="Foto principal o URL de portada opcional" value={coverImageUrl} onChange={setCoverImageUrl} placeholder="https://..." />
+            <TextArea label="Mensaje de portada opcional" value={heroMessage} onChange={setHeroMessage} placeholder="Dos almas, un destino" />
+            <NavButtons onBack={() => setStep(1)} onNext={() => setStep(3)} nextLabel="Continuar" />
+          </div>
+        )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <div>
-              <label style={labelStyle}>
-                {ceremonyType === 'civil_e_iglesia' ? 'Lugar del civil' : 'Lugar de la ceremonia'}
-              </label>
-              <input
-                value={ceremonyLocation}
-                onChange={(e) => setCeremonyLocation(e.target.value)}
-                placeholder="Salón / Templo"
-                style={inputStyle}
-              />
+        {step === 3 && (
+          <div>
+            <StepHeading title="Confirmación" subtitle="Revisa la base antes de guardar." />
+            <Field label="Dress code" value={dressCodeType} onChange={setDressCodeType} placeholder="Formal" />
+
+            <p style={labelStyle}>RSVP</p>
+            <div style={segmentedStyle}>
+              <ChoiceButton active={rsvpMode === 'open'} onClick={() => setRsvpMode('open')} title="Libre" subtitle="Cualquier invitado confirma." />
+              <ChoiceButton active={rsvpMode === 'passes_only'} onClick={() => setRsvpMode('passes_only')} title="Controlada" subtitle="Por familia / pases." />
             </div>
-            <div>
-              <label style={labelStyle}>Hora</label>
-              <input
-                type="time"
-                value={ceremonyTime}
-                onChange={(e) => setCeremonyTime(e.target.value)}
-                style={inputStyle}
-              />
+
+            <TextArea label="Mensaje de WhatsApp opcional" value={whatsappMessage} onChange={setWhatsappMessage} placeholder="Nos encantará celebrar contigo." />
+
+            <p style={labelStyle}>Regalos</p>
+            <div style={{ display: 'grid', gap: 8, marginBottom: 18 }}>
+              {GIFT_OPTIONS.map((option) => (
+                <ChoiceButton
+                  key={option.id}
+                  active={mesaRegalosType === option.id}
+                  onClick={() => setMesaRegalosType(option.id)}
+                  title={option.label}
+                  subtitle={option.description}
+                />
+              ))}
             </div>
-          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 14 }}>
-            <div>
-              <label style={labelStyle}>Lugar de la recepción</label>
-              <input
-                value={receptionLocation}
-                onChange={(e) => setReceptionLocation(e.target.value)}
-                placeholder="Salón / Jardín"
-                style={inputStyle}
-              />
+            <div style={summaryStyle}>
+              <p style={{ ...labelStyle, marginBottom: 8 }}>Resumen</p>
+              <p style={summaryLineStyle}>{noviaName || 'Novia'} & {novioName || 'Novio'}</p>
+              <p style={summaryMutedStyle}>{weddingDate || 'Fecha pendiente'} · {eventTime || 'Hora pendiente'}</p>
+              <p style={summaryMutedStyle}>{venueName || 'Lugar pendiente'}</p>
             </div>
-            <div>
-              <label style={labelStyle}>Hora</label>
-              <input
-                type="time"
-                value={receptionTime}
-                onChange={(e) => setReceptionTime(e.target.value)}
-                style={inputStyle}
-              />
-            </div>
+
+            {errorMsg && <p style={errorStyle}>{errorMsg}</p>}
+            <NavButtons onBack={() => setStep(2)} onNext={submitWizard} nextLabel={isPending ? 'Guardando...' : isCompleted ? 'Actualizar datos' : 'Dejar lista mi invitación'} disabled={isPending} />
           </div>
+        )}
+      </section>
+    </main>
+  );
+}
 
-          <div style={{ display: 'flex', gap: 10, marginTop: 28 }}>
-            <button type="button" onClick={() => setStep(1)} style={backStyle}>← Atrás</button>
-            <button
-              type="button"
-              disabled={!canNext2}
-              onClick={() => setStep(3)}
-              style={{ ...ctaStyle, flex: 1, opacity: canNext2 ? 1 : 0.4 }}
-            >
-              Siguiente →
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── Step 3: Extras ────────────────────────────────────────────────── */}
-      {step === 3 && (
-        <div>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#3D2B1A', marginBottom: 20 }}>
-            Un par de detalles más
-          </h2>
-
-          <label style={labelStyle}>Mesa de regalos</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8, marginBottom: 20 }}>
-            {([
-              { id: 'sobres',       label: 'Sobres',        icon: '✉️' },
-              { id: 'transferencia',label: 'Transferencia', icon: '🏦' },
-              { id: 'link',         label: 'Link externo',  icon: '🔗' },
-              { id: 'ninguna',      label: 'Sin mesa',      icon: '🚫' },
-            ] as const).map((opt) => (
-              <button
-                key={opt.id}
-                type="button"
-                onClick={() => setMesaRegalosType(opt.id)}
-                style={{
-                  border: `2px solid ${mesaRegalosType === opt.id ? '#C5A880' : '#E8E2DA'}`,
-                  borderRadius: 10,
-                  padding: '12px 8px',
-                  background: mesaRegalosType === opt.id ? '#FAF7F2' : '#FFF',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                }}
-              >
-                <span style={{ fontSize: '1.2rem' }}>{opt.icon}</span>
-                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#3D2B1A' }}>{opt.label}</span>
-              </button>
-            ))}
-          </div>
-
-          <label style={labelStyle}>Niños en el evento</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 28 }}>
-            {([
-              { id: null,           label: 'No indicar',    icon: '—' },
-              { id: 'bienvenidos',  label: 'Bienvenidos',   icon: '👶' },
-              { id: 'adultos',      label: 'Solo adultos',  icon: '🔞' },
-            ] as const).map((opt) => (
-              <button
-                key={String(opt.id)}
-                type="button"
-                onClick={() => setNotasNinos(opt.id)}
-                style={{
-                  border: `2px solid ${notasNinos === opt.id ? '#C5A880' : '#E8E2DA'}`,
-                  borderRadius: 10,
-                  padding: '10px 6px',
-                  background: notasNinos === opt.id ? '#FAF7F2' : '#FFF',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                }}
-              >
-                <div style={{ fontSize: '1.2rem', marginBottom: 2 }}>{opt.icon}</div>
-                <p style={{ fontSize: '0.65rem', fontWeight: 600, color: '#3D2B1A' }}>{opt.label}</p>
-              </button>
-            ))}
-          </div>
-
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button type="button" onClick={() => setStep(2)} style={backStyle}>← Atrás</button>
-            <button
-              type="button"
-              disabled={isPending}
-              onClick={handleSubmit}
-              style={{ ...ctaStyle, flex: 1, opacity: isPending ? 0.6 : 1 }}
-            >
-              {isPending ? 'Generando tu invitación...' : '✨ Generar mi invitación'}
-            </button>
-          </div>
-
-          <p style={{ fontSize: '0.7rem', color: '#9B8878', textAlign: 'center', marginTop: 12 }}>
-            Podrás personalizar cada detalle después.
-          </p>
-          {errorMsg && (
-            <div style={{ marginTop: 12, padding: '10px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10 }}>
-              <p style={{ fontSize: '0.8rem', color: '#991B1B', margin: 0 }}>{errorMsg}</p>
-            </div>
-          )}
-        </div>
-      )}
+function Progress({ step }: { step: number }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 18 }}>
+      {[1, 2, 3].map((item) => (
+        <div key={item} style={{ height: 7, borderRadius: 99, background: item <= step ? '#C5A880' : '#E8DED2' }} />
+      ))}
     </div>
   );
 }
 
-// ── Shared styles ─────────────────────────────────────────────────────────────
+function StepHeading({ title, subtitle }: { title: string; subtitle: string }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <h2 style={{ color: '#3D2B1A', fontSize: 20, fontWeight: 650, marginBottom: 4 }}>{title}</h2>
+      <p style={{ color: '#8A7663', fontSize: 13, lineHeight: 1.5 }}>{subtitle}</p>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = 'text',
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  return (
+    <label style={{ display: 'block', marginBottom: 14 }}>
+      <span style={labelStyle}>{label}</span>
+      <input type={type} value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} style={inputStyle} />
+    </label>
+  );
+}
+
+function TextArea({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <label style={{ display: 'block', marginBottom: 14 }}>
+      <span style={labelStyle}>{label}</span>
+      <textarea value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} rows={3} style={{ ...inputStyle, resize: 'vertical' }} />
+    </label>
+  );
+}
+
+function ChoiceButton({
+  active,
+  onClick,
+  title,
+  subtitle,
+}: {
+  active: boolean;
+  onClick: () => void;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        border: `1.5px solid ${active ? '#B99752' : '#E8DED2'}`,
+        background: active ? '#FFF9EF' : '#FFFFFF',
+        borderRadius: 14,
+        padding: '13px 14px',
+        textAlign: 'left',
+        cursor: 'pointer',
+      }}
+    >
+      <strong style={{ display: 'block', color: '#3D2B1A', fontSize: 14 }}>{title}</strong>
+      <span style={{ color: '#8A7663', fontSize: 12 }}>{subtitle}</span>
+    </button>
+  );
+}
+
+function NavButtons({
+  onBack,
+  onNext,
+  nextLabel,
+  disabled = false,
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  nextLabel: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 10, marginTop: 22 }}>
+      <button type="button" onClick={onBack} style={backButtonStyle}>Atrás</button>
+      <button type="button" onClick={onNext} disabled={disabled} style={{ ...primaryButtonStyle, marginTop: 0, opacity: disabled ? 0.6 : 1 }}>{nextLabel}</button>
+    </div>
+  );
+}
+
+const shellStyle: React.CSSProperties = {
+  minHeight: '100vh',
+  width: '100%',
+  background: 'linear-gradient(180deg, #FFFDF8 0%, #F6F2EC 100%)',
+  padding: '24px 14px',
+};
+
+const cardStyle: React.CSSProperties = {
+  maxWidth: 560,
+  margin: '0 auto',
+  background: '#FFFCF7',
+  border: '1px solid #E8DED2',
+  borderRadius: 26,
+  boxShadow: '0 24px 70px rgba(72, 55, 38, 0.10)',
+  padding: '24px 18px',
+};
+
+const successCardStyle: React.CSSProperties = {
+  ...cardStyle,
+  textAlign: 'center',
+  padding: '34px 18px',
+};
+
+const eyebrowStyle: React.CSSProperties = {
+  color: '#B99752',
+  fontSize: 11,
+  letterSpacing: '0.16em',
+  textTransform: 'uppercase',
+  marginBottom: 8,
+};
+
+const titleStyle: React.CSSProperties = {
+  color: '#3D2B1A',
+  fontSize: 28,
+  lineHeight: 1.1,
+  fontWeight: 650,
+  marginBottom: 8,
+};
+
+const successTitleStyle: React.CSSProperties = {
+  ...titleStyle,
+  fontSize: 30,
+};
+
+const mutedStyle: React.CSSProperties = {
+  color: '#8A7663',
+  fontSize: 14,
+  lineHeight: 1.5,
+};
+
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: '0.7rem',
+  color: '#8A7663',
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-  color: '#9B8878',
-  marginBottom: 6,
+  marginBottom: 7,
 };
 
 const inputStyle: React.CSSProperties = {
-  display: 'block',
   width: '100%',
-  padding: '10px 14px',
-  fontSize: '0.9rem',
-  color: '#1A1410',
-  background: '#FFFFFF',
-  border: '1px solid #E8E2DA',
-  borderRadius: 10,
-  outline: 'none',
   boxSizing: 'border-box',
+  color: '#3D2B1A',
+  background: '#FFFFFF',
+  border: '1px solid #E8DED2',
+  borderRadius: 14,
+  fontSize: 16,
+  padding: '14px 14px',
+  outlineColor: '#C5A880',
 };
 
-const ctaStyle: React.CSSProperties = {
-  display: 'block',
+const twoColumnStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  gap: 10,
+};
+
+const styleGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+  gap: 10,
+  marginBottom: 18,
+};
+
+const styleButtonStyle: React.CSSProperties = {
+  border: '1.5px solid #E8DED2',
+  borderRadius: 16,
+  padding: '15px 10px',
+  cursor: 'pointer',
+};
+
+const swatchStyle: React.CSSProperties = {
+  width: 22,
+  height: 22,
+  borderRadius: 999,
+  border: '1px solid rgba(61, 43, 26, 0.10)',
+};
+
+const segmentedStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  gap: 8,
+  marginBottom: 14,
+};
+
+const primaryButtonStyle: React.CSSProperties = {
   width: '100%',
-  padding: '14px 20px',
-  fontSize: '0.9rem',
-  fontWeight: 700,
-  color: '#0D0A07',
-  background: '#C5A880',
+  marginTop: 18,
   border: 'none',
-  borderRadius: 12,
+  borderRadius: 16,
+  background: '#C5A880',
+  color: '#2F2418',
   cursor: 'pointer',
-  textAlign: 'center',
+  fontSize: 15,
+  fontWeight: 800,
+  padding: '15px 18px',
 };
 
-const backStyle: React.CSSProperties = {
-  padding: '14px 18px',
-  fontSize: '0.85rem',
-  fontWeight: 600,
-  color: '#9B8878',
-  background: 'transparent',
-  border: '1px solid #E8E2DA',
-  borderRadius: 12,
+const backButtonStyle: React.CSSProperties = {
+  border: '1px solid #E8DED2',
+  borderRadius: 16,
+  background: '#FFFFFF',
+  color: '#8A7663',
   cursor: 'pointer',
+  fontSize: 14,
+  fontWeight: 700,
+  padding: '15px 12px',
+};
+
+const summaryStyle: React.CSSProperties = {
+  background: '#F8F2E8',
+  border: '1px solid #E8DED2',
+  borderRadius: 18,
+  padding: 16,
+  marginTop: 16,
+};
+
+const summaryLineStyle: React.CSSProperties = {
+  color: '#3D2B1A',
+  fontSize: 18,
+  fontWeight: 700,
+  marginBottom: 4,
+};
+
+const summaryMutedStyle: React.CSSProperties = {
+  color: '#8A7663',
+  fontSize: 13,
+  lineHeight: 1.5,
+};
+
+const errorStyle: React.CSSProperties = {
+  color: '#9F2A2A',
+  background: '#FFF0F0',
+  border: '1px solid #F0CACA',
+  borderRadius: 14,
+  padding: 12,
+  fontSize: 13,
+  marginTop: 14,
+};
+
+const primaryLinkStyle: React.CSSProperties = {
+  display: 'block',
+  borderRadius: 16,
+  background: '#C5A880',
+  color: '#2F2418',
+  fontWeight: 800,
+  padding: '15px 18px',
+  textDecoration: 'none',
+};
+
+const secondaryLinkStyle: React.CSSProperties = {
+  display: 'block',
+  borderRadius: 16,
+  background: '#FFFFFF',
+  border: '1px solid #E8DED2',
+  color: '#6B5137',
+  fontWeight: 750,
+  padding: '14px 18px',
+  textDecoration: 'none',
+};
+
+const quickActionsStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  gap: 8,
+  marginTop: 20,
+};
+
+const miniActionStyle: React.CSSProperties = {
+  color: '#8A7663',
+  background: '#F8F2E8',
+  borderRadius: 14,
+  padding: '12px 10px',
+  fontSize: 12,
+  textDecoration: 'none',
 };

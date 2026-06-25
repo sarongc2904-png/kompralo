@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { isAdminUser } from '@/lib/admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,42 +10,19 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
-const THEME_GRADIENTS: Record<string, string> = {
-  'ivory-editorial': 'linear-gradient(135deg, #2D5016 0%, #4A7C23 50%, #C9A84C 100%)',
-  'modern-dark':     'linear-gradient(135deg, #0D1B2A 0%, #1E3A5F 60%, #A8B8C8 100%)',
-  'luxury-gold':     'linear-gradient(135deg, #8B4513 0%, #A0522D 55%, #D4AF7A 100%)',
-};
-
-function formatDate(iso: string): string {
+function formatDate(iso: string | null): string {
   if (!iso) return 'Fecha por confirmar';
   const [year, month, day] = iso.split('-').map(Number);
   if (!year || !month || !day) return 'Fecha por confirmar';
-  const d = new Date(year, month - 1, day);
-  return isNaN(d.getTime())
+  const date = new Date(year, month - 1, day);
+  return Number.isNaN(date.getTime())
     ? 'Fecha por confirmar'
-    : d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    : date.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
 }
-
-function daysUntil(iso: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const [year, month, day] = iso.split('-').map(Number);
-  const target = new Date(year, month - 1, day);
-  return Math.ceil((target.getTime() - today.getTime()) / 86400000);
-}
-
-const ICON_EMOJI: Record<string, string> = {
-  church: '⛪',
-  rings:  '💍',
-  glass:  '🥂',
-  music:  '🎵',
-  utensils: '🍽️',
-};
 
 export default async function PreviewWizardPage({ params }: Props) {
   const { id } = await params;
 
-  // Auth check
   const authClient = await createServerSupabaseClient();
   const { data: { user } } = await authClient.auth.getUser();
   if (!user) {
@@ -52,125 +30,216 @@ export default async function PreviewWizardPage({ params }: Props) {
   }
 
   const db = createServiceRoleSupabaseClient();
-
   const [{ data: inv }, { data: content }] = await Promise.all([
-    db.from('invitations').select('id, title, event_date, plan_id, status, theme_id, customer_email, user_id').eq('id', id).single(),
-    db.from('invitation_content').select('protagonists, itinerary, social').eq('invitation_id', id).maybeSingle(),
+    db.from('invitations')
+      .select('id, title, slug, event_date, theme_id, customer_email, user_id, wizard_step_completed')
+      .eq('id', id)
+      .single(),
+    db.from('invitation_content')
+      .select('protagonists, location, hero, social')
+      .eq('invitation_id', id)
+      .maybeSingle(),
   ]);
 
   if (!inv) notFound();
 
-  // Ownership check
   const isOwner = (inv.user_id && inv.user_id === user.id) ||
-                  (inv.customer_email && inv.customer_email.toLowerCase() === user.email?.toLowerCase());
-  if (!isOwner) notFound();
+    (inv.customer_email && inv.customer_email.toLowerCase() === user.email?.toLowerCase());
+  const isAdmin = isOwner ? false : await isAdminUser(user.id, user.email);
+  if (!isOwner && !isAdmin) notFound();
 
-  const protagonists = (content?.protagonists as Array<{ name: string; role: string }> | null) ?? [];
-  const itinerary    = (content?.itinerary   as Array<{ id: string; time: string; title: string; location: string; icon: string }> | null) ?? [];
+  const protagonists = (content?.protagonists as Array<{ name?: string }> | null) ?? [];
+  const location = (content?.location as { venueName?: string; address?: string } | null) ?? {};
+  const hero = (content?.hero as { emotionalPhrase?: string } | null) ?? {};
   const social = (content?.social as { hashtag?: string } | null) ?? {};
-
-  const names = protagonists.length >= 2
-    ? `${protagonists[0].name} & ${protagonists[1].name}`
-    : inv.title;
-
-  const gradient = THEME_GRADIENTS[inv.theme_id ?? ''] ?? THEME_GRADIENTS['ivory-editorial'];
-  const days     = inv.event_date ? daysUntil(inv.event_date) : null;
+  const publicUrl = inv.slug ? `/i/${inv.slug}` : null;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? '';
+  const absolutePublicUrl = inv.slug ? `${siteUrl}/i/${inv.slug}` : '';
+  const whatsappHref = publicUrl
+    ? `https://wa.me/?text=${encodeURIComponent(`Te comparto nuestra invitación digital: ${absolutePublicUrl}`)}`
+    : `/cliente/invitaciones/${id}`;
   const editorUrl = `/dashboard/invitations/${id}/edit`;
 
+  const names = protagonists
+    .map((item) => item.name)
+    .filter(Boolean)
+    .join(' & ') || inv.title || 'Tu boda';
+
+  const wizardCompleted = Number(inv.wizard_step_completed ?? 0) >= 3;
+
   return (
-    <div style={{ minHeight: '100vh', background: '#F6F2EC', fontFamily: 'system-ui, sans-serif' }}>
+    <main style={pageStyle}>
+      <section style={cardStyle}>
+        <Link href="/cliente" style={backLinkStyle}>Mis invitaciones</Link>
 
-      {/* Top bar */}
-      <div style={{ background: '#1A1410', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/cliente" style={{ color: '#C5A880', fontSize: '0.75rem', textDecoration: 'none' }}>
-          ← Mis invitaciones
-        </Link>
-        <p style={{ color: '#F5F3F0', fontSize: '0.75rem', opacity: 0.6 }}>Vista previa</p>
-      </div>
+        <p style={eyebrowStyle}>{wizardCompleted ? 'Wizard completado' : 'Vista previa'}</p>
+        <h1 style={titleStyle}>Tu invitación ya está lista.</h1>
+        <p style={mutedStyle}>Revisa la base, compártela o continúa afinando detalles desde el editor.</p>
 
-      {/* Hero banner */}
-      <div style={{ background: gradient, padding: '3rem 1.5rem', textAlign: 'center', color: '#fff' }}>
-        <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.2em', opacity: 0.7, marginBottom: 12 }}>
-          Tu invitación digital
-        </p>
-        <h1 style={{ fontSize: '2rem', fontWeight: 300, marginBottom: 8, lineHeight: 1.2 }}>
-          {names}
-        </h1>
-        <p style={{ fontSize: '0.9rem', opacity: 0.75, fontStyle: 'italic', marginBottom: 16 }}>
-          Nos casamos
-        </p>
-        {inv.event_date && (
-          <p style={{ fontSize: '0.85rem', opacity: 0.8, marginBottom: 6 }}>
-            {formatDate(inv.event_date)}
-          </p>
-        )}
-        {days !== null && days > 0 && (
-          <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.15)', borderRadius: 20, padding: '6px 20px', marginTop: 8 }}>
-            <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>{days}</span>
-            <span style={{ fontSize: '0.75rem', marginLeft: 6, opacity: 0.8 }}>días restantes</span>
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div style={{ maxWidth: 480, margin: '0 auto', padding: '2rem 1.25rem' }}>
-
-        {/* Itinerary */}
-        {itinerary.length > 0 && (
-          <div style={{ marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#C5A880', marginBottom: 16 }}>
-              Itinerario
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {itinerary.map((item) => (
-                <div key={item.id} style={{ display: 'flex', gap: 14, alignItems: 'flex-start',
-                                             background: '#fff', borderRadius: 12, padding: '14px 16px',
-                                             border: '1px solid #E8E2DA' }}>
-                  <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{ICON_EMOJI[item.icon] ?? '•'}</span>
-                  <div>
-                    <p style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1A1410', marginBottom: 2 }}>{item.title}</p>
-                    <p style={{ fontSize: '0.75rem', color: '#9B8878' }}>{item.time} · {item.location}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Hashtag */}
-        {social.hashtag && (
-          <div style={{ textAlign: 'center', marginBottom: '2rem', padding: '20px', background: '#fff', borderRadius: 12, border: '1px solid #E8E2DA' }}>
-            <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#9B8878', marginBottom: 8 }}>
-              Comparte tus momentos
-            </p>
-            <p style={{ fontSize: '1.4rem', fontWeight: 700, color: '#3D2B1A' }}>{social.hashtag}</p>
-          </div>
-        )}
-
-        {/* CTAs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <Link
-            href={editorUrl}
-            style={{ display: 'block', textAlign: 'center', padding: '14px 20px', background: '#1A1410',
-                     color: '#F5F3F0', borderRadius: 12, textDecoration: 'none',
-                     fontSize: '0.9rem', fontWeight: 700 }}
-          >
-            ✏️ Personalizar mi invitación
-          </Link>
-          <Link
-            href="/cliente"
-            style={{ display: 'block', textAlign: 'center', padding: '14px 20px', background: 'transparent',
-                     color: '#9B8878', borderRadius: 12, textDecoration: 'none',
-                     fontSize: '0.85rem', border: '1px solid #E8E2DA' }}
-          >
-            Ir a mis invitaciones
-          </Link>
+        <div style={previewCardStyle}>
+          <p style={dateStyle}>{formatDate(inv.event_date)}</p>
+          <h2 style={namesStyle}>{names}</h2>
+          {hero.emotionalPhrase && <p style={phraseStyle}>{hero.emotionalPhrase}</p>}
+          <div style={dividerStyle} />
+          <p style={detailStyle}>{location.venueName || 'Lugar por confirmar'}</p>
+          {location.address && <p style={subtleStyle}>{location.address}</p>}
+          {social.hashtag && <p style={hashtagStyle}>{social.hashtag}</p>}
         </div>
 
-        <p style={{ textAlign: 'center', fontSize: '0.7rem', color: '#C5A880', marginTop: 20 }}>
-          Esta es una vista previa. Tu invitación pública está en construcción.
-        </p>
-      </div>
-    </div>
+        <div style={{ display: 'grid', gap: 12, marginTop: 22 }}>
+          {publicUrl && <Link href={publicUrl} style={primaryLinkStyle}>Ver invitación</Link>}
+          <Link href={whatsappHref} style={secondaryLinkStyle}>Compartir por WhatsApp</Link>
+          <Link href={editorUrl} style={secondaryLinkStyle}>Personalizar detalles</Link>
+        </div>
+
+        <div style={quickActionsStyle}>
+          <Link href={editorUrl} style={miniActionStyle}>Agregar fotos</Link>
+          <Link href={editorUrl} style={miniActionStyle}>Agregar música</Link>
+          <Link href={`/cliente/invitaciones/${id}`} style={miniActionStyle}>Agregar invitados</Link>
+          <Link href={`/cliente/invitaciones/${id}`} style={miniActionStyle}>Configurar QR</Link>
+        </div>
+      </section>
+    </main>
   );
 }
+
+const pageStyle: React.CSSProperties = {
+  minHeight: '100vh',
+  background: 'linear-gradient(180deg, #FFFDF8 0%, #F6F2EC 100%)',
+  padding: '24px 14px',
+  fontFamily: 'system-ui, sans-serif',
+};
+
+const cardStyle: React.CSSProperties = {
+  maxWidth: 560,
+  margin: '0 auto',
+  background: '#FFFCF7',
+  border: '1px solid #E8DED2',
+  borderRadius: 28,
+  boxShadow: '0 24px 70px rgba(72, 55, 38, 0.10)',
+  padding: '28px 18px',
+  textAlign: 'center',
+};
+
+const backLinkStyle: React.CSSProperties = {
+  display: 'inline-block',
+  color: '#8A7663',
+  fontSize: 13,
+  textDecoration: 'none',
+  marginBottom: 18,
+};
+
+const eyebrowStyle: React.CSSProperties = {
+  color: '#B99752',
+  fontSize: 11,
+  letterSpacing: '0.16em',
+  textTransform: 'uppercase',
+  marginBottom: 8,
+};
+
+const titleStyle: React.CSSProperties = {
+  color: '#3D2B1A',
+  fontSize: 31,
+  lineHeight: 1.08,
+  fontWeight: 680,
+  marginBottom: 10,
+};
+
+const mutedStyle: React.CSSProperties = {
+  color: '#8A7663',
+  fontSize: 14,
+  lineHeight: 1.55,
+};
+
+const previewCardStyle: React.CSSProperties = {
+  marginTop: 24,
+  background: '#FFFFFF',
+  border: '1px solid #E8DED2',
+  borderRadius: 24,
+  padding: '24px 16px',
+};
+
+const dateStyle: React.CSSProperties = {
+  color: '#B99752',
+  fontSize: 12,
+  letterSpacing: '0.12em',
+  textTransform: 'uppercase',
+  marginBottom: 10,
+};
+
+const namesStyle: React.CSSProperties = {
+  color: '#3D2B1A',
+  fontSize: 28,
+  lineHeight: 1.12,
+  fontWeight: 500,
+  marginBottom: 8,
+};
+
+const phraseStyle: React.CSSProperties = {
+  color: '#8A7663',
+  fontSize: 15,
+  fontStyle: 'italic',
+};
+
+const dividerStyle: React.CSSProperties = {
+  width: 52,
+  height: 1,
+  background: '#D9C8AE',
+  margin: '18px auto',
+};
+
+const detailStyle: React.CSSProperties = {
+  color: '#3D2B1A',
+  fontSize: 15,
+  fontWeight: 700,
+};
+
+const subtleStyle: React.CSSProperties = {
+  color: '#8A7663',
+  fontSize: 13,
+  marginTop: 4,
+};
+
+const hashtagStyle: React.CSSProperties = {
+  color: '#B99752',
+  fontSize: 14,
+  fontWeight: 800,
+  marginTop: 14,
+};
+
+const primaryLinkStyle: React.CSSProperties = {
+  display: 'block',
+  borderRadius: 16,
+  background: '#C5A880',
+  color: '#2F2418',
+  fontWeight: 800,
+  padding: '15px 18px',
+  textDecoration: 'none',
+};
+
+const secondaryLinkStyle: React.CSSProperties = {
+  display: 'block',
+  borderRadius: 16,
+  background: '#FFFFFF',
+  border: '1px solid #E8DED2',
+  color: '#6B5137',
+  fontWeight: 750,
+  padding: '14px 18px',
+  textDecoration: 'none',
+};
+
+const quickActionsStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  gap: 8,
+  marginTop: 20,
+};
+
+const miniActionStyle: React.CSSProperties = {
+  color: '#8A7663',
+  background: '#F8F2E8',
+  borderRadius: 14,
+  padding: '12px 10px',
+  fontSize: 12,
+  textDecoration: 'none',
+};

@@ -228,9 +228,17 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     const wizardCompleted = (raw ?? 0) >= 3;
     console.log('[wizard-gate] invRow=%j raw=%s wizardCompleted=%s err=%s', invRow, raw, wizardCompleted, wizardQueryErr?.message ?? null);
     if (!wizardCompleted) {
+      const publicUrl = invitation.slug ? `/i/${invitation.slug}` : null;
       return (
         <div style={{ minHeight: '100vh', background: '#F6F2EC', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '3rem', paddingBottom: '3rem' }}>
-          <QuickSetupWizard invitationId={id} invitationTitle={invitation.title} />
+          <QuickSetupWizard
+            invitationId={id}
+            invitationTitle={invitation.title}
+            isCompleted={wizardCompleted}
+            publicUrl={publicUrl}
+            editorUrl={`/dashboard/invitations/${id}/edit`}
+            dashboardUrl={`/cliente/invitaciones/${id}`}
+          />
         </div>
       );
     }
