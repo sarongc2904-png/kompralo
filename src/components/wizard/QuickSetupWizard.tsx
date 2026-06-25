@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { wizardQuickSetup } from '@/app/actions/wizard-quick-setup';
 import type { WizardMinimalInput, WizardStyle, CeremonyType } from '@/lib/invitations/generate-smart-defaults';
 
@@ -22,8 +23,10 @@ const CEREMONY_TYPES: Array<{ id: CeremonyType; label: string; icon: string }> =
 ];
 
 export function QuickSetupWizard({ invitationId, invitationTitle }: Props) {
+  const router = useRouter();
   const [step, setStep]       = useState(1);
   const [isPending, startTransition] = useTransition();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Step 1 — Names & Style
   const [noviaName, setNoviaName]   = useState('');
@@ -61,8 +64,16 @@ export function QuickSetupWizard({ invitationId, invitationTitle }: Props) {
       mesaRegalosType,
       notasNinos,
     };
+    setErrorMsg(null);
     startTransition(async () => {
-      await wizardQuickSetup(invitationId, input);
+      const result = await wizardQuickSetup(invitationId, input);
+      if (result.ok && result.redirectUrl) {
+        router.push(result.redirectUrl);
+      } else if (!result.ok && result.redirectUrl) {
+        router.push(result.redirectUrl); // auth redirect (login)
+      } else {
+        setErrorMsg(result.error ?? 'Error desconocido. Intenta de nuevo.');
+      }
     });
   }
 
@@ -355,6 +366,11 @@ export function QuickSetupWizard({ invitationId, invitationTitle }: Props) {
           <p style={{ fontSize: '0.7rem', color: '#9B8878', textAlign: 'center', marginTop: 12 }}>
             Podrás personalizar cada detalle después.
           </p>
+          {errorMsg && (
+            <div style={{ marginTop: 12, padding: '10px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10 }}>
+              <p style={{ fontSize: '0.8rem', color: '#991B1B', margin: 0 }}>{errorMsg}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

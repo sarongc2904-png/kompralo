@@ -4,6 +4,7 @@ import { invitationRepository } from '@/domain/invitations';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { isAdminUser } from '@/lib/admin';
 import { normalizePlanId } from '@/domain/plans/types';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import EditForm from './EditForm';
 import MediaForm from './MediaForm';
 import LocationForm from './LocationForm';
@@ -215,8 +216,9 @@ export default async function EditInvitationPage({ params, searchParams }: Props
 
   // Quick Setup Wizard gate — show for new wedding invitations that haven't
   // completed the 3-step quick setup yet. Admins bypass it.
+  // Uses service role to avoid RLS issues reading the new column.
   if (invitation.category === 'wedding' && !fromAdmin) {
-    const { data: invRow } = await (await createServerSupabaseClient())
+    const { data: invRow } = await createServiceRoleSupabaseClient()
       .from('invitations')
       .select('wizard_step_completed')
       .eq('id', id)
