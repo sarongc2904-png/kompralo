@@ -9,10 +9,10 @@ import { motion } from 'framer-motion';
 // Uses --v2 CSS custom properties with warm-ivory fallbacks.
 
 export const CARD_BASE: React.CSSProperties = {
-  background:
-    'var(--v2-card-ivory-bg, linear-gradient(152deg, rgba(255,251,242,0.97) 0%, rgba(253,245,229,0.93) 45%, rgba(247,235,210,0.90) 100%))',
-  backdropFilter: 'blur(14px) saturate(140%)',
-  WebkitBackdropFilter: 'blur(14px) saturate(140%)',
+  backgroundImage: 'url(/images/invitaciones/floral-gold-bg.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
   border: '1px solid var(--v2-card-border, rgba(200,167,93,0.35))',
   borderRadius: 'var(--v2-card-radius, 24px)',
   boxShadow:
@@ -119,8 +119,6 @@ export default function ElegantInvitationCard({
       className={className}
       style={{ ...CARD_BASE, ...style }}
     >
-      <CardGloss />
-      <LinenTexture />
       {showInnerBorder && <InnerBorder />}
       {children}
     </motion.div>
