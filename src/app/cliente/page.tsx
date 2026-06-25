@@ -9,19 +9,20 @@ import { DashboardManualNavButton } from '@/components/dashboard/DashboardManual
 import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
+interface InvitationListData { slug: string; status: string; title: string | null }
 
-async function fetchInvitationData(ids: string[]): Promise<Record<string, { slug: string; status: string }>> {
+async function fetchInvitationData(ids: string[]): Promise<Record<string, InvitationListData>> {
   if (ids.length === 0) return {};
   try {
     const svc = createServiceRoleSupabaseClient();
     const { data } = await svc
       .from('invitations')
-      .select('id, slug, status, deleted_at')
+      .select('id, slug, status, title, deleted_at')
       .in('id', ids)
       .is('deleted_at', null); // exclude soft-deleted invitations
     if (!data) return {};
     return Object.fromEntries(
-      data.map((r) => [r.id, { slug: r.slug as string, status: r.status as string }]),
+      data.map((r) => [r.id, { slug: r.slug as string, status: r.status as string, title: r.title as string | null }]),
     );
   } catch { return {}; }
 }
@@ -164,6 +165,108 @@ function PageStyles() {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(15,12,9,0.06);
       }
+      @media (max-width: 767px) {
+        .client-page {
+          background: #F7F1E7 !important;
+          background-image:
+            radial-gradient(circle at 20% 0%, rgba(196,169,98,0.16) 0%, transparent 38%),
+            linear-gradient(180deg, #FFFDF8 0%, #F7F1E7 100%) !important;
+          padding: 4.75rem 1rem 2rem !important;
+        }
+        .client-shell {
+          max-width: 100% !important;
+          margin-top: 0 !important;
+        }
+        .client-title-wrap {
+          text-align: left !important;
+          margin-bottom: 1.5rem !important;
+        }
+        .client-kicker {
+          color: #B99752 !important;
+        }
+        .client-title {
+          font-size: 2.125rem !important;
+          color: #2F2419 !important;
+        }
+        .client-subtitle {
+          color: #7A6A5B !important;
+          line-height: 1.6 !important;
+        }
+        .client-session-badge {
+          left: auto !important;
+          transform: none !important;
+          width: 100% !important;
+          justify-content: center !important;
+          background: #FFFDF8 !important;
+          border-color: #E6D8BD !important;
+        }
+        .cl-card.client-event-card {
+          background: #FFFDF8 !important;
+          border-color: #E6D8BD !important;
+          border-radius: 1.75rem !important;
+          padding: 1.25rem !important;
+          box-shadow: 0 14px 36px rgba(78,61,38,0.08) !important;
+        }
+        .client-event-header {
+          gap: .875rem !important;
+          margin-bottom: 1rem !important;
+        }
+        .client-event-title {
+          font-size: 1.35rem !important;
+          color: #2F2419 !important;
+        }
+        .client-event-meta {
+          color: #7A6A5B !important;
+        }
+        .client-rsvp-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          background: #F6F0E4 !important;
+          border-color: #E8D9BB !important;
+        }
+        .client-primary-action {
+          background: #C4A962 !important;
+          color: #241B12 !important;
+          min-height: 52px !important;
+          border-radius: 1rem !important;
+          font-size: 0 !important;
+        }
+        .client-primary-action::after {
+          content: 'Abrir Mi Evento';
+          font-size: .95rem;
+        }
+        .client-secondary-actions {
+          display: grid !important;
+          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        }
+        .client-secondary-action {
+          flex: none !important;
+          background: #F4EBDD !important;
+          color: #4D3A28 !important;
+          box-shadow: none !important;
+        }
+        .client-share-action {
+          background: #DDEBDD !important;
+          color: #2F5F46 !important;
+        }
+        .client-public-action {
+          background: #FFFDF8 !important;
+          color: #5F4B35 !important;
+          border: 1px solid #E6D8BD !important;
+          box-shadow: none !important;
+        }
+        .client-edit-action {
+          order: 3;
+        }
+        .client-share-action {
+          order: 2;
+        }
+        .client-public-action {
+          order: 1;
+        }
+        .client-public-standalone {
+          display: none !important;
+        }
+      }
     `}</style>
   );
 }
@@ -214,22 +317,23 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
   );
 }
 
-function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthenticated }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; invitationStatus?: string | null; isAuthenticated: boolean }) {
+function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, invitationTitle, isAuthenticated }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; invitationStatus?: string | null; invitationTitle?: string | null; isAuthenticated: boolean }) {
   const statusColor: Record<string, string> = {
     pending:  '#8A6D3B',
-    paid:     '#238636',
+    paid:     '#4F7D5A',
     failed:   '#D32F2F',
     refunded: '#6A1B9A',
   };
 
   const statusBg: Record<string, string> = {
     pending:  '#FCF8E3',
-    paid:     '#E6F4EA',
+    paid:     '#DDEBDD',
     failed:   '#FCE8E6',
     refunded: '#F3E5F5',
   };
 
   const isPaid = order.status === 'paid';
+  const eventName = invitationTitle || order.customerName || 'Mi evento';
 
   const appUrl       = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
   const publicUrl    = invitationSlug ? `${appUrl}/i/${invitationSlug}` : null;
@@ -240,7 +344,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
 
   return (
     <div
-      className="cl-card"
+      className="cl-card client-event-card"
       style={{
         background:   T.white,
         border:       `1px solid ${isPaid ? 'rgba(35,134,54,0.18)' : T.border}`,
@@ -251,12 +355,15 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
       }}
     >
       {/* Header row */}
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', flexWrap:'wrap', marginBottom:'1rem' }}>
+      <div className="client-event-header" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', flexWrap:'wrap', marginBottom:'1rem' }}>
         <div>
-          <p style={{ margin:'0 0 4px', fontSize:'1.125rem', fontWeight:700, color:T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+          <p className="client-event-title" style={{ margin:'0 0 4px', fontSize:'1.125rem', fontWeight:700, color:T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+            {eventName}
+          </p>
+          <p style={{ margin:'0 0 4px', fontSize:'.75rem', color:'#B99752', fontWeight:800, textTransform:'uppercase', letterSpacing:'.08em' }}>
             Plan {planLabels[order.planId] ?? order.planId}
           </p>
-          <p style={{ margin:0, fontSize:'.8125rem', color:T.mid }}>
+          <p className="client-event-meta" style={{ margin:0, fontSize:'.8125rem', color:T.mid }}>
             {formatPrice(order.amountTotal, order.currency)} MXN · Adquirido el {formatDate(order.createdAt)}
           </p>
         </div>
@@ -282,8 +389,8 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
                 fontSize:     '0.7rem',
                 fontWeight:   700,
                 letterSpacing:'.02em',
-                color:        invitationStatus === 'published' ? '#238636' : '#8A6D3B',
-                background:   invitationStatus === 'published' ? '#E6F4EA' : '#FCF8E3',
+                color:        invitationStatus === 'published' ? '#4F7D5A' : '#8A6D3B',
+                background:   invitationStatus === 'published' ? '#DDEBDD' : '#FCF8E3',
               }}
             >
               {invitationStatus === 'published' ? '🟢 Publicada' : '🟡 Borrador'}
@@ -293,7 +400,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
       </div>
 
       {/* Email confirmation */}
-      <p style={{ margin:'0 0 1.25rem', fontSize:'0.8125rem', color: order.confirmationEmailSentAt ? '#238636' : T.light, display:'flex', alignItems:'center', gap:'0.375rem', fontWeight:500 }}>
+      <p style={{ margin:'0 0 1.25rem', fontSize:'0.8125rem', color: order.confirmationEmailSentAt ? '#4F7D5A' : T.light, display:'flex', alignItems:'center', gap:'0.375rem', fontWeight:500 }}>
         <span style={{ fontSize:'1rem', lineHeight:1 }}>{order.confirmationEmailSentAt ? '✓' : '○'}</span>
         {order.confirmationEmailSentAt
           ? `Correo de acceso enviado el ${formatDate(order.confirmationEmailSentAt)}`
@@ -302,7 +409,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
 
       {/* RSVP mini-stats */}
       {order.invitationId && isPaid && rsvpStats !== undefined && (
-        <div style={{
+        <div className="client-rsvp-grid" style={{
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '.5rem',
           marginBottom: '1.25rem',
           padding: '.875rem', background: T.cream,
@@ -332,7 +439,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
                   cookies or serve a stale Router Cache redirect when auth state changed). */}
               <a
                 href={`/cliente/invitaciones/${order.invitationId}`}
-                className="cl-btn"
+                className="cl-btn client-primary-action"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
                   padding: '0.75rem 1.5rem', background: T.dark, color: T.cream,
@@ -342,10 +449,29 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
               >
                 📊 Ver respuestas RSVP
               </a>
-              <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+              <div className="client-secondary-actions" style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+                {publicUrl && (
+                  <a
+                    href={publicUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cl-btn client-secondary-action client-public-action"
+                    style={{
+                      flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                      padding: '0.625rem 1rem',
+                      background: '#F6F2EC',
+                      color: '#5F4B35',
+                      borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+                      textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                      boxShadow: '0 4px 14px rgba(95,75,53,0.08)',
+                    }}
+                  >
+                    Ver invitaciÃ³n
+                  </a>
+                )}
                 <a
                   href={`/dashboard/invitations/${order.invitationId}/edit`}
-                  className="cl-btn"
+                  className="cl-btn client-secondary-action client-edit-action"
                   style={{
                     flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
                     padding: '0.625rem 1rem', background: T.gold, color: T.dark,
@@ -361,7 +487,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="cl-btn"
+                    className="cl-btn client-secondary-action client-share-action"
                     style={{
                       flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
                       padding: '0.625rem 1rem', background: '#25D366', color: '#fff',
@@ -378,7 +504,7 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
                   href={publicUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="cl-btn"
+                  className="cl-btn client-secondary-action client-public-action client-public-standalone"
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                     padding: '0.75rem 1rem',
@@ -461,6 +587,7 @@ export default async function ClientePage({ searchParams }: Props) {
 
   return (
     <main
+      className="client-page"
       style={{
         minHeight:     '100dvh',
         background:    T.ivory,
@@ -498,23 +625,23 @@ export default async function ClientePage({ searchParams }: Props) {
         </div>
       </nav>
 
-      <div style={{ maxWidth: '640px', margin: '2rem auto 0', position:'relative', zIndex:2 }}>
+      <div className="client-shell" style={{ maxWidth: '640px', margin: '2rem auto 0', position:'relative', zIndex:2 }}>
         {/* Title */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <p style={{ fontSize:'.6875rem', fontWeight:700, letterSpacing:'.2em', color:T.gold, textTransform:'uppercase', margin:'0 0 .5rem' }}>
+        <div className="client-title-wrap" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <p className="client-kicker" style={{ fontSize:'.6875rem', fontWeight:700, letterSpacing:'.2em', color:T.gold, textTransform:'uppercase', margin:'0 0 .5rem' }}>
             Panel de Cliente
           </p>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 700, color: '#1A1410', margin: '0 0 0.5rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
-            Mis invitaciones
+          <h1 className="client-title" style={{ fontSize: '1.875rem', fontWeight: 700, color: '#1A1410', margin: '0 0 0.5rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+            Mis Eventos
           </h1>
-          <p style={{ color: T.mid, fontSize: '0.9rem', margin: 0 }}>
+          <p className="client-subtitle" style={{ color: T.mid, fontSize: '0.9rem', margin: 0 }}>
             Aquí aparecen tus invitaciones compradas y su estado.
           </p>
         </div>
 
         {/* Authenticated identity badge */}
         {isAuthenticated && (
-          <div style={{
+          <div className="client-session-badge" style={{
             textAlign: 'center',
             marginBottom: '2rem',
             padding: '.5rem 1rem',
@@ -577,6 +704,7 @@ export default async function ClientePage({ searchParams }: Props) {
                 rsvpStats={order.invitationId ? rsvpStatsMap[order.invitationId] : undefined}
                 invitationSlug={order.invitationId ? invitationDataMap[order.invitationId]?.slug : null}
                 invitationStatus={order.invitationId ? invitationDataMap[order.invitationId]?.status : null}
+                invitationTitle={order.invitationId ? invitationDataMap[order.invitationId]?.title : null}
                 isAuthenticated={isAuthenticated}
               />
             ))}
