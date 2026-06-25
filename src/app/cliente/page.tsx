@@ -16,8 +16,9 @@ async function fetchInvitationData(ids: string[]): Promise<Record<string, { slug
     const svc = createServiceRoleSupabaseClient();
     const { data } = await svc
       .from('invitations')
-      .select('id, slug, status')
-      .in('id', ids);
+      .select('id, slug, status, deleted_at')
+      .in('id', ids)
+      .is('deleted_at', null); // exclude soft-deleted invitations
     if (!data) return {};
     return Object.fromEntries(
       data.map((r) => [r.id, { slug: r.slug as string, status: r.status as string }]),
@@ -430,20 +431,30 @@ export default async function ClientePage({ searchParams }: Props) {
   console.log('[cliente] isAuthenticated=true userId=%s email=%s', session.userId, session.email);
 
   const hasValidEmail = isValidEmail(trimmedEmail);
-  const orders = await fetchOrders(session.userId, session.email);
+  const allOrders = await fetchOrders(session.userId, session.email);
 
-  // Skip the listing and go straight to the only paid invitation.
-  if (orders.length === 1 && orders[0].status === 'paid' && orders[0].invitationId) {
-    redirect(`/cliente/invitaciones/${orders[0].invitationId}`);
-  }
-
-  const paidInvitationIds = orders
+  // Fetch invitation data first so we can filter out orders whose invitation
+  // was deleted by admin (invitationDataMap won't have an entry for them).
+  const allPaidInvitationIds = allOrders
     .filter((o) => o.status === 'paid' && !!o.invitationId)
     .map((o) => o.invitationId as string);
   const [rsvpStatsMap, invitationDataMap] = await Promise.all([
-    fetchRsvpStats(paidInvitationIds),
-    fetchInvitationData(paidInvitationIds),
+    fetchRsvpStats(allPaidInvitationIds),
+    fetchInvitationData(allPaidInvitationIds),
   ]);
+
+  // Keep only orders that either have no invitation linked (non-paid / pending)
+  // or whose invitation still exists in the DB (not deleted by admin).
+  const orders = allOrders.filter((o) => {
+    if (!o.invitationId) return true;
+    if (o.status !== 'paid') return true;
+    return !!invitationDataMap[o.invitationId];
+  });
+
+  // Skip the listing and go straight to the only paid invitation (after filtering).
+  if (orders.length === 1 && orders[0].status === 'paid' && orders[0].invitationId) {
+    redirect(`/cliente/invitaciones/${orders[0].invitationId}`);
+  }
 
   return (
     <main
