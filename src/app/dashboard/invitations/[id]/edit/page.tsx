@@ -32,6 +32,7 @@ import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/
 import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WizardShell } from './WizardShell';
 import { QuickSetupWizard } from '@/components/wizard/QuickSetupWizard';
+import { VisualEditorOverlay } from '@/components/visual-editor/VisualEditorOverlay';
 import { getAvailableModules } from '@/domain/modules';
 import { getEditableElements } from '@/domain/visual-editor';
 
@@ -52,16 +53,18 @@ function getDashboardAssistantEventType(category: string): DashboardAssistantEve
 // ─── Shared section wrapper ───────────────────────────────────────────────────
 
 function Section({
+  id,
   title,
   hint,
   children,
 }: {
+  id?: string;
   title: string;
   hint?: string;
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <section id={id}>
       <h2 className="text-xs uppercase tracking-widest mb-3 mt-8" style={{ color: '#3D2B1A' }}>
         {title}
       </h2>
@@ -71,7 +74,7 @@ function Section({
         )}
         {children}
       </div>
-    </>
+    </section>
   );
 }
 
@@ -338,12 +341,13 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         ) : (
         <>
           {/* ── 1. Datos del evento ──────────────────────────────────────────── */}
-        <Section title="Datos del evento">
+        <Section id="visual-editor-event" title="Datos del evento">
           <EditForm invitation={invitation} />
         </Section>
 
         {/* ── 2. Portada y multimedia ─────────────────────────────────────── */}
         <Section
+          id="visual-editor-media"
           title="Portada y multimedia"
           hint={
             plan === 'basic'
@@ -401,6 +405,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         {/* ── 4. Nuestra galería — Premium+ ───────────────────────────────── */}
         {isPremiumOrDeluxe && (
           <Section
+            id="visual-editor-gallery"
             title="Nuestra galería"
             hint="Las imágenes se muestran en el carrusel de la invitación en el orden definido aquí."
           >
@@ -438,6 +443,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
 
         {/* ── 7. Ubicación ────────────────────────────────────────────────── */}
         <Section
+          id="visual-editor-location"
           title="Ubicación"
           hint="Agrega los links de Google Maps y Waze para que los invitados lleguen fácilmente al venue."
         >
@@ -611,6 +617,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         enabledForPlan={assistantAllowedForPlan}
         invitationContext={assistantContext}
       />
+      {!isWizardView && <VisualEditorOverlay editableElements={editableElements} />}
     </div>
   );
 }
