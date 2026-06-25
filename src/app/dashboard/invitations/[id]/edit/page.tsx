@@ -32,7 +32,7 @@ import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/
 import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WizardShell } from './WizardShell';
 import { QuickSetupWizard } from '@/components/wizard/QuickSetupWizard';
-import { VisualEditorOverlay } from '@/components/visual-editor/VisualEditorOverlay';
+import { VisualEditorMobileEntry } from '@/components/visual-editor/VisualEditorMobileEntry';
 import { getAvailableModules } from '@/domain/modules';
 import { getEditableElements } from '@/domain/visual-editor';
 
@@ -339,6 +339,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         {isWizardView ? (
           <WizardShell invitation={invitation} plan={plan} previewUrl={previewUrl} />
         ) : (
+        <VisualEditorMobileEntry invitationId={invitation.id} editableElements={editableElements}>
         <>
           {/* ── 1. Datos del evento ──────────────────────────────────────────── */}
         <Section id="visual-editor-event" title="Datos del evento">
@@ -602,6 +603,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           </a>
         </div>
         </>
+        </VisualEditorMobileEntry>
         )}
       </div>{/* end editor column */}
 
@@ -617,7 +619,6 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         enabledForPlan={assistantAllowedForPlan}
         invitationContext={assistantContext}
       />
-      {!isWizardView && <VisualEditorOverlay editableElements={editableElements} />}
     </div>
   );
 }

@@ -6,6 +6,7 @@ interface VisualEditorBottomSheetProps {
   element: EditableElement | null;
   open: boolean;
   targetId?: string;
+  onEdit?: () => void;
   onClose: () => void;
 }
 
@@ -13,11 +14,18 @@ export function VisualEditorBottomSheet({
   element,
   open,
   targetId,
+  onEdit,
   onClose,
 }: VisualEditorBottomSheetProps) {
   if (!open || !element) return null;
 
   function handleEdit() {
+    if (onEdit) {
+      onEdit();
+      onClose();
+      return;
+    }
+
     if (targetId) {
       const target = document.getElementById(targetId);
       if (target) {
