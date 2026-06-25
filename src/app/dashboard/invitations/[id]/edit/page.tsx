@@ -32,6 +32,7 @@ import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/
 import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WizardShell } from './WizardShell';
 import { QuickSetupWizard } from '@/components/wizard/QuickSetupWizard';
+import { getAvailableModules } from '@/domain/modules';
 
 // Always render fresh — prevents the router/prefetch cache from serving a stale
 // redirect-to-login response when navigating via <Link> from /cliente.
@@ -213,6 +214,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
   const plan = normalizePlanId(invitation.planId);
   const isPremiumOrDeluxe = plan === 'premium' || plan === 'deluxe';
   const isDeluxe          = plan === 'deluxe';
+  const availableEditorModules = getAvailableModules(plan);
 
   // Quick Setup Wizard gate — show for new wedding invitations that haven't
   // completed the 3-step quick setup yet. Admins bypass it.
@@ -272,7 +274,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
   const previewUrl = `/preview/${invitation.id}?from=editor`;
 
   return (
-    <div className="relative">
+    <div className="relative" data-available-modules={availableEditorModules.map((module) => module.id).join(',')}>
       {/* ── Editor column ───────────────────────────────────────────────────── */}
       <div className="w-full xl:pr-[500px] overflow-x-hidden">
 

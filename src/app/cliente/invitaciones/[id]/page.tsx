@@ -9,6 +9,8 @@ import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
 import ShareButtons from './ShareButtons';
 import RsvpModeSelector from './RsvpModeSelector';
+import { getAvailableModules } from '@/domain/modules';
+import type { EventModuleId } from '@/domain/modules';
 
 export const dynamic  = 'force-dynamic';
 export const revalidate = 0;
@@ -58,6 +60,13 @@ const quickAccessStyle: React.CSSProperties = {
   fontSize: '.9rem',
   fontWeight: 800,
   textDecoration: 'none',
+};
+
+const quickAccessTargets: Partial<Record<EventModuleId, { label: string; href: (ctx: { publicUrl: string | null; editUrl: string }) => string; external?: boolean }>> = {
+  cover:         { label: 'Invitación', href: ({ publicUrl }) => publicUrl ?? '#', external: true },
+  guests:        { label: 'Invitados', href: () => '#invitados' },
+  event_details: { label: 'Evento', href: ({ editUrl }) => editUrl },
+  settings:      { label: 'Configuración', href: () => '#configuracion' },
 };
 
 function formatDate(iso?: string | null): string {
@@ -475,6 +484,10 @@ export default async function InvitationDashboard({ params }: Props) {
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
   const publicUrl = inv.slug ? `${appUrl}/i/${inv.slug}` : null;
   const editUrl   = `/dashboard/invitations/${id}/edit`;
+  const availableModules = getAvailableModules(inv.plan_id);
+  const quickAccessModules = availableModules
+    .map((module) => ({ module, target: quickAccessTargets[module.id] }))
+    .filter((item): item is { module: typeof item.module; target: NonNullable<typeof item.target> } => Boolean(item.target));
 
   // 5. Display helpers
   const eventTitle   = inv.title ?? 'Mi invitación';
@@ -597,10 +610,22 @@ export default async function InvitationDashboard({ params }: Props) {
               Accesos rápidos
             </p>
             <div className="quick-access-grid">
-              <a href={publicUrl ?? '#'} target={publicUrl ? '_blank' : undefined} rel={publicUrl ? 'noopener noreferrer' : undefined} style={quickAccessStyle}>Invitación</a>
-              <a href="#invitados" style={quickAccessStyle}>Invitados</a>
-              <a href={editUrl} style={quickAccessStyle}>Evento</a>
-              <a href="#configuracion" style={quickAccessStyle}>Configuración</a>
+              {quickAccessModules.map(({ module, target }) => {
+                const href = target.href({ publicUrl, editUrl });
+                const isExternal = target.external && href !== '#';
+                return (
+                  <a
+                    key={module.id}
+                    href={href}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    style={quickAccessStyle}
+                  >
+                    <span aria-hidden="true" style={{ marginRight: 6 }}>{module.icon}</span>
+                    {target.label}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
