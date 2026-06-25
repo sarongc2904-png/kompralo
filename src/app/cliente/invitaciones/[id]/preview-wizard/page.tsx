@@ -16,15 +16,20 @@ const THEME_GRADIENTS: Record<string, string> = {
 };
 
 function formatDate(iso: string): string {
-  if (!iso) return '';
-  const d = new Date(iso + 'T12:00:00');
-  return d.toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  if (!iso) return 'Fecha por confirmar';
+  const [year, month, day] = iso.split('-').map(Number);
+  if (!year || !month || !day) return 'Fecha por confirmar';
+  const d = new Date(year, month - 1, day);
+  return isNaN(d.getTime())
+    ? 'Fecha por confirmar'
+    : d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function daysUntil(iso: string): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const target = new Date(iso + 'T00:00:00');
+  const [year, month, day] = iso.split('-').map(Number);
+  const target = new Date(year, month - 1, day);
   return Math.ceil((target.getTime() - today.getTime()) / 86400000);
 }
 
@@ -50,7 +55,7 @@ export default async function PreviewWizardPage({ params }: Props) {
 
   const [{ data: inv }, { data: content }] = await Promise.all([
     db.from('invitations').select('id, title, event_date, plan_id, status, theme_id, customer_email, user_id').eq('id', id).single(),
-    db.from('invitation_content').select('protagonists, itinerary, social, hero').eq('invitation_id', id).maybeSingle(),
+    db.from('invitation_content').select('protagonists, itinerary, social').eq('invitation_id', id).maybeSingle(),
   ]);
 
   if (!inv) notFound();
@@ -62,8 +67,7 @@ export default async function PreviewWizardPage({ params }: Props) {
 
   const protagonists = (content?.protagonists as Array<{ name: string; role: string }> | null) ?? [];
   const itinerary    = (content?.itinerary   as Array<{ id: string; time: string; title: string; location: string; icon: string }> | null) ?? [];
-  const social       = (content?.social      as { hashtag?: string } | null) ?? {};
-  const hero         = (content?.hero        as { emotionalPhrase?: string } | null) ?? {};
+  const social = (content?.social as { hashtag?: string } | null) ?? {};
 
   const names = protagonists.length >= 2
     ? `${protagonists[0].name} & ${protagonists[1].name}`
@@ -92,11 +96,9 @@ export default async function PreviewWizardPage({ params }: Props) {
         <h1 style={{ fontSize: '2rem', fontWeight: 300, marginBottom: 8, lineHeight: 1.2 }}>
           {names}
         </h1>
-        {hero.emotionalPhrase && (
-          <p style={{ fontSize: '0.9rem', opacity: 0.85, fontStyle: 'italic', marginBottom: 16 }}>
-            {hero.emotionalPhrase}
-          </p>
-        )}
+        <p style={{ fontSize: '0.9rem', opacity: 0.75, fontStyle: 'italic', marginBottom: 16 }}>
+          Nos casamos
+        </p>
         {inv.event_date && (
           <p style={{ fontSize: '0.85rem', opacity: 0.8, marginBottom: 6 }}>
             {formatDate(inv.event_date)}
