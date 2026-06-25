@@ -88,7 +88,7 @@ export default function Hero3D() {
           
           {/* Left Column: Text & Value Propositions */}
           <Reveal className="cro-hero-content">
-            <span className="cro-eyebrow" style={{ textShadow: '0 2px 10px rgba(197,168,128,0.2)' }}>
+            <span className="cro-eyebrow" style={{ textShadow: '0 2px 10px rgba(197,168,128,0.2)', letterSpacing: '0.1em', whiteSpace: 'normal', wordBreak: 'break-word' }}>
               Invitaciones Digitales Premium
             </span>
             <h1 className="cro-title-mega" style={{ textShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
