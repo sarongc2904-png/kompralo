@@ -30,6 +30,7 @@ import {
 import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
 import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WizardShell } from './WizardShell';
+import { QuickSetupWizard } from '@/components/wizard/QuickSetupWizard';
 
 // Always render fresh — prevents the router/prefetch cache from serving a stale
 // redirect-to-login response when navigating via <Link> from /cliente.
@@ -212,7 +213,25 @@ export default async function EditInvitationPage({ params, searchParams }: Props
   const isPremiumOrDeluxe = plan === 'premium' || plan === 'deluxe';
   const isDeluxe          = plan === 'deluxe';
 
-  // Auto-open wizard for wedding invitations that are empty or incomplete.
+  // Quick Setup Wizard gate — show for new wedding invitations that haven't
+  // completed the 3-step quick setup yet. Admins bypass it.
+  if (invitation.category === 'wedding' && !fromAdmin) {
+    const { data: invRow } = await (await createServerSupabaseClient())
+      .from('invitations')
+      .select('wizard_step_completed')
+      .eq('id', id)
+      .single();
+    const wizardCompleted = ((invRow as { wizard_step_completed?: number } | null)?.wizard_step_completed ?? 0) >= 3;
+    if (!wizardCompleted) {
+      return (
+        <div style={{ minHeight: '100vh', background: '#F6F2EC', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '3rem', paddingBottom: '3rem' }}>
+          <QuickSetupWizard invitationId={id} invitationTitle={invitation.title} />
+        </div>
+      );
+    }
+  }
+
+  // Auto-open guided wizard for wedding invitations that are empty or incomplete.
   // Admins are excluded to preserve their full-editor access.
   if (invitation.category === 'wedding' && !isWizardView && !fromAdmin &&
       shouldShowWeddingWizard(invitation, plan)) {
