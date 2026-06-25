@@ -380,11 +380,14 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, isAuthe
                   rel="noopener noreferrer"
                   className="cl-btn"
                   style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-                    padding: '0.625rem 1rem', background: 'transparent', color: T.dark,
-                    borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 600,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    background: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)',
+                    color: '#fff',
+                    borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
                     textDecoration: 'none', minHeight: '44px', textAlign: 'center',
-                    border: `1px solid ${T.border}`,
+                    boxShadow: '0 4px 14px rgba(124,58,237,0.35)',
+                    letterSpacing: '0.01em',
                   }}
                 >
                   👁️ Ver mi invitación →
