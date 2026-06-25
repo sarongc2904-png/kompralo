@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
-import { isAdminUser } from '@/lib/admin';
+import { canWriteInvitation } from '@/lib/auth/invitation-ownership';
 
 export async function POST(
   _req: NextRequest,
@@ -27,7 +27,7 @@ export async function POST(
 
   const { data: invitation, error: fetchError } = await svc
     .from('invitations')
-    .select('id, status, owner_user_id, customer_email')
+    .select('id, status, user_id, customer_email')
     .eq('id', id)
     .maybeSingle();
 
@@ -35,13 +35,12 @@ export async function POST(
     return NextResponse.json({ error: 'Invitación no encontrada.' }, { status: 404 });
   }
 
-  const isOwnerByUserId = invitation.owner_user_id === sessionUserId;
-  const isOwnerByEmail  =
-    !!invitation.customer_email &&
-    invitation.customer_email.toLowerCase() === (sessionEmail ?? '').toLowerCase();
-  const isAdmin = await isAdminUser(sessionUserId, sessionEmail);
+  const canPublish = await canWriteInvitation(invitation, {
+    id: sessionUserId,
+    email: sessionEmail,
+  });
 
-  if (!isOwnerByUserId && !isOwnerByEmail && !isAdmin) {
+  if (!canPublish) {
     return NextResponse.json({ error: 'No autorizado.' }, { status: 403 });
   }
 
