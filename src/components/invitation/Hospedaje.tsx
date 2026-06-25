@@ -60,8 +60,18 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
             key={hotel.id}
             animateFrom={i % 2 === 0 ? 'left' : 'right'}
             animateDelay={i * 0.08}
+            style={{
+              backgroundPosition: 'left center',
+              backgroundSize: '55% auto',
+            }}
           >
-            <div className="flex items-center justify-between gap-4 px-6 py-6 pl-8 relative z-10">
+            {/* Semi-transparent overlay so text is always legible */}
+            <div aria-hidden="true" style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(to right, rgba(255,252,245,0.45) 0%, rgba(255,252,245,0.82) 40%, rgba(255,252,245,0.96) 100%)',
+              pointerEvents: 'none', zIndex: 1,
+            }} />
+            <div className="flex items-center justify-between gap-4 px-6 py-6 pl-8 relative z-20">
               <div className="flex-1 min-w-0">
                 {/* Name + stars */}
                 <div className="flex items-start gap-3 mb-1 flex-wrap">
