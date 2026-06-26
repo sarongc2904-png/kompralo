@@ -41,10 +41,19 @@ const statusBg: Record<string, string> = {
   used:      '#F0F0F0',
 };
 const statusLabels: Record<string, string> = {
-  pending:   'Pendiente',
+  pending:   'Sin confirmar',
   confirmed: 'Confirmado',
   declined:  'Declinado',
   used:      'Usado',
+};
+
+type FilterKey = 'all' | 'pending' | 'confirmed' | 'no-phone';
+
+const filterLabels: Record<FilterKey, string> = {
+  all:      'Todos',
+  pending:  'Pendientes',
+  confirmed: 'Confirmados',
+  'no-phone': 'Sin WhatsApp',
 };
 
 function formatDt(iso: string): string {
@@ -66,6 +75,10 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
   const [passes,     setPasses]     = useState<GuestPass[]>([]);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState('');
+
+  // Search + filter
+  const [searchQuery,  setSearchQuery]  = useState('');
+  const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
 
   // Form modal state
   const [showForm,   setShowForm]   = useState(false);
@@ -127,6 +140,32 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Scroll lock when modals open
+  useEffect(() => {
+    document.body.style.overflow = (showForm || qrPass) ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [showForm, qrPass]);
+
+  // ── Computed stats ──────────────────────────────────────────────────────────
+  const totalFamilies  = passes.length;
+  const totalPersonas  = passes.reduce((acc, p) => acc + p.allowedGuests, 0);
+  const totalConfirmed = passes.filter(p => p.status === 'confirmed' || p.status === 'used').length;
+  const totalPending   = passes.filter(p => p.status === 'pending').length;
+
+  // ── Filtered list ───────────────────────────────────────────────────────────
+  const q = searchQuery.toLowerCase().trim();
+  const filteredPasses = passes.filter(p => {
+    const matchesSearch = !q || p.guestName.toLowerCase().includes(q) || (p.phone ?? '').includes(q);
+    const matchesFilter =
+      activeFilter === 'all'       ? true :
+      activeFilter === 'pending'   ? p.status === 'pending' :
+      activeFilter === 'confirmed' ? (p.status === 'confirmed' || p.status === 'used') :
+      activeFilter === 'no-phone'  ? !p.phone :
+      true;
+    return matchesSearch && matchesFilter;
+  });
+
+  // ── Actions ─────────────────────────────────────────────────────────────────
   function openCreate() {
     setEditing(null);
     setForm(emptyForm);
@@ -142,7 +181,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
   }
 
   function validatePhone(raw: string): string | null {
-    if (!raw) return null; // optional
+    if (!raw) return null;
     const digits = raw.replace(/\D/g, '');
     if (digits.length === 10) return null;
     if (digits.length === 12 && digits.startsWith('52')) return null;
@@ -181,6 +220,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
   }
 
   async function handleDelete(passId: string) {
+    if (!window.confirm('¿Eliminar este invitado? Esta acción no se puede deshacer.')) return;
     setDeleting(passId);
     setDeleteErr('');
     try {
@@ -221,12 +261,6 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
     });
   }
 
-  // Scroll lock when modals open
-  useEffect(() => {
-    document.body.style.overflow = (showForm || qrPass) ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [showForm, qrPass]);
-
   function buildWaMsg(pass: GuestPass): string {
     const passUrl = `${appUrl}/pass/${pass.passToken}`;
     return `Hola, te compartimos tu pase para nuestro evento.\n\nInvitado: ${pass.guestName}\nPase para: ${pass.allowedGuests} persona${pass.allowedGuests !== 1 ? 's' : ''}\n\nEvento: ${eventTitle}\n\nAbre tu pase aquí:\n${passUrl}\n\nPor favor confirma tu asistencia.`;
@@ -240,30 +274,45 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
     return `https://wa.me/${normalized}?text=${encoded}`;
   }
 
+  // ── Render ──────────────────────────────────────────────────────────────────
   return (
     <section style={{ marginTop: '2rem' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '.5rem', marginBottom: '1rem' }}>
+
+      {/* ── Header ── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
         <div>
           <h2 style={{ margin: '0 0 .2rem', fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-            Pases de entrada
+            Mis invitados
           </h2>
           <p style={{ margin: 0, fontSize: '.8rem', color: T.light }}>
-            Crea un pase único para cada invitado o familia y define cuántas personas pueden asistir.
+            Administra todas las personas invitadas desde un solo lugar.
           </p>
         </div>
-        <button
-          onClick={openCreate}
-          style={{
-            padding: '.5rem 1.125rem', background: T.dark, color: T.cream,
-            border: 'none', borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
-            cursor: 'pointer',
-          }}
-        >
-          + Agregar pase
-        </button>
+        {passes.length > 0 && (
+          <button
+            onClick={openCreate}
+            style={{
+              padding: '.5rem 1.125rem', background: T.dark, color: T.cream,
+              border: 'none', borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
+              cursor: 'pointer', whiteSpace: 'nowrap',
+            }}
+          >
+            + Crear invitado
+          </button>
+        )}
       </div>
 
+      {/* ── Summary stats (only when there are passes) ── */}
+      {passes.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.625rem', marginBottom: '1.25rem' }}>
+          <StatCard label="Familias invitadas" value={totalFamilies} />
+          <StatCard label="Personas invitadas" value={totalPersonas} accent={T.gold} />
+          <StatCard label="Confirmados"         value={totalConfirmed} accent="#238636" />
+          <StatCard label="Pendientes"          value={totalPending}   accent="#8A6D3B" />
+        </div>
+      )}
+
+      {/* ── Error banner ── */}
       {deleteErr && (
         <div style={{ margin: '0 0 .75rem', padding: '.75rem 1rem', background: '#FCE8E6', border: '1px solid #F5C6C6', borderRadius: '.75rem', fontSize: '.8125rem', color: '#D32F2F', fontWeight: 600 }}>
           {deleteErr}
@@ -271,25 +320,26 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
         </div>
       )}
 
+      {/* ── Loading ── */}
       {loading && (
-        <p style={{ color: T.light, fontSize: '.875rem', textAlign: 'center', padding: '1.5rem 0' }}>Cargando pases…</p>
+        <p style={{ color: T.light, fontSize: '.875rem', textAlign: 'center', padding: '1.5rem 0' }}>Cargando invitados…</p>
       )}
-
       {!loading && error && (
         <p style={{ color: '#D32F2F', fontSize: '.875rem', textAlign: 'center' }}>{error}</p>
       )}
 
+      {/* ── Empty state ── */}
       {!loading && !error && passes.length === 0 && (
         <div style={{
           background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem',
-          padding: '2rem 1.5rem', textAlign: 'center',
+          padding: '2.5rem 1.5rem', textAlign: 'center',
         }}>
-          <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>🎟</div>
+          <div style={{ fontSize: '2.25rem', marginBottom: '.75rem' }}>👥</div>
           <p style={{ margin: '0 0 .5rem', fontWeight: 700, color: T.dark, fontSize: '1rem' }}>
-            Crea pases de entrada para tus invitados
+            Todavía no has agregado invitados
           </p>
-          <p style={{ margin: '0 0 1.25rem', fontSize: '.875rem', color: T.light, lineHeight: 1.6 }}>
-            Los pases te ayudan a controlar la entrada de tus invitados el día del evento.
+          <p style={{ margin: '0 0 1.5rem', fontSize: '.875rem', color: T.light, lineHeight: 1.6, maxWidth: '340px', marginLeft: 'auto', marginRight: 'auto' }}>
+            Crea tu primer pase para comenzar a organizar tu lista de invitados.
           </p>
           <button
             onClick={openCreate}
@@ -299,144 +349,208 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
               cursor: 'pointer',
             }}
           >
-            Crear primer pase
+            Crear primer invitado
           </button>
         </div>
       )}
 
+      {/* ── Search + filters ── */}
       {!loading && passes.length > 0 && (
         <>
-          {/* Desktop table */}
-          <div className="rsvp-table-wrap" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', overflowX: 'auto' }}>
-            <table className="rsvp-table">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Teléfono</th>
-                  <th style={{ textAlign: 'center' }}>Personas</th>
-                  <th>Estado</th>
-                  <th>Creado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {passes.map((p) => (
-                  <tr key={p.id}>
-                    <td style={{ fontWeight: 600, color: T.dark }}>{p.guestName}</td>
-                    <td>{p.phone ?? '—'}</td>
-                    <td style={{ textAlign: 'center' }}>{p.allowedGuests}</td>
-                    <td>
-                      <span style={{
-                        padding: '.2rem .625rem', borderRadius: '2rem',
-                        fontSize: '.75rem', fontWeight: 700,
-                        color: statusColors[p.status] ?? T.mid,
-                        background: statusBg[p.status] ?? T.cream,
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {statusLabels[p.status] ?? p.status}
-                      </span>
-                    </td>
-                    <td style={{ fontSize: '.75rem', color: T.light, whiteSpace: 'nowrap' }}>{formatDt(p.createdAt)}</td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '.375rem', flexWrap: 'wrap' }}>
-                        <button
-                          onClick={() => { setQrPass(p); setQrCopied(false); }}
-                          style={{ padding: '.3rem .625rem', background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700, cursor: 'pointer', color: T.dark, whiteSpace: 'nowrap' }}
-                        >
-                          🎫 QR
-                        </button>
-                        <a
-                          href={`${appUrl}/pass/${p.passToken}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ padding: '.3rem .625rem', background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700, cursor: 'pointer', color: T.dark, textDecoration: 'none', whiteSpace: 'nowrap' }}
-                        >
-                          🔗 Ver pase
-                        </a>
-                        <button
-                          onClick={() => openEdit(p)}
-                          style={{ padding: '.3rem .625rem', background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700, cursor: 'pointer', color: T.dark }}
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p.id)}
-                          disabled={deleting === p.id}
-                          style={{ padding: '.3rem .625rem', background: '#FCE8E6', border: '1px solid #F5C6C6', borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700, cursor: 'pointer', color: '#D32F2F', opacity: deleting === p.id ? 0.5 : 1 }}
-                        >
-                          {deleting === p.id ? '…' : '🗑'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.625rem', marginBottom: '1rem' }}>
+            {/* Search */}
+            <input
+              type="text"
+              placeholder="Buscar por nombre o teléfono…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%', padding: '.625rem .875rem',
+                background: T.white, border: `1px solid ${T.border}`,
+                borderRadius: '.75rem', fontSize: '.875rem', color: T.dark,
+                outline: 'none', boxSizing: 'border-box',
+              }}
+            />
+            {/* Filter chips */}
+            <div style={{ display: 'flex', gap: '.375rem', flexWrap: 'wrap' }}>
+              {(Object.keys(filterLabels) as FilterKey[]).map(key => (
+                <button
+                  key={key}
+                  onClick={() => setActiveFilter(key)}
+                  style={{
+                    padding: '.3rem .75rem', borderRadius: '2rem',
+                    fontSize: '.75rem', fontWeight: 700, cursor: 'pointer',
+                    border: `1px solid ${activeFilter === key ? T.dark : T.border}`,
+                    background: activeFilter === key ? T.dark : T.white,
+                    color: activeFilter === key ? T.cream : T.light,
+                    transition: 'all .15s',
+                  }}
+                >
+                  {filterLabels[key]}
+                  {key === 'pending'   && totalPending   > 0 && <span style={{ marginLeft: '.35rem', background: '#8A6D3B', color: '#fff', borderRadius: '1rem', padding: '0 .35rem', fontSize: '.65rem' }}>{totalPending}</span>}
+                  {key === 'confirmed' && totalConfirmed > 0 && <span style={{ marginLeft: '.35rem', background: '#238636', color: '#fff', borderRadius: '1rem', padding: '0 .35rem', fontSize: '.65rem' }}>{totalConfirmed}</span>}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Mobile cards */}
-          <div className="rsvp-cards-wrap">
-            {passes.map((p) => (
-              <div key={p.id} style={{
-                background: T.white, border: `1px solid ${T.border}`,
-                borderRadius: '1rem', padding: '1rem 1.125rem',
-                marginBottom: '.75rem',
-                borderLeft: `3px solid ${statusColors[p.status] ?? T.border}`,
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', marginBottom: '.5rem' }}>
-                  <p style={{ margin: 0, fontWeight: 700, color: T.dark }}>{p.guestName}</p>
-                  <span style={{
-                    padding: '.2rem .625rem', borderRadius: '2rem',
-                    fontSize: '.6875rem', fontWeight: 700, whiteSpace: 'nowrap',
-                    color: statusColors[p.status] ?? T.mid,
-                    background: statusBg[p.status] ?? T.cream,
-                  }}>
-                    {statusLabels[p.status] ?? p.status}
-                  </span>
-                </div>
-                <p style={{ margin: '0 0 .625rem', fontSize: '.8125rem', color: T.light }}>
-                  {p.allowedGuests} {p.allowedGuests === 1 ? 'persona' : 'personas'}{p.phone ? ` · ${p.phone}` : ''}
-                </p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.375rem' }}>
-                  <button
-                    onClick={() => { setQrPass(p); setQrCopied(false); }}
-                    style={mobileBtn(T.dark, T.cream)}
-                  >
-                    🎫 Ver QR
-                  </button>
-                  <a
-                    href={`${appUrl}/pass/${p.passToken}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ ...mobileBtn(T.cream, T.dark, T.border), textDecoration: 'none' }}
-                  >
-                    🔗 Ver pase
-                  </a>
+          {/* No results for current search/filter */}
+          {filteredPasses.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '2rem 1rem', color: T.light, fontSize: '.875rem' }}>
+              No se encontraron invitados con ese filtro.
+            </div>
+          )}
+
+          {/* ── Desktop table ── */}
+          {filteredPasses.length > 0 && (
+            <div className="rsvp-table-wrap" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', overflowX: 'auto' }}>
+              <table className="rsvp-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>WhatsApp</th>
+                    <th style={{ textAlign: 'center' }}>Personas</th>
+                    <th>Estado</th>
+                    <th>Creado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPasses.map((p) => (
+                    <tr key={p.id}>
+                      <td style={{ fontWeight: 600, color: T.dark }}>{p.guestName}</td>
+                      <td>
+                        {p.phone
+                          ? <span style={{ fontSize: '.75rem', color: T.light }}>WhatsApp listo: {p.phone}</span>
+                          : <span style={{ fontSize: '.75rem', color: T.light }}>Sin número de WhatsApp</span>
+                        }
+                      </td>
+                      <td style={{ textAlign: 'center' }}>{p.allowedGuests}</td>
+                      <td>
+                        <span style={{
+                          padding: '.2rem .625rem', borderRadius: '2rem',
+                          fontSize: '.75rem', fontWeight: 700,
+                          color: statusColors[p.status] ?? T.mid,
+                          background: statusBg[p.status] ?? T.cream,
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {statusLabels[p.status] ?? p.status}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: '.75rem', color: T.light, whiteSpace: 'nowrap' }}>{formatDt(p.createdAt)}</td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '.375rem', flexWrap: 'wrap' }}>
+                          <button
+                            onClick={() => { setQrPass(p); setQrCopied(false); }}
+                            style={tableBtn}
+                          >
+                            🎫 QR
+                          </button>
+                          <a
+                            href={`${appUrl}/pass/${p.passToken}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ ...tableBtn, textDecoration: 'none' }}
+                          >
+                            Ver pase
+                          </a>
+                          <a
+                            href={buildWaUrl(buildWaMsg(p), p.phone)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ ...tableBtn, textDecoration: 'none', background: '#E8F9EE', color: '#238636', borderColor: '#A7D7B0' }}
+                          >
+                            Enviar WA
+                          </a>
+                          <button onClick={() => openEdit(p)} style={tableBtn}>✏️</button>
+                          <button
+                            onClick={() => handleDelete(p.id)}
+                            disabled={deleting === p.id}
+                            style={{ ...tableBtn, background: '#FCE8E6', borderColor: '#F5C6C6', color: '#D32F2F', opacity: deleting === p.id ? 0.5 : 1 }}
+                          >
+                            {deleting === p.id ? '…' : '🗑'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── Mobile cards ── */}
+          {filteredPasses.length > 0 && (
+            <div className="rsvp-cards-wrap">
+              {filteredPasses.map((p) => (
+                <div key={p.id} style={{
+                  background: T.white, border: `1px solid ${T.border}`,
+                  borderRadius: '1.125rem', padding: '1.125rem 1.25rem',
+                  marginBottom: '.75rem',
+                  borderLeft: `3px solid ${statusColors[p.status] ?? T.border}`,
+                }}>
+                  {/* Name + badge */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', marginBottom: '.25rem' }}>
+                    <p style={{ margin: 0, fontWeight: 700, color: T.dark, fontSize: '1rem' }}>{p.guestName}</p>
+                    <span style={{
+                      padding: '.2rem .625rem', borderRadius: '2rem', flexShrink: 0,
+                      fontSize: '.6875rem', fontWeight: 700, whiteSpace: 'nowrap',
+                      color: statusColors[p.status] ?? T.mid,
+                      background: statusBg[p.status] ?? T.cream,
+                    }}>
+                      {statusLabels[p.status] ?? p.status}
+                    </span>
+                  </div>
+                  {/* Sub info */}
+                  <p style={{ margin: '0 0 .125rem', fontSize: '.8125rem', color: T.light }}>
+                    {p.allowedGuests} {p.allowedGuests === 1 ? 'invitado' : 'invitados'}
+                  </p>
+                  <p style={{ margin: '0 0 1rem', fontSize: '.75rem', color: T.light }}>
+                    {p.phone ? `WhatsApp listo: ${p.phone}` : 'Sin número de WhatsApp'}
+                  </p>
+                  {/* Primary actions */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem', marginBottom: '.5rem' }}>
+                    <a
+                      href={`${appUrl}/pass/${p.passToken}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ ...mobileBtn(T.dark, T.cream), textDecoration: 'none' }}
+                    >
+                      Ver pase
+                    </a>
+                    <button
+                      onClick={() => { setQrPass(p); setQrCopied(false); }}
+                      style={mobileBtn(T.cream, T.dark, T.border)}
+                    >
+                      🎫 Ver QR
+                    </button>
+                  </div>
+                  {/* WhatsApp */}
                   <a
                     href={buildWaUrl(buildWaMsg(p), p.phone)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ ...mobileBtn('#25D366', '#fff'), textDecoration: 'none', gridColumn: '1 / -1' }}
+                    style={{ ...mobileBtn('#25D366', '#fff'), textDecoration: 'none', display: 'flex', marginBottom: '.5rem' }}
                   >
-                    📲 Enviar por WhatsApp
+                    📲 Enviar nuevamente
                   </a>
-                  <button
-                    onClick={() => openEdit(p)}
-                    style={mobileBtn(T.cream, T.dark, T.border)}
-                  >
-                    ✏️ Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(p.id)}
-                    disabled={deleting === p.id}
-                    style={{ ...mobileBtn('#FCE8E6', '#D32F2F', '#F5C6C6'), opacity: deleting === p.id ? 0.5 : 1 }}
-                  >
-                    {deleting === p.id ? 'Eliminando…' : '🗑 Eliminar'}
-                  </button>
+                  {/* Secondary actions */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.375rem' }}>
+                    <button onClick={() => openEdit(p)} style={{ ...mobileBtn(T.cream, T.dark, T.border), fontSize: '.8rem' }}>
+                      ✏️ Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      disabled={deleting === p.id}
+                      style={{ ...mobileBtn('#FCE8E6', '#D32F2F', '#F5C6C6'), fontSize: '.8rem', opacity: deleting === p.id ? 0.5 : 1 }}
+                    >
+                      {deleting === p.id ? 'Eliminando…' : '🗑 Eliminar'}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </>
       )}
 
@@ -458,7 +572,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair,Georgia,serif)' }}>
-                {editing ? 'Editar pase' : 'Nuevo pase de invitado'}
+                {editing ? 'Editar invitado' : 'Nuevo invitado'}
               </h3>
               <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: T.light, lineHeight: 1 }}>×</button>
             </div>
@@ -480,8 +594,8 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
             </label>
 
             <label style={{ display: 'block', marginBottom: '1rem' }}>
-              <span style={{ display: 'block', fontSize: '.8125rem', fontWeight: 700, color: T.mid, marginBottom: '.25rem' }}>Número de personas permitidas *</span>
-              <span style={{ display: 'block', fontSize: '.75rem', color: T.light, marginBottom: '.375rem' }}>Este será el máximo de personas que podrán confirmar con este pase.</span>
+              <span style={{ display: 'block', fontSize: '.8125rem', fontWeight: 700, color: T.mid, marginBottom: '.25rem' }}>Número de personas *</span>
+              <span style={{ display: 'block', fontSize: '.75rem', color: T.light, marginBottom: '.375rem' }}>Máximo de personas que pueden confirmar con este pase.</span>
               <input
                 type="number"
                 min={1} max={20}
@@ -498,7 +612,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
 
             <label style={{ display: 'block', marginBottom: '1.25rem' }}>
               <span style={{ display: 'block', fontSize: '.8125rem', fontWeight: 700, color: T.mid, marginBottom: '.25rem' }}>WhatsApp (opcional)</span>
-              <span style={{ display: 'block', fontSize: '.75rem', color: T.light, marginBottom: '.375rem' }}>Si agregas WhatsApp, podrás enviar el pase directamente.</span>
+              <span style={{ display: 'block', fontSize: '.75rem', color: T.light, marginBottom: '.375rem' }}>Si agregas WhatsApp, podrás enviarle el pase directamente.</span>
               <input
                 type="tel"
                 value={form.phone}
@@ -529,7 +643,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
                 disabled={saving}
                 style={{ flex: 1, padding: '.625rem', background: T.dark, border: 'none', borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700, cursor: 'pointer', color: T.cream, opacity: saving ? 0.7 : 1 }}
               >
-                {saving ? 'Guardando…' : (editing ? 'Guardar cambios' : 'Crear pase')}
+                {saving ? 'Guardando…' : (editing ? 'Guardar cambios' : 'Crear invitado')}
               </button>
             </div>
           </div>
@@ -559,7 +673,6 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
               <button onClick={() => setQrPass(null)} style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: T.light, lineHeight: 1 }}>×</button>
             </div>
 
-            {/* Capturable card */}
             <div ref={qrCardRef} style={{
               background: T.dark, borderRadius: '1.25rem', padding: '1.5rem',
               textAlign: 'center', marginBottom: '1rem',
@@ -585,7 +698,6 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
               )}
             </div>
 
-            {/* Actions */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem' }}>
               <button
                 onClick={handleDownloadQr}
@@ -627,7 +739,28 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
   );
 }
 
-// ── Mobile button style helper ─────────────────────────────────────────────────
+// ── Stat card ──────────────────────────────────────────────────────────────────
+function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
+  return (
+    <div style={{
+      background: '#FFFAF3', border: `1px solid #EAD7A3`,
+      borderRadius: '1rem', padding: '.875rem 1rem',
+      borderTop: accent ? `3px solid ${accent}` : '3px solid #EAD7A3',
+    }}>
+      <p style={{ margin: '0 0 .125rem', fontSize: '1.5rem', fontWeight: 800, color: accent ?? '#0D0A07', lineHeight: 1 }}>{value}</p>
+      <p style={{ margin: 0, fontSize: '.75rem', fontWeight: 600, color: '#6B4A35' }}>{label}</p>
+    </div>
+  );
+}
+
+// ── Style helpers ──────────────────────────────────────────────────────────────
+const tableBtn: React.CSSProperties = {
+  padding: '.3rem .625rem', background: '#F1E3C8', border: '1px solid #EAD7A3',
+  borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700,
+  cursor: 'pointer', color: '#0D0A07', whiteSpace: 'nowrap',
+  textDecoration: 'none', display: 'inline-flex', alignItems: 'center',
+};
+
 function mobileBtn(bg: string, color: string, borderColor?: string): React.CSSProperties {
   return {
     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.375rem',
