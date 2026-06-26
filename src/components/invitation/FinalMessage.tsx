@@ -293,6 +293,7 @@ export default function FinalMessage({
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? '';
   const closingTitle = title || 'Gracias';
   const closingQuote = message || quote || 'Sin ti este día no estaría completo. Te esperamos con los brazos abiertos para celebrar la vida, el amor y el inicio de nuestra historia.';
+  const closingQuoteFieldPath = message ? 'final_message.message' : 'final_message.quote';
   const closingSignature = signature || `${primaryName} & ${secondaryName}`;
 
   const { scrollYProgress } = useScroll({
@@ -472,7 +473,7 @@ export default function FinalMessage({
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.2 }}
         >
-          <EditableText value={closingQuote} fieldPath="final_message.message" isEditable={editablePreview} />
+          <EditableText value={closingQuote} fieldPath={closingQuoteFieldPath} isEditable={editablePreview} />
         </motion.blockquote>
 
         {/* Ornamental Divider */}
