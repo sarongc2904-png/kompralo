@@ -136,7 +136,7 @@ function FloatingHearts() {
       ref={canvasRef}
       aria-hidden="true"
       style={{
-        position: 'fixed', inset: 0,
+        position: 'absolute', inset: 0,
         width: '100%', height: '100%',
         pointerEvents: 'none',
         zIndex: 0,
@@ -623,9 +623,10 @@ function buildLayerContent(
 
 interface MultilayerBackgroundProps {
   theme: Theme;
+  children?: React.ReactNode;
 }
 
-export default function MultilayerBackground({ theme }: MultilayerBackgroundProps) {
+export default function MultilayerBackground({ theme, children }: MultilayerBackgroundProps) {
   const themeV2 = useThemeV2();
   const bgAssets = resolveThemeBackgroundAssets(themeV2);
   const layerContent = buildLayerContent(themeV2.id, bgAssets);
@@ -633,17 +634,17 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
 
 
   return (
-  <>
-    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-[-10]">
-      {/* 0. Viewport-fixed Ambient Glow Background */}
-      <div className="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-[-20]">
+    <div className="relative isolate overflow-hidden">
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
+      {/* 0. Section-scoped Ambient Glow Background */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
         {/* Base gradient — V2 background-main token with v1 fallback */}
         <div
           className="absolute inset-0 transition-colors duration-1000"
           style={{ background: `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})` }}
         />
 
-        {/* Shared editorial paper background. One fixed layer, no tiling. */}
+        {/* Shared editorial paper background. One scroll layer, no tiling. */}
         <div
           className="absolute inset-0"
           aria-hidden="true"
@@ -681,7 +682,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
       <div
         className="invitation-bg-layer invitation-bg-layer-1"
         aria-hidden="true"
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}
       >
         {layerContent.layer1}
       </div>
@@ -690,7 +691,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
       <div
         className="invitation-bg-layer invitation-bg-layer-2"
         aria-hidden="true"
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}
       >
         {layerContent.layer2}
       </div>
@@ -699,15 +700,16 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
       <div
         className="invitation-bg-layer invitation-bg-layer-3"
         aria-hidden="true"
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}
       >
         {layerContent.layer3}
       </div>
+      {themeV2.effects.particles && <FloatingHearts />}
+      </div>
+
+      <div className="relative z-10">
+        {children}
+      </div>
     </div>
-
-    {/* Floating hearts — driven by V2 theme particles flag */}
-    {themeV2.effects.particles && <FloatingHearts />}
-
-  </>
   );
 }

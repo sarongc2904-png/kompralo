@@ -230,10 +230,6 @@ export default function InvitationRenderer({
         </FeatureGate>
       )}
 
-      <MultilayerBackground theme={effectiveTheme} />
-
-      {(effectiveTheme.paperTexture || themeV2.effects.paperTexture) && <div className="paper-noise" />}
-
       <FeatureGate feature="showMusic" features={features}>
         <BackgroundMusicPlayer key={invitation.music?.audioUrl} music={invitation.music} />
       </FeatureGate>
@@ -263,9 +259,14 @@ export default function InvitationRenderer({
         })()}
       </FeatureGate>
 
-      {plan.features.showCountdown && invitation.eventDate && (
-        <Countdown eventDate={invitation.eventDate} eventTime={invitation.eventTime} theme={effectiveTheme} />
-      )}
+      <MultilayerBackground theme={effectiveTheme}>
+        {(effectiveTheme.paperTexture || themeV2.effects.paperTexture) && (
+          <div className="paper-noise" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 2 }} />
+        )}
+
+        {plan.features.showCountdown && invitation.eventDate && (
+          <Countdown eventDate={invitation.eventDate} eventTime={invitation.eventTime} theme={effectiveTheme} />
+        )}
 
       <FeatureGate feature="showParents" features={features}>
         <Parents parents={invitation.parents} theme={effectiveTheme} editablePreview={editablePreview} />
@@ -372,6 +373,7 @@ export default function InvitationRenderer({
           editablePreview={editablePreview}
         />
       </FeatureGate>
+      </MultilayerBackground>
     </ThemeProviderV2>
     </div>
   );
