@@ -65,12 +65,13 @@ const INLINE_EDIT_ALLOWED_PATHS = [
   /^itinerary\.\d+\.(time|title|location|description)$/,
   /^dress_code\.(sectionEyebrow|title|type|description|suggestions)$/,
   /^gift_registry\.(sectionEyebrow|sectionTitle|subtitle)$/,
-  /^gift_registry\.items\.\d+\.(provider|description)$/,
+  /^gift_registry\.items\.\d+\.(provider|description|link)$/,
+  /^gift_registry\.items\.\d+\.bankDetails\.(bankName|accountOwner|clabe)$/,
   /^parents\.(groomTitle|groomFatherLabel|groomFatherName|groomMotherLabel|groomMotherName|brideTitle|brideFatherLabel|brideFatherName|brideMotherLabel|brideMotherName)$/,
   /^padrinos\.\d+\.rubro$/,
   /^padrinos\.\d+\.names\.\d+$/,
   /^hotels\.\d+\.(name|description|address|distance|priceRange|phone|bookingLink)$/,
-  /^social\.(sectionEyebrow|hashtag|note)$/,
+  /^social\.(sectionEyebrow|hashtag|note|instagramHandle|tiktokHandle|facebookUrl|youtubeUrl)$/,
   /^final_message\.(title|message|quote|signature)$/,
 ];
 
@@ -396,8 +397,17 @@ export async function updateInlineEditableText(input: {
   if (value.length > 500) {
     return { success: false, error: 'El texto es demasiado largo.' };
   }
+  if (/^gift_registry\.items\.\d+\.link$/.test(fieldPath) && !isValidUrl(value)) {
+    return { success: false, error: 'El enlace de mesa de regalos no es una URL válida.' };
+  }
+  if (/^gift_registry\.items\.\d+\.bankDetails\.clabe$/.test(fieldPath) && !/^\d{18}$/.test(value)) {
+    return { success: false, error: 'La CLABE debe tener exactamente 18 dígitos.' };
+  }
   if (/^hotels\.\d+\.bookingLink$/.test(fieldPath) && !isValidUrl(value)) {
     return { success: false, error: 'El sitio web del hotel no es una URL válida.' };
+  }
+  if (/^social\.(facebookUrl|youtubeUrl)$/.test(fieldPath) && !isValidUrl(value)) {
+    return { success: false, error: 'La URL de red social no es válida.' };
   }
 
   try {

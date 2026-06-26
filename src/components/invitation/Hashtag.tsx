@@ -190,7 +190,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
   const photoUrl = imageUrl || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800';
   const handle   = meta.getHandle(social);
 
-  if (!hasSocialContent) return null;
+  if (!hasSocialContent && !editablePreview) return null;
 
   return (
     <SectionShell className="select-none" contentClassName="max-w-[420px] mx-auto">
@@ -400,10 +400,31 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
                     isEditable={editablePreview}
                   />
                 </p>
-                {social.hashtag && (
+                {(social.hashtag || editablePreview) && (
                   <p style={{ fontSize: 13, color: 'var(--v2-color-accent, #C8A75D)', marginTop: 3, fontWeight: 600 }}>
-                    #<EditableText value={social.hashtag} fieldPath="social.hashtag" isEditable={editablePreview} />
+                    #<EditableText
+                      value={social.hashtag ?? ''}
+                      fieldPath="social.hashtag"
+                      isEditable={editablePreview}
+                      placeholder="Hashtag"
+                    />
                   </p>
+                )}
+                {editablePreview && (
+                  <div style={{ marginTop: 8, display: 'grid', gap: 4 }}>
+                    <p style={{ fontSize: 11, color: platform === 'tiktok' ? 'rgba(255,255,255,0.75)' : 'var(--v2-color-text-secondary, #5C4A3E)' }}>
+                      Instagram @<EditableText value={social.instagramHandle ?? ''} fieldPath="social.instagramHandle" isEditable placeholder="usuario" />
+                    </p>
+                    <p style={{ fontSize: 11, color: platform === 'tiktok' ? 'rgba(255,255,255,0.75)' : 'var(--v2-color-text-secondary, #5C4A3E)' }}>
+                      TikTok @<EditableText value={social.tiktokHandle ?? ''} fieldPath="social.tiktokHandle" isEditable placeholder="usuario" />
+                    </p>
+                    <p style={{ fontSize: 11, color: platform === 'tiktok' ? 'rgba(255,255,255,0.75)' : 'var(--v2-color-text-secondary, #5C4A3E)', wordBreak: 'break-all' }}>
+                      Facebook <EditableText value={social.facebookUrl ?? ''} fieldPath="social.facebookUrl" isEditable placeholder="URL" />
+                    </p>
+                    <p style={{ fontSize: 11, color: platform === 'tiktok' ? 'rgba(255,255,255,0.75)' : 'var(--v2-color-text-secondary, #5C4A3E)', wordBreak: 'break-all' }}>
+                      YouTube <EditableText value={social.youtubeUrl ?? ''} fieldPath="social.youtubeUrl" isEditable placeholder="URL" />
+                    </p>
+                  </div>
                 )}
               </motion.div>
             )}

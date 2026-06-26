@@ -131,7 +131,13 @@ export default function GiftRegistry({
                               <Building className="w-3.5 h-3.5 mt-0.5 opacity-60 flex-shrink-0" style={{ color: 'var(--v2-color-accent, #C8A75D)' }} />
                               <div>
                                 <span className="block opacity-60 font-semibold uppercase text-[10px] md:text-[11px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>Banco</span>
-                                <span className="font-semibold" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>{item.bankDetails.bankName}</span>
+                                <span className="font-semibold" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
+                                  <EditableText
+                                    value={item.bankDetails.bankName}
+                                    fieldPath={`gift_registry.items.${idx}.bankDetails.bankName`}
+                                    isEditable={editablePreview}
+                                  />
+                                </span>
                               </div>
                             </div>
 
@@ -139,7 +145,13 @@ export default function GiftRegistry({
                               <User className="w-3.5 h-3.5 mt-0.5 opacity-60 flex-shrink-0" style={{ color: 'var(--v2-color-accent, #C8A75D)' }} />
                               <div>
                                 <span className="block opacity-60 font-semibold uppercase text-[10px] md:text-[11px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>Titular</span>
-                                <span className="font-semibold" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>{item.bankDetails.accountOwner}</span>
+                                <span className="font-semibold" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
+                                  <EditableText
+                                    value={item.bankDetails.accountOwner}
+                                    fieldPath={`gift_registry.items.${idx}.bankDetails.accountOwner`}
+                                    isEditable={editablePreview}
+                                  />
+                                </span>
                               </div>
                             </div>
 
@@ -148,7 +160,11 @@ export default function GiftRegistry({
                               <div className="w-full">
                                 <span className="block opacity-60 font-semibold uppercase text-[10px] md:text-[11px] tracking-[0.14em]" style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>CLABE</span>
                                 <span className="font-bold font-mono break-all block text-sm md:text-base select-all mt-0.5" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
-                                  {item.bankDetails.clabe}
+                                  <EditableText
+                                    value={item.bankDetails.clabe}
+                                    fieldPath={`gift_registry.items.${idx}.bankDetails.clabe`}
+                                    isEditable={editablePreview}
+                                  />
                                 </span>
                               </div>
                             </div>
@@ -160,12 +176,22 @@ export default function GiftRegistry({
                 )}
 
                 {/* Standard description for normal links */}
-                {item.logoType !== 'bank' && (
+                {(item.logoType !== 'bank' || editablePreview) && (
                   <p className={`text-[13px] md:text-[14px] opacity-75 mb-4 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
                     <EditableText
                       value={item.description || 'Haz clic abajo para ver la mesa de regalos directamente.'}
                       fieldPath={`gift_registry.items.${idx}.description`}
                       isEditable={editablePreview}
+                    />
+                  </p>
+                )}
+                {editablePreview && item.logoType !== 'bank' && (
+                  <p className={`text-[11px] opacity-70 break-all max-w-[220px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
+                    <EditableText
+                      value={item.link ?? ''}
+                      fieldPath={`gift_registry.items.${idx}.link`}
+                      isEditable={editablePreview}
+                      placeholder="URL de mesa de regalos…"
                     />
                   </p>
                 )}
