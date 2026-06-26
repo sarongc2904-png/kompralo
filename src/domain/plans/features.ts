@@ -70,12 +70,27 @@ export const deluxeFeatures: InvitationFeatures = {
 
 // ─── Merge helper ─────────────────────────────────────────────────────────────
 
+// Keys that customers cannot override — only admin toggles via FeaturesForm should
+// affect these. Stripping them here prevents stale DB overrides from hiding features.
+const ADMIN_ONLY_FEATURE_KEYS: ReadonlySet<keyof InvitationFeatures> = new Set([
+  'showIntro',
+  'showCountdown',
+  'showRSVP',
+  'showQRCode',
+  'showGuestbook',
+  'showMessages',
+]);
+
 export function mergePlanFeatures(
   planFeatures: InvitationFeatures,
   overrides?: FeatureOverrides | null,
 ): InvitationFeatures {
+  if (!overrides) return { ...planFeatures };
+  const safeOverrides = Object.fromEntries(
+    Object.entries(overrides).filter(([k]) => !ADMIN_ONLY_FEATURE_KEYS.has(k as keyof InvitationFeatures)),
+  ) as FeatureOverrides;
   return {
     ...planFeatures,
-    ...(overrides ?? {}),
+    ...safeOverrides,
   };
 }

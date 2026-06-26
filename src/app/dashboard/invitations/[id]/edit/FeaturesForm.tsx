@@ -27,8 +27,8 @@ const CATEGORY_ORDER: FeatureCategory[] = [
   'core', 'engagement', 'media', 'logistics', 'content', 'social', 'ai',
 ];
 
-// Only active features that have a planFeatureKey can be toggled.
-const toggleableFeatures = activeFeatures.filter((f) => !!f.planFeatureKey);
+// Only customer-editable features that have a planFeatureKey can be toggled.
+const toggleableFeatures = activeFeatures.filter((f) => !!f.planFeatureKey && f.editableByCustomer);
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
