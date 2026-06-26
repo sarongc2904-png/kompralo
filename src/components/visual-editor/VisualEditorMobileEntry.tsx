@@ -158,7 +158,14 @@ export function VisualEditorMobileEntry({
         </section>
       </div>
 
-      <div className={advancedOpen ? 'block' : 'hidden md:block'}>
+      <div className={advancedOpen ? 'block' : 'hidden md:block'} data-ve-forms="">
+        {advancedOpen && selectedZone?.targetId && (
+          <style>{`
+            [data-ve-forms] section:not(#${selectedZone.targetId}) {
+              display: none !important;
+            }
+          `}</style>
+        )}
         {advancedOpen && (
           <div className="sticky top-0 z-30 mb-4 rounded-b-2xl border border-t-0 px-4 py-3 shadow-sm md:hidden" style={{ background: '#FFFDF8', borderColor: '#E6D8BD' }}>
             <button
@@ -167,8 +174,13 @@ export function VisualEditorMobileEntry({
               style={{ background: '#F2E9DA', color: '#5F4B35' }}
               onClick={handleCloseForm}
             >
-              Cerrar formulario y volver a Preview
+              ← Volver a la invitación
             </button>
+            {selectedZone?.title && (
+              <p className="mt-1.5 text-center text-xs opacity-60" style={{ color: '#5F4B35' }}>
+                Editando: {selectedZone.title}
+              </p>
+            )}
           </div>
         )}
         {children}

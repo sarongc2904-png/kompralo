@@ -68,10 +68,6 @@ export function VisualEditorBottomSheet({
             {description}
           </p>
         )}
-        <p className="mt-2 text-sm" style={{ color: '#7A6A5B' }}>
-          Abre la sección correspondiente del editor para ajustar este contenido.
-        </p>
-
         <div className="mt-5 grid grid-cols-[0.8fr_1.2fr] gap-3">
           <button
             type="button"
@@ -87,7 +83,7 @@ export function VisualEditorBottomSheet({
             style={{ background: '#C4A962', color: '#1D160E' }}
             onClick={handleEdit}
           >
-            Editar
+            Personalizar
           </button>
         </div>
       </div>
