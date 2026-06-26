@@ -208,29 +208,26 @@ export function VisualEditorMobileEntry({
               scrolling="yes"
             />
 
-            <div className="pointer-events-none absolute inset-0 z-10">
+            <div className="pointer-events-none absolute inset-0 z-10" aria-hidden="true">
               {visibleElements.map((element) => {
                 const zone = EDITABLE_ZONES[element.id];
                 const isHighlighted = highlightedId === element.id;
 
                 return (
-                  <button
+                  <div
                     key={element.id}
-                    type="button"
-                    aria-label={`Editar ${zone.title}`}
                     className={`absolute rounded-[24px] border-2 transition-all ${zone.className} ${
                       isHighlighted
                         ? 'border-[#C4A962] bg-[#C4A962]/20 shadow-[0_0_0_999px_rgba(13,10,7,0.08)]'
                         : 'border-transparent bg-transparent'
                     }`}
-                    onClick={() => handleZoneTouch(element)}
                   >
                     {isHighlighted && (
                       <span className="absolute left-3 top-3 rounded-full bg-[#FFFDF8] px-3 py-1 text-xs font-bold text-[#5F4B35] shadow">
                         {zone.title}
                       </span>
                     )}
-                  </button>
+                  </div>
                 );
               })}
             </div>
