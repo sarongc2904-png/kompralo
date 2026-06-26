@@ -165,6 +165,66 @@ function PageStyles() {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(15,12,9,0.06);
       }
+      .client-subtitle {
+        font-size: 0 !important;
+      }
+      .client-subtitle::after {
+        content: 'Administra tus invitaciones, confirma RSVP y comparte cada evento desde un solo lugar.';
+        font-size: .9rem;
+      }
+      .cl-card.client-event-card {
+        background: #FFFDF8 !important;
+        border-color: #E6D8BD !important;
+        border-radius: 1.75rem !important;
+        box-shadow: 0 14px 36px rgba(78,61,38,0.08) !important;
+      }
+      .client-primary-action {
+        background: #C4A962 !important;
+        color: #241B12 !important;
+        min-height: 52px !important;
+        border-radius: 1rem !important;
+        font-size: 0 !important;
+        box-shadow: 0 4px 14px rgba(196,169,98,0.22) !important;
+      }
+      .client-primary-action::after {
+        content: 'Abrir Mi Evento';
+        font-size: .95rem;
+      }
+      .client-secondary-actions {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      }
+      .client-secondary-action {
+        flex: none !important;
+        background: #F4EBDD !important;
+        color: #4D3A28 !important;
+        box-shadow: none !important;
+        font-size: 0 !important;
+      }
+      .client-public-action::after {
+        content: 'Ver invitación';
+        font-size: .875rem;
+      }
+      .client-edit-action::after {
+        content: 'Editar';
+        font-size: .875rem;
+      }
+      .client-share-action {
+        background: #DDEBDD !important;
+        color: #2F5F46 !important;
+      }
+      .client-share-action::after {
+        content: 'Compartir';
+        font-size: .875rem;
+      }
+      .client-public-action {
+        background: #FFFDF8 !important;
+        color: #5F4B35 !important;
+        border: 1px solid #E6D8BD !important;
+      }
+      .client-public-standalone {
+        display: none !important;
+      }
       @media (max-width: 767px) {
         .client-page {
           background: #F7F1E7 !important;
