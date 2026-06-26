@@ -549,7 +549,7 @@ export default async function InvitationDashboard({ params }: Props) {
                 Todo está listo. Desde aquí podrás controlar la entrada de tus invitados y seguir las confirmaciones en tiempo real.
               </p>
               <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '.875rem' }}>
-                <a href="#pases" className="db-btn" style={{ ...btnPrimary, padding: '.9rem 2rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
+                <a href="#mis-invitados" className="db-btn" style={{ ...btnPrimary, padding: '.9rem 2rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
                   Preparar entrada
                 </a>
                 {publicUrl && (
@@ -879,7 +879,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
             {/* Pases de entrada — confirmaciones, semana, dia (después de RSVP) */}
             {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
-              <div id="pases">
+              <div id="mis-invitados">
                 <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} />
               </div>
             )}
