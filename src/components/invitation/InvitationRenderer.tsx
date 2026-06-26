@@ -122,6 +122,18 @@ export default function InvitationRenderer({
     : theme;
 
   const themeVariables = createThemeCssVariables(effectiveTheme);
+  const invitationPaperVariables = {
+    ...themeVariables,
+    '--kompralo-invitation-paper-bg': "url('/images/invitaciones/editorial-paper-background.jpg')",
+    '--v2-background-main': 'rgba(251, 247, 239, 0.18)',
+    '--v2-background-story': 'rgba(251, 247, 239, 0.12)',
+    '--v2-background-sections': 'rgba(251, 247, 239, 0.1)',
+    '--v2-background-final': 'rgba(251, 247, 239, 0.14)',
+    '--v2-color-surface': 'rgba(255, 253, 248, 0.76)',
+    '--v2-card-ivory-bg': 'rgba(255, 253, 248, 0.72)',
+    '--v2-glass-bg': 'rgba(255, 253, 248, 0.68)',
+    '--v2-color-overlay': 'rgba(255, 253, 248, 0.34)',
+  } as React.CSSProperties & Record<string, string>;
 
   const handleEnterInvitation = () => {
     // Platinum: CinematicIntro calls this when user taps "Entrar"
@@ -181,7 +193,7 @@ export default function InvitationRenderer({
       data-render-mode={mode}
       data-plan-id={plan.id}
       data-theme-v2={themeV2.id}
-      style={{ ...themeVariables, ...(themeV2.cssVariables as React.CSSProperties) }}
+      style={{ ...(themeV2.cssVariables as React.CSSProperties), ...invitationPaperVariables }}
     >
       {editablePreview && (
         <style>{`

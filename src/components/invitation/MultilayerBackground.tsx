@@ -273,19 +273,6 @@ function FogLayers() {
   );
 }
 
-// ─── WATERMARK SEAMLESS BACKGROUND PATTERN ───────────────────────────────────
-function BackgroundPattern() {
-  return (
-    <div
-      className="absolute inset-0 opacity-[0.035] mix-blend-multiply pointer-events-none select-none z-[-15]"
-      style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M30,30 C45,15 55,15 70,30 C85,45 85,55 70,70 C55,85 45,85 30,70 C15,55 15,45 30,30 Z M90,90 C105,75 115,75 130,90' fill='none' stroke='%23C8A75D' stroke-width='0.5'/%3E%3Cpath d='M60,0 C65,15 75,25 90,30 M60,0 C55,15 45,25 30,30 M60,120 C65,105 75,95 90,90 M60,120 C55,105 45,95 30,90 M0,60 C15,65 25,75 30,90 M0,60 C15,55 25,45 30,30 M120,60 C105,65 95,75 90,90 M120,60 C105,55 95,45 90,30' fill='none' stroke='%23C8A75D' stroke-width='0.5'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'repeat',
-      }}
-    />
-  );
-}
-
 // ─── GOLDEN WEDDING RINGS WATERMARK ──────────────────────────────────────────
 function GoldenWeddingRings({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
@@ -656,8 +643,18 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
           style={{ background: `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})` }}
         />
 
-        {/* Repeating premium organic floral/scroll pattern watermark */}
-        <BackgroundPattern />
+        {/* Shared editorial paper background. One fixed layer, no tiling. */}
+        <div
+          className="absolute inset-0"
+          aria-hidden="true"
+          style={{
+            backgroundImage: 'var(--kompralo-invitation-paper-bg)',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center center',
+            backgroundAttachment: 'fixed',
+          }}
+        />
 
         {/* Subtle radial center brightening (makes content area feel lit) */}
         <div
@@ -681,25 +678,6 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
           }}
         />
       </div>
-
-      {/* 0b. Full-page watercolor floral backdrop — absolute so it covers the entire
-           document height (not just the viewport). Scoped to editorial themes only.
-           background-repeat: repeat-y tiles the image vertically so every section
-           sees the floral pattern regardless of page length. */}
-      {(themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial' || themeV2.id === 'pastel-rose-editorial' || themeV2.id === 'pastel-sage-editorial' || themeV2.id === 'pastel-sky-editorial') && (
-        <div
-          className="absolute inset-0 pointer-events-none"
-          aria-hidden="true"
-          style={{
-            backgroundImage: `url('/layers/wedding_floral_background.png')`,
-            backgroundSize: '100% auto',
-            backgroundRepeat: 'repeat-y',
-            backgroundPosition: 'center top',
-            opacity: 0.92,
-          }}
-        />
-      )}
-
       {/* 1. Static Layer 1 */}
       <div
         className="invitation-bg-layer invitation-bg-layer-1"
