@@ -139,6 +139,7 @@ export function QuickSetupWizard({
 
   return (
     <main style={shellStyle}>
+      <style>{wizardResponsiveCss}</style>
       <section style={cardStyle}>
         <div style={{ marginBottom: 18, textAlign: 'center' }}>
           {invitationTitle && <p style={eyebrowStyle}>{invitationTitle}</p>}
@@ -149,7 +150,7 @@ export function QuickSetupWizard({
           <StepFrame
             title={isCompleted ? 'Actualiza tu invitación' : 'Hagamos tu invitación en minutos'}
             subtitle="Te haremos pocas preguntas y al final guardaremos todo en tu invitación real."
-            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+            preview={<WizardLivePreview step={step} noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} eventTime={eventTime} venueName={venueName} styleId={style} heroMessage={heroMessage} />}
           >
             <button type="button" onClick={() => goTo(1)} style={primaryButtonStyle}>
               Comenzar
@@ -161,7 +162,7 @@ export function QuickSetupWizard({
           <StepFrame
             title="¿Quiénes se casan?"
             subtitle="Esto crea el título y la portada base de la invitación."
-            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+            preview={<WizardLivePreview step={step} noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} eventTime={eventTime} venueName={venueName} styleId={style} heroMessage={heroMessage} />}
           >
             <Field label="Novia" value={noviaName} onChange={setNoviaName} placeholder="Sofía" />
             <Field label="Novio" value={novioName} onChange={setNovioName} placeholder="Alejandro" />
@@ -173,7 +174,7 @@ export function QuickSetupWizard({
           <StepFrame
             title="¿Cuándo y dónde?"
             subtitle="Con esto tus invitados ya sabrán lo esencial del evento."
-            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+            preview={<WizardLivePreview step={step} noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} eventTime={eventTime} venueName={venueName} styleId={style} heroMessage={heroMessage} />}
           >
             <div style={twoColumnStyle}>
               <Field label="Fecha" type="date" value={weddingDate} onChange={setWeddingDate} />
@@ -198,7 +199,7 @@ export function QuickSetupWizard({
           <StepFrame
             title="Elige el estilo"
             subtitle="Selecciona una dirección visual. Después podrás personalizar más."
-            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+            preview={<WizardLivePreview step={step} noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} eventTime={eventTime} venueName={venueName} styleId={style} heroMessage={heroMessage} />}
           >
             <div style={styleGridStyle}>
               {STYLES.map((item) => (
@@ -236,7 +237,7 @@ export function QuickSetupWizard({
           <StepFrame
             title="Revisar y activar"
             subtitle="Guardaremos todo al pulsar el botón final. Podrás editar cualquier detalle después."
-            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+            preview={<WizardLivePreview step={step} noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} eventTime={eventTime} venueName={venueName} styleId={style} heroMessage={heroMessage} />}
           >
             <Field label="Dress code" value={dressCodeType} onChange={setDressCodeType} placeholder="Formal" />
             <p style={labelStyle}>RSVP</p>
@@ -292,37 +293,65 @@ function StepFrame({
   return (
     <div>
       <StepHeading title={title} subtitle={subtitle} />
-      {preview}
-      <div style={{ marginTop: 20 }}>{children}</div>
+      <div className="wizard-step-body">
+        <div className="wizard-preview-pane">{preview}</div>
+        <div className="wizard-fields-pane">{children}</div>
+      </div>
     </div>
   );
 }
 
-function MiniPreview({
+function WizardLivePreview({
+  step,
   noviaName,
   novioName,
   weddingDate,
+  eventTime,
   venueName,
   styleId,
+  heroMessage,
 }: {
+  step: number;
   noviaName: string;
   novioName: string;
   weddingDate: string;
+  eventTime: string;
   venueName: string;
   styleId: WizardStyle;
+  heroMessage: string;
 }) {
   const styleMeta = STYLES.find((item) => item.id === styleId) ?? STYLES[0];
-  const names = noviaName || novioName ? `${noviaName || 'Novia'} & ${novioName || 'Novio'}` : 'Tu boda';
+  const names = noviaName || novioName ? `${noviaName || 'Novia'} & ${novioName || 'Novio'}` : step === 0 ? 'Sofía & Alejandro' : 'Tu boda';
+  const dateLabel = weddingDate || (step === 0 ? '25 de junio de 2026' : 'Fecha por definir');
+  const timeLabel = eventTime || 'Hora por definir';
+  const placeLabel = venueName || (step === 0 ? 'Hacienda Kompralo' : 'Lugar por confirmar');
+  const phrase = heroMessage.trim() || (step === 0 ? 'Dos almas, un destino' : 'Tu frase de portada aparecerá aquí');
+  const stepLabel = ['Ejemplo elegante', 'Portada', 'Fecha y lugar', styleMeta.label, 'Resumen'][step] ?? 'Preview';
 
   return (
-    <div style={{ ...previewStyle, background: `linear-gradient(145deg, ${styleMeta.swatches[0]}, #FFFFFF)` }}>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 14 }}>
-        <span style={{ ...swatchStyle, width: 18, height: 18, background: styleMeta.swatches[0] }} />
-        <span style={{ ...swatchStyle, width: 18, height: 18, background: styleMeta.swatches[1] }} />
+    <div style={{ ...previewStyle, background: `linear-gradient(145deg, ${styleMeta.swatches[0]} 0%, #FFFFFF 62%, #FBF7EF 100%)` }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center', marginBottom: 14 }}>
+        <p style={{ ...previewEyebrowStyle, marginBottom: 0 }}>{stepLabel}</p>
+        <span style={{ display: 'inline-flex', gap: 5 }}>
+          <span style={{ ...swatchStyle, width: 15, height: 15, background: styleMeta.swatches[0] }} />
+          <span style={{ ...swatchStyle, width: 15, height: 15, background: styleMeta.swatches[1] }} />
+        </span>
       </div>
-      <p style={previewEyebrowStyle}>{weddingDate || 'Fecha por definir'}</p>
+      <p style={previewEyebrowStyle}>{styleMeta.description}</p>
       <h3 style={previewTitleStyle}>{names}</h3>
-      <p style={previewMutedStyle}>{venueName || 'Lugar por confirmar'}</p>
+      <p style={previewPhraseStyle}>{phrase}</p>
+      <div style={previewDividerStyle} />
+      <div style={previewDetailsGridStyle}>
+        <div>
+          <strong style={previewDetailLabelStyle}>Fecha</strong>
+          <span style={previewMutedStyle}>{dateLabel}</span>
+        </div>
+        <div>
+          <strong style={previewDetailLabelStyle}>Hora</strong>
+          <span style={previewMutedStyle}>{timeLabel}</span>
+        </div>
+      </div>
+      <p style={{ ...previewMutedStyle, marginTop: 12 }}>{placeLabel}</p>
     </div>
   );
 }
@@ -425,6 +454,35 @@ function NavButtons({
   );
 }
 
+const wizardResponsiveCss = `
+  .wizard-step-body {
+    display: grid;
+    gap: 18px;
+  }
+
+  .wizard-fields-pane {
+    min-width: 0;
+  }
+
+  @media (min-width: 860px) {
+    .wizard-step-body {
+      grid-template-columns: minmax(0, 1fr) 340px;
+      align-items: start;
+      gap: 28px;
+    }
+
+    .wizard-fields-pane {
+      order: 1;
+    }
+
+    .wizard-preview-pane {
+      order: 2;
+      position: sticky;
+      top: 24px;
+    }
+  }
+`;
+
 const shellStyle: React.CSSProperties = {
   minHeight: '100vh',
   width: '100%',
@@ -433,7 +491,7 @@ const shellStyle: React.CSSProperties = {
 };
 
 const cardStyle: React.CSSProperties = {
-  maxWidth: 560,
+  maxWidth: 940,
   margin: '0 auto',
   background: '#FFFCF7',
   border: '1px solid #E8DED2',
@@ -624,8 +682,41 @@ const previewTitleStyle: React.CSSProperties = {
 };
 
 const previewMutedStyle: React.CSSProperties = {
+  display: 'block',
   color: '#8A7663',
   fontSize: 13,
+};
+
+const previewPhraseStyle: React.CSSProperties = {
+  color: '#6B5137',
+  fontSize: 14,
+  fontStyle: 'italic',
+  lineHeight: 1.5,
+  margin: '8px auto 0',
+  maxWidth: 260,
+};
+
+const previewDividerStyle: React.CSSProperties = {
+  width: 48,
+  height: 1,
+  background: '#D9C8AE',
+  margin: '16px auto',
+};
+
+const previewDetailsGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  gap: 10,
+  textAlign: 'center',
+};
+
+const previewDetailLabelStyle: React.CSSProperties = {
+  display: 'block',
+  color: '#B99752',
+  fontSize: 10,
+  letterSpacing: '0.12em',
+  textTransform: 'uppercase',
+  marginBottom: 4,
 };
 
 const primaryLinkStyle: React.CSSProperties = {
