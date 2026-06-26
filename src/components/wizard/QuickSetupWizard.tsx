@@ -15,22 +15,14 @@ interface Props {
   dashboardUrl?: string;
 }
 
-const STYLES: Array<{ id: WizardStyle; label: string; description: string; swatches: [string, string] }> = [
-  { id: 'editorial', label: 'Editorial', description: 'Marfil, dorado suave', swatches: ['#FBF7EF', '#C8A75D'] },
-  { id: 'romantico', label: 'Romántico', description: 'Rosa pastel, champagne', swatches: ['#FFF7F8', '#B76E79'] },
-  { id: 'minimalista', label: 'Minimalista', description: 'Limpio y luminoso', swatches: ['#FAF8F6', '#BDAE9A'] },
-  { id: 'floral', label: 'Floral', description: 'Verde sage, blush', swatches: ['#F8FAF7', '#A8BFAA'] },
-  { id: 'moderno', label: 'Moderno', description: 'Celeste suave, editorial', swatches: ['#F5FAFF', '#6F8FBF'] },
-];
+const TOTAL_STEPS = 5;
 
-const GIFT_OPTIONS: Array<{
-  id: WizardMinimalInput['mesaRegalosType'];
-  label: string;
-  description: string;
-}> = [
-  { id: 'ninguna', label: 'No mostrar aún', description: 'Puedes activarlo después.' },
-  { id: 'sobres', label: 'Lluvia de sobres', description: 'Mensaje elegante para sobres.' },
-  { id: 'link', label: 'Mesa después', description: 'Placeholder para configurar luego.' },
+const STYLES: Array<{ id: WizardStyle; label: string; description: string; swatches: [string, string] }> = [
+  { id: 'editorial', label: 'Editorial', description: 'Marfil y dorado suave', swatches: ['#FBF7EF', '#C8A75D'] },
+  { id: 'romantico', label: 'Romántico', description: 'Rosa pastel y champagne', swatches: ['#FFF7F8', '#B76E79'] },
+  { id: 'minimalista', label: 'Minimalista', description: 'Limpio y luminoso', swatches: ['#FAF8F6', '#BDAE9A'] },
+  { id: 'floral', label: 'Floral', description: 'Verde sage y blush', swatches: ['#F8FAF7', '#A8BFAA'] },
+  { id: 'moderno', label: 'Moderno', description: 'Celeste suave editorial', swatches: ['#F5FAFF', '#6F8FBF'] },
 ];
 
 export function QuickSetupWizard({
@@ -41,7 +33,7 @@ export function QuickSetupWizard({
   editorUrl = `/dashboard/invitations/${invitationId}/edit`,
   dashboardUrl = `/cliente/invitaciones/${invitationId}`,
 }: Props) {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -53,6 +45,7 @@ export function QuickSetupWizard({
   const [eventTime, setEventTime] = useState('18:00');
   const [venueName, setVenueName] = useState('');
   const [venueAddress, setVenueAddress] = useState('');
+  const [showMapLinks, setShowMapLinks] = useState(false);
   const [googleMapsUrl, setGoogleMapsUrl] = useState('');
   const [wazeUrl, setWazeUrl] = useState('');
 
@@ -63,20 +56,25 @@ export function QuickSetupWizard({
   const [dressCodeType, setDressCodeType] = useState('Formal');
   const [rsvpMode, setRsvpMode] = useState<'open' | 'passes_only'>('open');
   const [whatsappMessage, setWhatsappMessage] = useState('');
-  const [mesaRegalosType, setMesaRegalosType] = useState<WizardMinimalInput['mesaRegalosType']>('ninguna');
+  const [mesaRegalosType] = useState<WizardMinimalInput['mesaRegalosType']>('ninguna');
 
-  const canContinueEvent =
-    noviaName.trim().length > 0 &&
-    novioName.trim().length > 0 &&
+  const hasNames = noviaName.trim().length > 0 && novioName.trim().length > 0;
+  const hasDatePlace =
     weddingDate.length > 0 &&
     eventTime.length > 0 &&
     venueName.trim().length > 0 &&
     venueAddress.trim().length > 0;
+  const canSubmit = hasNames && hasDatePlace;
+
+  function goTo(nextStep: number) {
+    setErrorMsg(null);
+    setStep(Math.max(0, Math.min(TOTAL_STEPS - 1, nextStep)));
+  }
 
   function submitWizard() {
-    if (!canContinueEvent) {
-      setErrorMsg('Completa nombres, fecha, hora, lugar y dirección para continuar.');
-      setStep(1);
+    if (!canSubmit) {
+      setErrorMsg('Completa nombres, fecha, hora, lugar y dirección para crear tu invitación.');
+      setStep(hasNames ? 2 : 1);
       return;
     }
 
@@ -108,9 +106,7 @@ export function QuickSetupWizard({
     startTransition(async () => {
       const result = await wizardQuickSetup(invitationId, input);
       if (result.ok) {
-        if (result.publicUrl) {
-          setSavedPublicUrl(result.publicUrl);
-        }
+        if (result.publicUrl) setSavedPublicUrl(result.publicUrl);
         setSaved(true);
         return;
       }
@@ -127,20 +123,14 @@ export function QuickSetupWizard({
       <main style={shellStyle}>
         <section style={successCardStyle}>
           <p style={eyebrowStyle}>KOMPRALO</p>
-          <h1 style={successTitleStyle}>Tu invitación ya está lista.</h1>
-          <p style={mutedStyle}>Ya puedes verla, compartirla o seguir personalizando los detalles.</p>
+          <h1 style={successTitleStyle}>Tu invitación ya está lista</h1>
+          <p style={mutedStyle}>Entra a Mi Evento para compartirla, revisar RSVP y completar detalles cuando quieras.</p>
 
           <div style={{ display: 'grid', gap: 12, marginTop: 24 }}>
-            {savedPublicUrl && <Link href={savedPublicUrl} style={primaryLinkStyle}>Ver invitación</Link>}
+            <Link href={dashboardUrl} style={primaryLinkStyle}>Ir a Mi Evento</Link>
+            {savedPublicUrl && <Link href={savedPublicUrl} style={secondaryLinkStyle}>Ver mi invitación</Link>}
             <WizardWhatsAppShareLink publicPath={savedPublicUrl} style={secondaryLinkStyle} />
-            <Link href={editorUrl} style={secondaryLinkStyle}>Personalizar detalles</Link>
-          </div>
-
-          <div style={quickActionsStyle}>
-            <Link href={editorUrl} style={miniActionStyle}>Agregar fotos</Link>
-            <Link href={editorUrl} style={miniActionStyle}>Agregar música</Link>
-            <Link href={dashboardUrl} style={miniActionStyle}>Agregar invitados</Link>
-            <Link href={dashboardUrl} style={miniActionStyle}>Configurar QR</Link>
+            <Link href={editorUrl} style={secondaryLinkStyle}>Personalizar más</Link>
           </div>
         </section>
       </main>
@@ -150,37 +140,66 @@ export function QuickSetupWizard({
   return (
     <main style={shellStyle}>
       <section style={cardStyle}>
-        <div style={{ marginBottom: 22, textAlign: 'center' }}>
+        <div style={{ marginBottom: 18, textAlign: 'center' }}>
           {invitationTitle && <p style={eyebrowStyle}>{invitationTitle}</p>}
-          <h1 style={titleStyle}>{isCompleted ? 'Actualizar datos' : 'Configura tu invitación'}</h1>
-          <p style={mutedStyle}>{isCompleted ? 'Ajusta la base de tu invitación.' : '3 pasos · menos de 3 minutos'}</p>
           <Progress step={step} />
         </div>
 
+        {step === 0 && (
+          <StepFrame
+            title={isCompleted ? 'Actualiza tu invitación' : 'Hagamos tu invitación en minutos'}
+            subtitle="Te haremos pocas preguntas y al final guardaremos todo en tu invitación real."
+            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+          >
+            <button type="button" onClick={() => goTo(1)} style={primaryButtonStyle}>
+              Comenzar
+            </button>
+          </StepFrame>
+        )}
+
         {step === 1 && (
-          <div>
-            <StepHeading title="Evento" subtitle="Lo esencial para mostrar tu boda correctamente." />
-            <div style={twoColumnStyle}>
-              <Field label="Novia" value={noviaName} onChange={setNoviaName} placeholder="Sofía" />
-              <Field label="Novio" value={novioName} onChange={setNovioName} placeholder="Alejandro" />
-            </div>
+          <StepFrame
+            title="¿Quiénes se casan?"
+            subtitle="Esto crea el título y la portada base de la invitación."
+            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+          >
+            <Field label="Novia" value={noviaName} onChange={setNoviaName} placeholder="Sofía" />
+            <Field label="Novio" value={novioName} onChange={setNovioName} placeholder="Alejandro" />
+            <NavButtons onBack={() => goTo(0)} onNext={() => goTo(2)} nextLabel="Continuar" disabled={!hasNames} />
+          </StepFrame>
+        )}
+
+        {step === 2 && (
+          <StepFrame
+            title="¿Cuándo y dónde?"
+            subtitle="Con esto tus invitados ya sabrán lo esencial del evento."
+            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+          >
             <div style={twoColumnStyle}>
               <Field label="Fecha" type="date" value={weddingDate} onChange={setWeddingDate} />
               <Field label="Hora" type="time" value={eventTime} onChange={setEventTime} />
             </div>
             <Field label="Lugar" value={venueName} onChange={setVenueName} placeholder="Hacienda, jardín o salón" />
             <Field label="Dirección" value={venueAddress} onChange={setVenueAddress} placeholder="Calle, ciudad, estado" />
-            <Field label="Google Maps URL opcional" value={googleMapsUrl} onChange={setGoogleMapsUrl} placeholder="https://maps.google.com/..." />
-            <Field label="Waze URL opcional" value={wazeUrl} onChange={setWazeUrl} placeholder="https://waze.com/..." />
-            <button type="button" disabled={!canContinueEvent} onClick={() => setStep(2)} style={{ ...primaryButtonStyle, opacity: canContinueEvent ? 1 : 0.45 }}>
-              Continuar
+            <button type="button" onClick={() => setShowMapLinks((current) => !current)} style={plainButtonStyle}>
+              {showMapLinks ? 'Ocultar links de mapas' : 'Agregar Maps/Waze opcional'}
             </button>
-          </div>
+            {showMapLinks && (
+              <div style={{ marginTop: 12 }}>
+                <Field label="Google Maps URL opcional" value={googleMapsUrl} onChange={setGoogleMapsUrl} placeholder="https://maps.google.com/..." />
+                <Field label="Waze URL opcional" value={wazeUrl} onChange={setWazeUrl} placeholder="https://waze.com/..." />
+              </div>
+            )}
+            <NavButtons onBack={() => goTo(1)} onNext={() => goTo(3)} nextLabel="Continuar" disabled={!hasDatePlace} />
+          </StepFrame>
         )}
 
-        {step === 2 && (
-          <div>
-            <StepHeading title="Estilo" subtitle="Elige una dirección visual. Podrás cambiarla después." />
+        {step === 3 && (
+          <StepFrame
+            title="Elige el estilo"
+            subtitle="Selecciona una dirección visual. Después podrás personalizar más."
+            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+          >
             <div style={styleGridStyle}>
               {STYLES.map((item) => (
                 <button
@@ -202,48 +221,44 @@ export function QuickSetupWizard({
                 </button>
               ))}
             </div>
-            <Field label="Foto principal o URL de portada opcional" value={coverImageUrl} onChange={setCoverImageUrl} placeholder="https://..." />
             <TextArea label="Mensaje de portada opcional" value={heroMessage} onChange={setHeroMessage} placeholder="Dos almas, un destino" />
-            <NavButtons onBack={() => setStep(1)} onNext={() => setStep(3)} nextLabel="Continuar" />
-          </div>
+            <details style={detailsStyle}>
+              <summary style={{ cursor: 'pointer', color: '#6B5137', fontSize: 13, fontWeight: 750 }}>Tengo URL de foto de portada</summary>
+              <div style={{ marginTop: 12 }}>
+                <Field label="URL de portada opcional" value={coverImageUrl} onChange={setCoverImageUrl} placeholder="https://..." />
+              </div>
+            </details>
+            <NavButtons onBack={() => goTo(2)} onNext={() => goTo(4)} nextLabel="Continuar" />
+          </StepFrame>
         )}
 
-        {step === 3 && (
-          <div>
-            <StepHeading title="Confirmación" subtitle="Revisa la base antes de guardar." />
+        {step === 4 && (
+          <StepFrame
+            title="Revisar y activar"
+            subtitle="Guardaremos todo al pulsar el botón final. Podrás editar cualquier detalle después."
+            preview={<MiniPreview noviaName={noviaName} novioName={novioName} weddingDate={weddingDate} venueName={venueName} styleId={style} />}
+          >
             <Field label="Dress code" value={dressCodeType} onChange={setDressCodeType} placeholder="Formal" />
-
             <p style={labelStyle}>RSVP</p>
             <div style={segmentedStyle}>
-              <ChoiceButton active={rsvpMode === 'open'} onClick={() => setRsvpMode('open')} title="Libre" subtitle="Cualquier invitado confirma." />
-              <ChoiceButton active={rsvpMode === 'passes_only'} onClick={() => setRsvpMode('passes_only')} title="Controlada" subtitle="Por familia / pases." />
+              <ChoiceButton active={rsvpMode === 'open'} onClick={() => setRsvpMode('open')} title="Libre" subtitle="Confirmación simple para invitados." />
+              <ChoiceButton active={rsvpMode === 'passes_only'} onClick={() => setRsvpMode('passes_only')} title="Controlada" subtitle="Control básico por invitación. QR se configura aparte si tu plan lo permite." />
             </div>
-
             <TextArea label="Mensaje de WhatsApp opcional" value={whatsappMessage} onChange={setWhatsappMessage} placeholder="Nos encantará celebrar contigo." />
-
-            <p style={labelStyle}>Regalos</p>
-            <div style={{ display: 'grid', gap: 8, marginBottom: 18 }}>
-              {GIFT_OPTIONS.map((option) => (
-                <ChoiceButton
-                  key={option.id}
-                  active={mesaRegalosType === option.id}
-                  onClick={() => setMesaRegalosType(option.id)}
-                  title={option.label}
-                  subtitle={option.description}
-                />
-              ))}
-            </div>
-
             <div style={summaryStyle}>
               <p style={{ ...labelStyle, marginBottom: 8 }}>Resumen</p>
               <p style={summaryLineStyle}>{noviaName || 'Novia'} & {novioName || 'Novio'}</p>
               <p style={summaryMutedStyle}>{weddingDate || 'Fecha pendiente'} · {eventTime || 'Hora pendiente'}</p>
               <p style={summaryMutedStyle}>{venueName || 'Lugar pendiente'}</p>
             </div>
-
             {errorMsg && <p style={errorStyle}>{errorMsg}</p>}
-            <NavButtons onBack={() => setStep(2)} onNext={submitWizard} nextLabel={isPending ? 'Guardando...' : isCompleted ? 'Actualizar datos' : 'Dejar lista mi invitación'} disabled={isPending} />
-          </div>
+            <NavButtons
+              onBack={() => goTo(3)}
+              onNext={submitWizard}
+              nextLabel={isPending ? 'Guardando...' : isCompleted ? 'Actualizar invitación' : 'Crear mi invitación'}
+              disabled={isPending || !canSubmit}
+            />
+          </StepFrame>
         )}
       </section>
     </main>
@@ -252,19 +267,71 @@ export function QuickSetupWizard({
 
 function Progress({ step }: { step: number }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 18 }}>
-      {[1, 2, 3].map((item) => (
-        <div key={item} style={{ height: 7, borderRadius: 99, background: item <= step ? '#C5A880' : '#E8DED2' }} />
-      ))}
+    <div>
+      <p style={{ ...labelStyle, marginBottom: 10 }}>Paso {step + 1} de {TOTAL_STEPS}</p>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${TOTAL_STEPS}, 1fr)`, gap: 8 }}>
+        {Array.from({ length: TOTAL_STEPS }, (_, index) => (
+          <div key={index} style={{ height: 7, borderRadius: 99, background: index <= step ? '#C5A880' : '#E8DED2' }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StepFrame({
+  title,
+  subtitle,
+  preview,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  preview: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <StepHeading title={title} subtitle={subtitle} />
+      {preview}
+      <div style={{ marginTop: 20 }}>{children}</div>
+    </div>
+  );
+}
+
+function MiniPreview({
+  noviaName,
+  novioName,
+  weddingDate,
+  venueName,
+  styleId,
+}: {
+  noviaName: string;
+  novioName: string;
+  weddingDate: string;
+  venueName: string;
+  styleId: WizardStyle;
+}) {
+  const styleMeta = STYLES.find((item) => item.id === styleId) ?? STYLES[0];
+  const names = noviaName || novioName ? `${noviaName || 'Novia'} & ${novioName || 'Novio'}` : 'Tu boda';
+
+  return (
+    <div style={{ ...previewStyle, background: `linear-gradient(145deg, ${styleMeta.swatches[0]}, #FFFFFF)` }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 14 }}>
+        <span style={{ ...swatchStyle, width: 18, height: 18, background: styleMeta.swatches[0] }} />
+        <span style={{ ...swatchStyle, width: 18, height: 18, background: styleMeta.swatches[1] }} />
+      </div>
+      <p style={previewEyebrowStyle}>{weddingDate || 'Fecha por definir'}</p>
+      <h3 style={previewTitleStyle}>{names}</h3>
+      <p style={previewMutedStyle}>{venueName || 'Lugar por confirmar'}</p>
     </div>
   );
 }
 
 function StepHeading({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div style={{ marginBottom: 18 }}>
-      <h2 style={{ color: '#3D2B1A', fontSize: 20, fontWeight: 650, marginBottom: 4 }}>{title}</h2>
-      <p style={{ color: '#8A7663', fontSize: 13, lineHeight: 1.5 }}>{subtitle}</p>
+    <div style={{ marginBottom: 18, textAlign: 'center' }}>
+      <h2 style={{ color: '#3D2B1A', fontSize: 26, lineHeight: 1.1, fontWeight: 680, marginBottom: 8 }}>{title}</h2>
+      <p style={{ color: '#8A7663', fontSize: 14, lineHeight: 1.5 }}>{subtitle}</p>
     </div>
   );
 }
@@ -353,7 +420,7 @@ function NavButtons({
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 10, marginTop: 22 }}>
       <button type="button" onClick={onBack} style={backButtonStyle}>Atrás</button>
-      <button type="button" onClick={onNext} disabled={disabled} style={{ ...primaryButtonStyle, marginTop: 0, opacity: disabled ? 0.6 : 1 }}>{nextLabel}</button>
+      <button type="button" onClick={onNext} disabled={disabled} style={{ ...primaryButtonStyle, marginTop: 0, opacity: disabled ? 0.55 : 1 }}>{nextLabel}</button>
     </div>
   );
 }
@@ -362,7 +429,7 @@ const shellStyle: React.CSSProperties = {
   minHeight: '100vh',
   width: '100%',
   background: 'linear-gradient(180deg, #FFFDF8 0%, #F6F2EC 100%)',
-  padding: '24px 14px',
+  padding: '18px 12px',
 };
 
 const cardStyle: React.CSSProperties = {
@@ -370,9 +437,9 @@ const cardStyle: React.CSSProperties = {
   margin: '0 auto',
   background: '#FFFCF7',
   border: '1px solid #E8DED2',
-  borderRadius: 26,
+  borderRadius: 28,
   boxShadow: '0 24px 70px rgba(72, 55, 38, 0.10)',
-  padding: '24px 18px',
+  padding: '22px 16px',
 };
 
 const successCardStyle: React.CSSProperties = {
@@ -389,17 +456,12 @@ const eyebrowStyle: React.CSSProperties = {
   marginBottom: 8,
 };
 
-const titleStyle: React.CSSProperties = {
-  color: '#3D2B1A',
-  fontSize: 28,
-  lineHeight: 1.1,
-  fontWeight: 650,
-  marginBottom: 8,
-};
-
 const successTitleStyle: React.CSSProperties = {
-  ...titleStyle,
-  fontSize: 30,
+  color: '#3D2B1A',
+  fontSize: 31,
+  lineHeight: 1.08,
+  fontWeight: 680,
+  marginBottom: 10,
 };
 
 const mutedStyle: React.CSSProperties = {
@@ -424,21 +486,21 @@ const inputStyle: React.CSSProperties = {
   color: '#3D2B1A',
   background: '#FFFFFF',
   border: '1px solid #E8DED2',
-  borderRadius: 14,
+  borderRadius: 16,
   fontSize: 16,
-  padding: '14px 14px',
+  padding: '15px 14px',
   outlineColor: '#C5A880',
 };
 
 const twoColumnStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
   gap: 10,
 };
 
 const styleGridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
   gap: 10,
   marginBottom: 18,
 };
@@ -459,7 +521,7 @@ const swatchStyle: React.CSSProperties = {
 
 const segmentedStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+  gridTemplateColumns: '1fr',
   gap: 8,
   marginBottom: 14,
 };
@@ -486,6 +548,24 @@ const backButtonStyle: React.CSSProperties = {
   fontSize: 14,
   fontWeight: 700,
   padding: '15px 12px',
+};
+
+const plainButtonStyle: React.CSSProperties = {
+  border: 'none',
+  background: 'transparent',
+  color: '#6B5137',
+  cursor: 'pointer',
+  fontSize: 13,
+  fontWeight: 750,
+  padding: '4px 0',
+};
+
+const detailsStyle: React.CSSProperties = {
+  background: '#F8F2E8',
+  border: '1px solid #E8DED2',
+  borderRadius: 16,
+  padding: 14,
+  marginBottom: 14,
 };
 
 const summaryStyle: React.CSSProperties = {
@@ -519,6 +599,35 @@ const errorStyle: React.CSSProperties = {
   marginTop: 14,
 };
 
+const previewStyle: React.CSSProperties = {
+  border: '1px solid #E8DED2',
+  borderRadius: 24,
+  padding: '22px 16px',
+  textAlign: 'center',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.75)',
+};
+
+const previewEyebrowStyle: React.CSSProperties = {
+  color: '#B99752',
+  fontSize: 11,
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase',
+  marginBottom: 8,
+};
+
+const previewTitleStyle: React.CSSProperties = {
+  color: '#3D2B1A',
+  fontSize: 25,
+  lineHeight: 1.1,
+  fontWeight: 540,
+  marginBottom: 8,
+};
+
+const previewMutedStyle: React.CSSProperties = {
+  color: '#8A7663',
+  fontSize: 13,
+};
+
 const primaryLinkStyle: React.CSSProperties = {
   display: 'block',
   borderRadius: 16,
@@ -537,21 +646,5 @@ const secondaryLinkStyle: React.CSSProperties = {
   color: '#6B5137',
   fontWeight: 750,
   padding: '14px 18px',
-  textDecoration: 'none',
-};
-
-const quickActionsStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-  gap: 8,
-  marginTop: 20,
-};
-
-const miniActionStyle: React.CSSProperties = {
-  color: '#8A7663',
-  background: '#F8F2E8',
-  borderRadius: 14,
-  padding: '12px 10px',
-  fontSize: 12,
   textDecoration: 'none',
 };

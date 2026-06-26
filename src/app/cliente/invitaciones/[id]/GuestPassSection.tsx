@@ -18,27 +18,27 @@ interface GuestPass {
 }
 
 const T = {
-  dark:   '#0D0A07',
-  mid:    '#1A1612',
-  light:  '#6B4A35',
-  gold:   '#C4A962',
-  cream:  '#F1E3C8',
-  white:  '#FFFAF3',
-  border: '#EAD7A3',
-  ivory:  '#E8D7B8',
+  dark:   '#1C1713',
+  mid:    '#1C1713',
+  light:  '#7A6A5B',
+  gold:   '#C8A95B',
+  cream:  '#FFFBF4',
+  white:  '#FFFBF4',
+  border: '#E5D2A8',
+  ivory:  '#FAF3E6',
 } as const;
 
 const statusColors: Record<string, string> = {
-  pending:   '#8A6D3B',
-  confirmed: '#238636',
-  declined:  '#D32F2F',
-  used:      '#555',
+  pending:   '#7A6A5B',
+  confirmed: '#247A45',
+  declined:  '#B43232',
+  used:      '#6A6A6A',
 };
 const statusBg: Record<string, string> = {
-  pending:   '#FCF8E3',
-  confirmed: '#E6F4EA',
-  declined:  '#FCE8E6',
-  used:      '#F0F0F0',
+  pending:   '#FBF5E3',
+  confirmed: '#E7F5EC',
+  declined:  '#FBEAEA',
+  used:      '#F2F2F2',
 };
 const statusLabels: Record<string, string> = {
   pending:   'Sin confirmar',
@@ -329,9 +329,9 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
 
       {/* ── Error banner ── */}
       {deleteErr && (
-        <div style={{ margin: '0 0 .75rem', padding: '.75rem 1rem', background: '#FCE8E6', border: '1px solid #F5C6C6', borderRadius: '.75rem', fontSize: '.8125rem', color: '#D32F2F', fontWeight: 600 }}>
+        <div style={{ margin: '0 0 .75rem', padding: '.75rem 1rem', background: '#FBEAEA', border: '1px solid #F5C6C6', borderRadius: '.75rem', fontSize: '.8125rem', color: '#B43232', fontWeight: 600 }}>
           {deleteErr}
-          <button onClick={() => setDeleteErr('')} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer', color: '#D32F2F', fontSize: '.875rem' }}>×</button>
+          <button onClick={() => setDeleteErr('')} style={{ float: 'right', background: 'none', border: 'none', cursor: 'pointer', color: '#B43232', fontSize: '.875rem' }}>×</button>
         </div>
       )}
 
@@ -340,7 +340,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
         <p style={{ color: T.light, fontSize: '.875rem', textAlign: 'center', padding: '1.5rem 0' }}>Cargando invitados…</p>
       )}
       {!loading && error && (
-        <p style={{ color: '#D32F2F', fontSize: '.875rem', textAlign: 'center' }}>{error}</p>
+        <p style={{ color: '#B43232', fontSize: '.875rem', textAlign: 'center' }}>{error}</p>
       )}
 
       {/* ── Empty state ── */}
@@ -403,7 +403,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                 >
                   {filterLabels[key]}
                   {key === 'pending'   && totalPending   > 0 && <span style={{ marginLeft: '.35rem', background: '#8A6D3B', color: '#fff', borderRadius: '1rem', padding: '0 .35rem', fontSize: '.65rem' }}>{totalPending}</span>}
-                  {key === 'confirmed' && totalConfirmed > 0 && <span style={{ marginLeft: '.35rem', background: '#238636', color: '#fff', borderRadius: '1rem', padding: '0 .35rem', fontSize: '.65rem' }}>{totalConfirmed}</span>}
+                  {key === 'confirmed' && totalConfirmed > 0 && <span style={{ marginLeft: '.35rem', background: '#247A45', color: '#fff', borderRadius: '1rem', padding: '0 .35rem', fontSize: '.65rem' }}>{totalConfirmed}</span>}
                 </button>
               ))}
             </div>
@@ -473,7 +473,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                             href={buildWaUrl(buildWaMsg(p), p.phone)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ ...tableBtn, textDecoration: 'none', background: '#E8F9EE', color: '#238636', borderColor: '#A7D7B0' }}
+                            style={{ ...tableBtn, textDecoration: 'none', background: '#E8F9EE', color: '#247A45', borderColor: '#B8DFC4' }}
                           >
                             Enviar invitación
                           </a>
@@ -481,7 +481,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                           <button
                             onClick={() => handleDelete(p.id)}
                             disabled={deleting === p.id}
-                            style={{ ...tableBtn, background: '#FCE8E6', borderColor: '#F5C6C6', color: '#D32F2F', opacity: deleting === p.id ? 0.5 : 1 }}
+                            style={{ ...tableBtn, background: '#FBEAEA', borderColor: '#F0C4C4', color: '#B43232', opacity: deleting === p.id ? 0.5 : 1 }}
                           >
                             {deleting === p.id ? '…' : '🗑'}
                           </button>
@@ -557,7 +557,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                     <button
                       onClick={() => handleDelete(p.id)}
                       disabled={deleting === p.id}
-                      style={{ ...mobileBtn('#FCE8E6', '#D32F2F', '#F5C6C6'), fontSize: '.8rem', opacity: deleting === p.id ? 0.5 : 1 }}
+                      style={{ ...mobileBtn('#FBEAEA', '#B43232', '#F0C4C4'), fontSize: '.8rem', opacity: deleting === p.id ? 0.5 : 1 }}
                     >
                       {deleting === p.id ? 'Eliminando…' : '🗑 Eliminar'}
                     </button>
@@ -643,7 +643,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
             </label>
 
             {formError && (
-              <p style={{ margin: '0 0 .875rem', fontSize: '.8125rem', color: '#D32F2F', fontWeight: 600 }}>{formError}</p>
+              <p style={{ margin: '0 0 .875rem', fontSize: '.8125rem', color: '#B43232', fontWeight: 600 }}>{formError}</p>
             )}
 
             <div style={{ display: 'flex', gap: '.625rem' }}>
@@ -707,7 +707,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
               </p>
 
               {qrPass.checkedInAt && (
-                <div style={{ marginTop: '.75rem', padding: '.35rem .75rem', background: '#238636', borderRadius: '2rem', display: 'inline-block' }}>
+                <div style={{ marginTop: '.75rem', padding: '.35rem .75rem', background: '#247A45', borderRadius: '2rem', display: 'inline-block' }}>
                   <span style={{ fontSize: '.75rem', color: '#fff', fontWeight: 700 }}>✓ Pase utilizado</span>
                 </div>
               )}
@@ -722,7 +722,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
               </button>
               <button
                 onClick={handleCopyQr}
-                style={{ padding: '.625rem', background: qrCopied ? '#E6F4EA' : T.cream, color: qrCopied ? '#238636' : T.dark, border: `1px solid ${qrCopied ? '#A7D7B0' : T.border}`, borderRadius: '.75rem', fontSize: '.8125rem', fontWeight: 700, cursor: 'pointer' }}
+                style={{ padding: '.625rem', background: qrCopied ? '#E7F5EC' : T.cream, color: qrCopied ? '#247A45' : T.dark, border: `1px solid ${qrCopied ? '#B8DFC4' : T.border}`, borderRadius: '.75rem', fontSize: '.8125rem', fontWeight: 700, cursor: 'pointer' }}
               >
                 {qrCopied ? '✓ Copiado' : '🔗 Copiar enlace'}
               </button>

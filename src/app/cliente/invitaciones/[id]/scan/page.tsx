@@ -14,12 +14,12 @@ interface Props {
 }
 
 const T = {
-  dark:   '#0D0A07',
-  light:  '#6B4A35',
-  gold:   '#C4A962',
-  cream:  '#F1E3C8',
-  white:  '#FFFAF3',
-  border: '#EAD7A3',
+  dark:   '#1C1713',
+  light:  '#7A6A5B',
+  gold:   '#C8A95B',
+  cream:  '#FFFBF4',
+  white:  '#FFFBF4',
+  border: '#E5D2A8',
 } as const;
 
 export default async function ScanPage({ params }: Props) {
@@ -54,7 +54,7 @@ export default async function ScanPage({ params }: Props) {
   return (
     <div style={{
       minHeight: '100dvh',
-      background: '#F7F2E9',
+      background: '#FAF3E6',
       fontFamily: 'var(--font-inter, system-ui, sans-serif)',
     }}>
       {/* Header */}

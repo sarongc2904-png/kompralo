@@ -11,12 +11,12 @@ interface GuestPassResult {
 }
 
 const T = {
-  dark:   '#0D0A07',
-  light:  '#6B4A35',
-  gold:   '#C4A962',
-  cream:  '#F1E3C8',
-  white:  '#FFFAF3',
-  border: '#EAD7A3',
+  dark:   '#1C1713',
+  light:  '#7A6A5B',
+  gold:   '#C8A95B',
+  cream:  '#FFFBF4',
+  white:  '#FFFBF4',
+  border: '#E5D2A8',
 } as const;
 
 const statusLabels: Record<string, string> = {
@@ -26,15 +26,15 @@ const statusLabels: Record<string, string> = {
   used:      'Usado',
 };
 const statusColors: Record<string, string> = {
-  pending:   '#8A6D3B',
-  confirmed: '#238636',
-  declined:  '#D32F2F',
+  pending:   '#7A6A5B',
+  confirmed: '#247A45',
+  declined:  '#B43232',
   used:      '#555',
 };
 const statusBg: Record<string, string> = {
-  pending:   '#FCF8E3',
-  confirmed: '#E6F4EA',
-  declined:  '#FCE8E6',
+  pending:   '#FBF5E3',
+  confirmed: '#E7F5EC',
+  declined:  '#FBEAEA',
   used:      '#F0F0F0',
 };
 
@@ -327,7 +327,7 @@ export default function ScannerView({ invitationId }: Props) {
       {/* ── CAMERA DENIED ── */}
       {uiState === 'camera-denied' && (
         <div style={{
-          background: '#FCF8E3', border: `1px solid ${T.border}`,
+          background: '#FBF5E3', border: `1px solid ${T.border}`,
           borderRadius: '1.25rem', padding: '1.5rem', textAlign: 'center',
           marginTop: '1rem',
         }}>
@@ -397,15 +397,15 @@ export default function ScannerView({ invitationId }: Props) {
       {/* ── NOT FOUND / ERROR ── */}
       {(uiState === 'not-found' || uiState === 'error') && (
         <div style={{
-          background: '#FCE8E6', border: '1px solid #F5C6C6',
+          background: '#FBEAEA', border: '1px solid #F5C0C0',
           borderRadius: '1.25rem', padding: '1.5rem', textAlign: 'center',
           marginTop: '1rem',
         }}>
           <div style={{ fontSize: '1.75rem', marginBottom: '.5rem' }}>❌</div>
-          <p style={{ margin: '0 0 .25rem', fontWeight: 700, color: '#D32F2F', fontSize: '.9375rem' }}>
+          <p style={{ margin: '0 0 .25rem', fontWeight: 700, color: '#B43232', fontSize: '.9375rem' }}>
             {uiState === 'not-found' ? 'Pase no encontrado' : 'Error'}
           </p>
-          <p style={{ margin: '0 0 1.25rem', fontSize: '.8125rem', color: '#9F2A2A', lineHeight: 1.5 }}>{errorMsg}</p>
+          <p style={{ margin: '0 0 1.25rem', fontSize: '.8125rem', color: '#8C2222', lineHeight: 1.5 }}>{errorMsg}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
             <button onClick={resetToCamera} style={primaryBtn}>Escanear de nuevo</button>
             <button onClick={resetToManual} style={secondaryBtn}>Buscar manualmente</button>
@@ -428,7 +428,7 @@ export default function ScannerView({ invitationId }: Props) {
             disabled={checkingIn}
             style={{
               marginTop: '1.25rem', width: '100%', padding: '.875rem',
-              background: checkingIn ? T.border : '#238636',
+              background: checkingIn ? T.border : '#247A45',
               color: '#fff', border: 'none', borderRadius: '.75rem',
               fontSize: '1rem', fontWeight: 800,
               cursor: checkingIn ? 'not-allowed' : 'pointer',
@@ -445,12 +445,12 @@ export default function ScannerView({ invitationId }: Props) {
       {/* ── SUCCESS ── */}
       {uiState === 'done' && pass && (
         <div style={{
-          background: '#E6F4EA', border: '1px solid #A7D7B0',
+          background: '#E7F5EC', border: '1px solid #B8DFC4',
           borderRadius: '1.25rem', padding: '1.5rem', textAlign: 'center',
           marginTop: '1rem',
         }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '.625rem' }}>✅</div>
-          <p style={{ margin: '0 0 .25rem', fontWeight: 800, color: '#238636', fontSize: '1.0625rem' }}>
+          <p style={{ margin: '0 0 .25rem', fontWeight: 800, color: '#247A45', fontSize: '1.0625rem' }}>
             Entrada registrada
           </p>
           <p style={{ margin: '0 0 .125rem', fontSize: '1rem', fontWeight: 700, color: T.dark }}>{pass.guestName}</p>
@@ -458,7 +458,7 @@ export default function ScannerView({ invitationId }: Props) {
             {pass.allowedGuests} {pass.allowedGuests === 1 ? 'persona' : 'personas'}
           </p>
           {checkedInAt && (
-            <p style={{ margin: '0 0 1.25rem', fontSize: '.75rem', color: '#238636', fontWeight: 600 }}>
+            <p style={{ margin: '0 0 1.25rem', fontSize: '.75rem', color: '#247A45', fontWeight: 600 }}>
               {formatDateTime(checkedInAt)}
             </p>
           )}
@@ -469,12 +469,12 @@ export default function ScannerView({ invitationId }: Props) {
       {/* ── ALREADY CHECKED IN ── */}
       {uiState === 'already-in' && pass && (
         <div style={{
-          background: '#FCF8E3', border: '1px solid #EAD7A3',
+          background: '#FBF5E3', border: `1px solid ${T.border}`,
           borderRadius: '1.25rem', padding: '1.5rem', textAlign: 'center',
           marginTop: '1rem',
         }}>
           <div style={{ fontSize: '2rem', marginBottom: '.625rem' }}>⚠️</div>
-          <p style={{ margin: '0 0 .25rem', fontWeight: 800, color: '#8A6D3B', fontSize: '1.0625rem' }}>
+          <p style={{ margin: '0 0 .25rem', fontWeight: 800, color: '#7A6A5B', fontSize: '1.0625rem' }}>
             Este pase ya fue usado
           </p>
           <p style={{ margin: '0 0 .125rem', fontSize: '1rem', fontWeight: 700, color: T.dark }}>{pass.guestName}</p>
@@ -482,7 +482,7 @@ export default function ScannerView({ invitationId }: Props) {
             {pass.allowedGuests} {pass.allowedGuests === 1 ? 'persona' : 'personas'}
           </p>
           {checkedInAt && (
-            <p style={{ margin: '0 0 1.25rem', fontSize: '.75rem', color: '#8A6D3B', fontWeight: 600 }}>
+            <p style={{ margin: '0 0 1.25rem', fontSize: '.75rem', color: '#7A6A5B', fontWeight: 600 }}>
               Ingresó el {formatDateTime(checkedInAt)}
             </p>
           )}
@@ -498,21 +498,21 @@ export default function ScannerView({ invitationId }: Props) {
 function PassInfo({ pass }: { pass: GuestPassResult }) {
   return (
     <div style={{
-      background: '#FFFAF3', border: `1px solid #EAD7A3`,
+      background: '#FFFBF4', border: `1px solid #E5D2A8`,
       borderRadius: '1rem', padding: '1rem',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', marginBottom: '.375rem' }}>
-        <p style={{ margin: 0, fontWeight: 700, color: '#0D0A07', fontSize: '1.0625rem' }}>{pass.guestName}</p>
+        <p style={{ margin: 0, fontWeight: 700, color: '#1C1713', fontSize: '1.0625rem' }}>{pass.guestName}</p>
         <span style={{
           padding: '.2rem .625rem', borderRadius: '2rem', flexShrink: 0,
           fontSize: '.6875rem', fontWeight: 700, whiteSpace: 'nowrap',
-          color: statusColors[pass.status] ?? '#6B4A35',
-          background: statusBg[pass.status] ?? '#F1E3C8',
+          color: statusColors[pass.status] ?? '#7A6A5B',
+          background: statusBg[pass.status] ?? '#FFFBF4',
         }}>
           {statusLabels[pass.status] ?? pass.status}
         </span>
       </div>
-      <p style={{ margin: 0, fontSize: '.875rem', color: '#6B4A35' }}>
+      <p style={{ margin: 0, fontSize: '.875rem', color: '#7A6A5B' }}>
         {pass.allowedGuests} {pass.allowedGuests === 1 ? 'persona permitida' : 'personas permitidas'}
       </p>
     </div>
@@ -536,7 +536,7 @@ function ScanLine() {
       <div style={{
         position: 'absolute', left: '22%', right: '22%',
         height: '2px',
-        background: `linear-gradient(90deg, transparent, #C4A962, transparent)`,
+        background: `linear-gradient(90deg, transparent, #C8A95B, transparent)`,
         animation: 'scanline 2s ease-in-out infinite',
         borderRadius: '1px',
       }} />
@@ -549,7 +549,7 @@ function ScanLine() {
 const primaryBtn: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
   padding: '.75rem 1.5rem', width: '100%',
-  background: '#0D0A07', color: '#F1E3C8',
+  background: '#1C1713', color: '#FFFBF4',
   border: 'none', borderRadius: '.75rem',
   fontSize: '.9375rem', fontWeight: 700, cursor: 'pointer',
 };
@@ -557,7 +557,7 @@ const primaryBtn: React.CSSProperties = {
 const secondaryBtn: React.CSSProperties = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
   padding: '.625rem 1.25rem',
-  background: '#FFFAF3', border: '1px solid #EAD7A3',
+  background: '#FFFBF4', border: '1px solid #E5D2A8',
   borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
-  cursor: 'pointer', color: '#0D0A07',
+  cursor: 'pointer', color: '#1C1713',
 };

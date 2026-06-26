@@ -16,14 +16,14 @@ export const revalidate = 0;
 export const metadata: Metadata = { title: 'Dashboard de invitación — Kompralo' };
 
 const T = {
-  ivory:     '#E8D7B8',
-  cream:     '#F1E3C8',
-  dark:      '#0D0A07',
-  mid:       '#1A1612',
-  light:     '#6B4A35',
-  gold:      '#C4A962',
-  border:    '#EAD7A3',
-  white:     '#F1E3C8',
+  ivory:     '#FAF3E6',
+  cream:     '#FFFBF4',
+  dark:      '#1C1713',
+  mid:       '#1C1713',
+  light:     '#7A6A5B',
+  gold:      '#C8A95B',
+  border:    '#E5D2A8',
+  white:     '#FFFBF4',
 } as const;
 
 const planLabels: Record<string, string> = {
@@ -39,11 +39,11 @@ const attendanceLabels: Record<string, string> = {
 };
 
 const attendanceColors: Record<string, string> = {
-  yes: '#238636', no: '#D32F2F', maybe: '#8A6D3B',
+  yes: '#247A45', no: '#B43232', maybe: '#7A6A5B',
 };
 
 const attendanceBg: Record<string, string> = {
-  yes: '#E6F4EA', no: '#FCE8E6', maybe: '#FCF8E3',
+  yes: '#E7F5EC', no: '#FBEAEA', maybe: '#FBF5E3',
 };
 
 
@@ -75,14 +75,14 @@ function getDaysUntil(iso?: string | null): number | null {
 
 function getEventStatus(input: { publicUrl: string | null; title?: string | null; eventDate?: string | null; status?: string | null }) {
   if (!input.publicUrl || !input.status) {
-    return { label: '🔴 Requiere atención', color: '#9F2A2A', bg: '#FFF0F0', border: '#F0CACA' };
+    return { label: '🔴 Requiere atención', color: '#B43232', bg: '#FBEAEA', border: '#F0C4C4' };
   }
 
   if (!input.title || !input.eventDate) {
-    return { label: '🟡 Faltan detalles', color: '#8A6D1D', bg: '#FFF8E1', border: '#EAD7A3' };
+    return { label: '🟡 Faltan detalles', color: '#7A6A5B', bg: '#FBF5E3', border: '#E5D2A8' };
   }
 
-  return { label: '🟢 Listo para compartir', color: '#1F7A3A', bg: '#E6F4EA', border: '#A7D7B0' };
+  return { label: '🟢 Listo para compartir', color: '#247A45', bg: '#E7F5EC', border: '#B8DFC4' };
 }
 
 type EventPhase = 'configurando' | 'lista' | 'confirmaciones' | 'semana' | 'dia';
@@ -130,16 +130,22 @@ function buildStats(responses: RSVPResponse[]) {
 function PageStyles() {
   return (
     <style>{`
-      .db-btn { transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease; }
-      .db-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15,12,9,0.1); }
-      .db-btn:active { transform: translateY(0); }
+      .db-btn { transition: transform .13s ease, box-shadow .13s ease, opacity .13s ease; }
+      .db-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15,12,9,0.13); }
+      .db-btn:active { transform: translateY(0); box-shadow: none; }
       .db-stat-card { transition: transform .2s ease, box-shadow .2s ease; }
-      .db-stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,12,9,0.06); }
+      .db-stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,12,9,0.08); }
       .event-card {
-        background: rgba(241,227,200,0.92);
-        border: 1px solid ${T.border};
+        background: #FFFBF4;
+        border: 1px solid #E5D2A8;
         border-radius: 1.35rem;
-        box-shadow: 0 18px 45px rgba(72,55,38,0.08);
+        box-shadow: 0 2px 12px rgba(28,23,19,0.05), 0 1px 3px rgba(28,23,19,0.04);
+      }
+      .event-card-dark {
+        background: #1C1713;
+        border: 1px solid rgba(200,169,91,0.25);
+        border-radius: 1.35rem;
+        box-shadow: 0 24px 56px rgba(28,23,19,0.28), 0 4px 16px rgba(28,23,19,0.18);
       }
       .event-hero-grid {
         display: grid;
@@ -220,24 +226,33 @@ function PageStyles() {
 
 // ─── Stat card ────────────────────────────────────────────────────────────────
 
+const STAT_TINT: Record<string, { bg: string; border: string }> = {
+  '#247A45': { bg: '#F0FAF4', border: '#B8DFC4' },
+  '#B43232': { bg: '#FDF2F2', border: '#F5C0C0' },
+  '#C8A95B': { bg: '#FBF5E3', border: '#E8D8AD' },
+};
+
 function StatCard({ label, value, sub, accent }: { label: string; value: number; sub: string; accent?: string }) {
+  const tint = accent ? (STAT_TINT[accent] ?? null) : null;
   return (
     <div
       className="db-stat-card"
       style={{
-        background: T.white, border: `1px solid ${T.border}`,
+        background: tint ? tint.bg : T.white,
+        border: `1px solid ${tint ? tint.border : T.border}`,
         borderRadius: '1rem', padding: '1.25rem 1rem',
-        textAlign: 'center', boxShadow: '0 2px 8px rgba(15,12,9,0.03)',
-        borderTop: accent ? `3px solid ${accent}` : undefined,
+        textAlign: 'center',
+        boxShadow: '0 1px 4px rgba(28,23,19,0.04)',
+        borderLeft: accent ? `4px solid ${accent}` : `4px solid ${T.border}`,
       }}
     >
-      <p style={{ margin: '0 0 .25rem', fontSize: '2rem', fontWeight: 800, color: accent ?? T.dark, lineHeight: 1 }}>
+      <p style={{ margin: '0 0 .3rem', fontSize: '2.125rem', fontWeight: 800, color: accent ?? T.dark, lineHeight: 1, letterSpacing: '-.02em' }}>
         {value}
       </p>
-      <p style={{ margin: '0 0 .25rem', fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>
+      <p style={{ margin: '0 0 .2rem', fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>
         {label}
       </p>
-      <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{sub}</p>
+      <p style={{ margin: 0, fontSize: '.7rem', color: T.light, letterSpacing: '.01em' }}>{sub}</p>
     </div>
   );
 }
@@ -274,7 +289,7 @@ function RsvpCard({ r, appUrl }: { r: RSVPResponse; appUrl: string }) {
             <span style={{ color: T.light, fontSize: '.75rem' }}>Acompañantes</span>
             <span style={{ fontWeight: 600 }}>{validComp}</span>
             <span style={{ color: T.light, fontSize: '.75rem' }}>Asistentes</span>
-            <span style={{ fontWeight: 600, color: '#238636' }}>{total}</span>
+            <span style={{ fontWeight: 600, color: '#247A45' }}>{total}</span>
           </>
         )}
         {r.phone && (
@@ -304,9 +319,9 @@ function RsvpCard({ r, appUrl }: { r: RSVPResponse; appUrl: string }) {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '.375rem',
               padding: '.4rem .875rem',
-              background: r.checkedInAt ? '#E6F4EA' : T.dark,
-              color: r.checkedInAt ? '#238636' : T.cream,
-              border: `1px solid ${r.checkedInAt ? '#A7D7B0' : 'transparent'}`,
+              background: r.checkedInAt ? '#E7F5EC' : T.dark,
+              color: r.checkedInAt ? '#247A45' : T.cream,
+              border: `1px solid ${r.checkedInAt ? '#B8DFC4' : 'transparent'}`,
               borderRadius: '.625rem', fontSize: '.8125rem', fontWeight: 700,
               textDecoration: 'none',
             }}
@@ -474,13 +489,14 @@ export default async function InvitationDashboard({ params }: Props) {
   // ── Button style helpers ──────────────────────────────────────────────────────
   const btnBase: React.CSSProperties = {
     display: 'flex', justifyContent: 'center', alignItems: 'center',
-    minHeight: '48px', padding: '.8rem 1rem',
-    borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800,
-    textDecoration: 'none', border: '2px solid transparent',
+    minHeight: '50px', padding: '.85rem 1.25rem',
+    borderRadius: '1rem', fontSize: '.9375rem', fontWeight: 700,
+    textDecoration: 'none', border: '1.5px solid transparent',
+    letterSpacing: '.005em', transition: 'all .13s ease',
   };
-  const btnPrimary: React.CSSProperties   = { ...btnBase, background: T.dark,  color: '#F5F0E8' };
-  const btnGold: React.CSSProperties      = { ...btnBase, background: T.gold,  color: T.dark };
-  const btnSecondary: React.CSSProperties = { ...btnBase, background: '#FFFFFF', border: `2px solid ${T.border}`, color: T.dark };
+  const btnPrimary: React.CSSProperties   = { ...btnBase, background: '#1C1713', color: '#FFF7EA', boxShadow: '0 2px 8px rgba(28,23,19,0.18)' };
+  const btnGold: React.CSSProperties      = { ...btnBase, background: T.gold, color: '#1C1713', boxShadow: '0 4px 16px rgba(200,169,91,0.35)', fontWeight: 800 };
+  const btnSecondary: React.CSSProperties = { ...btnBase, background: '#FFFBF4', border: '1.5px solid #D4BF96', color: '#3D2F20', fontWeight: 600 };
 
   return (
     <main style={{
@@ -524,11 +540,18 @@ export default async function InvitationDashboard({ params }: Props) {
           </h1>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem', alignItems: 'center' }}>
             {daysUntilEvent !== null && (
-              <span style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '2rem', padding: '.45rem .8rem', fontSize: '.8125rem', fontWeight: 800, color: T.dark }}>
+              <span style={{
+                background: daysUntilEvent === 0 ? '#1C1713' : T.cream,
+                border: `1px solid ${daysUntilEvent === 0 ? 'rgba(200,169,91,0.35)' : T.border}`,
+                borderRadius: '2rem', padding: '.45rem .875rem',
+                fontSize: '.8rem', fontWeight: 700,
+                color: daysUntilEvent === 0 ? '#C8A95B' : T.dark,
+                letterSpacing: '.01em',
+              }}>
                 {daysUntilEvent > 0 ? `${daysUntilEvent} días restantes` : daysUntilEvent === 0 ? 'Hoy es el evento' : 'Evento realizado'}
               </span>
             )}
-            <span style={{ background: eventStatus.bg, border: `1px solid ${eventStatus.border}`, borderRadius: '2rem', padding: '.45rem .8rem', fontSize: '.8125rem', fontWeight: 800, color: eventStatus.color }}>
+            <span style={{ background: eventStatus.bg, border: `1px solid ${eventStatus.border}`, borderRadius: '2rem', padding: '.45rem .875rem', fontSize: '.8rem', fontWeight: 700, color: eventStatus.color, letterSpacing: '.01em' }}>
               {eventStatus.label}
             </span>
           </div>
@@ -540,57 +563,66 @@ export default async function InvitationDashboard({ params }: Props) {
         ════════════════════════════════════════════════ */}
         {phase === 'dia' && (
           <>
-            <div className="event-card" style={{ padding: '2.5rem 1.5rem', marginBottom: '1.25rem', textAlign: 'center' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '.875rem' }}>🎉</div>
-              <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.1 }}>
+            {/* Hero — dark espresso premium */}
+            <div className="event-card-dark" style={{ padding: 'clamp(2rem,5vw,3rem) clamp(1.5rem,4vw,2.5rem)', marginBottom: '1.25rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '2.75rem', marginBottom: '1rem', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))' }}>🎉</div>
+              <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.875rem, 6vw, 2.625rem)', fontWeight: 700, color: '#FFF7EA', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.08, letterSpacing: '-.01em' }}>
                 Hoy es tu gran día
               </h2>
-              <p style={{ margin: '0 auto 1.75rem', color: T.light, fontSize: '1rem', lineHeight: 1.65, maxWidth: '520px' }}>
+              <p style={{ margin: '0 auto 2rem', color: 'rgba(255,247,234,0.65)', fontSize: '1rem', lineHeight: 1.7, maxWidth: '480px' }}>
                 Todo está listo. Desde aquí podrás controlar la entrada de tus invitados y seguir las confirmaciones en tiempo real.
               </p>
               <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '.875rem' }}>
-                <a href="#mis-invitados" className="db-btn" style={{ ...btnPrimary, padding: '.9rem 2rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
+                <a href="#mis-invitados" className="db-btn" style={{ ...btnGold, padding: '.9rem 2.25rem', minHeight: '54px', fontSize: '1rem' }}>
                   Preparar entrada
                 </a>
                 {publicUrl && (
-                  <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ ...btnSecondary, padding: '.9rem 1.5rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
+                  <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn"
+                    style={{ ...btnBase, background: 'rgba(255,247,234,0.1)', border: '1.5px solid rgba(255,247,234,0.22)', color: '#FFF7EA', minHeight: '54px', fontSize: '1rem', fontWeight: 600 }}
+                  >
                     Ver invitación
                   </a>
                 )}
               </div>
             </div>
 
-            {/* ── Control del evento — agrupa acceso, confirmados y check-ins ── */}
-            <div id="control-acceso" className="event-card" style={{ padding: '1.25rem', marginBottom: '1.5rem' }}>
-              <p style={{ margin: '0 0 1rem', fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
+            {/* ── Control del evento ── */}
+            <div id="control-acceso" className="event-card" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+              <p style={{ margin: '0 0 1.125rem', fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: T.gold }}>
                 Control del evento
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '.75rem', marginBottom: '1.25rem' }}>
-                <div className="db-stat-card" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1rem', padding: '1rem', textAlign: 'center', borderTop: `3px solid #238636` }}>
-                  <p style={{ margin: '0 0 .2rem', fontSize: '1.75rem', fontWeight: 800, color: '#238636', lineHeight: 1 }}>{stats.yesCount}</p>
-                  <p style={{ margin: 0, fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>Confirmados</p>
-                  <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>van a asistir</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '.75rem', marginBottom: '1.25rem' }}>
+                {/* Confirmados */}
+                <div className="db-stat-card" style={{ background: '#F0FAF4', border: '1px solid #B8DFC4', borderLeft: '4px solid #247A45', borderRadius: '1rem', padding: '1.125rem 1rem', textAlign: 'center' }}>
+                  <p style={{ margin: '0 0 .25rem', fontSize: '2rem', fontWeight: 800, color: '#247A45', lineHeight: 1, letterSpacing: '-.02em' }}>{stats.yesCount}</p>
+                  <p style={{ margin: '0 0 .125rem', fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>Confirmados</p>
+                  <p style={{ margin: 0, fontSize: '.7rem', color: '#4F7D5A' }}>van a asistir</p>
                 </div>
-                <div className="db-stat-card" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1rem', padding: '1rem', textAlign: 'center', borderTop: `3px solid ${T.gold}` }}>
-                  <p style={{ margin: '0 0 .2rem', fontSize: '1.75rem', fontWeight: 800, color: T.gold, lineHeight: 1 }}>{checkedInCount}</p>
-                  <p style={{ margin: 0, fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>Dentro</p>
-                  <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>ya ingresaron</p>
+                {/* Dentro */}
+                <div className="db-stat-card" style={{ background: '#FBF5E3', border: '1px solid #E8D8AD', borderLeft: `4px solid ${T.gold}`, borderRadius: '1rem', padding: '1.125rem 1rem', textAlign: 'center' }}>
+                  <p style={{ margin: '0 0 .25rem', fontSize: '2rem', fontWeight: 800, color: T.gold, lineHeight: 1, letterSpacing: '-.02em' }}>{checkedInCount}</p>
+                  <p style={{ margin: '0 0 .125rem', fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>Dentro</p>
+                  <p style={{ margin: 0, fontSize: '.7rem', color: '#8A6D3B' }}>ya ingresaron</p>
                 </div>
               </div>
-              {lastCheckIn && (
-                <div style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.875rem', padding: '.75rem 1rem', marginBottom: '1rem' }}>
-                  <p style={{ margin: '0 0 .125rem', fontSize: '.6875rem', fontWeight: 700, color: T.light, letterSpacing: '.06em', textTransform: 'uppercase' }}>Último ingreso</p>
-                  <p style={{ margin: 0, fontSize: '.9rem', fontWeight: 600, color: T.dark }}>{lastCheckIn.name}</p>
-                  <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{formatDateTime(lastCheckIn.checkedInAt)}</p>
+
+              {lastCheckIn ? (
+                <div style={{ background: '#F0FAF4', border: '1px solid #B8DFC4', borderRadius: '.875rem', padding: '.875rem 1rem', marginBottom: '1.125rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>✅</span>
+                  <div>
+                    <p style={{ margin: '0 0 .1rem', fontSize: '.625rem', fontWeight: 700, color: '#4F7D5A', letterSpacing: '.1em', textTransform: 'uppercase' }}>Último ingreso</p>
+                    <p style={{ margin: '0 0 .1rem', fontSize: '.9375rem', fontWeight: 700, color: T.dark }}>{lastCheckIn.name}</p>
+                    <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{formatDateTime(lastCheckIn.checkedInAt)}</p>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ background: T.ivory, border: `1px solid ${T.border}`, borderRadius: '.875rem', padding: '.875rem 1rem', marginBottom: '1.125rem' }}>
+                  <p style={{ margin: 0, fontSize: '.875rem', color: T.light, lineHeight: 1.55 }}>Aún no ha ingresado nadie. Los accesos aparecerán aquí conforme lleguen.</p>
                 </div>
               )}
-              {!lastCheckIn && (
-                <div style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.875rem', padding: '.75rem 1rem', marginBottom: '1rem' }}>
-                  <p style={{ margin: 0, fontSize: '.875rem', color: T.light }}>Aún no ha ingresado nadie. Los accesos aparecerán aquí conforme lleguen.</p>
-                </div>
-              )}
-              <a href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnSecondary, display: 'flex' }}>
-                Escanear invitados
+
+              <a href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, display: 'flex' }}>
+                📷 Escanear invitados
               </a>
             </div>
           </>
@@ -755,8 +787,8 @@ export default async function InvitationDashboard({ params }: Props) {
         {stats.total > 0 && phase !== 'configurando' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.875rem', marginBottom: '2rem' }}>
             <StatCard label="Confirmaron" value={stats.total} sub="respondieron la invitación" />
-            <StatCard label="Asistirán" value={stats.yesCount} sub="confirmaciones positivas" accent="#238636" />
-            <StatCard label="No asistirán" value={stats.noCount} sub="declinaron la invitación" accent="#D32F2F" />
+            <StatCard label="Asistirán" value={stats.yesCount} sub="confirmaciones positivas" accent="#247A45" />
+            <StatCard label="No asistirán" value={stats.noCount} sub="declinaron la invitación" accent="#B43232" />
             <StatCard label="Asistentes" value={stats.totalPeople} sub="personas en total" accent={T.gold} />
           </div>
         )}
@@ -793,13 +825,15 @@ export default async function InvitationDashboard({ params }: Props) {
             {/* Lista RSVP — confirmaciones, semana, dia */}
             {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
               <>
-                <div id="invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
-                  <h2 style={{ margin: 0, fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-                    Invitados confirmados
-                  </h2>
-                  <span style={{ fontSize: '.8125rem', color: T.light, fontWeight: 600 }}>
-                    {responses.length} {responses.length === 1 ? 'invitado' : 'invitados'}
-                  </span>
+                <div id="invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '.75rem' }}>
+                  <div>
+                    <h2 style={{ margin: '0 0 .125rem', fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+                      Invitados confirmados
+                    </h2>
+                    <p style={{ margin: 0, fontSize: '.8rem', color: T.light, fontWeight: 500 }}>
+                      {responses.length} {responses.length === 1 ? 'invitado' : 'invitados'}
+                    </p>
+                  </div>
                 </div>
 
                 {responses.length === 0 ? (
@@ -810,7 +844,7 @@ export default async function InvitationDashboard({ params }: Props) {
                       Cuando tus invitados respondan aparecerán aquí. Mientras tanto comparte tu invitación para comenzar a recibir confirmaciones.
                     </p>
                     {(phase === 'confirmaciones' || phase === 'semana') && (
-                      <a href="#compartir" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '.625rem 1.5rem', background: T.dark, color: '#F5F0E8', borderRadius: '.875rem', fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
+                      <a href="#compartir" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '.625rem 1.5rem', background: T.dark, color: '#FFF7EA', borderRadius: '.875rem', fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
                         Compartir invitación
                       </a>
                     )}
@@ -845,7 +879,7 @@ export default async function InvitationDashboard({ params }: Props) {
                                   </span>
                                 </td>
                                 <td className="col-num">{vComp}</td>
-                                <td className="col-num" style={{ fontWeight: 600, color: isAttending(r) ? '#238636' : T.light }}>
+                                <td className="col-num" style={{ fontWeight: 600, color: isAttending(r) ? '#247A45' : T.light }}>
                                   {ppl > 0 ? ppl : '—'}
                                 </td>
                                 <td className="col-phone">{r.phone ?? '—'}</td>
@@ -854,7 +888,7 @@ export default async function InvitationDashboard({ params }: Props) {
                                 </td>
                                 <td className="col-pass">
                                   {r.passToken ? (
-                                    <a href={`${appUrl}/pass/${r.passToken}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '.25rem', padding: '.3rem .625rem', background: r.checkedInAt ? '#E6F4EA' : T.cream, color: r.checkedInAt ? '#238636' : T.dark, border: `1px solid ${r.checkedInAt ? '#A7D7B0' : T.border}`, borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                                    <a href={`${appUrl}/pass/${r.passToken}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '.25rem', padding: '.3rem .625rem', background: r.checkedInAt ? '#E7F5EC' : T.cream, color: r.checkedInAt ? '#247A45' : T.dark, border: `1px solid ${r.checkedInAt ? '#B8DFC4' : T.border}`, borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
                                       {r.checkedInAt ? '✓ Usado' : '🎫 Ver pase'}
                                     </a>
                                   ) : (

@@ -3,11 +3,11 @@
 import { useState } from 'react';
 
 const T = {
-  dark:   '#0D0A07',
-  gold:   '#C4A962',
-  cream:  '#F1E3C8',
-  border: '#EAD7A3',
-  light:  '#6B4A35',
+  dark:   '#1C1713',
+  gold:   '#C8A95B',
+  cream:  '#FFFBF4',
+  border: '#E5D2A8',
+  light:  '#7A6A5B',
 } as const;
 
 interface Props {
@@ -66,9 +66,9 @@ Por favor confirma tu asistencia desde la invitación. ¡Te esperamos!`;
         style={{
           width: '100%', minHeight: '46px',
           padding: '.75rem 1rem',
-          background: copied ? '#E6F4EA' : T.cream,
-          color: copied ? '#238636' : T.dark,
-          border: `1px solid ${copied ? '#A7D7B0' : T.border}`,
+          background: copied ? '#E7F5EC' : T.cream,
+          color: copied ? '#247A45' : T.dark,
+          border: `1px solid ${copied ? '#B8DFC4' : T.border}`,
           borderRadius: '.75rem',
           fontSize: '.875rem', fontWeight: 700,
           cursor: 'pointer', display: 'flex',

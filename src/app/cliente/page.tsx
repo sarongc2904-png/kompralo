@@ -60,15 +60,15 @@ export const revalidate = 0;
 export const metadata: Metadata = { title: 'Mis invitaciones — Kompralo' };
 
 const T = {
-  ivory:     '#E8D7B8',
-  cream:     '#F1E3C8',
-  dark:      '#0D0A07',
-  mid:       '#1A1612',
-  light:     '#6B4A35',
-  gold:      '#C4A962',
-  champagne: '#EAD7A3',
-  white:     '#F1E3C8',
-  border:    '#EAD7A3',
+  ivory:     '#FAF3E6',
+  cream:     '#FFFBF4',
+  dark:      '#1C1713',
+  mid:       '#1C1713',
+  light:     '#7A6A5B',
+  gold:      '#C8A95B',
+  champagne: '#E5D2A8',
+  white:     '#FFFBF4',
+  border:    '#E5D2A8',
 } as const;
 
 const planLabels: Record<string, string> = {
@@ -379,16 +379,16 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
 
 function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, invitationTitle, isAuthenticated }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; invitationStatus?: string | null; invitationTitle?: string | null; isAuthenticated: boolean }) {
   const statusColor: Record<string, string> = {
-    pending:  '#8A6D3B',
-    paid:     '#4F7D5A',
-    failed:   '#D32F2F',
+    pending:  '#7A6A5B',
+    paid:     '#247A45',
+    failed:   '#B43232',
     refunded: '#6A1B9A',
   };
 
   const statusBg: Record<string, string> = {
-    pending:  '#FCF8E3',
-    paid:     '#DDEBDD',
-    failed:   '#FCE8E6',
+    pending:  '#FBF5E3',
+    paid:     '#E7F5EC',
+    failed:   '#FBEAEA',
     refunded: '#F3E5F5',
   };
 
@@ -449,8 +449,8 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, invitat
                 fontSize:     '0.7rem',
                 fontWeight:   700,
                 letterSpacing:'.02em',
-                color:        invitationStatus === 'published' ? '#4F7D5A' : '#8A6D3B',
-                background:   invitationStatus === 'published' ? '#DDEBDD' : '#FCF8E3',
+                color:        invitationStatus === 'published' ? '#247A45' : '#7A6A5B',
+                background:   invitationStatus === 'published' ? '#E7F5EC' : '#FBF5E3',
               }}
             >
               {invitationStatus === 'published' ? '🟢 Publicada' : '🟡 Borrador'}
@@ -477,8 +477,8 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, invitat
         }}>
           {[
             { label: 'Respuestas', value: rsvpStats.total, color: T.dark },
-            { label: 'Sí asistirán', value: rsvpStats.yes, color: '#238636' },
-            { label: 'No asistirán', value: rsvpStats.no, color: '#D32F2F' },
+            { label: 'Sí asistirán', value: rsvpStats.yes, color: '#247A45' },
+            { label: 'No asistirán', value: rsvpStats.no, color: '#B43232' },
             { label: 'Personas', value: rsvpStats.people, color: T.gold },
           ].map(({ label, value, color }) => (
             <div key={label} style={{ textAlign: 'center' }}>
@@ -717,7 +717,7 @@ export default async function ClientePage({ searchParams }: Props) {
             left: '50%',
             transform: 'translateX(-50%)',
           }}>
-            <span style={{ fontSize: '.5rem', color: '#238636' }}>●</span>
+            <span style={{ fontSize: '.5rem', color: '#247A45' }}>●</span>
             Sesión activa: <strong>{trimmedEmail}</strong>
           </div>
         )}

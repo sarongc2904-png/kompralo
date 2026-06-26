@@ -4,12 +4,12 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import QRCode from 'react-qr-code';
 
 const T = {
-  dark:   '#0D0A07',
-  mid:    '#1A1612',
-  light:  '#6B4A35',
-  gold:   '#C4A962',
-  cream:  '#F1E3C8',
-  border: '#EAD7A3',
+  dark:   '#1C1713',
+  mid:    '#1C1713',
+  light:  '#7A6A5B',
+  gold:   '#C8A95B',
+  cream:  '#FFFBF4',
+  border: '#E5D2A8',
 } as const;
 
 interface Props {
@@ -110,7 +110,7 @@ export default function QrCard({ publicUrl, eventSlug }: Props) {
             aria-hidden="true"
             style={{
               position: 'fixed', inset: 0,
-              background: 'rgba(13,10,7,0.72)',
+              background: 'rgba(28,23,19,0.72)',
               backdropFilter: 'blur(4px)',
               WebkitBackdropFilter: 'blur(4px)',
               zIndex: 9998,
@@ -134,7 +134,7 @@ export default function QrCard({ publicUrl, eventSlug }: Props) {
               borderRadius: '1.5rem',
               padding: '1.5rem',
               zIndex: 9999,
-              boxShadow: '0 20px 60px rgba(13,10,7,0.28)',
+              boxShadow: '0 20px 60px rgba(28,23,19,0.28)',
               textAlign: 'center',
               boxSizing: 'border-box',
             }}
@@ -215,9 +215,9 @@ export default function QrCard({ publicUrl, eventSlug }: Props) {
                 style={{
                   width: '100%', minHeight: '46px',
                   padding: '.75rem 1rem',
-                  background: copied ? '#E6F4EA' : '#ffffff',
-                  color: copied ? '#238636' : T.dark,
-                  border: `1px solid ${copied ? '#A7D7B0' : T.border}`,
+                  background: copied ? '#E7F5EC' : '#ffffff',
+                  color: copied ? '#247A45' : T.dark,
+                  border: `1px solid ${copied ? '#B8DFC4' : T.border}`,
                   borderRadius: '.75rem',
                   fontSize: '.875rem', fontWeight: 700,
                   cursor: 'pointer', display: 'flex',

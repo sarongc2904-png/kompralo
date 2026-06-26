@@ -12,14 +12,14 @@ interface Props {
 }
 
 const T = {
-  dark:   '#0D0A07',
-  mid:    '#1A1612',
-  light:  '#6B4A35',
-  gold:   '#C4A962',
-  cream:  '#F1E3C8',
-  white:  '#FFFAF3',
-  border: '#EAD7A3',
-  green:  '#238636',
+  dark:   '#1C1713',
+  mid:    '#1C1713',
+  light:  '#7A6A5B',
+  gold:   '#C8A95B',
+  cream:  '#FFFBF4',
+  white:  '#FFFBF4',
+  border: '#E5D2A8',
+  green:  '#247A45',
 } as const;
 
 function buildInviteWaMsg(publicUrl: string, eventTitle: string): string {
@@ -95,7 +95,7 @@ export default function RsvpModeSelector({ invitationId, initialMode, publicUrl,
 
       {/* Feedback */}
       {error && (
-        <p style={{ margin: '.25rem 0 0', fontSize: '.8125rem', color: '#D32F2F', fontWeight: 600 }}>{error}</p>
+        <p style={{ margin: '.25rem 0 0', fontSize: '.8125rem', color: '#B43232', fontWeight: 600 }}>{error}</p>
       )}
       {saved && (
         <p style={{ margin: '.25rem 0 0', fontSize: '.8125rem', color: T.green, fontWeight: 600 }}>✓ Modo guardado</p>
@@ -133,7 +133,7 @@ export default function RsvpModeSelector({ invitationId, initialMode, publicUrl,
       )}
 
       {mode === 'passes_only' && (
-        <div style={{ marginTop: '.875rem', padding: '.75rem 1rem', background: '#FCF8E3', border: '1px solid #EAD7A3', borderRadius: '.875rem' }}>
+        <div style={{ marginTop: '.875rem', padding: '.75rem 1rem', background: '#FBF5E3', border: `1px solid ${T.border}`, borderRadius: '.875rem' }}>
           <p style={{ margin: 0, fontSize: '.8125rem', color: T.mid, lineHeight: 1.55 }}>
             <strong>Modo pases activo.</strong> La invitación pública no mostrará el formulario RSVP. Tus invitados confirmarán desde su pase personal. Crea los pases en la sección <strong>&quot;Pases de entrada&quot;</strong> debajo.
           </p>
