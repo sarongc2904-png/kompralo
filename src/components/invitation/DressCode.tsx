@@ -105,7 +105,7 @@ export default function DressCode({ dressCode, theme, editablePreview = false }:
         })()}
 
         {/* Important notes */}
-        {dressCode.suggestions && (
+        {(dressCode.suggestions || editablePreview) && (
           <p 
             className={`text-base md:text-lg italic mt-8 pt-6 leading-relaxed ${theme.bodyFont}`}
             style={{ 
@@ -113,7 +113,12 @@ export default function DressCode({ dressCode, theme, editablePreview = false }:
               color: 'var(--v2-color-text-secondary, #5C4A3E)'
             }}
           >
-            * <EditableText value={dressCode.suggestions} fieldPath="dress_code.suggestions" isEditable={editablePreview} />
+            * <EditableText
+              value={dressCode.suggestions ?? ''}
+              fieldPath="dress_code.suggestions"
+              isEditable={editablePreview}
+              placeholder="Recomendaciones…"
+            />
           </p>
         )}
       </ElegantInvitationCard>

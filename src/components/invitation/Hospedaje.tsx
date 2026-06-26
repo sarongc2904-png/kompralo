@@ -95,17 +95,32 @@ export default function Hospedaje({ hotels, theme, editablePreview = false }: Ho
 
                 {/* Details */}
                 <div className="flex flex-col gap-1.5">
+                  {(hotel.description || editablePreview) && (
+                    <p className="text-[13px] opacity-80 leading-relaxed break-words" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
+                      <EditableText
+                        value={hotel.description ?? ''}
+                        fieldPath={`hotels.${i}.description`}
+                        isEditable={editablePreview}
+                        placeholder="Descripción del hotel…"
+                      />
+                    </p>
+                  )}
                   <div className="flex items-start gap-2">
                     <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" style={{ color: `var(--v2-color-accent, #C8A75D)` }} />
                     <span className="text-[13px] opacity-90 leading-relaxed break-words" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
                       <EditableText value={hotel.address} fieldPath={`hotels.${i}.address`} isEditable={editablePreview} />
                     </span>
                   </div>
-                  {hotel.phone && (
+                  {(hotel.phone || editablePreview) && (
                     <div className="flex items-center gap-2">
                       <Phone className="w-3 h-3 flex-shrink-0" style={{ color: `var(--v2-color-accent, #C8A75D)` }} />
                       <span className="text-[13px] opacity-90" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
-                        <EditableText value={hotel.phone} fieldPath={`hotels.${i}.phone`} isEditable={editablePreview} />
+                        <EditableText
+                          value={hotel.phone ?? ''}
+                          fieldPath={`hotels.${i}.phone`}
+                          isEditable={editablePreview}
+                          placeholder="Teléfono…"
+                        />
                       </span>
                     </div>
                   )}
@@ -117,6 +132,21 @@ export default function Hospedaje({ hotels, theme, editablePreview = false }: Ho
                       <EditableText value={hotel.distance} fieldPath={`hotels.${i}.distance`} isEditable={editablePreview} />
                     </span>
                   </div>
+                  {editablePreview && (
+                    <div className="flex items-start gap-2">
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: `var(--v2-color-accent, #C8A75D)` }}>
+                        Sitio
+                      </span>
+                      <span className="text-[12px] opacity-80 break-all" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
+                        <EditableText
+                          value={hotel.bookingLink ?? ''}
+                          fieldPath={`hotels.${i}.bookingLink`}
+                          isEditable={editablePreview}
+                          placeholder="URL de reservación…"
+                        />
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 

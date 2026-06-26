@@ -24,9 +24,9 @@ const iconMap = {
 };
 
 export default function Itinerary({ items, theme, editablePreview = false }: ItineraryProps) {
-  const validItems = items?.filter(
-    (item) => item && (item.title || item.time || item.location),
-  ) ?? [];
+  const validItems = items
+    ?.map((item, originalIndex) => ({ item, originalIndex }))
+    .filter(({ item }) => item && (item.title || item.time || item.location)) ?? [];
 
   if (validItems.length === 0) return null;
 
@@ -37,7 +37,7 @@ export default function Itinerary({ items, theme, editablePreview = false }: Iti
       
       {/* Itinerary Cards — flex wrap so 1 or 2 cards stay centred */}
       <div className="flex flex-wrap justify-center gap-6 md:gap-8">
-        {validItems.map((item, index) => {
+        {validItems.map(({ item, originalIndex }, index) => {
           const IconComponent = iconMap[item.icon as keyof typeof iconMap] || Sparkles;
           return (
             <ElegantInvitationCard
@@ -70,7 +70,7 @@ export default function Itinerary({ items, theme, editablePreview = false }: Iti
 
               {/* Time Badge */}
               <span className="text-[14px] md:text-[15px] font-mono font-semibold tracking-[0.2em] mb-3" style={{ color: 'var(--v2-color-accent, inherit)' }}>
-                <EditableText value={item.time} fieldPath={`itinerary.${index}.time`} isEditable={editablePreview} />
+                <EditableText value={item.time} fieldPath={`itinerary.${originalIndex}.time`} isEditable={editablePreview} />
               </span>
 
               {/* Divider */}
@@ -81,17 +81,22 @@ export default function Itinerary({ items, theme, editablePreview = false }: Iti
                 className={`text-xl md:text-2xl font-normal tracking-wide mb-3 ${theme.headingFont}`}
                 style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
               >
-                <EditableText value={item.title} fieldPath={`itinerary.${index}.title`} isEditable={editablePreview} />
+                <EditableText value={item.title} fieldPath={`itinerary.${originalIndex}.title`} isEditable={editablePreview} />
               </h4>
 
               {/* Location */}
               <p className={`text-sm md:text-base leading-relaxed opacity-75 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
-                <EditableText value={item.location} fieldPath={`itinerary.${index}.location`} isEditable={editablePreview} />
+                <EditableText value={item.location} fieldPath={`itinerary.${originalIndex}.location`} isEditable={editablePreview} />
               </p>
 
-              {item.description && (
+              {(item.description || editablePreview) && (
                 <p className={`mt-2 text-xs md:text-sm leading-relaxed opacity-70 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
-                  <EditableText value={item.description} fieldPath={`itinerary.${index}.description`} isEditable={editablePreview} />
+                  <EditableText
+                    value={item.description ?? ''}
+                    fieldPath={`itinerary.${originalIndex}.description`}
+                    isEditable={editablePreview}
+                    placeholder="Descripción…"
+                  />
                 </p>
               )}
 

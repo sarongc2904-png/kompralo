@@ -69,7 +69,7 @@ const INLINE_EDIT_ALLOWED_PATHS = [
   /^parents\.(groomTitle|groomFatherLabel|groomFatherName|groomMotherLabel|groomMotherName|brideTitle|brideFatherLabel|brideFatherName|brideMotherLabel|brideMotherName)$/,
   /^padrinos\.\d+\.rubro$/,
   /^padrinos\.\d+\.names\.\d+$/,
-  /^hotels\.\d+\.(name|description|address|distance|priceRange|phone)$/,
+  /^hotels\.\d+\.(name|description|address|distance|priceRange|phone|bookingLink)$/,
   /^social\.(sectionEyebrow|hashtag|note)$/,
   /^final_message\.(title|message|quote|signature)$/,
 ];
@@ -395,6 +395,9 @@ export async function updateInlineEditableText(input: {
   }
   if (value.length > 500) {
     return { success: false, error: 'El texto es demasiado largo.' };
+  }
+  if (/^hotels\.\d+\.bookingLink$/.test(fieldPath) && !isValidUrl(value)) {
+    return { success: false, error: 'El sitio web del hotel no es una URL válida.' };
   }
 
   try {
