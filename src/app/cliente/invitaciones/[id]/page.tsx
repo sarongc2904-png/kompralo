@@ -589,7 +589,7 @@ export default async function InvitationDashboard({ params }: Props) {
                   <p style={{ margin: 0, fontSize: '.875rem', color: T.light }}>Aún no ha ingresado nadie. Los accesos aparecerán aquí conforme lleguen.</p>
                 </div>
               )}
-              <a href="#qr-sidebar" className="db-btn" style={{ ...btnSecondary, display: 'flex' }}>
+              <a href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnSecondary, display: 'flex' }}>
                 Escanear invitados
               </a>
             </div>
