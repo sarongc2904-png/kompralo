@@ -252,7 +252,7 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       {plan.features.showCountdown && invitation.eventDate && (
-        <Countdown eventDate={invitation.eventDate} theme={effectiveTheme} />
+        <Countdown eventDate={invitation.eventDate} eventTime={invitation.eventTime} theme={effectiveTheme} />
       )}
 
       <FeatureGate feature="showParents" features={features}>

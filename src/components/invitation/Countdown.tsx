@@ -6,6 +6,7 @@ import { Theme } from '@/domain/themes/types';
 
 interface CountdownProps {
   eventDate: string;
+  eventTime?: string;
   theme: Theme;
 }
 
@@ -31,21 +32,28 @@ function useCompactCountdown() {
 
 // Normalises YYYY-MM-DD (no time part) to midnight local time before parsing,
 // so the countdown never receives NaN from a bare date string.
-function parseEventDate(raw: string): Date | null {
+function parseEventDate(raw: string, eventTime?: string): Date | null {
   if (!raw) return null;
+  const timeMatch = eventTime?.match(/(\d{1,2}):(\d{2})/);
+  const datePart = raw.includes('T') ? raw.split('T')[0] : raw.split(' ')[0];
+  if (timeMatch && /^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+    const [, hour, minute] = timeMatch;
+    const d = new Date(`${datePart}T${hour.padStart(2, '0')}:${minute}:00`);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
   const normalized = raw.includes('T') ? raw : `${raw}T00:00:00`;
   const d = new Date(normalized);
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-function isEventPast(eventDate: string): boolean {
-  const d = parseEventDate(eventDate);
+function isEventPast(eventDate: string, eventTime?: string): boolean {
+  const d = parseEventDate(eventDate, eventTime);
   if (!d) return false;
   return d.getTime() - Date.now() <= 0;
 }
 
-function getTimeLeft(eventDate: string): TimeLeft {
-  const d = parseEventDate(eventDate);
+function getTimeLeft(eventDate: string, eventTime?: string): TimeLeft {
+  const d = parseEventDate(eventDate, eventTime);
   if (!d) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
   const diff = d.getTime() - Date.now();
   if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -249,21 +257,21 @@ function Separator({ theme }: { theme: Theme }) {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 
-export default function Countdown({ eventDate, theme }: CountdownProps) {
-  const hasValidDate = !!parseEventDate(eventDate);
-  const [timeLeft,    setTimeLeft]    = useState<TimeLeft>(() => getTimeLeft(eventDate));
-  const [eventPassed, setEventPassed] = useState<boolean>(() => isEventPast(eventDate));
+export default function Countdown({ eventDate, eventTime, theme }: CountdownProps) {
+  const hasValidDate = !!parseEventDate(eventDate, eventTime);
+  const [timeLeft,    setTimeLeft]    = useState<TimeLeft>(() => getTimeLeft(eventDate, eventTime));
+  const [eventPassed, setEventPassed] = useState<boolean>(() => isEventPast(eventDate, eventTime));
 
   useEffect(() => {
     const calc = () => {
-      setTimeLeft(getTimeLeft(eventDate));
-      setEventPassed(isEventPast(eventDate));
+      setTimeLeft(getTimeLeft(eventDate, eventTime));
+      setEventPassed(isEventPast(eventDate, eventTime));
     };
 
     calc();
     const id = setInterval(calc, 1000);
     return () => clearInterval(id);
-  }, [eventDate]);
+  }, [eventDate, eventTime]);
 
   const units = [
     { label: 'Días',     value: timeLeft.days,    max: timeLeft.days >= 100 ? 3 : 2 },
