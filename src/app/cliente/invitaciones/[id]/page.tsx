@@ -660,6 +660,8 @@ export default async function InvitationDashboard({ params }: Props) {
                 eventTitle={eventTitle}
               />
             </div>
+            {/* ── Guest passes — immediately after mode selector ── */}
+            <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} />
             <div id="invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
                 Confirmaciones RSVP
@@ -761,8 +763,6 @@ export default async function InvitationDashboard({ params }: Props) {
                 </div>
               </>
             )}
-            {/* Guest passes section — inside left column so it scrolls with RSVP */}
-            <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} />
           </div>
 
           {/* Right sidebar: QR + share */}
