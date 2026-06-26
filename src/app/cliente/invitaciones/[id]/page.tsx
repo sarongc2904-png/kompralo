@@ -577,14 +577,14 @@ export default async function InvitationDashboard({ params }: Props) {
                 <span>Plan {planLabel}</span>
               </div>
               <div className="event-actions-grid">
-                <a href={publicUrl ?? undefined} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.dark, color: T.cream, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none', opacity: publicUrl ? 1 : .55, pointerEvents: publicUrl ? 'auto' : 'none' }}>
-                  Ver invitación
+                <a href={publicUrl ?? undefined} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.dark, color: '#F5F0E8', borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none', opacity: publicUrl ? 1 : .55, pointerEvents: publicUrl ? 'auto' : 'none' }}>
+                  👁 Ver mi invitación
+                </a>
+                <a href={editUrl} className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: '#FFFFFF', border: '2px solid #D4B36A', color: T.dark, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
+                  ✨ Personalizar
                 </a>
                 <a href="#compartir" className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.gold, color: T.dark, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
-                  Compartir
-                </a>
-                <a href={editUrl} className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.cream, border: `1px solid ${T.border}`, color: T.dark, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
-                  Editar invitación
+                  📤 Compartir
                 </a>
               </div>
             </div>
