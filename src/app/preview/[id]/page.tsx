@@ -54,7 +54,7 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
   return (
     <>
       {/* Back-to-editor button — only when opened from the editor */}
-      {isFromEditor && (
+      {isFromEditor && !isEditablePreview && (
         <a
           href={`/dashboard/invitations/${invitation.id}/edit`}
           style={{
@@ -76,7 +76,7 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
         plan={plan}
         features={features}
         mode="preview"
-        showPreviewBadge={isFromEditor}
+        showPreviewBadge={isFromEditor && !isEditablePreview}
         themePreviewId={themePreview}
         skipIntro={shouldSkipIntro}
         editablePreview={isEditablePreview}

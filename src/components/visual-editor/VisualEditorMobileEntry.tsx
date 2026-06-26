@@ -68,6 +68,7 @@ export function VisualEditorMobileEntry({
   const [highlightedId, setHighlightedId] = useState<EditableElementId | null>(null);
   const [inlineSaveStatus, setInlineSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [previewHeight, setPreviewHeight] = useState(680);
+  const [showHint, setShowHint] = useState(true);
   const previewRef = useRef<HTMLDivElement>(null);
   const previewUrl = `/preview/${invitationId}?from=editor&editorPreview=1&skipIntro=1`;
 
@@ -117,6 +118,11 @@ export function VisualEditorMobileEntry({
     return () => window.removeEventListener('message', handlePreviewResize);
   }, []);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowHint(false), 5200);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   function scrollToPreview() {
     window.setTimeout(() => {
       previewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -157,20 +163,40 @@ export function VisualEditorMobileEntry({
   return (
     <>
       <div className="md:hidden" ref={previewRef}>
-        <section className="relative -mx-4 mb-6 min-h-[calc(100dvh-92px)] overflow-hidden bg-[#F6F0E4] px-3 pb-4 pt-2">
-          <div className="pointer-events-none absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-full border border-[#E6D8BD] bg-[#FFFDF8]/90 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8A6D3B] shadow-sm">
-            Estás editando tu invitación. Toca un texto para modificarlo.
-          </div>
-          {inlineSaveStatus !== 'idle' && (
-            <div className="pointer-events-none absolute right-4 top-16 z-20 rounded-full border border-[#E6D8BD] bg-[#FFFDF8]/95 px-3 py-1 text-[11px] font-semibold text-[#6E573A] shadow-sm">
-              {inlineSaveStatus === 'saving' && 'Guardando…'}
-              {inlineSaveStatus === 'saved' && 'Guardado'}
-              {inlineSaveStatus === 'error' && 'No se pudo guardar'}
+        <section className="relative -mx-4 mb-6 min-h-[calc(100dvh-92px)] overflow-hidden bg-[#F6F0E4] px-3 pb-4 pt-0">
+          <div
+            className="sticky top-0 z-30 -mx-3 border-b border-[#E6D8BD] bg-[#F6F0E4]/95 px-3 pb-3 pt-3 shadow-sm backdrop-blur"
+            style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}
+          >
+            <div className="mx-auto flex max-w-[430px] items-center justify-between gap-3">
+              <a
+                href={`/dashboard/invitations/${invitationId}/edit`}
+                className="rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold text-[#5F4B35] shadow-sm"
+              >
+                ← Regresar
+              </a>
+              <span className="rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#8A6D3B] shadow-sm">
+                Vista previa
+              </span>
             </div>
-          )}
+            {showHint && (
+              <div className="pointer-events-none mx-auto mt-3 max-w-[430px] rounded-2xl border border-[#E6D8BD] bg-[#FFFDF8]/95 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8A6D3B] shadow-sm">
+                Estás editando tu invitación. Toca un texto para modificarlo.
+              </div>
+            )}
+            {inlineSaveStatus !== 'idle' && (
+              <div className="pointer-events-none mx-auto mt-2 max-w-[430px] text-right">
+                <span className="inline-flex rounded-full border border-[#E6D8BD] bg-[#FFFDF8]/95 px-3 py-1 text-[11px] font-semibold text-[#6E573A] shadow-sm">
+                  {inlineSaveStatus === 'saving' && 'Guardando…'}
+                  {inlineSaveStatus === 'saved' && 'Guardado'}
+                  {inlineSaveStatus === 'error' && 'No se pudo guardar'}
+                </span>
+              </div>
+            )}
+          </div>
 
           <div
-            className="relative mx-auto h-[calc(100dvh-112px)] max-h-[820px] min-h-[640px] max-w-[430px] overflow-y-auto overscroll-contain rounded-[32px] border border-[#E6D8BD] bg-[#FFFDF8] shadow-2xl"
+            className="relative mx-auto mt-4 h-[calc(100dvh-190px)] max-h-[760px] min-h-[560px] max-w-[430px] overflow-y-auto overscroll-contain rounded-[32px] border border-[#E6D8BD] bg-[#FFFDF8] shadow-2xl"
             style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
           >
             <iframe
