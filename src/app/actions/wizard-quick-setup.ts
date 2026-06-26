@@ -82,7 +82,7 @@ export async function wizardQuickSetup(
 
     const { data: currentContent, error: contentReadErr } = await db
       .from('invitation_content')
-      .select('protagonists, location, hero, itinerary, timeline, social, final_message, gift_registry, dress_code')
+      .select('protagonists, location, hero, itinerary, timeline, story, social, final_message, gift_registry, dress_code')
       .eq('invitation_id', invitationId)
       .maybeSingle();
 
@@ -95,6 +95,7 @@ export async function wizardQuickSetup(
     const currentProtagonists = currentContent?.protagonists;
     const currentItinerary = currentContent?.itinerary;
     const currentTimeline = currentContent?.timeline;
+    const currentStory = currentContent?.story as { slides?: unknown[] } | null | undefined;
     const contentPatch = {
       invitation_id: invitationId,
       protagonists: wizardCompleted && hasItems(currentProtagonists)
@@ -109,6 +110,9 @@ export async function wizardQuickSetup(
       timeline: wizardCompleted && hasItems(currentTimeline)
         ? currentTimeline
         : defaults.timeline,
+      story: wizardCompleted && hasItems(currentStory?.slides)
+        ? currentContent?.story
+        : defaults.story,
       social: mergeGeneratedObject(currentContent?.social, defaults.social),
       final_message: mergeGeneratedObject(currentContent?.final_message, defaults.finalMessage),
       gift_registry: wizardCompleted && hasItems(currentGiftRegistry?.items)

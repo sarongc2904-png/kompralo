@@ -54,6 +54,15 @@ interface TimelineItem {
   imageUrl?: string;
 }
 
+interface StorySlideItem {
+  id: string;
+  imageUrl: string;
+  title: string;
+  text: string;
+  subtitle?: string;
+  date?: string;
+}
+
 export interface GeneratedDefaults {
   invitationTitle: string;
   protagonists: InvitationProtagonist[];
@@ -73,6 +82,7 @@ export interface GeneratedDefaults {
   };
   itinerary: ItineraryItem[];
   timeline: TimelineItem[];
+  story: { slides: StorySlideItem[] };
   social: {
     hashtag: string;
     instagramHandle: string;
@@ -186,34 +196,50 @@ function buildItinerary(input: WizardMinimalInput): ItineraryItem[] {
   return items;
 }
 
-function buildTimeline(weddingDate: string): TimelineItem[] {
-  const weddingYear = Number(weddingDate.slice(0, 4)) || new Date().getFullYear();
+function buildTimeline(): TimelineItem[] {
   return [
     {
       id: uid(),
-      year: String(weddingYear - 3),
-      title: 'Nuestro primer encuentro',
-      description: 'El día que el destino nos puso en el mismo camino y nuestra historia comenzó.',
+      year: '',
+      title: '💍 Nos elegimos',
+      description: 'Todo comenzó con una historia que cambió nuestras vidas.',
     },
     {
       id: uid(),
-      year: String(weddingYear - 2),
-      title: 'Primer viaje juntos',
-      description: 'Exploramos el mundo juntos y supimos que éramos el equipo perfecto.',
+      year: '',
+      title: '🤍 Construimos recuerdos',
+      description: 'Cada momento nos acercó más a este gran día.',
     },
     {
       id: uid(),
-      year: String(weddingYear - 1),
-      title: 'La propuesta',
-      description: 'Un momento mágico e inolvidable donde decidimos unir nuestras vidas para siempre.',
-    },
-    {
-      id: uid(),
-      year: String(weddingYear),
-      title: 'Nuestro gran día',
-      description: '¡Hoy celebramos el inicio de nuestra nueva historia juntos!',
+      year: '',
+      title: '✨ Celebramos nuestro amor',
+      description: 'Hoy queremos compartir esta alegría con las personas que más queremos.',
     },
   ];
+}
+
+function buildStory(noviaName: string, novioName: string): GeneratedDefaults['story'] {
+  return {
+    slides: [
+      {
+        id: uid(),
+        title: 'Nuestra historia',
+        subtitle: `${noviaName} & ${novioName}`,
+        text: 'Cada historia de amor tiene momentos que no se olvidan. Esta es una pequeña parte de la nuestra.',
+        imageUrl: '/images/invitaciones/demo/moments/moment-1.png',
+        date: '',
+      },
+      {
+        id: uid(),
+        title: 'Un capítulo especial',
+        subtitle: 'Con amor',
+        text: 'Gracias por acompañarnos en este capítulo tan especial.',
+        imageUrl: '/images/invitaciones/demo/moments/moment-2.png',
+        date: '',
+      },
+    ],
+  };
 }
 
 function buildGiftRegistry(
@@ -221,15 +247,14 @@ function buildGiftRegistry(
   noviaName: string,
   novioName: string,
 ): GeneratedDefaults['giftRegistry'] {
-  if (type === 'ninguna') return { items: [] };
-
-  if (type === 'sobres') {
+  if (type === 'ninguna' || type === 'sobres') {
     return {
       items: [{
         id: uid(),
-        provider: 'Sobre de regalo',
+        provider: 'Lluvia de sobres',
         logoType: 'custom',
-        description: 'Tu presencia es el mejor regalo. Si deseas hacernos un obsequio, los sobres son bienvenidos durante la recepción.',
+        link: '#rsvp-name',
+        description: 'Tu presencia es nuestro mejor regalo. Si deseas tener un detalle con nosotros, tendremos lluvia de sobres el día del evento.',
       }],
     };
   }
@@ -277,7 +302,7 @@ export function generateSmartDefaults(input: WizardMinimalInput): GeneratedDefau
 
   const signature = `Con amor, ${noviaName} & ${novioName}`;
 
-  let finalNote = '¡Nos alegra mucho que estés aquí y quieras compartir este momento especial con nosotros!';
+  let finalNote = 'Gracias por formar parte de este momento tan especial. Nos hará muy felices compartir este día contigo.';
   if (notasNinos === 'adultos') {
     finalNote += '\n\nEste es un evento solo para adultos. Agradecemos tu comprensión.';
   } else if (notasNinos === 'bienvenidos') {
@@ -307,7 +332,8 @@ export function generateSmartDefaults(input: WizardMinimalInput): GeneratedDefau
       eventLabel:      'Boda',
     },
     itinerary: buildItinerary(input),
-    timeline:  buildTimeline(weddingDate),
+    timeline:  buildTimeline(),
+    story:     buildStory(noviaName, novioName),
     social: {
       hashtag:         buildHashtag(novioName, noviaName, weddingDate),
       instagramHandle: '',
@@ -317,9 +343,9 @@ export function generateSmartDefaults(input: WizardMinimalInput): GeneratedDefau
       note:            input.whatsappMessage?.trim() || '',
     },
     finalMessage: {
-      title:    '¡Nos vemos pronto!',
+      title:    'Gracias',
       message:  finalNote,
-      quote:    'Sin ti este día no estaría completo. Te esperamos con los brazos abiertos para celebrar el amor.',
+      quote:    'Gracias por formar parte de este momento tan especial. Nos hará muy felices compartir este día contigo.',
       imageUrl: '',
       signature,
     },
