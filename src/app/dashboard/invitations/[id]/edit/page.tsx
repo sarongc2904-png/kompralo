@@ -225,7 +225,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
   // completed the 3-step quick setup yet. Admins bypass it.
   // Uses service role to avoid RLS issues reading the new column.
   console.log('[wizard-gate] category=%s fromAdmin=%s id=%s', invitation.category, fromAdmin, id);
-  if (invitation.category === 'wedding' && !fromAdmin) {
+  if (!fromAdmin) {
     const { data: invRow, error: wizardQueryErr } = await createServiceRoleSupabaseClient()
       .from('invitations')
       .select('wizard_step_completed')

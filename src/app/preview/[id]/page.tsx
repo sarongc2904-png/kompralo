@@ -28,7 +28,7 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
   const { id }                    = await params;
   const { from, themePreview, editorPreview, skipIntro } = await searchParams;
   const isFromEditor              = from === 'editor' || editorPreview === '1';
-  const isEditablePreview         = from === 'editor' && editorPreview === '1';
+  const isEditablePreview         = editorPreview === '1' || from === 'editor';
   const shouldSkipIntro           = isFromEditor && skipIntro === '1';
 
   // Use service role so RLS does not block preview reads (editor-only route) if Supabase is configured.
