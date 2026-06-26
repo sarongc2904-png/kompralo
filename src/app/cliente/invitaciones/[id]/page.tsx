@@ -273,7 +273,7 @@ function RsvpCard({ r, appUrl }: { r: RSVPResponse; appUrl: string }) {
           <>
             <span style={{ color: T.light, fontSize: '.75rem' }}>Acompañantes</span>
             <span style={{ fontWeight: 600 }}>{validComp}</span>
-            <span style={{ color: T.light, fontSize: '.75rem' }}>Total personas</span>
+            <span style={{ color: T.light, fontSize: '.75rem' }}>Asistentes</span>
             <span style={{ fontWeight: 600, color: '#238636' }}>{total}</span>
           </>
         )}
@@ -438,6 +438,12 @@ export default async function InvitationDashboard({ params }: Props) {
 
   const stats = buildStats(responses);
 
+  // Derived from existing responses — no new API calls
+  const checkedInCount = responses.filter(r => r.checkedInAt).length;
+  const lastCheckIn = responses
+    .filter((r): r is RSVPResponse & { checkedInAt: string } => !!r.checkedInAt)
+    .sort((a, b) => new Date(b.checkedInAt).getTime() - new Date(a.checkedInAt).getTime())[0];
+
   // 4. Build URLs
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
   const publicUrl = inv.slug ? `${appUrl}/i/${inv.slug}` : null;
@@ -533,27 +539,61 @@ export default async function InvitationDashboard({ params }: Props) {
             daysUntilEvent === 0
         ════════════════════════════════════════════════ */}
         {phase === 'dia' && (
-          <div className="event-card" style={{ padding: '2.5rem 1.5rem', marginBottom: '1.5rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '.875rem' }}>🎊</div>
-            <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.1 }}>
-              Hoy es tu gran día.
-            </h2>
-            <p style={{ margin: '0 auto 1.75rem', color: T.light, fontSize: '1rem', lineHeight: 1.65, maxWidth: '480px' }}>
-              {stats.yesCount > 0
-                ? `${stats.yesCount} persona${stats.yesCount !== 1 ? 's' : ''} confirmaron su asistencia. Todo está listo para recibirlas.`
-                : 'Tu invitación está en línea y tus invitados pueden acceder.'}
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '.875rem' }}>
-              <a href="#invitados" className="db-btn" style={{ ...btnPrimary, padding: '.9rem 2rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
-                🎫 Abrir Check-in
-              </a>
-              {publicUrl && (
-                <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ ...btnSecondary, padding: '.9rem 1.5rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
-                  👁 Ver invitación
+          <>
+            <div className="event-card" style={{ padding: '2.5rem 1.5rem', marginBottom: '1.25rem', textAlign: 'center' }}>
+              <div style={{ fontSize: '3rem', marginBottom: '.875rem' }}>🎉</div>
+              <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.1 }}>
+                Hoy es tu gran día
+              </h2>
+              <p style={{ margin: '0 auto 1.75rem', color: T.light, fontSize: '1rem', lineHeight: 1.65, maxWidth: '520px' }}>
+                Todo está listo. Desde aquí podrás controlar la entrada de tus invitados y seguir las confirmaciones en tiempo real.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '.875rem' }}>
+                <a href="#pases" className="db-btn" style={{ ...btnPrimary, padding: '.9rem 2rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
+                  Preparar entrada
                 </a>
-              )}
+                {publicUrl && (
+                  <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ ...btnSecondary, padding: '.9rem 1.5rem', borderRadius: '1rem', fontSize: '1rem', minHeight: '52px' }}>
+                    Ver invitación
+                  </a>
+                )}
+              </div>
             </div>
-          </div>
+
+            {/* ── Control del evento — agrupa acceso, confirmados y check-ins ── */}
+            <div id="control-acceso" className="event-card" style={{ padding: '1.25rem', marginBottom: '1.5rem' }}>
+              <p style={{ margin: '0 0 1rem', fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
+                Control del evento
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '.75rem', marginBottom: '1.25rem' }}>
+                <div className="db-stat-card" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1rem', padding: '1rem', textAlign: 'center', borderTop: `3px solid #238636` }}>
+                  <p style={{ margin: '0 0 .2rem', fontSize: '1.75rem', fontWeight: 800, color: '#238636', lineHeight: 1 }}>{stats.yesCount}</p>
+                  <p style={{ margin: 0, fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>Confirmados</p>
+                  <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>van a asistir</p>
+                </div>
+                <div className="db-stat-card" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1rem', padding: '1rem', textAlign: 'center', borderTop: `3px solid ${T.gold}` }}>
+                  <p style={{ margin: '0 0 .2rem', fontSize: '1.75rem', fontWeight: 800, color: T.gold, lineHeight: 1 }}>{checkedInCount}</p>
+                  <p style={{ margin: 0, fontSize: '.8125rem', fontWeight: 700, color: T.dark }}>Dentro</p>
+                  <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>ya ingresaron</p>
+                </div>
+              </div>
+              {lastCheckIn && (
+                <div style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.875rem', padding: '.75rem 1rem', marginBottom: '1rem' }}>
+                  <p style={{ margin: '0 0 .125rem', fontSize: '.6875rem', fontWeight: 700, color: T.light, letterSpacing: '.06em', textTransform: 'uppercase' }}>Último ingreso</p>
+                  <p style={{ margin: 0, fontSize: '.9rem', fontWeight: 600, color: T.dark }}>{lastCheckIn.name}</p>
+                  <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{formatDateTime(lastCheckIn.checkedInAt)}</p>
+                </div>
+              )}
+              {!lastCheckIn && (
+                <div style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '.875rem', padding: '.75rem 1rem', marginBottom: '1rem' }}>
+                  <p style={{ margin: 0, fontSize: '.875rem', color: T.light }}>Aún no ha ingresado nadie. Los accesos aparecerán aquí conforme lleguen.</p>
+                </div>
+              )}
+              <a href="#qr-sidebar" className="db-btn" style={{ ...btnSecondary, display: 'flex' }}>
+                Escanear invitados
+              </a>
+            </div>
+          </>
         )}
 
         {/* ════════════════════════════════════════════════
@@ -570,7 +610,7 @@ export default async function InvitationDashboard({ params }: Props) {
                 {(daysUntilEvent ?? 0) === 1 ? 'Mañana es tu boda.' : `Faltan ${daysUntilEvent} días.`}
               </p>
               <p style={{ margin: 0, fontSize: '.875rem', color: T.light, lineHeight: 1.6 }}>
-                Revisa tu lista de invitados y asegúrate de que todos tengan su pase de entrada.
+                Todo está listo. Revisa las últimas confirmaciones y prepara los pases de entrada.
               </p>
             </div>
             <div className="event-card" style={{ padding: '1.25rem', marginBottom: '1.5rem' }}>
@@ -714,10 +754,10 @@ export default async function InvitationDashboard({ params }: Props) {
         {/* ── Stats — solo cuando hay respuestas, nunca en configurando ── */}
         {stats.total > 0 && phase !== 'configurando' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.875rem', marginBottom: '2rem' }}>
-            <StatCard label="Respuestas" value={stats.total} sub="confirmaciones totales" />
-            <StatCard label="Sí asistirán" value={stats.yesCount} sub="respuestas positivas" accent="#238636" />
-            <StatCard label="No asistirán" value={stats.noCount} sub="respuestas negativas" accent="#D32F2F" />
-            <StatCard label="Personas" value={stats.totalPeople} sub="total real confirmado" accent={T.gold} />
+            <StatCard label="Confirmaron" value={stats.total} sub="respondieron la invitación" />
+            <StatCard label="Asistirán" value={stats.yesCount} sub="confirmaciones positivas" accent="#238636" />
+            <StatCard label="No asistirán" value={stats.noCount} sub="declinaron la invitación" accent="#D32F2F" />
+            <StatCard label="Asistentes" value={stats.totalPeople} sub="personas en total" accent={T.gold} />
           </div>
         )}
         {/* Vacío: mensaje humano solo en fase lista */}
@@ -750,28 +790,30 @@ export default async function InvitationDashboard({ params }: Props) {
               </div>
             )}
 
-            {/* Pases de entrada — confirmaciones, semana, dia */}
-            {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
-              <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} />
-            )}
-
             {/* Lista RSVP — confirmaciones, semana, dia */}
             {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
               <>
                 <div id="invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '.5rem' }}>
                   <h2 style={{ margin: 0, fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-                    Confirmaciones RSVP
+                    Invitados confirmados
                   </h2>
                   <span style={{ fontSize: '.8125rem', color: T.light, fontWeight: 600 }}>
-                    {responses.length} {responses.length === 1 ? 'respuesta' : 'respuestas'}
+                    {responses.length} {responses.length === 1 ? 'invitado' : 'invitados'}
                   </span>
                 </div>
 
                 {responses.length === 0 ? (
                   <div style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '2.5rem 1.5rem', textAlign: 'center' }}>
                     <div style={{ fontSize: '2.25rem', marginBottom: '.75rem' }}>📭</div>
-                    <p style={{ margin: '0 0 .5rem', fontWeight: 700, color: T.dark, fontSize: '1rem' }}>Aún no hay confirmaciones</p>
-                    <p style={{ margin: 0, color: T.light, fontSize: '.875rem', lineHeight: 1.6 }}>Cuando tus invitados respondan, aparecerán aquí.</p>
+                    <p style={{ margin: '0 0 .5rem', fontWeight: 700, color: T.dark, fontSize: '1rem' }}>Aún nadie ha confirmado</p>
+                    <p style={{ margin: '0 0 1.25rem', color: T.light, fontSize: '.875rem', lineHeight: 1.6 }}>
+                      Cuando tus invitados respondan aparecerán aquí. Mientras tanto comparte tu invitación para comenzar a recibir confirmaciones.
+                    </p>
+                    {(phase === 'confirmaciones' || phase === 'semana') && (
+                      <a href="#compartir" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '.625rem 1.5rem', background: T.dark, color: '#F5F0E8', borderRadius: '.875rem', fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
+                        Compartir invitación
+                      </a>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -783,7 +825,7 @@ export default async function InvitationDashboard({ params }: Props) {
                             <th className="col-name">Nombre</th>
                             <th className="col-badge">Asistencia</th>
                             <th className="col-num">Acomp.</th>
-                            <th className="col-num">Personas</th>
+                            <th className="col-num">Asistentes</th>
                             <th className="col-phone">Teléfono</th>
                             <th className="col-msg">Mensaje</th>
                             <th className="col-pass">Pase</th>
@@ -834,13 +876,22 @@ export default async function InvitationDashboard({ params }: Props) {
                 )}
               </>
             )}
+
+            {/* Pases de entrada — confirmaciones, semana, dia (después de RSVP) */}
+            {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
+              <div id="pases">
+                <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} />
+              </div>
+            )}
           </div>
 
           {/* Sidebar derecha */}
           <div className="db-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {/* QR — solo en semana y dia */}
             {(phase === 'semana' || phase === 'dia') && publicUrl && (
-              <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
+              <div id="qr-sidebar">
+                <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
+              </div>
             )}
 
             {/* Compartir — lista y confirmaciones */}
