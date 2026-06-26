@@ -69,7 +69,7 @@ const INLINE_EDIT_ALLOWED_PATHS = [
   /^parents\.(groomTitle|groomFatherLabel|groomFatherName|groomMotherLabel|groomMotherName|brideTitle|brideFatherLabel|brideFatherName|brideMotherLabel|brideMotherName)$/,
   /^padrinos\.\d+\.rubro$/,
   /^padrinos\.\d+\.names\.\d+$/,
-  /^hotels\.\d+\.(name|description|address|distance|priceRange)$/,
+  /^hotels\.\d+\.(name|description|address|distance|priceRange|phone)$/,
   /^social\.(sectionEyebrow|hashtag|note)$/,
   /^final_message\.(title|message|quote|signature)$/,
 ];

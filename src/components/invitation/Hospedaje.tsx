@@ -103,7 +103,9 @@ export default function Hospedaje({ hotels, theme, editablePreview = false }: Ho
                   {hotel.phone && (
                     <div className="flex items-center gap-2">
                       <Phone className="w-3 h-3 flex-shrink-0" style={{ color: `var(--v2-color-accent, #C8A75D)` }} />
-                      <span className="text-[13px] opacity-90" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>{hotel.phone}</span>
+                      <span className="text-[13px] opacity-90" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
+                        <EditableText value={hotel.phone} fieldPath={`hotels.${i}.phone`} isEditable={editablePreview} />
+                      </span>
                     </div>
                   )}
                   <div className="flex items-center gap-2 mt-0.5">
