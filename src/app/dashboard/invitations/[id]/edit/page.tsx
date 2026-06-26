@@ -31,7 +31,7 @@ import {
 import type { DashboardAssistantEventType, InvitationAssistantContext } from '@/features/dashboard-assistant/types';
 import { shouldShowWeddingWizard } from '@/lib/invitations/completion-score';
 import { WizardShell } from './WizardShell';
-import { QuickSetupWizard } from '@/components/wizard/QuickSetupWizard';
+import { WizardExpress } from '@/components/wizard/WizardExpress';
 import { VisualEditorMobileEntry } from '@/components/visual-editor/VisualEditorMobileEntry';
 import { getAvailableModules } from '@/domain/modules';
 import { getEditableElements } from '@/domain/visual-editor';
@@ -234,19 +234,31 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     const raw = (invRow as { wizard_step_completed?: number } | null)?.wizard_step_completed;
     const wizardCompleted = (raw ?? 0) >= 3;
     console.log('[wizard-gate] invRow=%j raw=%s wizardCompleted=%s err=%s', invRow, raw, wizardCompleted, wizardQueryErr?.message ?? null);
-    if (!wizardCompleted) {
+    // Skip wizard if invitation already has the minimum required data.
+    // wizard_step_completed tracks completion, but a manually-edited invitation
+    // may have full data with wizard_step_completed still at 0.
+    const hasMinimalData =
+      invitation.protagonists.some((p) => p.name?.trim()) &&
+      !!invitation.eventDate?.trim() &&
+      !!invitation.location?.venueName?.trim();
+
+    if (!wizardCompleted && !hasMinimalData) {
       const publicUrl = invitation.slug ? `/i/${invitation.slug}` : null;
+      const brideName = invitation.protagonists.find((p) => p.role === 'novia' || p.role === 'bride')?.name ?? '';
+      const groomName = invitation.protagonists.find((p) => p.role === 'novio' || p.role === 'groom')?.name ?? '';
       return (
-        <div style={{ minHeight: '100vh', background: '#F6F2EC', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '3rem', paddingBottom: '3rem' }}>
-          <QuickSetupWizard
-            invitationId={id}
-            invitationTitle={invitation.title}
-            isCompleted={wizardCompleted}
-            publicUrl={publicUrl}
-            editorUrl={`/dashboard/invitations/${id}/edit`}
-            dashboardUrl={`/cliente/invitaciones/${id}`}
-          />
-        </div>
+        <WizardExpress
+          invitationId={id}
+          planId={invitation.planId ?? 'basic'}
+          invitationTitle={invitation.title}
+          editorUrl={`/dashboard/invitations/${id}/edit`}
+          prefilled={{
+            brideName,
+            groomName,
+            eventDate: invitation.eventDate ?? '',
+            venueName: invitation.location?.venueName ?? '',
+          }}
+        />
       );
     }
   }
