@@ -5,6 +5,7 @@ import { Theme } from '@/domain/themes/types';
 import { InvitationProtagonist } from '@/domain/invitations/types';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { getVideoEmbedUrl } from '@/lib/video/getVideoEmbedUrl';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface HeroProps {
   protagonists?: InvitationProtagonist[];
@@ -17,7 +18,9 @@ interface HeroProps {
   /** Library video URL — takes priority over videoUrl when provided (plan-gated by renderer) */
   heroVideoUrl?: string | null;
   eventLabel?: string;
+  connectorText?: string;
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 export default function Hero({
@@ -30,7 +33,9 @@ export default function Hero({
   videoUrl,
   heroVideoUrl,
   eventLabel = 'Nuestra Boda',
+  connectorText = 'y',
   theme,
+  editablePreview = false,
 }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [videoFailed, setVideoFailed] = useState(false);
@@ -243,7 +248,11 @@ export default function Hero({
           className={`text-sm md:text-base font-semibold uppercase tracking-[0.28em] mb-5 text-center max-w-md px-6 ${theme.bodyFont} hero-text-champagne`}
           style={{ textShadow: '0 8px 28px rgba(0,0,0,0.45)', color: '#F4DFC0' }}
         >
-          {eventLabel}
+          <EditableText
+            value={eventLabel}
+            fieldPath="hero.eventLabel"
+            isEditable={editablePreview}
+          />
         </motion.p>
 
         {/* Divider */}
@@ -277,7 +286,11 @@ export default function Hero({
               color: '#F8E7C6',
             }}
           >
-            {primaryName}
+            <EditableText
+              value={primaryName}
+              fieldPath="protagonists.0.name"
+              isEditable={editablePreview}
+            />
           </motion.span>
 
           <motion.span
@@ -287,7 +300,11 @@ export default function Hero({
             className="block font-calligraphy italic my-0.5 hero-text-champagne"
             style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#F4DFC0', textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
           >
-            y
+            <EditableText
+              value={connectorText}
+              fieldPath="hero.connectorText"
+              isEditable={editablePreview}
+            />
           </motion.span>
 
           <motion.span
@@ -303,7 +320,11 @@ export default function Hero({
               color: '#F8E7C6',
             }}
           >
-            {secondaryName}
+            <EditableText
+              value={secondaryName}
+              fieldPath="protagonists.1.name"
+              isEditable={editablePreview}
+            />
           </motion.span>
         </div>
 
@@ -316,7 +337,11 @@ export default function Hero({
             className={`text-xs md:text-sm italic text-center max-w-xs px-6 mt-4 ${theme.bodyFont} hero-text-champagne`}
             style={{ textShadow: '0 4px 16px rgba(0,0,0,0.4)', color: '#F4DFC0' }}
           >
-            {emotionalPhrase}
+            <EditableText
+              value={emotionalPhrase}
+              fieldPath="hero.emotionalPhrase"
+              isEditable={editablePreview}
+            />
           </motion.p>
         )}
 

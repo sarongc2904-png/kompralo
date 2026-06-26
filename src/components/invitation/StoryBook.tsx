@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Theme } from '@/domain/themes/types';
 import { InvitationProtagonist, StorySlide } from '@/domain/invitations/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface StoryBookProps {
   slides: StorySlide[];
@@ -12,6 +13,7 @@ interface StoryBookProps {
   protagonists?: InvitationProtagonist[];
   brideName?: string;
   groomName?: string;
+  editablePreview?: boolean;
 }
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -319,14 +321,18 @@ function StoryImage({ imageUrl, alt }: { imageUrl: string; alt: string }) {
 // so StoryImage can fill it with position:absolute; inset:0.
 function DesktopBookSpread({
   slide,
+  slideIndex,
   pageNum,
   imageOnLeft,
   theme,
+  editablePreview,
 }: {
   slide: StorySlide;
+  slideIndex: number;
   pageNum: number;
   imageOnLeft: boolean;
   theme: Theme;
+  editablePreview: boolean;
 }) {
   const accent = `var(--v2-color-accent, ${theme.colors.accent})`;
   const textPrimary = `var(--v2-color-text-primary, ${theme.colors.textPrimary})`;
@@ -441,7 +447,7 @@ function DesktopBookSpread({
             marginBottom: 16,
           }}
         >
-          {slide.title}
+          <EditableText value={slide.title} fieldPath={`story.slides.${slideIndex}.title`} isEditable={editablePreview} />
         </h4>
         <div
           style={{
@@ -462,7 +468,7 @@ function DesktopBookSpread({
             textAlign: 'justify',
           }}
         >
-          {slide.text}
+          <EditableText value={slide.text} fieldPath={`story.slides.${slideIndex}.text`} isEditable={editablePreview} singleLine={false} />
         </p>
         <FloralDivider color={accent} />
       </div>
@@ -536,12 +542,16 @@ function DesktopBookSpread({
 // (position:absolute; inset:0) can fill it correctly.
 function MobileStoryCard({
   slide,
+  slideIndex,
   pageNum,
   theme,
+  editablePreview,
 }: {
   slide: StorySlide;
+  slideIndex: number;
   pageNum: number;
   theme: Theme;
+  editablePreview: boolean;
 }) {
   const accent = `var(--v2-color-accent, ${theme.colors.accent})`;
   const textPrimary = `var(--v2-color-text-primary, ${theme.colors.textPrimary})`;
@@ -605,7 +615,7 @@ function MobileStoryCard({
               marginBottom: 12,
             }}
           >
-            {slide.title}
+            <EditableText value={slide.title} fieldPath={`story.slides.${slideIndex}.title`} isEditable={editablePreview} />
           </h4>
           <div
             style={{
@@ -625,7 +635,7 @@ function MobileStoryCard({
               opacity: 0.88,
             }}
           >
-            {slide.text}
+            <EditableText value={slide.text} fieldPath={`story.slides.${slideIndex}.text`} isEditable={editablePreview} singleLine={false} />
           </p>
           <FloralDivider color={accent} />
           <p
@@ -917,6 +927,7 @@ export default function StoryBook({
   theme,
   brideName,
   groomName,
+  editablePreview = false,
 }: StoryBookProps) {
   const primaryName = protagonists?.[0]?.name ?? brideName ?? 'Sofía';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? 'Alejandro';
@@ -1075,17 +1086,21 @@ export default function StoryBook({
                       <div className="hidden lg:block">
                         <DesktopBookSpread
                           slide={currentSlide!}
+                          slideIndex={currentPage}
                           pageNum={pageNum}
                           imageOnLeft={imageOnLeft}
                           theme={theme}
+                          editablePreview={editablePreview}
                         />
                       </div>
                       {/* Mobile / tablet: vertical card */}
                       <div className="lg:hidden">
                         <MobileStoryCard
                           slide={currentSlide!}
+                          slideIndex={currentPage}
                           pageNum={pageNum}
                           theme={theme}
+                          editablePreview={editablePreview}
                         />
                       </div>
                     </>

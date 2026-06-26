@@ -8,10 +8,12 @@ import { MapPin, Phone, Star } from 'lucide-react';
 import SectionShell from './SectionShell';
 import SectionHeader from './SectionHeader';
 import ElegantInvitationCard from './ElegantInvitationCard';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface HospedajeProps {
   hotels: Hotel[];
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 function StarRating({ count }: { count: number }) {
@@ -31,15 +33,15 @@ function StarRating({ count }: { count: number }) {
   );
 }
 
-function PriceTag({ range }: { range: string }) {
+function PriceTag({ range, fieldPath, editablePreview }: { range: string; fieldPath: string; editablePreview: boolean }) {
   return (
     <span className="text-[10px] font-semibold tracking-widest" style={{ color: `var(--v2-color-accent, #C8A75D)` }}>
-      {range}
+      <EditableText value={range} fieldPath={fieldPath} isEditable={editablePreview} />
     </span>
   );
 }
 
-export default function Hospedaje({ hotels, theme }: HospedajeProps) {
+export default function Hospedaje({ hotels, theme, editablePreview = false }: HospedajeProps) {
   if (!hotels || hotels.length === 0) return null;
 
   return (
@@ -79,9 +81,9 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
                     className="text-base font-normal tracking-wide" 
                     style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: `var(--v2-color-text-primary, #1F1A16)` }}
                   >
-                    {hotel.name}
+                    <EditableText value={hotel.name} fieldPath={`hotels.${i}.name`} isEditable={editablePreview} />
                   </h4>
-                  <PriceTag range={hotel.priceRange} />
+                  <PriceTag range={hotel.priceRange} fieldPath={`hotels.${i}.priceRange`} editablePreview={editablePreview} />
                 </div>
                 <div className="mb-3">
                   <StarRating count={hotel.stars} />
@@ -91,7 +93,9 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3 h-3 flex-shrink-0" style={{ color: `var(--v2-color-accent, #C8A75D)` }} />
-                    <span className="text-[13px] opacity-90 truncate" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>{hotel.address}</span>
+                    <span className="text-[13px] opacity-90 truncate" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
+                      <EditableText value={hotel.address} fieldPath={`hotels.${i}.address`} isEditable={editablePreview} />
+                    </span>
                   </div>
                   {hotel.phone && (
                     <div className="flex items-center gap-2">
@@ -104,7 +108,7 @@ export default function Hospedaje({ hotels, theme }: HospedajeProps) {
                       <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--v2-color-accent, #C8A75D)' }} />
                     </div>
                     <span className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: `var(--v2-color-accent, #C8A75D)` }}>
-                      {hotel.distance}
+                      <EditableText value={hotel.distance} fieldPath={`hotels.${i}.distance`} isEditable={editablePreview} />
                     </span>
                   </div>
                 </div>

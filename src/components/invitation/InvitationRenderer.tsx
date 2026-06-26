@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { InvitationContent } from '@/domain/invitations/types';
 import type { InvitationFeatures, InvitationPlan } from '@/domain/plans/types';
 import { createThemeCssVariables, type Theme } from '@/domain/themes/types';
@@ -93,6 +93,8 @@ interface InvitationRendererProps {
   themePreviewId?: string;
   /** Skips the public tap-to-open intro in editor previews only. */
   skipIntro?: boolean;
+  /** Enables contentEditable text only inside editor preview iframe. */
+  editablePreview?: boolean;
 }
 
 export default function InvitationRenderer({
@@ -103,6 +105,7 @@ export default function InvitationRenderer({
   mode = 'public',
   themePreviewId,
   skipIntro = false,
+  editablePreview = false,
 }: InvitationRendererProps) {
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
@@ -123,6 +126,39 @@ export default function InvitationRenderer({
   const handleEnterInvitation = () => {
     // Platinum: CinematicIntro calls this when user taps "Entrar"
   };
+
+  useEffect(() => {
+    if (!editablePreview) return;
+
+    let frame = 0;
+    const sendHeight = () => {
+      window.parent?.postMessage(
+        {
+          type: 'KOMPRALO_PREVIEW_HEIGHT',
+          height: document.documentElement.scrollHeight,
+        },
+        window.location.origin,
+      );
+    };
+    const scheduleSendHeight = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(sendHeight);
+    };
+
+    scheduleSendHeight();
+    window.addEventListener('load', scheduleSendHeight);
+    window.addEventListener('resize', scheduleSendHeight);
+
+    const observer = new ResizeObserver(scheduleSendHeight);
+    observer.observe(document.body);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('load', scheduleSendHeight);
+      window.removeEventListener('resize', scheduleSendHeight);
+      observer.disconnect();
+    };
+  }, [editablePreview]);
 
   // Diagnostic logs for debugging theme resolution
   if (typeof window !== 'undefined') {
@@ -147,6 +183,27 @@ export default function InvitationRenderer({
       data-theme-v2={themeV2.id}
       style={{ ...themeVariables, ...(themeV2.cssVariables as React.CSSProperties) }}
     >
+      {editablePreview && (
+        <style>{`
+          [data-editable-field] {
+            cursor: text;
+            border-radius: 8px;
+            outline: 1px dashed transparent;
+            outline-offset: 4px;
+            transition: outline-color 160ms ease, background-color 160ms ease;
+            -webkit-user-select: text;
+            user-select: text;
+          }
+          [data-editable-field]:hover,
+          [data-editable-field]:focus {
+            outline-color: rgba(200, 167, 93, 0.72);
+            background-color: rgba(255, 253, 248, 0.12);
+          }
+          [data-editable-field]:focus {
+            outline-style: dotted;
+          }
+        `}</style>
+      )}
     <ThemeProviderV2 theme={themeV2} injectCssVariables={false}>
       <MultilayerBackground theme={effectiveTheme} />
 
@@ -187,6 +244,8 @@ export default function InvitationRenderer({
               heroVideoUrl={heroVideoUrl}
               eventLabel={invitation.hero?.eventLabel || 'Nos casamos'}
               theme={effectiveTheme}
+              editablePreview={editablePreview}
+              connectorText={(invitation.hero as { connectorText?: string } | undefined)?.connectorText}
             />
           );
         })()}
@@ -201,7 +260,7 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showStoryBook" features={features}>
-        <StoryBook slides={invitation.story.slides} theme={effectiveTheme} protagonists={protagonists} />
+        <StoryBook slides={invitation.story.slides} theme={effectiveTheme} protagonists={protagonists} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showGallery" features={features}>
@@ -209,15 +268,15 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showTimeline" features={features}>
-        <Timeline events={invitation.timeline} theme={effectiveTheme} />
+        <Timeline events={invitation.timeline} theme={effectiveTheme} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showItinerary" features={features}>
-        <Itinerary items={invitation.itinerary} theme={effectiveTheme} />
+        <Itinerary items={invitation.itinerary} theme={effectiveTheme} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showMaps" features={features}>
-        <Location location={invitation.location} theme={effectiveTheme} />
+        <Location location={invitation.location} theme={effectiveTheme} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showQRCode" features={features}>
@@ -225,19 +284,19 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showDressCode" features={features}>
-        <DressCode dressCode={invitation.dressCode} theme={effectiveTheme} />
+        <DressCode dressCode={invitation.dressCode} theme={effectiveTheme} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showGiftRegistry" features={features}>
-        <GiftRegistry items={invitation.giftRegistry.items} theme={effectiveTheme} />
+        <GiftRegistry items={invitation.giftRegistry.items} theme={effectiveTheme} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showPadrinos" features={features}>
-        <Padrinos padrinos={invitation.padrinos} theme={effectiveTheme} />
+        <Padrinos padrinos={invitation.padrinos} theme={effectiveTheme} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showAccommodation" features={features}>
-        <Hospedaje hotels={invitation.hotels} theme={effectiveTheme} />
+        <Hospedaje hotels={invitation.hotels} theme={effectiveTheme} editablePreview={editablePreview} />
       </FeatureGate>
 
       <FeatureGate feature="showHashtag" features={features}>
@@ -245,6 +304,7 @@ export default function InvitationRenderer({
           social={invitation.social}
           imageUrl={galleryImages[1] || galleryImages[0]}
           theme={effectiveTheme}
+          editablePreview={editablePreview}
         />
       </FeatureGate>
 
@@ -279,7 +339,11 @@ export default function InvitationRenderer({
           protagonists={protagonists}
           imageUrl={invitation.finalMessage.imageUrl ?? galleryImages[0]}
           quote={invitation.finalMessage.quote}
+          message={invitation.finalMessage.message}
+          title={invitation.finalMessage.title}
+          signature={invitation.finalMessage.signature}
           theme={effectiveTheme}
+          editablePreview={editablePreview}
         />
       </FeatureGate>
     </ThemeProviderV2>

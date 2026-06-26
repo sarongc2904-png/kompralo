@@ -1,8 +1,9 @@
 ﻿'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { EditableElement, EditableElementId } from '@/domain/visual-editor';
+import { updateInlineEditableText } from '@/app/dashboard/invitations/[id]/edit/actions';
 import { VisualEditorBottomSheet } from './VisualEditorBottomSheet';
 
 type EditableZone = {
@@ -65,6 +66,8 @@ export function VisualEditorMobileEntry({
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [selectedElement, setSelectedElement] = useState<EditableElement | null>(null);
   const [highlightedId, setHighlightedId] = useState<EditableElementId | null>(null);
+  const [inlineSaveStatus, setInlineSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [previewHeight, setPreviewHeight] = useState(680);
   const previewRef = useRef<HTMLDivElement>(null);
   const previewUrl = `/preview/${invitationId}?from=editor&editorPreview=1&skipIntro=1`;
 
@@ -74,6 +77,45 @@ export function VisualEditorMobileEntry({
   );
 
   const selectedZone = selectedElement ? EDITABLE_ZONES[selectedElement.id] : null;
+
+  useEffect(() => {
+    let savedTimer: number | null = null;
+
+    async function handleInlineEdit(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data as { type?: string; fieldPath?: string; value?: string };
+      if (data?.type !== 'KOMPRALO_INLINE_EDIT' || !data.fieldPath || typeof data.value !== 'string') return;
+
+      setInlineSaveStatus('saving');
+      const result = await updateInlineEditableText({
+        id: invitationId,
+        fieldPath: data.fieldPath,
+        value: data.value,
+      });
+
+      setInlineSaveStatus(result.success ? 'saved' : 'error');
+      if (savedTimer) window.clearTimeout(savedTimer);
+      savedTimer = window.setTimeout(() => setInlineSaveStatus('idle'), 1800);
+    }
+
+    window.addEventListener('message', handleInlineEdit);
+    return () => {
+      window.removeEventListener('message', handleInlineEdit);
+      if (savedTimer) window.clearTimeout(savedTimer);
+    };
+  }, [invitationId]);
+
+  useEffect(() => {
+    function handlePreviewResize(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data as { type?: string; height?: number };
+      if (data?.type !== 'KOMPRALO_PREVIEW_HEIGHT' || typeof data.height !== 'number') return;
+      setPreviewHeight(Math.max(680, Math.min(data.height, 12000)));
+    }
+
+    window.addEventListener('message', handlePreviewResize);
+    return () => window.removeEventListener('message', handlePreviewResize);
+  }, []);
 
   function scrollToPreview() {
     window.setTimeout(() => {
@@ -117,18 +159,30 @@ export function VisualEditorMobileEntry({
       <div className="md:hidden" ref={previewRef}>
         <section className="relative -mx-4 mb-6 min-h-[calc(100dvh-92px)] overflow-hidden bg-[#F6F0E4] px-3 pb-4 pt-2">
           <div className="pointer-events-none absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-full border border-[#E6D8BD] bg-[#FFFDF8]/90 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8A6D3B] shadow-sm">
-            Estás editando tu invitación. Toca una zona para personalizarla.
+            Estás editando tu invitación. Toca un texto para modificarlo.
           </div>
+          {inlineSaveStatus !== 'idle' && (
+            <div className="pointer-events-none absolute right-4 top-16 z-20 rounded-full border border-[#E6D8BD] bg-[#FFFDF8]/95 px-3 py-1 text-[11px] font-semibold text-[#6E573A] shadow-sm">
+              {inlineSaveStatus === 'saving' && 'Guardando…'}
+              {inlineSaveStatus === 'saved' && 'Guardado'}
+              {inlineSaveStatus === 'error' && 'No se pudo guardar'}
+            </div>
+          )}
 
-          <div className="relative mx-auto h-[calc(100dvh-112px)] max-h-[820px] min-h-[640px] max-w-[430px] overflow-hidden rounded-[32px] border border-[#E6D8BD] bg-[#FFFDF8] shadow-2xl">
+          <div
+            className="relative mx-auto h-[calc(100dvh-112px)] max-h-[820px] min-h-[640px] max-w-[430px] overflow-y-auto overscroll-contain rounded-[32px] border border-[#E6D8BD] bg-[#FFFDF8] shadow-2xl"
+            style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
+          >
             <iframe
               src={previewUrl}
               title="Vista previa de la invitaciÃ³n"
-              className="h-full w-full border-0"
+              className="block w-full border-0"
+              style={{ height: previewHeight }}
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              scrolling="yes"
             />
 
-            <div className="absolute inset-0 z-10">
+            <div className="pointer-events-none absolute inset-0 z-10">
               {visibleElements.map((element) => {
                 const zone = EDITABLE_ZONES[element.id];
                 const isHighlighted = highlightedId === element.id;

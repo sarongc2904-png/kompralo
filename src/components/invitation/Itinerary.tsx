@@ -7,10 +7,12 @@ import { Sparkles, Church, GlassWater, Utensils, Music } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import SectionShell from './SectionShell';
 import ElegantInvitationCard from './ElegantInvitationCard';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface ItineraryProps {
   items: ItineraryItem[];
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 const iconMap = {
@@ -21,7 +23,7 @@ const iconMap = {
   music: Music,
 };
 
-export default function Itinerary({ items, theme }: ItineraryProps) {
+export default function Itinerary({ items, theme, editablePreview = false }: ItineraryProps) {
   const validItems = items?.filter(
     (item) => item && (item.title || item.time || item.location),
   ) ?? [];
@@ -68,7 +70,7 @@ export default function Itinerary({ items, theme }: ItineraryProps) {
 
               {/* Time Badge */}
               <span className="text-[14px] md:text-[15px] font-mono font-semibold tracking-[0.2em] mb-3" style={{ color: 'var(--v2-color-accent, inherit)' }}>
-                {item.time}
+                <EditableText value={item.time} fieldPath={`itinerary.${index}.time`} isEditable={editablePreview} />
               </span>
 
               {/* Divider */}
@@ -79,13 +81,19 @@ export default function Itinerary({ items, theme }: ItineraryProps) {
                 className={`text-xl md:text-2xl font-normal tracking-wide mb-3 ${theme.headingFont}`}
                 style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
               >
-                {item.title}
+                <EditableText value={item.title} fieldPath={`itinerary.${index}.title`} isEditable={editablePreview} />
               </h4>
 
               {/* Location */}
               <p className={`text-sm md:text-base leading-relaxed opacity-75 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
-                {item.location}
+                <EditableText value={item.location} fieldPath={`itinerary.${index}.location`} isEditable={editablePreview} />
               </p>
+
+              {item.description && (
+                <p className={`mt-2 text-xs md:text-sm leading-relaxed opacity-70 ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
+                  <EditableText value={item.description} fieldPath={`itinerary.${index}.description`} isEditable={editablePreview} />
+                </p>
+              )}
 
               {/* Trailing ornament */}
               <div className="mt-4 text-[9px]" style={{ color: 'var(--v2-color-accent, rgba(200, 167, 93, 0.40))', opacity: 0.6 }}>

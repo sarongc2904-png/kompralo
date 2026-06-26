@@ -37,6 +37,86 @@ export type UpdateInvitationResult =
   | { success: true; message: string }
   | { success: false; error: string };
 
+const INLINE_EDIT_COLUMNS = [
+  'protagonists',
+  'hero',
+  'location',
+  'story',
+  'timeline',
+  'itinerary',
+  'dress_code',
+  'gift_registry',
+  'padrinos',
+  'hotels',
+  'social',
+  'final_message',
+] as const;
+
+type InlineEditColumn = typeof INLINE_EDIT_COLUMNS[number];
+
+const INLINE_EDIT_ALLOWED_PATHS = [
+  /^protagonists\.\d+\.name$/,
+  /^hero\.(eventLabel|emotionalPhrase|connectorText)$/,
+  /^location\.(venueName|address)$/,
+  /^story\.slides\.\d+\.(title|subtitle|text|date)$/,
+  /^timeline\.\d+\.(year|title|description)$/,
+  /^itinerary\.\d+\.(time|title|location|description)$/,
+  /^dress_code\.(title|type|description|suggestions)$/,
+  /^gift_registry\.items\.\d+\.(provider|description)$/,
+  /^padrinos\.\d+\.rubro$/,
+  /^padrinos\.\d+\.names\.\d+$/,
+  /^hotels\.\d+\.(name|description|address|distance|priceRange)$/,
+  /^social\.(hashtag|note)$/,
+  /^final_message\.(title|message|quote|signature)$/,
+];
+
+function getInlineEditColumn(fieldPath: string): InlineEditColumn | null {
+  if (!INLINE_EDIT_ALLOWED_PATHS.some((pattern) => pattern.test(fieldPath))) return null;
+  const root = fieldPath.split('.')[0];
+  return INLINE_EDIT_COLUMNS.find((column) => column === root) ?? null;
+}
+
+function setNestedTextValue(target: unknown, pathParts: string[], value: string): unknown {
+  const root = Array.isArray(target)
+    ? [...target]
+    : target && typeof target === 'object'
+      ? { ...(target as Record<string, unknown>) }
+      : {};
+
+  let cursor: Record<string, unknown> | unknown[] = root as Record<string, unknown> | unknown[];
+  for (let index = 0; index < pathParts.length - 1; index += 1) {
+    const key = pathParts[index];
+    const nextKey = pathParts[index + 1];
+    const isArrayIndex = /^\d+$/.test(nextKey);
+    const currentValue = Array.isArray(cursor)
+      ? cursor[Number(key)]
+      : (cursor as Record<string, unknown>)[key];
+    const nextValue = Array.isArray(currentValue)
+      ? [...currentValue]
+      : currentValue && typeof currentValue === 'object'
+        ? { ...(currentValue as Record<string, unknown>) }
+        : isArrayIndex
+          ? []
+          : {};
+
+    if (Array.isArray(cursor)) {
+      cursor[Number(key)] = nextValue;
+    } else {
+      (cursor as Record<string, unknown>)[key] = nextValue;
+    }
+    cursor = nextValue as Record<string, unknown> | unknown[];
+  }
+
+  const finalKey = pathParts[pathParts.length - 1];
+  if (Array.isArray(cursor)) {
+    cursor[Number(finalKey)] = value;
+  } else {
+    (cursor as Record<string, unknown>)[finalKey] = value;
+  }
+
+  return root;
+}
+
 async function getAuthorizedInvitationRepository(invitationId: string): Promise<IInvitationRepository> {
   const serviceSupabase = createServiceRoleSupabaseClient();
   const repository = new SupabaseInvitationRepository(serviceSupabase);
@@ -226,6 +306,63 @@ function validateBasicFormat(input: UpdateInvitationBasicInfoInput): string | nu
     }
   }
   return null;
+}
+
+export async function updateInlineEditableText(input: {
+  id: string;
+  fieldPath: string;
+  value: string;
+}): Promise<UpdateInvitationResult> {
+  const id = input.id.trim();
+  const fieldPath = input.fieldPath.trim();
+  const value = input.value.replace(/\s+/g, ' ').trim();
+  const column = getInlineEditColumn(fieldPath);
+
+  if (!id || !column) {
+    return { success: false, error: 'Campo inline no permitido.' };
+  }
+  if (!value) {
+    return { success: false, error: 'El texto no puede quedar vacío.' };
+  }
+  if (value.length > 500) {
+    return { success: false, error: 'El texto es demasiado largo.' };
+  }
+
+  try {
+    await getAuthorizedInvitationRepository(id);
+    const db = createServiceRoleSupabaseClient();
+    const { data: row, error: readError } = await db
+      .from('invitation_content')
+      .select(column)
+      .eq('invitation_id', id)
+      .maybeSingle();
+
+    if (readError) {
+      return { success: false, error: `Error leyendo contenido: ${readError.message}` };
+    }
+
+    const contentRow = (row ?? {}) as Partial<Record<InlineEditColumn, unknown>>;
+    const pathParts = fieldPath.split('.').slice(1);
+    const currentValue = contentRow[column] ?? (/^\d+$/.test(pathParts[0] ?? '') ? [] : {});
+    const nextValue = setNestedTextValue(currentValue, pathParts, value);
+
+    const { error: updateError } = await db
+      .from('invitation_content')
+      .update({ [column]: nextValue, updated_at: new Date().toISOString() })
+      .eq('invitation_id', id);
+
+    if (updateError) {
+      return { success: false, error: `Error guardando texto: ${updateError.message}` };
+    }
+
+    revalidatePath(`/dashboard/invitations/${id}/edit`);
+    revalidatePath(`/preview/${id}`);
+    return { success: true, message: 'Texto actualizado.' };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error inesperado.';
+    console.error('[Editor] updateInlineEditableText error:', message);
+    return { success: false, error: message };
+  }
 }
 
 export async function updateInvitationBasicInfo(

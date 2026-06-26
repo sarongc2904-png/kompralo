@@ -7,6 +7,7 @@ import { Sparkles } from 'lucide-react';
 import { motion, useInView, useScroll, useTransform, useSpring } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,8 +16,12 @@ interface FinalMessageProps {
   brideName?: string;
   groomName?: string;
   quote?: string;
+  title?: string;
+  message?: string;
+  signature?: string;
   imageUrl?: string;
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 // Calligraphic SVG paths for each letter — hand-drawn feel
@@ -269,13 +274,26 @@ function UnifiedSignatures({
   );
 }
 
-export default function FinalMessage({ protagonists, brideName, groomName, quote, imageUrl, theme }: FinalMessageProps) {
+export default function FinalMessage({
+  protagonists,
+  brideName,
+  groomName,
+  quote,
+  title,
+  message,
+  signature,
+  imageUrl,
+  theme,
+  editablePreview = false,
+}: FinalMessageProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const bgRef      = useRef<HTMLDivElement>(null);
   const imgRef     = useRef<HTMLDivElement>(null);
   const primaryName = protagonists?.[0]?.name ?? brideName ?? '';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? '';
-  const closingQuote = quote ?? 'Sin ti este día no estaría completo. Te esperamos con los brazos abiertos para celebrar la vida, el amor y el inicio de nuestra historia.';
+  const closingTitle = title || 'Gracias';
+  const closingQuote = message || quote || 'Sin ti este día no estaría completo. Te esperamos con los brazos abiertos para celebrar la vida, el amor y el inicio de nuestra historia.';
+  const closingSignature = signature || `${primaryName} & ${secondaryName}`;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -434,6 +452,13 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
           <Sparkles className="w-6 h-6" style={{ color: 'var(--v2-color-accent, #C8A75D)' }} strokeWidth={1} />
         </motion.div>
 
+        <p
+          className={`mb-5 text-[11px] md:text-xs uppercase tracking-[0.25em] ${theme.bodyFont}`}
+          style={{ color: accentColor, textShadow: imageUrl ? '0 2px 10px rgba(0,0,0,0.4)' : 'none' }}
+        >
+          <EditableText value={closingTitle} fieldPath="final_message.title" isEditable={editablePreview} />
+        </p>
+
         {/* Closing Quote */}
         <motion.blockquote
           className={`font-light italic leading-relaxed mb-10 max-w-lg ${theme.headingFont} ${quoteClass}`}
@@ -447,7 +472,7 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.2 }}
         >
-          {closingQuote}
+          <EditableText value={closingQuote} fieldPath="final_message.message" isEditable={editablePreview} />
         </motion.blockquote>
 
         {/* Ornamental Divider */}
@@ -475,6 +500,12 @@ export default function FinalMessage({ protagonists, brideName, groomName, quote
           color={textColor}
           accentColor={accentColor}
         />
+
+        {editablePreview && (
+          <p className={`mt-5 text-sm ${theme.bodyFont}`} style={{ color: textColor, opacity: 0.78 }}>
+            <EditableText value={closingSignature} fieldPath="final_message.signature" isEditable={editablePreview} />
+          </p>
+        )}
 
         {/* Elegant Footer */}
         <motion.footer

@@ -7,11 +7,13 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { Copy, Check, Heart, MessageCircle, Bookmark, MoreHorizontal, ThumbsUp, Share2, Play } from 'lucide-react';
 import SectionShell from './SectionShell';
 import SectionHeader from './SectionHeader';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface HashtagProps {
   social: SocialConfig;
   imageUrl?: string;
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 // ─── Platform detection ───────────────────────────────────────────────────────
@@ -121,7 +123,7 @@ function HeartBurst({ show }: { show: boolean }) {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function Hashtag({ social, imageUrl, theme }: HashtagProps) {
+export default function Hashtag({ social, imageUrl, theme, editablePreview = false }: HashtagProps) {
   const hasSocialContent =
     social.hashtag ||
     social.instagramHandle ||
@@ -390,11 +392,15 @@ export default function Hashtag({ social, imageUrl, theme }: HashtagProps) {
                   lineHeight: 1.5,
                 }}>
                   <span style={{ fontWeight: 700 }}>{handle}</span>{' '}
-                  {social.note ?? 'Comparte tus fotos y usa nuestro hashtag ❤️'}
+                  <EditableText
+                    value={social.note ?? 'Comparte tus fotos y usa nuestro hashtag ??'}
+                    fieldPath="social.note"
+                    isEditable={editablePreview}
+                  />
                 </p>
                 {social.hashtag && (
                   <p style={{ fontSize: 13, color: 'var(--v2-color-accent, #C8A75D)', marginTop: 3, fontWeight: 600 }}>
-                    #{social.hashtag}
+                    #<EditableText value={social.hashtag} fieldPath="social.hashtag" isEditable={editablePreview} />
                   </p>
                 )}
               </motion.div>

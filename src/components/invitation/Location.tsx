@@ -5,6 +5,7 @@ import { Theme } from '@/domain/themes/types';
 import { MapPin, Navigation } from 'lucide-react';
 import SectionHeader from './SectionHeader';
 import SectionShell from './SectionShell';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface LocationProps {
   location: {
@@ -14,6 +15,7 @@ interface LocationProps {
     wazeLink: string;
   };
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 // Cycle: 0-39% draw, 39-82% hold+circle travels, 82-93% erase, 93-100% pause
@@ -55,7 +57,7 @@ function isValidNavUrl(url: string | null | undefined): boolean {
   return /^https?:\/\//i.test(t);
 }
 
-export default function Location({ location, theme }: LocationProps) {
+export default function Location({ location, theme, editablePreview = false }: LocationProps) {
   if (!location) return null;
 
   const hasGoogleMaps = isValidNavUrl(location.googleMapsLink);
@@ -82,13 +84,13 @@ export default function Location({ location, theme }: LocationProps) {
             className={`text-3xl md:text-4xl font-normal tracking-wide mb-4 ${theme.headingFont}`}
             style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
           >
-            {location.venueName}
+            <EditableText value={location.venueName} fieldPath="location.venueName" isEditable={editablePreview} />
           </h4>
           <p 
             className={`text-base md:text-lg leading-relaxed opacity-85 mb-8 max-w-sm mx-auto md:mx-0 ${theme.bodyFont}`}
             style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
           >
-            {location.address}
+            <EditableText value={location.address} fieldPath="location.address" isEditable={editablePreview} />
           </p>
 
           {(hasGoogleMaps || hasWaze) && (

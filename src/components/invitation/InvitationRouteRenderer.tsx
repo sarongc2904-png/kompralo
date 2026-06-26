@@ -17,6 +17,8 @@ interface InvitationRouteRendererProps {
   themePreviewId?: string;
   /** Editor preview can bypass the public tap-to-open intro. */
   skipIntro?: boolean;
+  /** Enables inline editing only for editor iframe previews. */
+  editablePreview?: boolean;
 }
 
 export default function InvitationRouteRenderer({
@@ -28,6 +30,7 @@ export default function InvitationRouteRenderer({
   showPreviewBadge = false,
   themePreviewId,
   skipIntro = false,
+  editablePreview = false,
 }: InvitationRouteRendererProps) {
   const pathname    = usePathname();
   const searchParams = useSearchParams();
@@ -112,6 +115,7 @@ export default function InvitationRouteRenderer({
         mode={mode}
         themePreviewId={themePreviewId}
         skipIntro={skipIntro}
+        editablePreview={editablePreview}
       />
     </>
   );

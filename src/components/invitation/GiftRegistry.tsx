@@ -8,13 +8,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SectionHeader from './SectionHeader';
 import SectionShell from './SectionShell';
 import ElegantInvitationCard from './ElegantInvitationCard';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface GiftRegistryProps {
   items: GiftRegistryItem[];
   theme: Theme;
+  editablePreview?: boolean;
 }
 
-export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
+export default function GiftRegistry({ items, theme, editablePreview = false }: GiftRegistryProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [revealedIds, setRevealedIds] = useState<Record<string, boolean>>({});
 
@@ -45,6 +47,8 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
       <div className="flex flex-wrap justify-center gap-6 md:gap-8 mt-12">
         {items.map((item, idx) => {
           const isRevealed = !!revealedIds[item.id];
+          const isInternalAnchor = !item.link || item.link.startsWith('#');
+          const actionHref = item.link || '#rsvp-name';
           return (
             <ElegantInvitationCard
               key={item.id}
@@ -70,7 +74,7 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                   className={`text-2xl font-normal tracking-wide mb-3 ${theme.headingFont}`}
                   style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
                 >
-                  {item.provider}
+                  <EditableText value={item.provider} fieldPath={`gift_registry.items.${idx}.provider`} isEditable={editablePreview} />
                 </h4>
 
                 {/* Bank Details (Hidden by default, reveals on toggle) */}
@@ -133,7 +137,11 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                 {/* Standard description for normal links */}
                 {item.logoType !== 'bank' && (
                   <p className={`text-[13px] md:text-[14px] opacity-75 mb-4 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
-                    Haz clic abajo para ver la mesa de regalos directamente.
+                    <EditableText
+                      value={item.description || 'Haz clic abajo para ver la mesa de regalos directamente.'}
+                      fieldPath={`gift_registry.items.${idx}.description`}
+                      isEditable={editablePreview}
+                    />
                   </p>
                 )}
               </div>
@@ -194,9 +202,9 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                   </>
                 ) : (
                   <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={actionHref}
+                    target={isInternalAnchor ? undefined : '_blank'}
+                    rel={isInternalAnchor ? undefined : 'noopener noreferrer'}
                     className={`w-full py-3 border text-[12px] md:text-[13px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
                     style={{ 
                       borderRadius: '30px', 
@@ -206,8 +214,8 @@ export default function GiftRegistry({ items, theme }: GiftRegistryProps) {
                       backdropFilter: 'blur(8px)',
                     }}
                   >
-                    Ver Mesa
-                    <ExternalLink className="w-3 h-3 opacity-60" />
+                    {isInternalAnchor ? 'Confirmar asistencia' : 'Ver Mesa'}
+                    {!isInternalAnchor && <ExternalLink className="w-3 h-3 opacity-60" />}
                   </a>
                 )}
               </div>

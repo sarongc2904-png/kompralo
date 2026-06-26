@@ -7,6 +7,7 @@ import { Sparkles } from 'lucide-react';
 import ElegantInvitationCard from './ElegantInvitationCard';
 import SectionShell from './SectionShell';
 import SectionHeader from './SectionHeader';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface DressCodeProps {
   dressCode: {
@@ -16,10 +17,11 @@ interface DressCodeProps {
     colors?: string[];
   };
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 
-export default function DressCode({ dressCode, theme }: DressCodeProps) {
+export default function DressCode({ dressCode, theme, editablePreview = false }: DressCodeProps) {
   if (!dressCode) return null;
 
   return (
@@ -43,14 +45,14 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
           className={`text-3xl md:text-4xl font-normal tracking-wide mb-4 ${theme.headingFont}`}
           style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
         >
-          {dressCode.type}
+          <EditableText value={dressCode.type} fieldPath="dress_code.type" isEditable={editablePreview} />
         </h4>
 
         <p
           className={`text-lg md:text-xl leading-relaxed mb-8 ${theme.bodyFont}`}
           style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)', opacity: 0.95 }}
         >
-          {dressCode.description}
+          <EditableText value={dressCode.description} fieldPath="dress_code.description" isEditable={editablePreview} />
         </p>
 
         {/* Color Swatches — Priority: user colors > theme fallback */}
@@ -101,7 +103,7 @@ export default function DressCode({ dressCode, theme }: DressCodeProps) {
               color: 'var(--v2-color-text-secondary, #5C4A3E)'
             }}
           >
-            * {dressCode.suggestions}
+            * <EditableText value={dressCode.suggestions} fieldPath="dress_code.suggestions" isEditable={editablePreview} />
           </p>
         )}
       </ElegantInvitationCard>

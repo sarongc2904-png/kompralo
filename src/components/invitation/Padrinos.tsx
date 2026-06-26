@@ -5,10 +5,12 @@ import { Theme } from '@/domain/themes/types';
 import { Padrino } from '@/domain/invitations/types';
 import { motion } from 'framer-motion';
 import ElegantInvitationCard from './ElegantInvitationCard';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface PadrinosProps {
   padrinos: Padrino[];
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 // Icon map per rubro
@@ -108,7 +110,7 @@ function RubroIcon({ icon, size = 20, stroke = 'var(--v2-color-accent, #C8A75D)'
   );
 }
 
-export default function Padrinos({ padrinos, theme }: PadrinosProps) {
+export default function Padrinos({ padrinos, theme, editablePreview = false }: PadrinosProps) {
   if (!padrinos || padrinos.length === 0) return null;
 
   return (
@@ -165,7 +167,7 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
 
               {/* Rubro */}
               <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-bold mb-2" style={{ color: `var(--v2-color-accent, #C8A75D)` }}>
-                {p.rubro}
+                <EditableText value={p.rubro} fieldPath={`padrinos.${i}.rubro`} isEditable={editablePreview} />
               </p>
 
               {/* Divider */}
@@ -174,7 +176,7 @@ export default function Padrinos({ padrinos, theme }: PadrinosProps) {
               {/* Names */}
               {p.names.map((name, ni) => (
                 <p key={ni} className="text-[13px] sm:text-[14px] font-medium leading-snug" style={{ color: `var(--v2-color-text-primary, #1F1A16)` }}>
-                  {name}
+                  <EditableText value={name} fieldPath={`padrinos.${i}.names.${ni}`} isEditable={editablePreview} />
                 </p>
               ))}
             </ElegantInvitationCard>

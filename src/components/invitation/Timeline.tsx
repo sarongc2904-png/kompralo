@@ -7,20 +7,23 @@ import { motion, useScroll } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import SectionShell from './SectionShell';
 import SectionHeader from './SectionHeader';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface TimelineProps {
   events: TimelineEvent[];
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 // ── Mobile single-column item ─────────────────────────────────────────────────
 function MobileItem({
-  event, index, total, theme,
+  event, index, total, theme, editablePreview,
 }: {
   event: TimelineEvent;
   index: number;
   total: number;
   theme: Theme;
+  editablePreview: boolean;
 }) {
   return (
     <motion.div
@@ -64,29 +67,31 @@ function MobileItem({
 
       {/* Right column: text */}
       <div className="min-w-0 pb-8">
-        <span
-          className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium tracking-widest font-mono mb-2"
-          style={{
-            background: 'var(--v2-color-accent-soft, rgba(200, 167, 93, 0.10))',
-            border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))',
-            color: 'var(--v2-color-accent, #C8A75D)',
-          }}
-        >
-          {event.year}
-        </span>
+        {event.year && (
+          <span
+            className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-medium tracking-widest font-mono mb-2"
+            style={{
+              background: 'var(--v2-color-accent-soft, rgba(200, 167, 93, 0.10))',
+              border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))',
+              color: 'var(--v2-color-accent, #C8A75D)',
+            }}
+          >
+            <EditableText value={event.year} fieldPath={`timeline.${index}.year`} isEditable={editablePreview} />
+          </span>
+        )}
 
         <h4
           className={`mt-1 text-lg font-normal tracking-wide leading-snug ${theme.headingFont}`}
           style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
         >
-          {event.title}
+          <EditableText value={event.title} fieldPath={`timeline.${index}.title`} isEditable={editablePreview} />
         </h4>
 
         <p
           className={`mt-2 text-sm leading-relaxed ${theme.bodyFont}`}
           style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)', opacity: 0.85 }}
         >
-          {event.description}
+          <EditableText value={event.description} fieldPath={`timeline.${index}.description`} isEditable={editablePreview} />
         </p>
       </div>
     </motion.div>
@@ -95,11 +100,12 @@ function MobileItem({
 
 // ── Desktop alternating item ───────────────────────────────────────────────────
 function DesktopItem({
-  event, index, theme,
+  event, index, theme, editablePreview,
 }: {
   event: TimelineEvent;
   index: number;
   theme: Theme;
+  editablePreview: boolean;
 }) {
   const isEven = index % 2 === 0;
 
@@ -140,29 +146,31 @@ function DesktopItem({
         className={`w-1/2 ${isEven ? 'pl-4 pr-16' : 'pl-16 pr-4'}`}
       >
         <div className={isEven ? 'text-right' : 'text-left'}>
-          <span
-            className="inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest font-mono mb-3"
-            style={{
-              background: 'var(--v2-color-accent-soft, rgba(200, 167, 93, 0.10))',
-              border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))',
-              color: 'var(--v2-color-accent, #C8A75D)',
-            }}
-          >
-            {event.year}
-          </span>
+          {event.year && (
+            <span
+              className="inline-block px-3 py-1 rounded-full text-xs font-medium tracking-widest font-mono mb-3"
+              style={{
+                background: 'var(--v2-color-accent-soft, rgba(200, 167, 93, 0.10))',
+                border: '1px solid var(--v2-color-border, rgba(200, 167, 93, 0.25))',
+                color: 'var(--v2-color-accent, #C8A75D)',
+              }}
+            >
+              <EditableText value={event.year} fieldPath={`timeline.${index}.year`} isEditable={editablePreview} />
+            </span>
+          )}
 
           <h4
             className={`text-xl font-normal mb-3 tracking-wide ${theme.headingFont}`}
             style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: 'var(--v2-color-text-primary, #1F1A16)' }}
           >
-            {event.title}
+            <EditableText value={event.title} fieldPath={`timeline.${index}.title`} isEditable={editablePreview} />
           </h4>
 
           <p
             className={`text-sm leading-relaxed max-w-sm ${isEven ? 'ml-auto mr-0' : 'mr-auto ml-0'} ${theme.bodyFont}`}
             style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)', opacity: 0.85 }}
           >
-            {event.description}
+            <EditableText value={event.description} fieldPath={`timeline.${index}.description`} isEditable={editablePreview} />
           </p>
         </div>
       </motion.div>
@@ -171,7 +179,7 @@ function DesktopItem({
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function Timeline({ events, theme }: TimelineProps) {
+export default function Timeline({ events, theme, editablePreview = false }: TimelineProps) {
   const desktopRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -200,6 +208,7 @@ export default function Timeline({ events, theme }: TimelineProps) {
             index={index}
             total={events.length}
             theme={theme}
+            editablePreview={editablePreview}
           />
         ))}
       </div>
@@ -244,6 +253,7 @@ export default function Timeline({ events, theme }: TimelineProps) {
               event={event}
               index={index}
               theme={theme}
+              editablePreview={editablePreview}
             />
           ))}
         </div>
