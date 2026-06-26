@@ -15,6 +15,8 @@ interface InvitationRouteRendererProps {
   showPreviewBadge?: boolean;
   /** When set, overrides the invitation's saved theme for visual preview only. */
   themePreviewId?: string;
+  /** Editor preview can bypass the public tap-to-open intro. */
+  skipIntro?: boolean;
 }
 
 export default function InvitationRouteRenderer({
@@ -25,6 +27,7 @@ export default function InvitationRouteRenderer({
   mode,
   showPreviewBadge = false,
   themePreviewId,
+  skipIntro = false,
 }: InvitationRouteRendererProps) {
   const pathname    = usePathname();
   const searchParams = useSearchParams();
@@ -108,6 +111,7 @@ export default function InvitationRouteRenderer({
         features={features}
         mode={mode}
         themePreviewId={themePreviewId}
+        skipIntro={skipIntro}
       />
     </>
   );

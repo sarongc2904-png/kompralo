@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -17,7 +17,7 @@ const EDITABLE_ZONES: Record<EditableElementId, EditableZone> = {
   hero: {
     id: 'hero',
     title: 'Portada',
-    description: 'Foto principal, frase de portada, video y música de fondo.',
+    description: 'Foto principal, frase de portada, video y mÃºsica de fondo.',
     targetId: 'visual-editor-media',
     className: 'left-[8%] right-[8%] top-[7%] h-[21%]',
   },
@@ -30,22 +30,22 @@ const EDITABLE_ZONES: Record<EditableElementId, EditableZone> = {
   },
   location: {
     id: 'location',
-    title: 'Ubicación',
-    description: 'Lugar, dirección y enlaces de navegación para tus invitados.',
+    title: 'UbicaciÃ³n',
+    description: 'Lugar, direcciÃ³n y enlaces de navegaciÃ³n para tus invitados.',
     targetId: 'visual-editor-location',
     className: 'left-[10%] right-[10%] top-[58%] h-[15%]',
   },
   gallery: {
     id: 'gallery',
-    title: 'Galería',
-    description: 'Fotos y recuerdos que se muestran en la invitación.',
+    title: 'GalerÃ­a',
+    description: 'Fotos y recuerdos que se muestran en la invitaciÃ³n.',
     targetId: 'visual-editor-gallery',
     className: 'left-[10%] right-[10%] top-[75%] h-[10%]',
   },
   music: {
     id: 'music',
-    title: 'Música',
-    description: 'Canción o audio de fondo para la experiencia de la invitación.',
+    title: 'MÃºsica',
+    description: 'CanciÃ³n o audio de fondo para la experiencia de la invitaciÃ³n.',
     targetId: 'visual-editor-media',
     className: 'left-[68%] right-[8%] top-[7%] h-[8%]',
   },
@@ -66,7 +66,7 @@ export function VisualEditorMobileEntry({
   const [selectedElement, setSelectedElement] = useState<EditableElement | null>(null);
   const [highlightedId, setHighlightedId] = useState<EditableElementId | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
-  const previewUrl = `/preview/${invitationId}`;
+  const previewUrl = `/preview/${invitationId}?from=editor&editorPreview=1&skipIntro=1`;
 
   const visibleElements = useMemo(
     () => editableElements.filter((element) => element.editable && EDITABLE_ZONES[element.id]),
@@ -117,13 +117,13 @@ export function VisualEditorMobileEntry({
       <div className="md:hidden" ref={previewRef}>
         <section className="relative -mx-4 mb-6 min-h-[calc(100dvh-92px)] overflow-hidden bg-[#F6F0E4] px-3 pb-4 pt-2">
           <div className="pointer-events-none absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-full border border-[#E6D8BD] bg-[#FFFDF8]/90 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8A6D3B] shadow-sm">
-            Toca cualquier sección para editar
+            Estás editando tu invitación. Toca una zona para personalizarla.
           </div>
 
           <div className="relative mx-auto h-[calc(100dvh-112px)] max-h-[820px] min-h-[640px] max-w-[430px] overflow-hidden rounded-[32px] border border-[#E6D8BD] bg-[#FFFDF8] shadow-2xl">
             <iframe
               src={previewUrl}
-              title="Vista previa de la invitación"
+              title="Vista previa de la invitaciÃ³n"
               className="h-full w-full border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             />
@@ -174,7 +174,7 @@ export function VisualEditorMobileEntry({
               style={{ background: '#F2E9DA', color: '#5F4B35' }}
               onClick={handleCloseForm}
             >
-              ← Volver a la invitación
+              â† Volver a la invitaciÃ³n
             </button>
             {selectedZone?.title && (
               <p className="mt-1.5 text-center text-xs opacity-60" style={{ color: '#5F4B35' }}>
@@ -201,3 +201,4 @@ export function VisualEditorMobileEntry({
     </>
   );
 }
+

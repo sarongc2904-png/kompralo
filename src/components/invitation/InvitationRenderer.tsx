@@ -91,6 +91,8 @@ interface InvitationRendererProps {
   mode?: InvitationRenderMode;
   /** When set, overrides the saved theme for visual preview. Does not persist. */
   themePreviewId?: string;
+  /** Skips the public tap-to-open intro in editor previews only. */
+  skipIntro?: boolean;
 }
 
 export default function InvitationRenderer({
@@ -100,6 +102,7 @@ export default function InvitationRenderer({
   features,
   mode = 'public',
   themePreviewId,
+  skipIntro = false,
 }: InvitationRendererProps) {
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
@@ -149,16 +152,18 @@ export default function InvitationRenderer({
 
       {(effectiveTheme.paperTexture || themeV2.effects.paperTexture) && <div className="paper-noise" />}
 
-      <FeatureGate feature="showIntro" features={features}>
-        <CinematicIntro
-          protagonists={protagonists}
-          title={invitation.title}
-          subtitle={invitation.subtitle}
-          eventDate={invitation.eventDate}
-          theme={effectiveTheme}
-          onEnter={handleEnterInvitation}
-        />
-      </FeatureGate>
+      {!skipIntro && (
+        <FeatureGate feature="showIntro" features={features}>
+          <CinematicIntro
+            protagonists={protagonists}
+            title={invitation.title}
+            subtitle={invitation.subtitle}
+            eventDate={invitation.eventDate}
+            theme={effectiveTheme}
+            onEnter={handleEnterInvitation}
+          />
+        </FeatureGate>
+      )}
 
       <FeatureGate feature="showMusic" features={features}>
         <BackgroundMusicPlayer key={invitation.music?.audioUrl} music={invitation.music} />

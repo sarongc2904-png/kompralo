@@ -17,7 +17,7 @@ export const revalidate = 0;
 
 interface PreviewInvitationPageProps {
   params:      Promise<{ id: string }>;
-  searchParams: Promise<{ from?: string; themePreview?: string }>;
+  searchParams: Promise<{ from?: string; themePreview?: string; editorPreview?: string; skipIntro?: string }>;
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,8 +26,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PreviewInvitationPage({ params, searchParams }: PreviewInvitationPageProps) {
   const { id }                    = await params;
-  const { from, themePreview }    = await searchParams;
-  const isFromEditor              = from === 'editor';
+  const { from, themePreview, editorPreview, skipIntro } = await searchParams;
+  const isFromEditor              = from === 'editor' || editorPreview === '1';
+  const shouldSkipIntro           = isFromEditor && skipIntro === '1';
 
   // Use service role so RLS does not block preview reads (editor-only route) if Supabase is configured.
   let invitation = null;
@@ -76,6 +77,7 @@ export default async function PreviewInvitationPage({ params, searchParams }: Pr
         mode="preview"
         showPreviewBadge={isFromEditor}
         themePreviewId={themePreview}
+        skipIntro={shouldSkipIntro}
       />
     </>
   );
