@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+#### `chore(cliente)` — Ajuste visual de “Mis Eventos”
+
+- Normalizados labels visibles en `/cliente`: “Abrir Mi Evento”, “Ver invitación”, “Editar” y “Compartir”.
+- Eliminado visualmente el botón duplicado/saturado de “Ver mi invitación”.
+- Ajustada la paleta de tarjetas y acciones hacia marfil, champagne, dorado suave y verde suave.
+- Sin cambios en login, ownership, órdenes, RSVP ni rutas existentes.
+
 ---
 
 ## [0.8.0] — 2026-06-23

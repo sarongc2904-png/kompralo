@@ -182,7 +182,7 @@ export default function Timeline({ events, theme }: TimelineProps) {
   if (!events || events.length === 0) return null;
 
   return (
-    <SectionShell className="select-none" contentClassName="max-w-4xl mx-auto">
+    <SectionShell variant="alt" className="select-none" contentClassName="max-w-4xl mx-auto">
       {/* Section header */}
       <SectionHeader 
         eyebrow="Nuestra Historia" 

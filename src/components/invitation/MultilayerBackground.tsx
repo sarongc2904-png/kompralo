@@ -659,19 +659,6 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
         {/* Repeating premium organic floral/scroll pattern watermark */}
         <BackgroundPattern />
 
-        {/* Watercolor floral background reference backdrop */}
-        {(themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial' || themeV2.id === 'pastel-rose-editorial' || themeV2.id === 'pastel-sage-editorial' || themeV2.id === 'pastel-sky-editorial') && (
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url('/layers/wedding_floral_background.png')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              opacity: 0.95,
-            }}
-          />
-        )}
-
         {/* Subtle radial center brightening (makes content area feel lit) */}
         <div
           className="absolute inset-0"
@@ -694,6 +681,24 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
           }}
         />
       </div>
+
+      {/* 0b. Full-page watercolor floral backdrop — absolute so it covers the entire
+           document height (not just the viewport). Scoped to editorial themes only.
+           background-repeat: repeat-y tiles the image vertically so every section
+           sees the floral pattern regardless of page length. */}
+      {(themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial' || themeV2.id === 'pastel-rose-editorial' || themeV2.id === 'pastel-sage-editorial' || themeV2.id === 'pastel-sky-editorial') && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+          style={{
+            backgroundImage: `url('/layers/wedding_floral_background.png')`,
+            backgroundSize: '100% auto',
+            backgroundRepeat: 'repeat-y',
+            backgroundPosition: 'center top',
+            opacity: 0.92,
+          }}
+        />
+      )}
 
       {/* 1. Static Layer 1 */}
       <div

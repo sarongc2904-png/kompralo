@@ -1004,7 +1004,7 @@ export default function StoryBook({
   };
 
   return (
-    <section className="relative py-20 px-4 flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative py-20 px-4 flex flex-col items-center justify-center overflow-hidden" style={{ backgroundColor: 'var(--v2-section-bg-alt, transparent)' }}>
       <AnimatePresence mode="wait">
         {!isOpen ? (
           <motion.div key="closed" className="flex flex-col items-center w-full">
