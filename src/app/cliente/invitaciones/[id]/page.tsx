@@ -880,7 +880,7 @@ export default async function InvitationDashboard({ params }: Props) {
             {/* Pases de entrada — confirmaciones, semana, dia (después de RSVP) */}
             {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
               <div id="mis-invitados">
-                <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} />
+                <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} publicUrl={publicUrl} />
               </div>
             )}
           </div>

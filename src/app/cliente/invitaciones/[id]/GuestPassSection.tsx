@@ -69,9 +69,10 @@ interface Props {
   invitationId: string;
   appUrl: string;
   eventTitle?: string;
+  publicUrl?: string | null;
 }
 
-export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'Nuestro evento' }: Props) {
+export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Props) {
   const [passes,     setPasses]     = useState<GuestPass[]>([]);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState('');
@@ -263,7 +264,21 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
 
   function buildWaMsg(pass: GuestPass): string {
     const passUrl = `${appUrl}/pass/${pass.passToken}`;
-    return `Hola, te compartimos tu pase para nuestro evento.\n\nInvitado: ${pass.guestName}\nPase para: ${pass.allowedGuests} persona${pass.allowedGuests !== 1 ? 's' : ''}\n\nEvento: ${eventTitle}\n\nAbre tu pase aquí:\n${passUrl}\n\nPor favor confirma tu asistencia.`;
+    const lines = [
+      `Hola ${pass.guestName} 💛`,
+      '',
+      'Les compartimos nuestra invitación:',
+      publicUrl ?? '',
+      '',
+      'Este es su pase personalizado para confirmar asistencia y entrar al evento:',
+      passUrl,
+      '',
+      `Pase para: ${pass.allowedGuests} persona${pass.allowedGuests !== 1 ? 's' : ''}.`,
+      '',
+      'Por favor confirmen desde su pase.',
+      'Nos encantará contar con ustedes.',
+    ];
+    return lines.filter((l, i) => !(l === '' && i === 3 && !publicUrl)).join('\n');
   }
 
   function buildWaUrl(msg: string, phone?: string): string {
@@ -460,7 +475,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
                             rel="noopener noreferrer"
                             style={{ ...tableBtn, textDecoration: 'none', background: '#E8F9EE', color: '#238636', borderColor: '#A7D7B0' }}
                           >
-                            Enviar WA
+                            Enviar invitación
                           </a>
                           <button onClick={() => openEdit(p)} style={tableBtn}>✏️</button>
                           <button
@@ -532,7 +547,7 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
                     rel="noopener noreferrer"
                     style={{ ...mobileBtn('#25D366', '#fff'), textDecoration: 'none', display: 'flex', marginBottom: '.5rem' }}
                   >
-                    📲 Enviar nuevamente
+                    📲 Enviar invitación
                   </a>
                   {/* Secondary actions */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.375rem' }}>
