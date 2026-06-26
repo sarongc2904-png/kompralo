@@ -81,7 +81,7 @@ export default function Hero({
     <section
       ref={sectionRef}
       className="relative w-full overflow-hidden"
-      style={{ height: '100svh', minHeight: 640 }}
+      style={{ height: editablePreview ? 'min(100svh, 820px)' : '100svh', minHeight: 640 }}
     >
       <style dangerouslySetInnerHTML={{ __html: `
         .hero-card-container {
@@ -149,23 +149,32 @@ export default function Hero({
               }}
             />
           ) : videoEmbed?.type === 'youtube' ? (
-            /* B — Legacy YouTube embed */
-            <iframe
-              src={videoEmbed.embedUrl + '?autoplay=1&mute=1&loop=1&controls=0&playsinline=1&rel=0&modestbranding=1'}
-              title={`${primaryName} & ${secondaryName} — video`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              loading="lazy"
-              aria-hidden="true"
-              style={{
-                width: '100%', height: '100%',
-                objectFit: 'cover',
-                filter: 'brightness(0.68) contrast(0.95) saturate(0.78) sepia(0.08)',
-                border: 'none',
-                pointerEvents: 'none',
-                transform: 'scale(1.08)',
-              }}
-            />
+            /* B — Legacy YouTube embed.
+               objectFit:cover does not apply to iframes; use absolute-center + min-size
+               to ensure the 16:9 content fills any portrait/landscape container. */
+            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+              <iframe
+                src={videoEmbed.embedUrl + '?autoplay=1&mute=1&loop=1&controls=0&playsinline=1&rel=0&modestbranding=1'}
+                title={`${primaryName} & ${secondaryName} — video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: '50%', left: '50%',
+                  /* 16:9 cover: min-width ensures full cover in portrait; min-height in landscape */
+                  width: 'max(100%, calc(100% * 16 / 9 * (100vh / 100vw)))',
+                  height: 'max(100%, calc(100% * 9 / 16 * (100vw / 100vh)))',
+                  minWidth: '177.78%',
+                  minHeight: '100%',
+                  transform: 'translate(-50%, -50%)',
+                  filter: 'brightness(0.68) contrast(0.95) saturate(0.78) sepia(0.08)',
+                  border: 'none',
+                  pointerEvents: 'none',
+                }}
+              />
+            </div>
           ) : videoEmbed?.type === 'direct' ? (
             /* C — Legacy direct mp4 URL */
             <video
@@ -329,7 +338,7 @@ export default function Hero({
         </div>
 
         {/* Emotional phrase — subtitle below names */}
-        {emotionalPhrase && (
+        {(emotionalPhrase || editablePreview) && (
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 0.85, y: 0 }}
@@ -341,6 +350,7 @@ export default function Hero({
               value={emotionalPhrase}
               fieldPath="hero.emotionalPhrase"
               isEditable={editablePreview}
+              placeholder="Frase emotiva…"
             />
           </motion.p>
         )}

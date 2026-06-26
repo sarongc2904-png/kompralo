@@ -163,6 +163,8 @@ export interface SocialConfig {
   facebookUrl?: string;
   youtubeUrl?: string;
   note?: string;
+  /** Optional section eyebrow label — additive, stored in social JSONB */
+  sectionEyebrow?: string;
 }
 
 export interface InvitationSocialInput {
@@ -216,6 +218,9 @@ export interface InvitationLocation {
   address: string;
   googleMapsLink: string;
   wazeLink: string;
+  /** Optional section header labels — additive, stored in location JSONB */
+  sectionEyebrow?: string;
+  sectionTitle?: string;
 }
 
 export interface InvitationHero {
@@ -239,6 +244,9 @@ export interface InvitationHeroVideoInput {
 
 export interface InvitationStory {
   slides: StorySlide[];
+  /** Optional section header labels — additive, stored in story JSONB */
+  sectionEyebrow?: string;
+  sectionTitle?: string;
 }
 
 export interface InvitationGallery {
@@ -261,6 +269,7 @@ export interface InvitationDressCode {
   suggestions: string;
   // Editor-managed fields (additive — renderer reads only type/description/suggestions):
   title?: string;
+  sectionEyebrow?: string;
   observations?: string;
   primaryColor?: string;
   secondaryColor?: string;
@@ -281,6 +290,10 @@ export interface InvitationDressCodeInput {
 
 export interface InvitationGiftRegistry {
   items: GiftRegistryItem[];
+  /** Optional section header labels — additive, stored in gift_registry JSONB */
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  subtitle?: string;
 }
 
 export interface InvitationMusic {

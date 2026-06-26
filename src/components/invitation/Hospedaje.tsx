@@ -73,27 +73,30 @@ export default function Hospedaje({ hotels, theme, editablePreview = false }: Ho
               background: 'linear-gradient(to right, rgba(255,252,245,0.45) 0%, rgba(255,252,245,0.82) 40%, rgba(255,252,245,0.96) 100%)',
               pointerEvents: 'none', zIndex: 1,
             }} />
-            <div className="flex items-center justify-between gap-4 px-6 py-6 pl-8 relative z-20">
+            {/* Mobile: vertical stack. Desktop (sm+): horizontal row */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-6 py-6 relative z-20">
               <div className="flex-1 min-w-0">
-                {/* Name + stars */}
+                {/* Name + price tag */}
                 <div className="flex items-start gap-3 mb-1 flex-wrap">
-                  <h4 
-                    className="text-base font-normal tracking-wide" 
+                  <h4
+                    className="text-base font-normal tracking-wide break-words"
                     style={{ fontFamily: 'var(--v2-font-heading, inherit)', color: `var(--v2-color-text-primary, #1F1A16)` }}
                   >
                     <EditableText value={hotel.name} fieldPath={`hotels.${i}.name`} isEditable={editablePreview} />
                   </h4>
                   <PriceTag range={hotel.priceRange} fieldPath={`hotels.${i}.priceRange`} editablePreview={editablePreview} />
                 </div>
+
+                {/* Stars */}
                 <div className="mb-3">
                   <StarRating count={hotel.stars} />
                 </div>
 
                 {/* Details */}
                 <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3 h-3 flex-shrink-0" style={{ color: `var(--v2-color-accent, #C8A75D)` }} />
-                    <span className="text-[13px] opacity-90 truncate" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5" style={{ color: `var(--v2-color-accent, #C8A75D)` }} />
+                    <span className="text-[13px] opacity-90 leading-relaxed break-words" style={{ color: `var(--v2-color-text-secondary, #5C4A3E)` }}>
                       <EditableText value={hotel.address} fieldPath={`hotels.${i}.address`} isEditable={editablePreview} />
                     </span>
                   </div>
@@ -114,25 +117,27 @@ export default function Hospedaje({ hotels, theme, editablePreview = false }: Ho
                 </div>
               </div>
 
-              {/* CTA button */}
+              {/* CTA button — bottom-centered on mobile, right-aligned on desktop */}
               {hotel.bookingLink && (
-                <a
-                  href={hotel.bookingLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`flex-shrink-0 flex items-center justify-center gap-2 py-2.5 px-5 border transition-all duration-300 shadow-sm hover:shadow hover:-translate-y-0.5 group ${theme.bodyFont}`}
-                  style={{ 
-                    borderRadius: '30px', 
-                    borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.35))', 
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,250,238,0.6) 100%)',
-                    backdropFilter: 'blur(8px)',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <span className="text-[10px] uppercase tracking-[0.22em] font-semibold transition-colors duration-300" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
-                    Reservar
-                  </span>
-                </a>
+                <div className="flex justify-center sm:justify-end sm:flex-shrink-0">
+                  <a
+                    href={hotel.bookingLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center justify-center gap-2 py-2.5 px-8 sm:px-5 border transition-all duration-300 shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
+                    style={{
+                      borderRadius: '30px',
+                      borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.35))',
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,250,238,0.6) 100%)',
+                      backdropFilter: 'blur(8px)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span className="text-[10px] uppercase tracking-[0.22em] font-semibold" style={{ color: 'var(--v2-color-text-primary, #1F1A16)' }}>
+                      Reservar
+                    </span>
+                  </a>
+                </div>
               )}
             </div>
           </ElegantInvitationCard>

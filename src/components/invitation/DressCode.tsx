@@ -15,6 +15,8 @@ interface DressCodeProps {
     description: string;
     suggestions: string;
     colors?: string[];
+    title?: string;
+    sectionEyebrow?: string;
   };
   theme: Theme;
   editablePreview?: boolean;
@@ -27,7 +29,15 @@ export default function DressCode({ dressCode, theme, editablePreview = false }:
   return (
     <SectionShell className="text-center select-none" contentClassName="max-w-xl mx-auto">
       {/* Header */}
-      <SectionHeader eyebrow="Código de Vestimenta" title="Etiqueta Requerida" theme={theme} className="mb-10" />
+      <SectionHeader
+        eyebrow={dressCode.sectionEyebrow ?? 'Código de Vestimenta'}
+        title={dressCode.title ?? 'Etiqueta Requerida'}
+        theme={theme}
+        className="mb-10"
+        editablePreview={editablePreview}
+        eyebrowFieldPath="dress_code.sectionEyebrow"
+        titleFieldPath="dress_code.title"
+      />
 
       {/* Info Card */}
       <ElegantInvitationCard animateFrom="bottom" animateDelay={0.1} className="p-8 md:p-12">

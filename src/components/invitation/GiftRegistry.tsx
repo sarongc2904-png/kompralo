@@ -14,9 +14,19 @@ interface GiftRegistryProps {
   items: GiftRegistryItem[];
   theme: Theme;
   editablePreview?: boolean;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  subtitle?: string;
 }
 
-export default function GiftRegistry({ items, theme, editablePreview = false }: GiftRegistryProps) {
+export default function GiftRegistry({
+  items,
+  theme,
+  editablePreview = false,
+  sectionEyebrow,
+  sectionTitle,
+  subtitle,
+}: GiftRegistryProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [revealedIds, setRevealedIds] = useState<Record<string, boolean>>({});
 
@@ -35,12 +45,27 @@ export default function GiftRegistry({ items, theme, editablePreview = false }: 
   return (
     <SectionShell className="select-none relative z-20" contentClassName="max-w-4xl mx-auto">
       {/* Header */}
-      <SectionHeader eyebrow="Detalles" title="Mesa de Regalos" theme={theme} className="mb-0" />
-      <p 
+      <SectionHeader
+        eyebrow={sectionEyebrow ?? 'Detalles'}
+        title={sectionTitle ?? 'Mesa de Regalos'}
+        theme={theme}
+        className="mb-0"
+        editablePreview={editablePreview}
+        eyebrowFieldPath="gift_registry.sectionEyebrow"
+        titleFieldPath="gift_registry.sectionTitle"
+      />
+      <p
         className={`text-base md:text-lg opacity-85 mt-6 mb-16 max-w-md mx-auto text-center ${theme.bodyFont}`}
         style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}
       >
-        Su presencia es nuestro mayor regalo, pero si desean tener un detalle con nosotros, les compartimos nuestras opciones:
+        <EditableText
+          value={subtitle ?? 'Su presencia es nuestro mayor regalo, pero si desean tener un detalle con nosotros, les compartimos nuestras opciones:'}
+          fieldPath="gift_registry.subtitle"
+          isEditable={editablePreview}
+          as="span"
+          singleLine={false}
+          placeholder="Mensaje introductorio…"
+        />
       </p>
 
       {/* Registry — flex wrap so 1 or 2 cards stay centred */}

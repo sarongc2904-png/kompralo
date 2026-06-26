@@ -57,16 +57,18 @@ type InlineEditColumn = typeof INLINE_EDIT_COLUMNS[number];
 const INLINE_EDIT_ALLOWED_PATHS = [
   /^protagonists\.\d+\.name$/,
   /^hero\.(eventLabel|emotionalPhrase|connectorText)$/,
-  /^location\.(venueName|address)$/,
+  /^location\.(sectionEyebrow|sectionTitle|venueName|address)$/,
+  /^story\.(sectionEyebrow|sectionTitle)$/,
   /^story\.slides\.\d+\.(title|subtitle|text|date)$/,
   /^timeline\.\d+\.(year|title|description)$/,
   /^itinerary\.\d+\.(time|title|location|description)$/,
-  /^dress_code\.(title|type|description|suggestions)$/,
+  /^dress_code\.(sectionEyebrow|title|type|description|suggestions)$/,
+  /^gift_registry\.(sectionEyebrow|sectionTitle|subtitle)$/,
   /^gift_registry\.items\.\d+\.(provider|description)$/,
   /^padrinos\.\d+\.rubro$/,
   /^padrinos\.\d+\.names\.\d+$/,
   /^hotels\.\d+\.(name|description|address|distance|priceRange)$/,
-  /^social\.(hashtag|note)$/,
+  /^social\.(sectionEyebrow|hashtag|note)$/,
   /^final_message\.(title|message|quote|signature)$/,
 ];
 

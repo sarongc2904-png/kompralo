@@ -14,6 +14,8 @@ interface StoryBookProps {
   brideName?: string;
   groomName?: string;
   editablePreview?: boolean;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
 }
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -928,6 +930,8 @@ export default function StoryBook({
   brideName,
   groomName,
   editablePreview = false,
+  sectionEyebrow,
+  sectionTitle,
 }: StoryBookProps) {
   const primaryName = protagonists?.[0]?.name ?? brideName ?? 'Sofía';
   const secondaryName = protagonists?.[1]?.name ?? groomName ?? 'Alejandro';
@@ -1025,12 +1029,22 @@ export default function StoryBook({
               className="text-center mb-10"
             >
               <p className={`text-xs uppercase tracking-[0.25em] mb-2 ${theme.accentText}`}>
-                Nuestra Historia
+                <EditableText
+                  value={sectionEyebrow ?? 'Nuestra Historia'}
+                  fieldPath="story.sectionEyebrow"
+                  isEditable={editablePreview}
+                  placeholder="Subtítulo decorativo…"
+                />
               </p>
               <h3
                 className={`text-3xl font-light tracking-wide ${theme.headingFont} ${theme.bodyText}`}
               >
-                Capítulos de Amor
+                <EditableText
+                  value={sectionTitle ?? 'Capítulos de Amor'}
+                  fieldPath="story.sectionTitle"
+                  isEditable={editablePreview}
+                  placeholder="Título de sección…"
+                />
               </h3>
               <div
                 className="w-10 h-px mx-auto mt-5"

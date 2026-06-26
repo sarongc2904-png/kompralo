@@ -196,10 +196,12 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
     <SectionShell className="select-none" contentClassName="max-w-[420px] mx-auto">
       {/* Header */}
       <SectionHeader
-        eyebrow="Comparte el momento"
+        eyebrow={social.sectionEyebrow ?? 'Comparte el momento'}
         title={social.hashtag ? `#${social.hashtag}` : '#NuestroHashtag'}
         theme={theme}
         className="mb-10"
+        editablePreview={editablePreview}
+        eyebrowFieldPath="social.sectionEyebrow"
       />
 
       {/* Post Card */}

@@ -234,16 +234,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     const raw = (invRow as { wizard_step_completed?: number } | null)?.wizard_step_completed;
     const wizardCompleted = (raw ?? 0) >= 3;
     console.log('[wizard-gate] invRow=%j raw=%s wizardCompleted=%s err=%s', invRow, raw, wizardCompleted, wizardQueryErr?.message ?? null);
-    // Skip wizard if invitation already has the minimum required data.
-    // wizard_step_completed tracks completion, but a manually-edited invitation
-    // may have full data with wizard_step_completed still at 0.
-    const hasMinimalData =
-      invitation.protagonists.some((p) => p.name?.trim()) &&
-      !!invitation.eventDate?.trim() &&
-      !!invitation.location?.venueName?.trim();
-
-    if (!wizardCompleted && !hasMinimalData) {
-      const publicUrl = invitation.slug ? `/i/${invitation.slug}` : null;
+    if (!wizardCompleted) {
       const brideName = invitation.protagonists.find((p) => p.role === 'novia' || p.role === 'bride')?.name ?? '';
       const groomName = invitation.protagonists.find((p) => p.role === 'novio' || p.role === 'groom')?.name ?? '';
       return (

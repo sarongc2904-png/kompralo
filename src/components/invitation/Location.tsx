@@ -13,6 +13,8 @@ interface LocationProps {
     address: string;
     googleMapsLink: string;
     wazeLink: string;
+    sectionEyebrow?: string;
+    sectionTitle?: string;
   };
   theme: Theme;
   editablePreview?: boolean;
@@ -74,7 +76,14 @@ export default function Location({ location, theme, editablePreview = false }: L
   return (
     <SectionShell className="select-none" contentClassName="max-w-4xl mx-auto">
       {/* Header */}
-      <SectionHeader eyebrow="Ubicación" title="¿Dónde y Cuándo?" theme={theme} />
+      <SectionHeader
+        eyebrow={location.sectionEyebrow ?? 'Ubicación'}
+        title={location.sectionTitle ?? '¿Dónde y Cuándo?'}
+        theme={theme}
+        editablePreview={editablePreview}
+        eyebrowFieldPath="location.sectionEyebrow"
+        titleFieldPath="location.sectionTitle"
+      />
       
       {/* Location Info & Map Panel */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center mt-12">

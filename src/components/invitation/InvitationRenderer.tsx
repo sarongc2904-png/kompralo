@@ -260,7 +260,14 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showStoryBook" features={features}>
-        <StoryBook slides={invitation.story.slides} theme={effectiveTheme} protagonists={protagonists} editablePreview={editablePreview} />
+        <StoryBook
+          slides={invitation.story.slides}
+          theme={effectiveTheme}
+          protagonists={protagonists}
+          editablePreview={editablePreview}
+          sectionEyebrow={invitation.story.sectionEyebrow}
+          sectionTitle={invitation.story.sectionTitle}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showGallery" features={features}>
@@ -288,7 +295,14 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showGiftRegistry" features={features}>
-        <GiftRegistry items={invitation.giftRegistry.items} theme={effectiveTheme} editablePreview={editablePreview} />
+        <GiftRegistry
+          items={invitation.giftRegistry.items}
+          theme={effectiveTheme}
+          editablePreview={editablePreview}
+          sectionEyebrow={invitation.giftRegistry.sectionEyebrow}
+          sectionTitle={invitation.giftRegistry.sectionTitle}
+          subtitle={invitation.giftRegistry.subtitle}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showPadrinos" features={features}>
