@@ -17,25 +17,25 @@ function fmtShort(iso: string): string {
 }
 
 const STATUS_BADGE: Record<string, { bg: string; color: string; label: string }> = {
-  paid:            { bg: 'rgba(22, 163, 74, 0.15)', color: '#4ADE80', label: 'Pagado' },
-  published:       { bg: 'rgba(5, 150, 105, 0.15)', color: '#34D399', label: 'Publicado' },
-  draft:           { bg: 'rgba(217, 119, 6, 0.15)', color: '#FBBF24', label: 'Borrador' },
-  pending:         { bg: 'rgba(202, 138, 4, 0.15)', color: '#FBBF24', label: 'Pendiente' },
-  pending_payment: { bg: 'rgba(217, 119, 6, 0.15)', color: '#FBBF24', label: 'Pend. pago' },
-  failed:          { bg: 'rgba(220, 38, 38, 0.15)', color: '#F87171', label: 'Fallido' },
-  refunded:        { bg: 'rgba(156, 163, 175, 0.15)', color: '#9CA3AF', label: 'Reembolsado' },
-  cancelled:       { bg: 'rgba(220, 38, 38, 0.15)', color: '#F87171', label: 'Cancelado' },
-  archived:        { bg: 'rgba(156, 163, 175, 0.15)', color: '#9CA3AF', label: 'Archivado' },
+  paid:            { bg: '#E7F5EC', color: '#247A45', label: 'Pagado' },
+  published:       { bg: '#E7F5EC', color: '#247A45', label: 'Publicado' },
+  draft:           { bg: '#FBF5E3', color: '#7A6A5B', label: 'Borrador' },
+  pending:         { bg: '#FBF5E3', color: '#7A6A5B', label: 'Pendiente' },
+  pending_payment: { bg: '#FBF5E3', color: '#7A6A5B', label: 'Pend. pago' },
+  failed:          { bg: '#FBEAEA', color: '#B43232', label: 'Fallido' },
+  refunded:        { bg: '#F2F2F0', color: '#7A6A5B', label: 'Reembolsado' },
+  cancelled:       { bg: '#FBEAEA', color: '#B43232', label: 'Cancelado' },
+  archived:        { bg: '#F2F2F0', color: '#7A6A5B', label: 'Archivado' },
 };
 
 const PLAN_BADGE: Record<string, { bg: string; color: string; label: string }> = {
-  basic:   { bg: 'rgba(37, 99, 235, 0.15)', color: '#60A5FA', label: 'Elegante' },
-  premium: { bg: 'rgba(124, 58, 237, 0.15)', color: '#A78BFA', label: 'Sin Caos' },
-  deluxe:  { bg: 'rgba(226, 88, 34, 0.15)', color: '#FF9D66', label: 'Premium' },
+  basic:   { bg: 'rgba(37, 99, 235, 0.1)', color: '#2563EB', label: 'Elegante' },
+  premium: { bg: 'rgba(124, 58, 237, 0.1)', color: '#7C3AED', label: 'Sin Caos' },
+  deluxe:  { bg: 'rgba(200,169,91,0.15)', color: '#A07C2E', label: 'Premium' },
 };
 
 function StatusBadge({ status }: { status: string }) {
-  const s = STATUS_BADGE[status] ?? { bg: '#F3F4F6', color: '#6B7280', label: status };
+  const s = STATUS_BADGE[status] ?? { bg: '#F2F2F0', color: '#7A6A5B', label: status };
   return (
     <span style={{ display: 'inline-block', background: s.bg, color: s.color, fontSize: '.7rem', fontWeight: 700, padding: '.2rem .6rem', borderRadius: 20, whiteSpace: 'nowrap' }}>
       {s.label}
@@ -44,7 +44,7 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function PlanBadge({ plan }: { plan: string }) {
-  const p = PLAN_BADGE[plan] ?? { bg: '#F3F4F6', color: '#6B7280', label: plan };
+  const p = PLAN_BADGE[plan] ?? { bg: '#F2F2F0', color: '#7A6A5B', label: plan };
   return (
     <span style={{ display: 'inline-block', background: p.bg, color: p.color, fontSize: '.7rem', fontWeight: 700, padding: '.2rem .6rem', borderRadius: 20, whiteSpace: 'nowrap' }}>
       {p.label}
@@ -149,32 +149,32 @@ export default async function AdminDashboardPage() {
       {/* Page header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
         <div>
-          <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#E25822', margin: '0 0 .375rem' }}>
+          <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#C8A95B', margin: '0 0 .375rem' }}>
             Centro de operaciones
           </p>
-          <h1 style={{ fontSize: '1.625rem', fontWeight: 800, color: '#FFFFFF', margin: '0 0 .25rem', lineHeight: 1.2 }}>
+          <h1 style={{ fontSize: '1.625rem', fontWeight: 800, color: '#241A14', margin: '0 0 .25rem', lineHeight: 1.2 }}>
             Resumen general
           </h1>
-          <p style={{ fontSize: '.8125rem', color: '#A5A5AB', margin: 0 }}>
+          <p style={{ fontSize: '.8125rem', color: '#7A6A5B', margin: 0 }}>
             Estado de ventas, invitaciones y operación de KOMPRALO
           </p>
         </div>
         <div style={{ display: 'flex', gap: '.625rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          <Link href="/admin/invitations/new" style={{ ...quickBtn, background: 'linear-gradient(135deg, #E25822 0%, #D84A16 100%)', color: '#FFFFFF', boxShadow: '0 4px 14px rgba(226, 88, 34, 0.3)' }}>
+          <Link href="/admin/invitations/new" style={{ ...quickBtn, background: '#1C1713', color: '#FFF7EA' }}>
             + Crear invitación
           </Link>
-          <Link href="/admin/recovery" style={{ ...quickBtn, background: '#2C2C35', color: '#F5F0E8', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <Link href="/admin/recovery" style={{ ...quickBtn, background: '#FFFBF4', color: '#1C1713', border: '1px solid #C8A95B' }}>
             Recuperar compra
           </Link>
-          <Link href="/admin/orders" style={{ ...quickBtn, background: '#2C2C35', color: '#F5F0E8', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <Link href="/admin/orders" style={{ ...quickBtn, background: '#FFFBF4', color: '#1C1713', border: '1px solid #C8A95B' }}>
             Ver órdenes
           </Link>
         </div>
       </div>
 
-      {/* Hero status card */}
+      {/* Hero status card — espresso dark for contrast */}
       <div style={{
-        background: 'linear-gradient(135deg, #1A0D07 0%, #2E1305 50%, #170701 100%)',
+        background: '#1C1713',
         borderRadius: 16,
         padding: '2rem 2.25rem',
         marginBottom: '1.5rem',
@@ -183,14 +183,14 @@ export default async function AdminDashboardPage() {
         justifyContent: 'space-between',
         gap: '2rem',
         flexWrap: 'wrap',
-        border: '1px solid rgba(226, 88, 34, 0.25)',
-        boxShadow: '0 4px 24px rgba(226,88,34,0.12)',
+        border: '1px solid rgba(200,169,91,0.3)',
+        boxShadow: '0 4px 24px rgba(28,23,19,0.12)',
       }}>
         <div>
           <span style={{
             display: 'inline-block',
-            background: 'rgba(226, 88, 34, 0.2)',
-            color: '#E25822',
+            background: 'rgba(200,169,91,0.18)',
+            color: '#C8A95B',
             fontSize: '.6rem',
             fontWeight: 800,
             letterSpacing: '.2em',
@@ -222,7 +222,7 @@ export default async function AdminDashboardPage() {
               <p style={{ margin: '0 0 .25rem', fontSize: '.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '.1em', fontWeight: 600 }}>
                 {label}
               </p>
-              <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: alert ? '#FCA5A5' : 'rgba(255,255,255,0.9)' }}>
+              <p style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: alert ? '#F5A0A0' : 'rgba(255,255,255,0.9)' }}>
                 {value}
               </p>
             </div>
@@ -293,8 +293,8 @@ export default async function AdminDashboardPage() {
           revenue={basicRev}
           currency={currency}
           pct={basicPct}
-          color="#60A5FA"
-          bgColor="rgba(37, 99, 235, 0.15)"
+          color="#2563EB"
+          bgColor="rgba(37,99,235,0.1)"
         />
         <PlanCard
           label="Organización Sin Caos"
@@ -303,8 +303,8 @@ export default async function AdminDashboardPage() {
           revenue={premiumRev}
           currency={currency}
           pct={premiumPct}
-          color="#A78BFA"
-          bgColor="rgba(124, 58, 237, 0.15)"
+          color="#7C3AED"
+          bgColor="rgba(124,58,237,0.1)"
         />
         <PlanCard
           label="Experiencia Premium Total"
@@ -313,8 +313,8 @@ export default async function AdminDashboardPage() {
           revenue={deluxeRev}
           currency={currency}
           pct={deluxePct}
-          color="#FF9D66"
-          bgColor="rgba(226, 88, 34, 0.15)"
+          color="#A07C2E"
+          bgColor="rgba(200,169,91,0.15)"
         />
       </div>
 
@@ -323,21 +323,21 @@ export default async function AdminDashboardPage() {
       <div className="adm-activity-grid">
 
         {/* Recent orders */}
-        <div style={{ background: '#1A1A22', border: '1px solid rgba(226, 88, 34, 0.15)', borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{ padding: '.875rem 1.25rem', borderBottom: '1px solid rgba(226, 88, 34, 0.15)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ margin: 0, fontSize: '.75rem', fontWeight: 700, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '.1em' }}>Últimas órdenes</p>
-            <Link href="/admin/orders" style={{ fontSize: '.7rem', color: '#E25822', textDecoration: 'none', fontWeight: 600 }}>Ver todas →</Link>
+        <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ padding: '.875rem 1.25rem', borderBottom: '1px solid #E5D2A8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ margin: 0, fontSize: '.75rem', fontWeight: 700, color: '#241A14', textTransform: 'uppercase', letterSpacing: '.1em' }}>Últimas órdenes</p>
+            <Link href="/admin/orders" style={{ fontSize: '.7rem', color: '#C8A95B', textDecoration: 'none', fontWeight: 600 }}>Ver todas →</Link>
           </div>
           {recentOrders.length === 0 ? (
-            <p style={{ padding: '1.5rem', textAlign: 'center', color: '#767682', fontSize: '.8125rem', margin: 0 }}>Sin órdenes</p>
+            <p style={{ padding: '1.5rem', textAlign: 'center', color: '#7A6A5B', fontSize: '.8125rem', margin: 0 }}>Sin órdenes</p>
           ) : (
             recentOrders.map((o) => (
-              <div key={o.id as string} style={{ padding: '.75rem 1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem' }}>
+              <div key={o.id as string} style={{ padding: '.75rem 1.25rem', borderBottom: '1px solid rgba(200,169,91,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem' }}>
                 <div style={{ minWidth: 0 }}>
-                  <p style={{ margin: '0 0 .2rem', fontSize: '.8rem', color: '#FFFFFF', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{ margin: '0 0 .2rem', fontSize: '.8rem', color: '#241A14', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {(o.customer_email as string) ?? '—'}
                   </p>
-                  <p style={{ margin: 0, fontSize: '.7rem', color: '#A5A5AB' }}>{fmtShort(o.created_at as string)}</p>
+                  <p style={{ margin: 0, fontSize: '.7rem', color: '#7A6A5B' }}>{fmtShort(o.created_at as string)}</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexShrink: 0 }}>
                   <PlanBadge plan={o.plan_id as string} />
@@ -349,21 +349,21 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Recent invitations */}
-        <div style={{ background: '#1A1A22', border: '1px solid rgba(226, 88, 34, 0.15)', borderRadius: 12, overflow: 'hidden' }}>
-          <div style={{ padding: '.875rem 1.25rem', borderBottom: '1px solid rgba(226, 88, 34, 0.15)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ margin: 0, fontSize: '.75rem', fontWeight: 700, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: '.1em' }}>Últimas invitaciones</p>
-            <Link href="/admin/invitations" style={{ fontSize: '.7rem', color: '#E25822', textDecoration: 'none', fontWeight: 600 }}>Ver todas →</Link>
+        <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ padding: '.875rem 1.25rem', borderBottom: '1px solid #E5D2A8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p style={{ margin: 0, fontSize: '.75rem', fontWeight: 700, color: '#241A14', textTransform: 'uppercase', letterSpacing: '.1em' }}>Últimas invitaciones</p>
+            <Link href="/admin/invitations" style={{ fontSize: '.7rem', color: '#C8A95B', textDecoration: 'none', fontWeight: 600 }}>Ver todas →</Link>
           </div>
           {recentInvs.length === 0 ? (
-            <p style={{ padding: '1.5rem', textAlign: 'center', color: '#767682', fontSize: '.8125rem', margin: 0 }}>Sin invitaciones</p>
+            <p style={{ padding: '1.5rem', textAlign: 'center', color: '#7A6A5B', fontSize: '.8125rem', margin: 0 }}>Sin invitaciones</p>
           ) : (
             recentInvs.map((inv) => (
-              <div key={inv.id as string} style={{ padding: '.75rem 1.25rem', borderBottom: '1px solid rgba(255, 255, 255, 0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem' }}>
+              <div key={inv.id as string} style={{ padding: '.75rem 1.25rem', borderBottom: '1px solid rgba(200,169,91,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem' }}>
                 <div style={{ minWidth: 0 }}>
-                  <p style={{ margin: '0 0 .2rem', fontSize: '.8rem', color: '#FFFFFF', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{ margin: '0 0 .2rem', fontSize: '.8rem', color: '#241A14', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {(inv.title as string) || (inv.customer_email as string) || '—'}
                   </p>
-                  <p style={{ margin: 0, fontSize: '.7rem', color: '#A5A5AB', fontFamily: 'monospace' }}>/{inv.slug as string}</p>
+                  <p style={{ margin: 0, fontSize: '.7rem', color: '#7A6A5B', fontFamily: 'monospace' }}>/{inv.slug as string}</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', flexShrink: 0 }}>
                   <PlanBadge plan={inv.plan_id as string} />
@@ -379,17 +379,17 @@ export default async function AdminDashboardPage() {
       <SectionLabel>Acciones rápidas</SectionLabel>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
         {[
-          { href: '/admin/invitations/new', label: 'Crear invitación manual', desc: 'Sin pasar por Stripe', icon: '+', color: '#E25822' },
-          { href: '/admin/recovery',        label: 'Recuperar compra',       desc: 'Reenviar acceso a cliente', icon: '↺', color: '#A78BFA' },
-          { href: '/admin/orders',          label: 'Gestionar órdenes',      desc: `${orders.length} total`, icon: '◫', color: '#60A5FA' },
-          { href: '/admin/invitations',     label: 'Ver invitaciones',       desc: `${invitations.length} total`, icon: '✉', color: '#34D399' },
-          { href: '/admin/users',           label: 'Ver usuarios',           desc: `${userCount} registrados`, icon: '◎', color: '#FBBF24' },
-          { href: '/admin/logs',            label: 'Audit logs',             desc: `${logCount} registros`, icon: '≡', color: '#9CA3AF' },
+          { href: '/admin/invitations/new', label: 'Crear invitación manual', desc: 'Sin pasar por Stripe', icon: '+', color: '#C8A95B' },
+          { href: '/admin/recovery',        label: 'Recuperar compra',       desc: 'Reenviar acceso a cliente', icon: '↺', color: '#7C3AED' },
+          { href: '/admin/orders',          label: 'Gestionar órdenes',      desc: `${orders.length} total`, icon: '◫', color: '#2563EB' },
+          { href: '/admin/invitations',     label: 'Ver invitaciones',       desc: `${invitations.length} total`, icon: '✉', color: '#247A45' },
+          { href: '/admin/users',           label: 'Ver usuarios',           desc: `${userCount} registrados`, icon: '◎', color: '#A07C2E' },
+          { href: '/admin/logs',            label: 'Audit logs',             desc: `${logCount} registros`, icon: '≡', color: '#7A6A5B' },
         ].map(({ href, label, desc, icon, color }) => (
           <Link key={href} href={href} style={{ textDecoration: 'none' }}>
             <div style={{
-              background: '#1A1A22',
-              border: '1px solid rgba(226, 88, 34, 0.15)',
+              background: '#FFFBF4',
+              border: '1px solid #E5D2A8',
               borderRadius: 12,
               padding: '1.125rem 1.25rem',
               display: 'flex',
@@ -399,7 +399,7 @@ export default async function AdminDashboardPage() {
             }}>
               <div style={{
                 width: 40, height: 40, borderRadius: 10,
-                background: color + '22',
+                background: color + '18',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '1.125rem', color,
                 flexShrink: 0,
@@ -407,8 +407,8 @@ export default async function AdminDashboardPage() {
                 {icon}
               </div>
               <div style={{ minWidth: 0 }}>
-                <p style={{ margin: '0 0 .125rem', fontSize: '.875rem', fontWeight: 700, color: '#FFFFFF' }}>{label}</p>
-                <p style={{ margin: 0, fontSize: '.75rem', color: '#A5A5AB' }}>{desc}</p>
+                <p style={{ margin: '0 0 .125rem', fontSize: '.875rem', fontWeight: 700, color: '#241A14' }}>{label}</p>
+                <p style={{ margin: 0, fontSize: '.75rem', color: '#7A6A5B' }}>{desc}</p>
               </div>
             </div>
           </Link>
@@ -428,7 +428,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       fontWeight: 800,
       textTransform: 'uppercase',
       letterSpacing: '.18em',
-      color: '#E25822',
+      color: '#C8A95B',
       margin: '0 0 .75rem',
     }}>
       {children}
@@ -446,13 +446,13 @@ function MetricCard({ label, value, sub, tone = 'default' }: {
   const isSuccess = tone === 'success';
   const isDanger  = tone === 'danger';
 
-  const bg      = isPremium ? '#24130A' : '#1A1A22';
-  const border  = isPremium 
-    ? '1px solid rgba(226, 88, 34, 0.35)' 
-    : `1px solid ${isDanger ? 'rgba(220,38,38,0.25)' : isSuccess ? 'rgba(22,163,74,0.25)' : 'rgba(226, 88, 34, 0.15)'}`;
-  const lblClr  = isPremium ? '#FF9D66' : isDanger ? '#F87171' : isSuccess ? '#4ADE80' : '#A5A5AB';
-  const valClr  = '#FFFFFF';
-  const subClr  = '#8C8C96';
+  const bg      = '#FFFBF4';
+  const border  = isPremium
+    ? '1px solid rgba(200,169,91,0.45)'
+    : `1px solid ${isDanger ? 'rgba(180,50,50,0.25)' : isSuccess ? 'rgba(36,122,69,0.25)' : '#E5D2A8'}`;
+  const lblClr  = isPremium ? '#C8A95B' : isDanger ? '#B43232' : isSuccess ? '#247A45' : '#7A6A5B';
+  const valClr  = '#241A14';
+  const subClr  = '#7A6A5B';
 
   return (
     <div style={{
@@ -486,7 +486,7 @@ function PlanCard({ label, sublabel, count, revenue, currency, pct, color, bgCol
   bgColor: string;
 }) {
   return (
-    <div style={{ background: '#1A1A22', border: '1px solid rgba(226, 88, 34, 0.15)', borderRadius: 12, padding: '1.25rem' }}>
+    <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '.625rem', marginBottom: '.75rem' }}>
         <span style={{
           display: 'inline-block',
@@ -502,18 +502,18 @@ function PlanCard({ label, sublabel, count, revenue, currency, pct, color, bgCol
           {sublabel}
         </span>
       </div>
-      <p style={{ margin: '0 0 .125rem', fontSize: '.8125rem', fontWeight: 700, color: '#FFFFFF' }}>{label}</p>
+      <p style={{ margin: '0 0 .125rem', fontSize: '.8125rem', fontWeight: 700, color: '#241A14' }}>{label}</p>
       <p style={{ margin: '0 0 .875rem', fontSize: '1.5rem', fontWeight: 900, color }}>
-        {count} <span style={{ fontSize: '.9rem', color: '#A5A5AB', fontWeight: 400 }}>vendidas</span>
+        {count} <span style={{ fontSize: '.9rem', color: '#7A6A5B', fontWeight: 400 }}>vendidas</span>
       </p>
-      <p style={{ margin: '0 0 .5rem', fontSize: '.75rem', color: '#A5A5AB' }}>
+      <p style={{ margin: '0 0 .5rem', fontSize: '.75rem', color: '#7A6A5B' }}>
         {new Intl.NumberFormat('es-MX', { style: 'currency', currency, minimumFractionDigits: 0 }).format(revenue / 100)} ingresos
       </p>
       {/* Progress bar */}
-      <div style={{ background: '#2C2C35', borderRadius: 99, height: 6, overflow: 'hidden' }}>
+      <div style={{ background: '#E5D2A8', borderRadius: 99, height: 6, overflow: 'hidden' }}>
         <div style={{ background: color, width: `${pct}%`, height: '100%', borderRadius: 99, transition: 'width 0.4s' }} />
       </div>
-      <p style={{ margin: '.375rem 0 0', fontSize: '.7rem', color: '#A5A5AB' }}>{pct}% de las ventas</p>
+      <p style={{ margin: '.375rem 0 0', fontSize: '.7rem', color: '#7A6A5B' }}>{pct}% de las ventas</p>
     </div>
   );
 }
@@ -525,9 +525,9 @@ function AlertCard({ tone, title, description, action }: {
   action?: React.ReactNode;
 }) {
   const styles = {
-    danger:  { bg: 'rgba(220, 38, 38, 0.1)', border: 'rgba(220, 38, 38, 0.25)', icon: '⚠', iconColor: '#F87171', titleColor: '#F87171' },
-    warning: { bg: 'rgba(217, 119, 6, 0.1)', border: 'rgba(217, 119, 6, 0.25)', icon: '⚠', iconColor: '#FBBF24', titleColor: '#FBBF24' },
-    info:    { bg: 'rgba(37, 99, 235, 0.1)', border: 'rgba(37, 99, 235, 0.25)', icon: 'ℹ', iconColor: '#60A5FA', titleColor: '#60A5FA' },
+    danger:  { bg: '#FBEAEA', border: '#F5C0C0', icon: '⚠', iconColor: '#B43232', titleColor: '#B43232' },
+    warning: { bg: '#FBF5E3', border: '#E8D8AD', icon: '⚠', iconColor: '#7A6A5B', titleColor: '#7A6A5B' },
+    info:    { bg: '#EFF6FF', border: '#BFDBFE', icon: 'ℹ', iconColor: '#2563EB', titleColor: '#2563EB' },
   }[tone];
 
   return (
@@ -543,7 +543,7 @@ function AlertCard({ tone, title, description, action }: {
       <span style={{ fontSize: '1rem', color: styles.iconColor, flexShrink: 0, marginTop: '1px' }}>{styles.icon}</span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ margin: '0 0 .2rem', fontSize: '.875rem', fontWeight: 700, color: styles.titleColor }}>{title}</p>
-        <p style={{ margin: 0, fontSize: '.8rem', color: '#A5A5AB' }}>{description}</p>
+        <p style={{ margin: 0, fontSize: '.8rem', color: '#7A6A5B' }}>{description}</p>
         {action && <div style={{ marginTop: '.5rem' }}>{action}</div>}
       </div>
     </div>
@@ -565,6 +565,6 @@ const quickBtn: React.CSSProperties = {
 const alertAction: React.CSSProperties = {
   fontSize: '.8rem',
   fontWeight: 600,
-  color: '#E25822',
+  color: '#C8A95B',
   textDecoration: 'none',
 };

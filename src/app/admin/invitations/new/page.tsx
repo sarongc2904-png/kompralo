@@ -110,20 +110,20 @@ export default function AdminNewInvitationPage() {
   return (
     <div style={{ maxWidth: 680 }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <Link href="/admin/invitations" style={{ fontSize: '.8rem', color: '#8a8580', textDecoration: 'none' }}>← Invitaciones</Link>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1a1610', margin: '.5rem 0 .25rem' }}>Crear invitación</h1>
-        <p style={{ fontSize: '.8125rem', color: '#8a8580', margin: 0 }}>Crear una invitación manualmente sin pasar por Stripe.</p>
+        <Link href="/admin/invitations" style={{ fontSize: '.8rem', color: '#7A6A5B', textDecoration: 'none' }}>← Invitaciones</Link>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#241A14', margin: '.5rem 0 .25rem' }}>Crear invitación</h1>
+        <p style={{ fontSize: '.8125rem', color: '#7A6A5B', margin: 0 }}>Crear una invitación manualmente sin pasar por Stripe.</p>
       </div>
 
       {result ? (
-        <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12, padding: '1.5rem' }}>
-          <p style={{ fontSize: '1rem', fontWeight: 700, color: '#16a34a', margin: '0 0 .5rem' }}>✓ Invitación creada</p>
+        <div style={{ background: '#E7F5EC', border: '1px solid #B8DFC4', borderRadius: 12, padding: '1.5rem' }}>
+          <p style={{ fontSize: '1rem', fontWeight: 700, color: '#247A45', margin: '0 0 .5rem' }}>✓ Invitación creada</p>
           {result.ownerUserId ? (
-            <p style={{ fontSize: '.8rem', color: '#4a7c59', margin: '0 0 1rem' }}>
+            <p style={{ fontSize: '.8rem', color: '#247A45', margin: '0 0 1rem' }}>
               Owner asignado: <code style={{ fontFamily: 'monospace', fontSize: '.75rem' }}>{result.ownerUserId}</code>
             </p>
           ) : (
-            <p style={{ fontSize: '.8rem', color: '#8a8580', margin: '0 0 1rem' }}>
+            <p style={{ fontSize: '.8rem', color: '#7A6A5B', margin: '0 0 1rem' }}>
               Sin owner (user_id = null). customer_email guardado.
             </p>
           )}
@@ -134,12 +134,12 @@ export default function AdminNewInvitationPage() {
               { label: 'Editor',                   url: result.editorLink,           key: 'edit' },
               { label: 'Panel cliente',             url: result.clientDashboardLink, key: 'dash' },
             ].map(({ label, url, key }) => (
-              <div key={key} style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 8, padding: '.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+              <div key={key} style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 8, padding: '.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
                 <div>
-                  <p style={{ margin: 0, fontSize: '.7rem', color: '#8a8580', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>{label}</p>
-                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '.8rem', color: '#2563eb', wordBreak: 'break-all' }}>{url}</a>
+                  <p style={{ margin: 0, fontSize: '.7rem', color: '#7A6A5B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>{label}</p>
+                  <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '.8rem', color: '#2563EB', wordBreak: 'break-all' }}>{url}</a>
                 </div>
-                <button onClick={() => copy(url, key)} style={{ padding: '.375rem .875rem', background: copied === key ? '#16a34a' : '#1a1610', color: '#fff', border: 'none', borderRadius: 8, fontSize: '.75rem', cursor: 'pointer', whiteSpace: 'nowrap', fontWeight: 600 }}>
+                <button onClick={() => copy(url, key)} style={{ padding: '.375rem .875rem', background: copied === key ? '#247A45' : '#1C1713', color: '#FFF7EA', border: 'none', borderRadius: 8, fontSize: '.75rem', cursor: 'pointer', whiteSpace: 'nowrap', fontWeight: 600 }}>
                   {copied === key ? '✓ Copiado' : 'Copiar'}
                 </button>
               </div>
@@ -147,19 +147,19 @@ export default function AdminNewInvitationPage() {
           </div>
 
           <div style={{ marginTop: '1rem', display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-            <Link href={`/admin/invitations/${result.invitationId}`} style={{ padding: '.625rem 1.25rem', background: '#1a1610', color: '#f1e3c8', borderRadius: 8, fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
+            <Link href={`/admin/invitations/${result.invitationId}`} style={{ padding: '.625rem 1.25rem', background: '#1C1713', color: '#FFF7EA', borderRadius: 8, fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
               Ver detalle
             </Link>
-            <a href={result.editorLink} target="_blank" rel="noopener noreferrer" style={{ padding: '.625rem 1.25rem', background: '#f0ede8', color: '#4a4742', borderRadius: 8, fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
+            <a href={result.editorLink} target="_blank" rel="noopener noreferrer" style={{ padding: '.625rem 1.25rem', background: '#FAF3E6', color: '#7A6A5B', border: '1px solid #E5D2A8', borderRadius: 8, fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
               Abrir editor
             </a>
-            <button onClick={() => { setResult(null); setLookupStatus({ state: 'idle' }); }} style={{ padding: '.625rem 1.25rem', background: '#f0ede8', color: '#4a4742', border: 'none', borderRadius: 8, fontSize: '.875rem', cursor: 'pointer', fontWeight: 600 }}>
+            <button onClick={() => { setResult(null); setLookupStatus({ state: 'idle' }); }} style={{ padding: '.625rem 1.25rem', background: '#FAF3E6', color: '#7A6A5B', border: '1px solid #E5D2A8', borderRadius: 8, fontSize: '.875rem', cursor: 'pointer', fontWeight: 600 }}>
               Crear otra
             </button>
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form onSubmit={handleSubmit} style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <Field label="Nombre del cliente">
@@ -224,9 +224,9 @@ export default function AdminNewInvitationPage() {
                 disabled={lookupStatus.state === 'loading'}
                 style={{
                   padding: '.625rem .875rem',
-                  background: lookupStatus.state === 'loading' ? '#e5e2dc' : '#f0ede8',
-                  color: '#4a4742',
-                  border: '1px solid #e5e2dc',
+                  background: lookupStatus.state === 'loading' ? '#E5D2A8' : '#FAF3E6',
+                  color: '#7A6A5B',
+                  border: '1px solid #E5D2A8',
                   borderRadius: 8,
                   fontSize: '.75rem',
                   cursor: lookupStatus.state === 'loading' ? 'not-allowed' : 'pointer',
@@ -240,17 +240,17 @@ export default function AdminNewInvitationPage() {
 
             {/* Lookup feedback */}
             {lookupStatus.state === 'found' && (
-              <div style={{ marginTop: '.375rem', padding: '.5rem .75rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, fontSize: '.75rem', color: '#16a34a' }}>
+              <div style={{ marginTop: '.375rem', padding: '.5rem .75rem', background: '#E7F5EC', border: '1px solid #B8DFC4', borderRadius: 6, fontSize: '.75rem', color: '#247A45' }}>
                 ✓ Usuario encontrado — UUID llenado automáticamente.
               </div>
             )}
             {lookupStatus.state === 'notfound' && (
-              <div style={{ marginTop: '.375rem', padding: '.5rem .75rem', background: '#fefce8', border: '1px solid #fef08a', borderRadius: 6, fontSize: '.75rem', color: '#854d0e' }}>
+              <div style={{ marginTop: '.375rem', padding: '.5rem .75rem', background: '#FBF5E3', border: '1px solid #E8D8AD', borderRadius: 6, fontSize: '.75rem', color: '#7A6A5B' }}>
                 {lookupStatus.message}
               </div>
             )}
             {lookupStatus.state === 'error' && (
-              <div style={{ marginTop: '.375rem', padding: '.5rem .75rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, fontSize: '.75rem', color: '#dc2626' }}>
+              <div style={{ marginTop: '.375rem', padding: '.5rem .75rem', background: '#FBEAEA', border: '1px solid #F5C0C0', borderRadius: 6, fontSize: '.75rem', color: '#B43232' }}>
                 {lookupStatus.message}
               </div>
             )}
@@ -265,18 +265,18 @@ export default function AdminNewInvitationPage() {
             />
           </Field>
 
-          <label style={{ display: 'flex', alignItems: 'center', gap: '.75rem', fontSize: '.875rem', color: '#1a1610', cursor: 'pointer' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '.75rem', fontSize: '.875rem', color: '#241A14', cursor: 'pointer' }}>
             <input type="checkbox" checked={form.create_order} onChange={e => setForm(p => ({ ...p, create_order: e.target.checked }))} />
             <div>
               <span style={{ fontWeight: 600 }}>Crear orden manual</span>
-              <p style={{ margin: '2px 0 0', fontSize: '.75rem', color: '#8a8580' }}>
+              <p style={{ margin: '2px 0 0', fontSize: '.75rem', color: '#7A6A5B' }}>
                 Registra una orden con source: admin_manual_creation. No genera ningún cobro en Stripe.
               </p>
             </div>
           </label>
 
           {error && (
-            <div style={{ padding: '.75rem 1rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, fontSize: '.875rem', color: '#dc2626' }}>
+            <div style={{ padding: '.75rem 1rem', background: '#FBEAEA', border: '1px solid #F5C0C0', borderRadius: 8, fontSize: '.875rem', color: '#B43232' }}>
               {error}
             </div>
           )}
@@ -284,7 +284,7 @@ export default function AdminNewInvitationPage() {
           <button
             type="submit"
             disabled={loading}
-            style={{ padding: '.875rem 2rem', background: loading ? '#8a8580' : '#1a1610', color: '#f1e3c8', border: 'none', borderRadius: 10, fontSize: '.9375rem', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 700 }}
+            style={{ padding: '.875rem 2rem', background: loading ? '#7A6A5B' : '#1C1713', color: '#FFF7EA', border: 'none', borderRadius: 10, fontSize: '.9375rem', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 700 }}
           >
             {loading ? 'Creando…' : 'Crear invitación'}
           </button>
@@ -297,22 +297,22 @@ export default function AdminNewInvitationPage() {
 function Field({ label, hint, required, children }: { label: string; hint?: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '.375rem' }}>
-      <label style={{ fontSize: '.75rem', fontWeight: 700, color: '#4a4742', textTransform: 'uppercase', letterSpacing: '.08em' }}>
-        {label}{required && <span style={{ color: '#dc2626' }}>*</span>}
+      <label style={{ fontSize: '.75rem', fontWeight: 700, color: '#241A14', textTransform: 'uppercase', letterSpacing: '.08em' }}>
+        {label}{required && <span style={{ color: '#B43232' }}>*</span>}
       </label>
       {children}
-      {hint && <p style={{ margin: 0, fontSize: '.7rem', color: '#8a8580', lineHeight: 1.4 }}>{hint}</p>}
+      {hint && <p style={{ margin: 0, fontSize: '.7rem', color: '#7A6A5B', lineHeight: 1.4 }}>{hint}</p>}
     </div>
   );
 }
 
 const inputStyle: React.CSSProperties = {
   padding: '.625rem .875rem',
-  border: '1px solid #e5e2dc',
+  border: '1px solid #E5D2A8',
   borderRadius: 8,
   fontSize: '.875rem',
-  color: '#1a1610',
-  background: '#fafaf8',
+  color: '#241A14',
+  background: '#FAF3E6',
   width: '100%',
   boxSizing: 'border-box',
 };

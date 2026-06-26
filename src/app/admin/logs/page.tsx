@@ -10,18 +10,18 @@ function fmtDate(iso: string): string {
 }
 
 const ACTION_BADGE: Record<string, { bg: string; color: string }> = {
-  'invitation.create': { bg: '#DCFCE7', color: '#16A34A' },
-  'invitation.update': { bg: '#DBEAFE', color: '#2563EB' },
-  'invitation.delete': { bg: '#FEE2E2', color: '#DC2626' },
-  'order.create':      { bg: '#DCFCE7', color: '#16A34A' },
-  'order.update':      { bg: '#DBEAFE', color: '#2563EB' },
-  'recovery.create':   { bg: '#EDE9FE', color: '#7C3AED' },
+  'invitation.create': { bg: '#E7F5EC', color: '#247A45' },
+  'invitation.update': { bg: 'rgba(37,99,235,0.1)', color: '#2563EB' },
+  'invitation.delete': { bg: '#FBEAEA', color: '#B43232' },
+  'order.create':      { bg: '#E7F5EC', color: '#247A45' },
+  'order.update':      { bg: 'rgba(37,99,235,0.1)', color: '#2563EB' },
+  'recovery.create':   { bg: 'rgba(124,58,237,0.1)', color: '#7C3AED' },
 };
 
 const ENTITY_BADGE: Record<string, { bg: string; color: string }> = {
-  invitation: { bg: '#FEF3C7', color: '#B45309' },
-  order:      { bg: '#DBEAFE', color: '#2563EB' },
-  recovery:   { bg: '#EDE9FE', color: '#7C3AED' },
+  invitation: { bg: '#FBF5E3', color: '#A07C2E' },
+  order:      { bg: 'rgba(37,99,235,0.1)', color: '#2563EB' },
+  recovery:   { bg: 'rgba(124,58,237,0.1)', color: '#7C3AED' },
 };
 
 interface Props { searchParams: Promise<Record<string, string | undefined>> }
@@ -55,18 +55,18 @@ export default async function AdminLogsPage({ searchParams }: Props) {
     <div>
       {/* Header */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#C9A45C', margin: '0 0 .25rem' }}>
+        <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#C8A95B', margin: '0 0 .25rem' }}>
           Admin
         </p>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A1510', margin: '0 0 .25rem' }}>Audit Logs</h1>
-        <p style={{ fontSize: '.8125rem', color: '#766B60', margin: 0 }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#241A14', margin: '0 0 .25rem' }}>Audit Logs</h1>
+        <p style={{ fontSize: '.8125rem', color: '#7A6A5B', margin: 0 }}>
           {logs.length} registro{logs.length !== 1 ? 's' : ''}
-          {hasFilters && <> · <span style={{ color: '#D97706', fontWeight: 600 }}>Filtros activos</span></>}
+          {hasFilters && <> · <span style={{ color: '#C8A95B', fontWeight: 600 }}>Filtros activos</span></>}
         </p>
       </div>
 
       {/* Filters */}
-      <form method="get" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1.5rem', padding: '1rem 1.25rem', background: '#fff', border: '1px solid #E8E4DE', borderRadius: 12 }}>
+      <form method="get" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1.5rem', padding: '1rem 1.25rem', background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12 }}>
         <input name="email"      defaultValue={filterEmail}      placeholder="Admin email"       style={inputStyle} />
         <input name="action"     defaultValue={filterAction}     placeholder="Acción (ej. invitation.create)" style={inputStyle} />
         <select name="entity_type" defaultValue={filterEntityType} style={selectStyle}>
@@ -79,10 +79,10 @@ export default async function AdminLogsPage({ searchParams }: Props) {
       </form>
 
       {/* Table */}
-      <div style={{ overflowX: 'auto', background: '#fff', border: '1px solid #E8E4DE', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ overflowX: 'auto', background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#F8F5F1', borderBottom: '1px solid #E8E4DE' }}>
+            <tr style={{ background: '#FAF3E6', borderBottom: '1px solid #E5D2A8' }}>
               {['Fecha','Admin','Acción','Entidad','Entity ID','Detalle'].map(h => (
                 <th key={h} style={thStyle}>{h}</th>
               ))}
@@ -91,7 +91,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
           <tbody>
             {logs.length === 0 && (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center', padding: '3rem', color: '#B0A898', fontSize: '.875rem' }}>
+                <td colSpan={6} style={{ textAlign: 'center', padding: '3rem', color: '#7A6A5B', fontSize: '.875rem' }}>
                   Sin registros que coincidan
                 </td>
               </tr>
@@ -105,14 +105,14 @@ export default async function AdminLogsPage({ searchParams }: Props) {
               const entityBadge = ENTITY_BADGE[entityType];
 
               return (
-                <tr key={log.id as string} style={{ borderBottom: '1px solid #F5F2ED' }}>
+                <tr key={log.id as string} style={{ borderBottom: '1px solid rgba(200,169,91,0.12)' }}>
                   <td style={tdStyle}>
-                    <span style={{ fontSize: '.75rem', color: '#8A8580', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '.75rem', color: '#7A6A5B', whiteSpace: 'nowrap' }}>
                       {fmtDate(log.created_at as string)}
                     </span>
                   </td>
                   <td style={tdStyle}>
-                    <span style={{ fontSize: '.8rem', color: '#1A1510' }}>{log.admin_email as string}</span>
+                    <span style={{ fontSize: '.8rem', color: '#241A14' }}>{log.admin_email as string}</span>
                   </td>
                   <td style={tdStyle}>
                     {actionBadge ? (
@@ -120,7 +120,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                         {action}
                       </span>
                     ) : (
-                      <code style={{ fontSize: '.75rem', color: '#1A1510', background: '#F0ECE7', padding: '.2rem .5rem', borderRadius: 4 }}>{action}</code>
+                      <code style={{ fontSize: '.75rem', color: '#241A14', background: '#FAF3E6', padding: '.2rem .5rem', borderRadius: 4 }}>{action}</code>
                     )}
                   </td>
                   <td style={tdStyle}>
@@ -129,7 +129,7 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                         {entityType}
                       </span>
                     ) : (
-                      <span style={{ fontSize: '.75rem', color: '#8A8580' }}>{entityType}</span>
+                      <span style={{ fontSize: '.75rem', color: '#7A6A5B' }}>{entityType}</span>
                     )}
                   </td>
                   <td style={tdStyle}>
@@ -138,21 +138,21 @@ export default async function AdminLogsPage({ searchParams }: Props) {
                         {entityId.slice(0, 8)}…
                       </Link>
                     ) : entityId ? (
-                      <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: '#B0A898' }}>{entityId.slice(0, 8)}…</span>
+                      <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: '#7A6A5B' }}>{entityId.slice(0, 8)}…</span>
                     ) : (
-                      <span style={{ color: '#D1CBC4' }}>—</span>
+                      <span style={{ color: '#E5D2A8' }}>—</span>
                     )}
                   </td>
                   <td style={tdStyle}>
                     {afterObj ? (
                       <details style={{ cursor: 'pointer' }}>
-                        <summary style={{ fontSize: '.75rem', color: '#766B60', fontWeight: 600 }}>Ver detalle</summary>
-                        <pre style={{ fontSize: '.65rem', margin: '.375rem 0 0', color: '#4A4742', whiteSpace: 'pre-wrap', wordBreak: 'break-all', maxWidth: 280, background: '#F5F2ED', padding: '.5rem', borderRadius: 6 }}>
+                        <summary style={{ fontSize: '.75rem', color: '#7A6A5B', fontWeight: 600 }}>Ver detalle</summary>
+                        <pre style={{ fontSize: '.65rem', margin: '.375rem 0 0', color: '#241A14', whiteSpace: 'pre-wrap', wordBreak: 'break-all', maxWidth: 280, background: '#FAF3E6', padding: '.5rem', borderRadius: 6 }}>
                           {JSON.stringify(afterObj, null, 2)}
                         </pre>
                       </details>
                     ) : (
-                      <span style={{ color: '#D1CBC4' }}>—</span>
+                      <span style={{ color: '#E5D2A8' }}>—</span>
                     )}
                   </td>
                 </tr>
@@ -165,9 +165,9 @@ export default async function AdminLogsPage({ searchParams }: Props) {
   );
 }
 
-const inputStyle:  React.CSSProperties = { padding: '.5rem .75rem', border: '1px solid #E8E4DE', borderRadius: 8, fontSize: '.8125rem', color: '#1A1510', background: '#FAFAF8', minWidth: 160 };
+const inputStyle:  React.CSSProperties = { padding: '.5rem .75rem', border: '1px solid #E5D2A8', borderRadius: 8, fontSize: '.8125rem', color: '#241A14', background: '#FAF3E6', minWidth: 160 };
 const selectStyle: React.CSSProperties = { ...inputStyle };
-const btnDark:     React.CSSProperties = { padding: '.5rem 1.125rem', background: '#17120E', color: '#F5F0E8', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 700 };
-const btnLight:    React.CSSProperties = { padding: '.5rem 1rem', background: '#F0ECE7', color: '#4A4742', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 600, textDecoration: 'none' };
-const thStyle:     React.CSSProperties = { padding: '.625rem 1rem', fontSize: '.68rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#B0A898', fontWeight: 700, textAlign: 'left', whiteSpace: 'nowrap' };
-const tdStyle:     React.CSSProperties = { padding: '.75rem 1rem', fontSize: '.8125rem', color: '#2C2A26', verticalAlign: 'middle' };
+const btnDark:     React.CSSProperties = { padding: '.5rem 1.125rem', background: '#1C1713', color: '#FFF7EA', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 700 };
+const btnLight:    React.CSSProperties = { padding: '.5rem 1rem', background: '#FFFBF4', color: '#1C1713', border: '1px solid #C8A95B', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 600, textDecoration: 'none' };
+const thStyle:     React.CSSProperties = { padding: '.625rem 1rem', fontSize: '.68rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#7A6A5B', fontWeight: 700, textAlign: 'left', whiteSpace: 'nowrap' };
+const tdStyle:     React.CSSProperties = { padding: '.75rem 1rem', fontSize: '.8125rem', color: '#241A14', verticalAlign: 'middle' };

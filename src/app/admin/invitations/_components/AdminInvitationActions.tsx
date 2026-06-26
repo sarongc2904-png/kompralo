@@ -30,12 +30,12 @@ export function AdminInvitationActions({ id, isDeleted, deletedAt }: Props) {
         }}
         style={{
           padding: '.3rem .75rem',
-          background: canRestore ? '#DCFCE7' : '#F3F4F6',
-          color: canRestore ? '#16A34A' : '#9CA3AF',
+          background: canRestore ? '#E7F5EC' : '#FAF3E6',
+          color: canRestore ? '#247A45' : '#7A6A5B',
           borderRadius: 6,
           fontSize: '.7rem',
           fontWeight: 700,
-          border: 'none',
+          border: `1px solid ${canRestore ? '#B8DFC4' : '#E5D2A8'}`,
           cursor: canRestore ? 'pointer' : 'not-allowed',
           opacity: pending ? 0.6 : 1,
           whiteSpace: 'nowrap',
@@ -50,7 +50,7 @@ export function AdminInvitationActions({ id, isDeleted, deletedAt }: Props) {
   if (confirming) {
     return (
       <div style={{ display: 'flex', gap: '.25rem', alignItems: 'center' }}>
-        <span style={{ fontSize: '.65rem', color: '#DC2626', fontWeight: 600, whiteSpace: 'nowrap' }}>¿Eliminar?</span>
+        <span style={{ fontSize: '.65rem', color: '#B43232', fontWeight: 600, whiteSpace: 'nowrap' }}>¿Eliminar?</span>
         <button
           onClick={() => {
             setConfirming(false);
@@ -59,13 +59,13 @@ export function AdminInvitationActions({ id, isDeleted, deletedAt }: Props) {
             });
           }}
           disabled={pending}
-          style={{ padding: '.25rem .5rem', background: '#FEE2E2', color: '#DC2626', border: 'none', borderRadius: 6, fontSize: '.65rem', fontWeight: 700, cursor: 'pointer' }}
+          style={{ padding: '.25rem .5rem', background: '#FBEAEA', color: '#B43232', border: '1px solid #F5C0C0', borderRadius: 6, fontSize: '.65rem', fontWeight: 700, cursor: 'pointer' }}
         >
           Sí
         </button>
         <button
           onClick={() => setConfirming(false)}
-          style={{ padding: '.25rem .5rem', background: '#F3F4F6', color: '#6B7280', border: 'none', borderRadius: 6, fontSize: '.65rem', fontWeight: 600, cursor: 'pointer' }}
+          style={{ padding: '.25rem .5rem', background: '#FAF3E6', color: '#7A6A5B', border: '1px solid #E5D2A8', borderRadius: 6, fontSize: '.65rem', fontWeight: 600, cursor: 'pointer' }}
         >
           No
         </button>
@@ -79,12 +79,12 @@ export function AdminInvitationActions({ id, isDeleted, deletedAt }: Props) {
       disabled={pending}
       style={{
         padding: '.3rem .75rem',
-        background: '#FEE2E2',
-        color: '#DC2626',
+        background: '#FBEAEA',
+        color: '#B43232',
         borderRadius: 6,
         fontSize: '.7rem',
         fontWeight: 700,
-        border: 'none',
+        border: '1px solid #F5C0C0',
         cursor: 'pointer',
         opacity: pending ? 0.6 : 1,
         whiteSpace: 'nowrap',

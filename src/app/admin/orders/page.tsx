@@ -6,16 +6,16 @@ import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 export const metadata: Metadata = { title: 'Órdenes — Admin Kompralo' };
 
 const STATUS_BADGE: Record<string, { bg: string; color: string; label: string }> = {
-  paid:      { bg: '#DCFCE7', color: '#16A34A', label: 'Pagado' },
-  pending:   { bg: '#FEF9C3', color: '#CA8A04', label: 'Pendiente' },
-  failed:    { bg: '#FEE2E2', color: '#DC2626', label: 'Fallido' },
-  refunded:  { bg: '#F3F4F6', color: '#6B7280', label: 'Reembolsado' },
+  paid:      { bg: '#E7F5EC', color: '#247A45', label: 'Pagado' },
+  pending:   { bg: '#FBF5E3', color: '#7A6A5B', label: 'Pendiente' },
+  failed:    { bg: '#FBEAEA', color: '#B43232', label: 'Fallido' },
+  refunded:  { bg: '#F2F2F0', color: '#7A6A5B', label: 'Reembolsado' },
 };
 
 const PLAN_BADGE: Record<string, { bg: string; color: string; label: string }> = {
-  basic:   { bg: '#DBEAFE', color: '#2563EB', label: 'Elegante' },
-  premium: { bg: '#EDE9FE', color: '#7C3AED', label: 'Sin Caos' },
-  deluxe:  { bg: '#FEF3C7', color: '#B45309', label: 'Premium' },
+  basic:   { bg: 'rgba(37,99,235,0.1)',   color: '#2563EB', label: 'Elegante' },
+  premium: { bg: 'rgba(124,58,237,0.1)',  color: '#7C3AED', label: 'Sin Caos' },
+  deluxe:  { bg: 'rgba(200,169,91,0.15)', color: '#A07C2E', label: 'Premium' },
 };
 
 function fmt(cents: number, currency: string): string {
@@ -27,12 +27,12 @@ function fmtDate(iso: string): string {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const s = STATUS_BADGE[status] ?? { bg: '#F3F4F6', color: '#6B7280', label: status };
+  const s = STATUS_BADGE[status] ?? { bg: '#F2F2F0', color: '#7A6A5B', label: status };
   return <span style={{ display: 'inline-block', background: s.bg, color: s.color, fontSize: '.7rem', fontWeight: 700, padding: '.2rem .65rem', borderRadius: 20, whiteSpace: 'nowrap' }}>{s.label}</span>;
 }
 
 function PlanBadge({ plan }: { plan: string }) {
-  const p = PLAN_BADGE[plan] ?? { bg: '#F3F4F6', color: '#6B7280', label: plan };
+  const p = PLAN_BADGE[plan] ?? { bg: '#F2F2F0', color: '#7A6A5B', label: plan };
   return <span style={{ display: 'inline-block', background: p.bg, color: p.color, fontSize: '.7rem', fontWeight: 700, padding: '.2rem .65rem', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '.05em' }}>{p.label}</span>;
 }
 
@@ -79,18 +79,18 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#C9A45C', margin: '0 0 .25rem' }}>
+          <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#C8A95B', margin: '0 0 .25rem' }}>
             Admin
           </p>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A1510', margin: '0 0 .25rem' }}>Órdenes</h1>
-          <p style={{ fontSize: '.8125rem', color: '#766B60', margin: 0 }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#241A14', margin: '0 0 .25rem' }}>Órdenes</h1>
+          <p style={{ fontSize: '.8125rem', color: '#7A6A5B', margin: 0 }}>
             {orders.length} resultado{orders.length !== 1 ? 's' : ''}
-            {paidCount > 0 && <> · <span style={{ color: '#16A34A', fontWeight: 600 }}>{paidCount} pagadas</span></>}
-            {errorCount > 0 && <> · <span style={{ color: '#DC2626', fontWeight: 600 }}>{errorCount} con error de email</span></>}
+            {paidCount > 0 && <> · <span style={{ color: '#247A45', fontWeight: 600 }}>{paidCount} pagadas</span></>}
+            {errorCount > 0 && <> · <span style={{ color: '#B43232', fontWeight: 600 }}>{errorCount} con error de email</span></>}
           </p>
         </div>
         {hasFilters && !filterEmailErr && (
-          <div style={{ background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 8, padding: '.5rem .875rem', fontSize: '.75rem', color: '#B45309' }}>
+          <div style={{ background: '#FBF5E3', border: '1px solid #E8D8AD', borderRadius: 8, padding: '.5rem .875rem', fontSize: '.75rem', color: '#7A6A5B' }}>
             Filtros activos
           </div>
         )}
@@ -104,7 +104,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       </div>
 
       {/* Filters */}
-      <form method="get" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1.5rem', padding: '1rem 1.25rem', background: '#fff', border: '1px solid #E8E4DE', borderRadius: 12 }}>
+      <form method="get" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1.5rem', padding: '1rem 1.25rem', background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12 }}>
         <input name="email"   defaultValue={filterEmail}   placeholder="Email cliente"             style={inputStyle} />
         <input name="session" defaultValue={filterSession} placeholder="Session ID (cs_...)"        style={{ ...inputStyle, width: 200 }} />
         <select name="status" defaultValue={filterStatus}  style={selectStyle}>
@@ -115,7 +115,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
           <option value="">Todos los planes</option>
           {['basic','premium','deluxe'].map(p => <option key={p} value={p}>{p}</option>)}
         </select>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.8125rem', color: '#4A4742', cursor: 'pointer' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.8125rem', color: '#7A6A5B', cursor: 'pointer' }}>
           <input type="checkbox" name="email_error" value="1" defaultChecked={!!filterEmailErr} />
           Solo errores email
         </label>
@@ -124,10 +124,10 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       </form>
 
       {/* Table */}
-      <div style={{ overflowX: 'auto', background: '#fff', border: '1px solid #E8E4DE', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ overflowX: 'auto', background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#F8F5F1', borderBottom: '1px solid #E8E4DE' }}>
+            <tr style={{ background: '#FAF3E6', borderBottom: '1px solid #E5D2A8' }}>
               {['Fecha','Cliente','Plan','Monto','Status','Email confirm.','Session ID','Acciones'].map(h => (
                 <th key={h} style={thStyle}>{h}</th>
               ))}
@@ -136,7 +136,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
           <tbody>
             {orders.length === 0 && (
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: '#B0A898', fontSize: '.875rem' }}>
+                <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: '#7A6A5B', fontSize: '.875rem' }}>
                   No hay órdenes que coincidan
                 </td>
               </tr>
@@ -148,36 +148,36 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               const emailErr = !!o.confirmation_email_error;
 
               return (
-                <tr key={o.id as string} style={{ borderBottom: '1px solid #F5F2ED' }}>
+                <tr key={o.id as string} style={{ borderBottom: '1px solid rgba(200,169,91,0.12)' }}>
                   <td style={tdStyle}>
-                    <span style={{ fontSize: '.75rem', color: '#8A8580', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '.75rem', color: '#7A6A5B', whiteSpace: 'nowrap' }}>
                       {fmtDate(o.created_at as string)}
                     </span>
                   </td>
                   <td style={tdStyle}>
-                    <p style={{ margin: '0 0 .125rem', fontSize: '.8rem', fontWeight: 500, color: '#1A1510', whiteSpace: 'nowrap' }}>
+                    <p style={{ margin: '0 0 .125rem', fontSize: '.8rem', fontWeight: 500, color: '#241A14', whiteSpace: 'nowrap' }}>
                       {(o.customer_name as string) || '—'}
                     </p>
-                    <p style={{ margin: 0, fontSize: '.75rem', color: '#8A8580' }}>{(o.customer_email as string) ?? '—'}</p>
+                    <p style={{ margin: 0, fontSize: '.75rem', color: '#7A6A5B' }}>{(o.customer_email as string) ?? '—'}</p>
                   </td>
                   <td style={tdStyle}><PlanBadge plan={o.plan_id as string} /></td>
                   <td style={tdStyle}>
-                    <span style={{ fontSize: '.875rem', fontWeight: 700, color: o.status === 'paid' ? '#1A1510' : '#8A8580', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '.875rem', fontWeight: 700, color: o.status === 'paid' ? '#241A14' : '#7A6A5B', whiteSpace: 'nowrap' }}>
                       {fmt(o.amount_total as number, o.currency as string)}
                     </span>
                   </td>
                   <td style={tdStyle}><StatusBadge status={o.status as string} /></td>
                   <td style={tdStyle}>
                     {emailErr ? (
-                      <span style={{ fontSize: '.75rem', color: '#DC2626', fontWeight: 600 }}>✗ Error</span>
+                      <span style={{ fontSize: '.75rem', color: '#B43232', fontWeight: 600 }}>✗ Error</span>
                     ) : emailOk ? (
-                      <span style={{ fontSize: '.75rem', color: '#16A34A', fontWeight: 600 }}>✓ Enviado</span>
+                      <span style={{ fontSize: '.75rem', color: '#247A45', fontWeight: 600 }}>✓ Enviado</span>
                     ) : (
-                      <span style={{ fontSize: '.75rem', color: '#B0A898' }}>Pendiente</span>
+                      <span style={{ fontSize: '.75rem', color: '#7A6A5B' }}>Pendiente</span>
                     )}
                   </td>
                   <td style={tdStyle}>
-                    <span style={{ fontSize: '.65rem', fontFamily: 'monospace', color: '#B0A898', maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '.65rem', fontFamily: 'monospace', color: '#7A6A5B', maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', whiteSpace: 'nowrap' }}>
                       {(o.stripe_session_id as string) ?? '—'}
                     </span>
                   </td>
@@ -198,11 +198,11 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   );
 }
 
-const inputStyle:     React.CSSProperties = { padding: '.5rem .75rem', border: '1px solid #E8E4DE', borderRadius: 8, fontSize: '.8125rem', color: '#1A1510', background: '#FAFAF8', minWidth: 160 };
+const inputStyle:     React.CSSProperties = { padding: '.5rem .75rem', border: '1px solid #E5D2A8', borderRadius: 8, fontSize: '.8125rem', color: '#241A14', background: '#FAF3E6', minWidth: 160 };
 const selectStyle:    React.CSSProperties = { ...inputStyle };
-const btnDark:        React.CSSProperties = { padding: '.5rem 1.125rem', background: '#17120E', color: '#F5F0E8', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 700 };
-const btnLight:       React.CSSProperties = { padding: '.5rem 1rem', background: '#F0ECE7', color: '#4A4742', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 600, textDecoration: 'none' };
-const thStyle:        React.CSSProperties = { padding: '.625rem 1rem', fontSize: '.68rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#B0A898', fontWeight: 700, textAlign: 'left', whiteSpace: 'nowrap' };
-const tdStyle:        React.CSSProperties = { padding: '.75rem 1rem', fontSize: '.8125rem', color: '#2C2A26', verticalAlign: 'middle' };
-const btnAction:      React.CSSProperties = { padding: '.3rem .75rem', background: '#17120E', color: '#F5F0E8', borderRadius: 6, fontSize: '.7rem', fontWeight: 700, textDecoration: 'none' };
-const btnActionLight: React.CSSProperties = { padding: '.3rem .75rem', background: '#F0ECE7', color: '#4A4742', borderRadius: 6, fontSize: '.7rem', fontWeight: 600, textDecoration: 'none' };
+const btnDark:        React.CSSProperties = { padding: '.5rem 1.125rem', background: '#1C1713', color: '#FFF7EA', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 700 };
+const btnLight:       React.CSSProperties = { padding: '.5rem 1rem', background: '#FFFBF4', color: '#1C1713', border: '1px solid #C8A95B', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 600, textDecoration: 'none' };
+const thStyle:        React.CSSProperties = { padding: '.625rem 1rem', fontSize: '.68rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#7A6A5B', fontWeight: 700, textAlign: 'left', whiteSpace: 'nowrap' };
+const tdStyle:        React.CSSProperties = { padding: '.75rem 1rem', fontSize: '.8125rem', color: '#241A14', verticalAlign: 'middle' };
+const btnAction:      React.CSSProperties = { padding: '.3rem .75rem', background: '#1C1713', color: '#FFF7EA', borderRadius: 6, fontSize: '.7rem', fontWeight: 700, textDecoration: 'none' };
+const btnActionLight: React.CSSProperties = { padding: '.3rem .75rem', background: '#FFFBF4', color: '#1C1713', border: '1px solid #E5D2A8', borderRadius: 6, fontSize: '.7rem', fontWeight: 600, textDecoration: 'none' };

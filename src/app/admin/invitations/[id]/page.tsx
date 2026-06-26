@@ -15,9 +15,9 @@ function fmtDate(iso: string | null): string {
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <tr style={{ borderBottom: '1px solid #f0ede8' }}>
-      <td style={{ padding: '.5rem .875rem', fontSize: '.7rem', color: '#8a8580', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em', whiteSpace: 'nowrap', width: 160 }}>{label}</td>
-      <td style={{ padding: '.5rem .875rem', fontSize: '.8125rem', color: '#1a1610', wordBreak: 'break-all' }}>{value}</td>
+    <tr style={{ borderBottom: '1px solid #E5D2A8' }}>
+      <td style={{ padding: '.5rem .875rem', fontSize: '.7rem', color: '#7A6A5B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em', whiteSpace: 'nowrap', width: 160 }}>{label}</td>
+      <td style={{ padding: '.5rem .875rem', fontSize: '.8125rem', color: '#241A14', wordBreak: 'break-all' }}>{value}</td>
     </tr>
   );
 }
@@ -27,7 +27,7 @@ function CopyBtn({ text, label }: { text: string; label: string }) {
   return (
     <button
       onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
-      style={{ padding: '.375rem .75rem', background: copied ? '#16a34a' : '#f0ede8', color: copied ? '#fff' : '#4a4742', border: 'none', borderRadius: 8, fontSize: '.75rem', cursor: 'pointer', fontWeight: 600 }}
+      style={{ padding: '.375rem .75rem', background: copied ? '#E7F5EC' : '#FAF3E6', color: copied ? '#247A45' : '#7A6A5B', border: `1px solid ${copied ? '#B8DFC4' : '#E5D2A8'}`, borderRadius: 8, fontSize: '.75rem', cursor: 'pointer', fontWeight: 600 }}
     >
       {copied ? '✓ Copiado' : label}
     </button>
@@ -140,8 +140,8 @@ export default function AdminInvitationDetailPage() {
     await handlePatch({ reassign_to_user_id: newOwnerId.trim() });
   }
 
-  if (loading) return <div style={{ padding: '2rem', color: '#8a8580' }}>Cargando...</div>;
-  if (!inv)    return <div style={{ padding: '2rem', color: '#dc2626' }}>Invitación no encontrada</div>;
+  if (loading) return <div style={{ padding: '2rem', color: '#7A6A5B' }}>Cargando...</div>;
+  if (!inv)    return <div style={{ padding: '2rem', color: '#B43232' }}>Invitación no encontrada</div>;
 
   const slug     = inv.slug as string | null;
   const isActive = inv.status === 'paid' || inv.status === 'published';
@@ -154,12 +154,12 @@ export default function AdminInvitationDetailPage() {
     <div>
       <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <Link href="/admin/invitations" style={{ fontSize: '.8rem', color: '#8a8580', textDecoration: 'none' }}>← Invitaciones</Link>
-          <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#1a1610', margin: '.5rem 0 .125rem' }}>{(inv.title as string) || 'Sin título'}</h1>
-          <p style={{ fontFamily: 'monospace', fontSize: '.8rem', color: '#8a8580', margin: 0 }}>/{slug}</p>
+          <Link href="/admin/invitations" style={{ fontSize: '.8rem', color: '#7A6A5B', textDecoration: 'none' }}>← Invitaciones</Link>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#241A14', margin: '.5rem 0 .125rem' }}>{(inv.title as string) || 'Sin título'}</h1>
+          <p style={{ fontFamily: 'monospace', fontSize: '.8rem', color: '#7A6A5B', margin: 0 }}>/{slug}</p>
         </div>
         {msg && (
-          <div style={{ padding: '.5rem 1rem', borderRadius: 8, background: msg.startsWith('Error') ? '#fef2f2' : '#f0fdf4', color: msg.startsWith('Error') ? '#dc2626' : '#16a34a', fontSize: '.8125rem', fontWeight: 600 }}>
+          <div style={{ padding: '.5rem 1rem', borderRadius: 8, background: msg.startsWith('Error') ? '#FBEAEA' : '#E7F5EC', color: msg.startsWith('Error') ? '#B43232' : '#247A45', fontSize: '.8125rem', fontWeight: 600 }}>
             {msg}
           </div>
         )}
@@ -171,7 +171,7 @@ export default function AdminInvitationDetailPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
           {/* Basic data */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <tbody>
                 <Row label="ID"           value={<span style={{ fontFamily: 'monospace', fontSize: '.75rem' }}>{inv.id as string}</span>} />
@@ -183,13 +183,13 @@ export default function AdminInvitationDetailPage() {
                 <Row label="User ID"      value={<span style={{ fontFamily: 'monospace', fontSize: '.75rem' }}>{(inv.user_id as string) ?? '—'}</span>} />
                 <Row label="Creado"       value={fmtDate(inv.created_at as string)} />
                 <Row label="Actualizado"  value={fmtDate(inv.updated_at as string)} />
-                {!!(inv.deleted_at) && <Row label="Desactivado" value={<span style={{ color: '#dc2626' }}>{fmtDate(inv.deleted_at as string)}</span>} />}
+                {!!(inv.deleted_at) && <Row label="Desactivado" value={<span style={{ color: '#B43232' }}>{fmtDate(inv.deleted_at as string)}</span>} />}
               </tbody>
             </table>
           </div>
 
           {/* Cambiar plan */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
             <p style={sectionTitle}>Cambiar plan</p>
             <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
               <select value={newPlan} onChange={e => setNewPlan(e.target.value)} style={selectStyle}>
@@ -202,7 +202,7 @@ export default function AdminInvitationDetailPage() {
           </div>
 
           {/* Cambiar status */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
             <p style={sectionTitle}>Cambiar status</p>
             <div style={{ display: 'flex', gap: '.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
               <select value={newStatus} onChange={e => setNewStatus(e.target.value)} style={selectStyle}>
@@ -212,13 +212,13 @@ export default function AdminInvitationDetailPage() {
                 Actualizar status
               </button>
             </div>
-            {!isActive && <p style={{ fontSize: '.75rem', color: '#d97706', margin: '.5rem 0 0' }}>⚠ Status {newStatus} — la invitación NO será pública.</p>}
+            {!isActive && <p style={{ fontSize: '.75rem', color: '#7A6A5B', margin: '.5rem 0 0' }}>⚠ Status {newStatus} — la invitación NO será pública.</p>}
           </div>
 
           {/* Reasignar owner */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
             <p style={sectionTitle}>Reasignar ownership</p>
-            <p style={{ fontSize: '.8rem', color: '#8a8580', margin: '0 0 .75rem' }}>User ID actual: <code style={{ fontSize: '.75rem' }}>{(inv.user_id as string) ?? '(ninguno)'}</code></p>
+            <p style={{ fontSize: '.8rem', color: '#7A6A5B', margin: '0 0 .75rem' }}>User ID actual: <code style={{ fontSize: '.75rem' }}>{(inv.user_id as string) ?? '(ninguno)'}</code></p>
             <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
               <input
                 value={newOwnerId}
@@ -232,16 +232,16 @@ export default function AdminInvitationDetailPage() {
 
           {/* Órdenes vinculadas */}
           {orders.length > 0 && (
-            <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, overflow: 'hidden' }}>
+            <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, overflow: 'hidden' }}>
               <p style={{ ...sectionTitle, padding: '1rem 1.25rem 0' }}>Órdenes vinculadas</p>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <tbody>
                   {orders.map((o: Record<string, unknown>) => (
-                    <tr key={o.id as string} style={{ borderTop: '1px solid #f0ede8' }}>
-                      <td style={{ padding: '.5rem 1.25rem', fontSize: '.8rem' }}>{o.plan_id as string} — {o.status as string}</td>
-                      <td style={{ padding: '.5rem 1.25rem', fontSize: '.75rem', color: '#8a8580' }}>{o.customer_email as string}</td>
+                    <tr key={o.id as string} style={{ borderTop: '1px solid #E5D2A8' }}>
+                      <td style={{ padding: '.5rem 1.25rem', fontSize: '.8rem', color: '#241A14' }}>{o.plan_id as string} — {o.status as string}</td>
+                      <td style={{ padding: '.5rem 1.25rem', fontSize: '.75rem', color: '#7A6A5B' }}>{o.customer_email as string}</td>
                       <td style={{ padding: '.5rem 1.25rem' }}>
-                        <Link href={`/admin/orders/${o.id}`} style={{ fontSize: '.75rem', color: '#2563eb', textDecoration: 'none' }}>Ver orden</Link>
+                        <Link href={`/admin/orders/${o.id}`} style={{ fontSize: '.75rem', color: '#2563EB', textDecoration: 'none' }}>Ver orden</Link>
                       </td>
                     </tr>
                   ))}
@@ -255,7 +255,7 @@ export default function AdminInvitationDetailPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
 
           {/* Quick links */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
             <p style={sectionTitle}>Links de acceso</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
               {pubLink && <a href={pubLink} target="_blank" rel="noopener noreferrer" style={linkBtnPrimary}>🔗 Link público (invitados)</a>}
@@ -269,36 +269,36 @@ export default function AdminInvitationDetailPage() {
           </div>
 
           {/* Email */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
             <p style={sectionTitle}>Email de acceso</p>
-            <p style={{ fontSize: '.75rem', color: '#8a8580', margin: '0 0 .75rem' }}>Envía el link de editor al email del cliente.</p>
+            <p style={{ fontSize: '.75rem', color: '#7A6A5B', margin: '0 0 .75rem' }}>Envía el link de editor al email del cliente.</p>
             <button onClick={sendAccessEmail} disabled={emailSending} style={{ ...btnPrimary, width: '100%' }}>
               {emailSending ? 'Enviando...' : '📧 Enviar email acceso'}
             </button>
           </div>
 
           {/* Desactivar / Restaurar */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
             <p style={sectionTitle}>Desactivar / Restaurar</p>
             {!isDeleted ? (
-              <button onClick={handleSoftDelete} style={{ ...btnPrimary, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', width: '100%' }}>
+              <button onClick={handleSoftDelete} style={{ ...btnPrimary, background: '#FBEAEA', color: '#B43232', border: '1px solid #F5C0C0', width: '100%' }}>
                 🗑 Desactivar invitación
               </button>
             ) : (
-              <button onClick={handleRestore} style={{ ...btnPrimary, background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', width: '100%' }}>
+              <button onClick={handleRestore} style={{ ...btnPrimary, background: '#E7F5EC', color: '#247A45', border: '1px solid #B8DFC4', width: '100%' }}>
                 ✅ Restaurar invitación
               </button>
             )}
           </div>
 
           {/* Slug */}
-          <div style={{ background: '#fff', border: '1px solid #e5e2dc', borderRadius: 12, padding: '1.25rem' }}>
+          <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.25rem' }}>
             <p style={sectionTitle}>Slug</p>
-            <p style={{ fontFamily: 'monospace', fontSize: '.75rem', color: '#4a4742', margin: '0 0 .75rem', wordBreak: 'break-all' }}>/{slug}</p>
-            <button onClick={handleRegenSlug} style={{ ...btnPrimary, background: '#fffbeb', color: '#92400e', border: '1px solid #fde68a', width: '100%' }}>
+            <p style={{ fontFamily: 'monospace', fontSize: '.75rem', color: '#241A14', margin: '0 0 .75rem', wordBreak: 'break-all' }}>/{slug}</p>
+            <button onClick={handleRegenSlug} style={{ ...btnPrimary, background: '#FBF5E3', color: '#A07C2E', border: '1px solid #E8D8AD', width: '100%' }}>
               🔄 Regenerar slug
             </button>
-            <p style={{ fontSize: '.7rem', color: '#d97706', margin: '.5rem 0 0' }}>⚠ El link público cambiará.</p>
+            <p style={{ fontSize: '.7rem', color: '#7A6A5B', margin: '.5rem 0 0' }}>⚠ El link público cambiará.</p>
           </div>
 
           <Link href={`/admin/invitations/${id}/edit`} style={{ ...linkBtnPrimary, textAlign: 'center', padding: '.75rem', display: 'block' }}>
@@ -310,8 +310,8 @@ export default function AdminInvitationDetailPage() {
   );
 }
 
-const sectionTitle: React.CSSProperties = { fontSize: '.7rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#8a8580', fontWeight: 700, margin: '0 0 .75rem' };
-const selectStyle: React.CSSProperties = { padding: '.5rem .75rem', border: '1px solid #e5e2dc', borderRadius: 8, fontSize: '.8125rem', color: '#1a1610', background: '#fafaf8' };
-const btnPrimary: React.CSSProperties = { padding: '.5rem 1.25rem', background: '#1a1610', color: '#f1e3c8', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 600 };
-const linkBtnPrimary: React.CSSProperties = { padding: '.5rem .875rem', background: '#1a1610', color: '#f1e3c8', borderRadius: 8, fontSize: '.8rem', fontWeight: 600, textDecoration: 'none', display: 'block', textAlign: 'center' };
-const linkBtnSec: React.CSSProperties = { ...linkBtnPrimary, background: '#f0ede8', color: '#4a4742' };
+const sectionTitle: React.CSSProperties = { fontSize: '.7rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#7A6A5B', fontWeight: 700, margin: '0 0 .75rem' };
+const selectStyle: React.CSSProperties = { padding: '.5rem .75rem', border: '1px solid #E5D2A8', borderRadius: 8, fontSize: '.8125rem', color: '#241A14', background: '#FAF3E6' };
+const btnPrimary: React.CSSProperties = { padding: '.5rem 1.25rem', background: '#1C1713', color: '#FFF7EA', border: 'none', borderRadius: 8, fontSize: '.8125rem', cursor: 'pointer', fontWeight: 600 };
+const linkBtnPrimary: React.CSSProperties = { padding: '.5rem .875rem', background: '#1C1713', color: '#FFF7EA', borderRadius: 8, fontSize: '.8rem', fontWeight: 600, textDecoration: 'none', display: 'block', textAlign: 'center' };
+const linkBtnSec: React.CSSProperties = { ...linkBtnPrimary, background: '#FAF3E6', color: '#7A6A5B', border: '1px solid #E5D2A8' };

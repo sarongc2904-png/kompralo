@@ -75,37 +75,37 @@ export default async function AdminUsersPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#C9A45C', margin: '0 0 .25rem' }}>
+        <p style={{ fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: '#C8A95B', margin: '0 0 .25rem' }}>
           Admin
         </p>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A1510', margin: '0 0 .25rem' }}>Usuarios</h1>
-        <p style={{ fontSize: '.8125rem', color: '#766B60', margin: 0 }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#241A14', margin: '0 0 .25rem' }}>Usuarios</h1>
+        <p style={{ fontSize: '.8125rem', color: '#7A6A5B', margin: 0 }}>
           {rows.length} en auth.users
-          {buyers > 0 && <> · <span style={{ color: '#16A34A', fontWeight: 600 }}>{buyers} con compras</span></>}
-          {admins > 0 && <> · <span style={{ color: '#B45309', fontWeight: 600 }}>{admins} admin{admins > 1 ? 's' : ''}</span></>}
+          {buyers > 0 && <> · <span style={{ color: '#247A45', fontWeight: 600 }}>{buyers} con compras</span></>}
+          {admins > 0 && <> · <span style={{ color: '#A07C2E', fontWeight: 600 }}>{admins} admin{admins > 1 ? 's' : ''}</span></>}
         </p>
       </div>
 
       {/* Summary cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
         {[
-          { label: 'Total usuarios', value: rows.length, color: '#1A1510' },
-          { label: 'Con compras', value: buyers, color: '#16A34A' },
+          { label: 'Total usuarios',   value: rows.length,         color: '#241A14' },
+          { label: 'Con compras',      value: buyers,              color: '#247A45' },
           { label: 'Ingresos totales', value: fmtCurrency(totalRev), color: '#7C3AED' },
-          { label: 'Admins', value: admins, color: '#B45309' },
+          { label: 'Admins',           value: admins,              color: '#A07C2E' },
         ].map(({ label, value, color }) => (
-          <div key={label} style={{ background: '#fff', border: '1px solid #E8E4DE', borderRadius: 12, padding: '1.125rem' }}>
-            <p style={{ margin: '0 0 .25rem', fontSize: '.65rem', textTransform: 'uppercase', letterSpacing: '.14em', color: '#B0A898', fontWeight: 700 }}>{label}</p>
+          <div key={label} style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1.125rem' }}>
+            <p style={{ margin: '0 0 .25rem', fontSize: '.65rem', textTransform: 'uppercase', letterSpacing: '.14em', color: '#7A6A5B', fontWeight: 700 }}>{label}</p>
             <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color }}>{value}</p>
           </div>
         ))}
       </div>
 
       {/* Table */}
-      <div style={{ overflowX: 'auto', background: '#fff', border: '1px solid #E8E4DE', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ overflowX: 'auto', background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#F8F5F1', borderBottom: '1px solid #E8E4DE' }}>
+            <tr style={{ background: '#FAF3E6', borderBottom: '1px solid #E5D2A8' }}>
               {['Registro','Email','User ID','Invitaciones','Órdenes','Total pagado','Rol'].map(h => (
                 <th key={h} style={thStyle}>{h}</th>
               ))}
@@ -113,37 +113,37 @@ export default async function AdminUsersPage() {
           </thead>
           <tbody>
             {rows.length === 0 && (
-              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#B0A898' }}>Sin usuarios</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#7A6A5B' }}>Sin usuarios</td></tr>
             )}
             {rows.map(r => (
-              <tr key={r.id} style={{ borderBottom: '1px solid #F5F2ED' }}>
+              <tr key={r.id} style={{ borderBottom: '1px solid rgba(200,169,91,0.12)' }}>
                 <td style={tdStyle}>
-                  <span style={{ fontSize: '.75rem', color: '#8A8580', whiteSpace: 'nowrap' }}>{fmtDate(r.createdAt)}</span>
+                  <span style={{ fontSize: '.75rem', color: '#7A6A5B', whiteSpace: 'nowrap' }}>{fmtDate(r.createdAt)}</span>
                 </td>
                 <td style={tdStyle}>
-                  <span style={{ fontSize: '.8rem', color: '#1A1510' }}>{r.email}</span>
+                  <span style={{ fontSize: '.8rem', color: '#241A14' }}>{r.email}</span>
                 </td>
                 <td style={tdStyle}>
-                  <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: '#B0A898' }}>{r.id.slice(0, 8)}…</span>
+                  <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: '#7A6A5B' }}>{r.id.slice(0, 8)}…</span>
                 </td>
                 <td style={{ ...tdStyle, textAlign: 'center' }}>
-                  <span style={{ fontWeight: 700, color: r.invCount > 0 ? '#2563EB' : '#B0A898' }}>{r.invCount}</span>
+                  <span style={{ fontWeight: 700, color: r.invCount > 0 ? '#2563EB' : '#7A6A5B' }}>{r.invCount}</span>
                 </td>
                 <td style={{ ...tdStyle, textAlign: 'center' }}>
-                  <span style={{ fontWeight: 700, color: r.orderCount > 0 ? '#1A1510' : '#B0A898' }}>{r.orderCount}</span>
+                  <span style={{ fontWeight: 700, color: r.orderCount > 0 ? '#241A14' : '#7A6A5B' }}>{r.orderCount}</span>
                 </td>
                 <td style={tdStyle}>
-                  <span style={{ fontWeight: 700, color: r.totalSpent > 0 ? '#16A34A' : '#B0A898' }}>
+                  <span style={{ fontWeight: 700, color: r.totalSpent > 0 ? '#247A45' : '#7A6A5B' }}>
                     {r.totalSpent > 0 ? fmtCurrency(r.totalSpent) : '—'}
                   </span>
                 </td>
                 <td style={tdStyle}>
                   {r.isAdmin ? (
-                    <span style={{ display: 'inline-block', background: '#FEF3C7', color: '#B45309', fontSize: '.7rem', fontWeight: 800, padding: '.2rem .65rem', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '.1em' }}>
+                    <span style={{ display: 'inline-block', background: '#FBF5E3', color: '#A07C2E', fontSize: '.7rem', fontWeight: 800, padding: '.2rem .65rem', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '.1em' }}>
                       Admin
                     </span>
                   ) : (
-                    <span style={{ fontSize: '.75rem', color: '#B0A898' }}>usuario</span>
+                    <span style={{ fontSize: '.75rem', color: '#7A6A5B' }}>usuario</span>
                   )}
                 </td>
               </tr>
@@ -155,5 +155,5 @@ export default async function AdminUsersPage() {
   );
 }
 
-const thStyle: React.CSSProperties = { padding: '.625rem 1rem', fontSize: '.68rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#B0A898', fontWeight: 700, textAlign: 'left', whiteSpace: 'nowrap' };
-const tdStyle: React.CSSProperties = { padding: '.75rem 1rem', fontSize: '.8125rem', color: '#2C2A26', verticalAlign: 'middle' };
+const thStyle: React.CSSProperties = { padding: '.625rem 1rem', fontSize: '.68rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#7A6A5B', fontWeight: 700, textAlign: 'left', whiteSpace: 'nowrap' };
+const tdStyle: React.CSSProperties = { padding: '.75rem 1rem', fontSize: '.8125rem', color: '#241A14', verticalAlign: 'middle' };

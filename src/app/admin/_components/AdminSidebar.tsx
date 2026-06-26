@@ -32,7 +32,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
   return (
     <>
       <style>{`
-        .adm-nav-link:hover { background: rgba(255,255,255,0.06) !important; color: rgba(255,255,255,0.85) !important; }
+        .adm-nav-link:hover { background: rgba(200,169,91,0.08) !important; color: rgba(255,255,255,0.9) !important; }
         .adm-footer-link:hover { color: rgba(255,255,255,0.7) !important; }
         @media (max-width: 768px) {
           .adm-sidebar {
@@ -58,7 +58,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
             display: block !important;
           }
         }
-        
+
         .adm-mobile-header {
           display: none;
           position: fixed;
@@ -66,14 +66,14 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
           left: 0;
           right: 0;
           height: 56px;
-          background: #0D0D10;
-          border-bottom: 1px solid rgba(226, 88, 34, 0.15);
+          background: #1C1713;
+          border-bottom: 1px solid rgba(200,169,91,0.2);
           z-index: 999;
           align-items: center;
           justify-content: space-between;
           padding: 0 1.25rem;
         }
-        
+
         .adm-mobile-backdrop {
           display: none;
           position: fixed;
@@ -81,7 +81,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0,0,0,0.6);
+          background: rgba(0,0,0,0.5);
           backdrop-filter: blur(4px);
           z-index: 998;
         }
@@ -90,7 +90,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
       {/* Mobile Top Header */}
       <div className="adm-mobile-header">
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '.55rem', fontWeight: 900, letterSpacing: '.2em', textTransform: 'uppercase', color: '#E25822' }}>
+          <span style={{ fontSize: '.55rem', fontWeight: 900, letterSpacing: '.2em', textTransform: 'uppercase', color: '#C8A95B' }}>
             Kompralo
           </span>
           <span style={{ fontSize: '.85rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.1 }}>
@@ -102,7 +102,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
           style={{
             background: 'none',
             border: 'none',
-            color: '#E25822',
+            color: '#C8A95B',
             fontSize: '1.5rem',
             cursor: 'pointer',
             padding: '.25rem .5rem',
@@ -129,20 +129,20 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
         style={{
           width: 260,
           flexShrink: 0,
-          background: '#0D0D10',
+          background: '#1C1713',
           display: 'flex',
           flexDirection: 'column',
           position: 'sticky',
           top: 0,
           height: '100dvh',
           overflow: 'auto',
-          borderRight: '1px solid rgba(226, 88, 34, 0.1)',
+          borderRight: '1px solid rgba(200,169,91,0.15)',
         }}
       >
         {/* Brand */}
         <div style={{
           padding: '1.5rem 1.25rem 1.25rem',
-          borderBottom: '1px solid rgba(226, 88, 34, 0.1)',
+          borderBottom: '1px solid rgba(200,169,91,0.15)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
@@ -153,8 +153,8 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
               fontWeight: 900,
               letterSpacing: '.28em',
               textTransform: 'uppercase',
-              color: '#E25822',
-              textShadow: '0 0 10px rgba(226, 88, 34, 0.25)',
+              color: '#C8A95B',
+              textShadow: '0 0 10px rgba(200,169,91,0.25)',
               margin: '0 0 .375rem',
             }}>
               Kompralo
@@ -213,8 +213,8 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
                   fontSize: '.8125rem',
                   color: active ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
                   textDecoration: 'none',
-                  background: active ? 'rgba(226, 88, 34, 0.12)' : 'transparent',
-                  borderLeft: active ? '3px solid #E25822' : '3px solid transparent',
+                  background: active ? 'rgba(200,169,91,0.12)' : 'transparent',
+                  borderLeft: active ? '3px solid #C8A95B' : '3px solid transparent',
                   fontWeight: active ? 600 : 400,
                   transition: 'background 0.12s, color 0.12s',
                 }}
@@ -224,8 +224,8 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
                   textAlign: 'center',
                   fontSize: '1rem',
                   opacity: active ? 1 : 0.6,
-                  color: active ? '#E25822' : 'inherit',
-                  textShadow: active ? '0 0 8px rgba(226, 88, 34, 0.4)' : 'none',
+                  color: active ? '#C8A95B' : 'inherit',
+                  textShadow: active ? '0 0 8px rgba(200,169,91,0.4)' : 'none',
                 }}>
                   {icon}
                 </span>
@@ -238,7 +238,7 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
         {/* Footer */}
         <div style={{
           padding: '1rem 1.25rem',
-          borderTop: '1px solid rgba(226, 88, 34, 0.1)',
+          borderTop: '1px solid rgba(200,169,91,0.15)',
         }}>
           <p style={{
             margin: '0 0 .25rem',
@@ -253,8 +253,8 @@ export default function AdminSidebar({ email, role }: AdminSidebarProps) {
           </p>
           <span style={{
             display: 'inline-block',
-            background: '#E25822',
-            color: '#FFFFFF',
+            background: '#C8A95B',
+            color: '#1C1713',
             fontSize: '.6rem',
             fontWeight: 900,
             letterSpacing: '.14em',

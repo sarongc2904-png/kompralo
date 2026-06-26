@@ -12,31 +12,31 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       display: 'flex',
       minHeight: '100dvh',
       fontFamily: 'system-ui, -apple-system, sans-serif',
-      background: '#131316',
+      background: '#F7F1E8',
     }}>
       <style dangerouslySetInnerHTML={{ __html: `
         body {
-          background-color: #131316 !important;
-          color: #F5F0E8 !important;
+          background-color: #F7F1E8 !important;
+          color: #241A14 !important;
         }
         main {
-          background-color: #131316 !important;
-          color: #F5F0E8 !important;
+          background-color: #F7F1E8 !important;
+          color: #241A14 !important;
         }
         h1, h2, h3, h4, h5, h6 {
-          color: #FFFFFF !important;
+          color: #241A14 !important;
         }
         p, span, label {
-          color: #E5E5EB;
+          color: #241A14;
         }
-        
+
         /* Mobile Layout Spacing */
         @media (max-width: 768px) {
           main {
             padding: 5rem 1rem 2rem !important;
           }
         }
-        
+
         /* Responsive grids */
         .adm-plans-grid {
           display: grid;
@@ -58,133 +58,44 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             grid-template-columns: 1fr !important;
           }
         }
-        
-        /* Form inputs, selects, labels */
+
+        /* Form inputs */
         form {
-          background-color: #1A1A22 !important;
-          border-color: rgba(226, 88, 34, 0.15) !important;
+          background-color: #FFFBF4 !important;
+          border-color: #E5D2A8 !important;
         }
         input, select, textarea {
-          background-color: #22222E !important;
-          border: 1px solid rgba(226, 88, 34, 0.25) !important;
-          color: #F5F0E8 !important;
+          background-color: #FAF3E6 !important;
+          border: 1px solid #E5D2A8 !important;
+          color: #241A14 !important;
         }
         input:focus, select:focus, textarea:focus {
-          border-color: #E25822 !important;
+          border-color: #C8A95B !important;
           outline: none;
         }
         input::placeholder {
-          color: #767682 !important;
+          color: #7A6A5B !important;
         }
-        
+
         /* Tables */
         table {
-          background-color: #1A1A22 !important;
-          border: 1px solid rgba(226, 88, 34, 0.15) !important;
+          background-color: #FFFBF4 !important;
+          border: 1px solid #E5D2A8 !important;
         }
         tr {
-          border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+          border-bottom: 1px solid rgba(200,169,91,0.15) !important;
         }
         tr:hover {
-          background-color: rgba(255, 255, 255, 0.02) !important;
+          background-color: rgba(200,169,91,0.04) !important;
         }
         th {
-          background-color: #16161E !important;
-          color: #A5A5AB !important;
-          border-bottom: 1px solid rgba(226, 88, 34, 0.15) !important;
+          background-color: #FAF3E6 !important;
+          color: #7A6A5B !important;
+          border-bottom: 1px solid #E5D2A8 !important;
         }
         td {
-          color: #F5F0E8 !important;
-          border-bottom-color: rgba(255, 255, 255, 0.04) !important;
-        }
-        
-        /* Standard White Containers & Cards (fallback targeting) */
-        div[style*="background: rgb(255, 255, 255)"],
-        div[style*="background: #fff"],
-        div[style*="background: white"],
-        div[style*="background-color: rgb(255, 255, 255)"],
-        div[style*="background-color: #fff"],
-        div[style*="background-color: white"] {
-          background-color: #1A1A22 !important;
-          border: 1px solid rgba(226, 88, 34, 0.15) !important;
-          color: #F5F0E8 !important;
-        }
-        
-        /* Overriding specific text colors in lists/tables */
-        td p, td span {
-          color: #F5F0E8 !important;
-        }
-        
-        /* Global Overrides for hardcoded low-contrast inline styling colors */
-        *[style*="color: #1A1510"],
-        *[style*="color: rgb(26, 21, 16)"],
-        *[style*="color: #1a1510"] {
-          color: #FFFFFF !important;
-        }
-        *[style*="color: #8A8580"],
-        *[style*="color: rgb(138, 133, 128)"],
-        *[style*="color: #8a8580"],
-        *[style*="color: #B0A898"],
-        *[style*="color: #b0a898"] {
-          color: #C2C2CB !important;
-        }
-        *[style*="color: #4a4742"],
-        *[style*="color: rgb(74, 71, 66)"],
-        *[style*="color: #4a4742"] {
-          color: #E5E5EB !important;
-        }
-        
-        /* Header rows and backgrounds in lists */
-        tr[style*="background: #F8F5F1"],
-        tr[style*="background-color: #F8F5F1"],
-        tr[style*="background: rgb(248, 245, 241)"],
-        tr[style*="background-color: rgb(248, 245, 241)"] {
-          background-color: #16161E !important;
-        }
-        
-        /* Darker subtle borders for tables and dividers */
-        tr[style*="border-bottom: 1px solid #F5F2ED"],
-        tr[style*="border-bottom: 1px solid rgb(245, 242, 237)"] {
-          border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-        }
-        
-        /* Primary Buttons */
-        button[style*="background: rgb(23, 18, 14)"],
-        button[style*="background: #17120E"],
-        a[style*="background: rgb(23, 18, 14)"],
-        a[style*="background: #17120E"] {
-          background: linear-gradient(135deg, #E25822 0%, #D84A16 100%) !important;
-          color: #FFFFFF !important;
-          box-shadow: 0 4px 14px rgba(226, 88, 34, 0.3) !important;
-          border: none !important;
-        }
-        button[style*="background: rgb(23, 18, 14)"]:hover,
-        button[style*="background: #17120E"]:hover,
-        a[style*="background: rgb(23, 18, 14)"]:hover,
-        a[style*="background: #17120E"]:hover {
-          background: linear-gradient(135deg, #F06A35 0%, #E25822 100%) !important;
-        }
-        
-        /* Secondary/Light Buttons */
-        button[style*="background: rgb(240, 236, 231)"],
-        button[style*="background: #F0ECE7"],
-        a[style*="background: rgb(240, 236, 231)"],
-        a[style*="background: #F0ECE7"],
-        button[style*="background: rgb(255, 255, 255)"],
-        button[style*="background: #fff"],
-        a[style*="background: rgb(255, 255, 255)"],
-        a[style*="background: #fff"] {
-          background-color: #2C2C35 !important;
-          color: #F5F0E8 !important;
-          border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        }
-        button[style*="background: rgb(240, 236, 231)"]:hover,
-        button[style*="background: #F0ECE7"]:hover,
-        a[style*="background: rgb(240, 236, 231)"]:hover,
-        a[style*="background: #F0ECE7"]:hover,
-        button[style*="background: rgb(255, 255, 255)"]:hover,
-        a[style*="background: #fff"]:hover {
-          background-color: #383844 !important;
+          color: #241A14 !important;
+          border-bottom-color: rgba(200,169,91,0.15) !important;
         }
       `}} />
       <AdminSidebar email={admin.email} role={admin.role} />
