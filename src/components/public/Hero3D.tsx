@@ -60,14 +60,14 @@ export default function Hero3D() {
   }
 
   return (
-    <section 
-      className="cro-section-vh flex items-center" 
-      style={{ 
+    <section
+      className="cro-section-vh flex items-center pt-24 lg:pt-20"
+      style={{
         minHeight: '100svh',
         perspective: '1200px',
         overflow: 'hidden',
         position: 'relative',
-        padding: '5rem 0'
+        paddingBottom: '5rem',
       }}
     >
       {/* Background Layer with Parallax */}
