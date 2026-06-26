@@ -54,12 +54,14 @@ const EDITABLE_ZONES: Record<EditableElementId, EditableZone> = {
 
 interface VisualEditorMobileEntryProps {
   invitationId: string;
+  slug?: string | null;
   editableElements: EditableElement[];
   children: ReactNode;
 }
 
 export function VisualEditorMobileEntry({
   invitationId,
+  slug,
   editableElements,
   children,
 }: VisualEditorMobileEntryProps) {
@@ -71,6 +73,7 @@ export function VisualEditorMobileEntry({
   const [showHint, setShowHint] = useState(true);
   const previewRef = useRef<HTMLDivElement>(null);
   const previewUrl = `/preview/${invitationId}?from=editor&editorPreview=1&skipIntro=1`;
+  const publicPreviewUrl = slug ? `/i/${slug}` : `/preview/${invitationId}`;
 
   const visibleElements = useMemo(
     () => editableElements.filter((element) => element.editable && EDITABLE_ZONES[element.id]),
@@ -170,14 +173,19 @@ export function VisualEditorMobileEntry({
           >
             <div className="mx-auto flex max-w-[430px] items-center justify-between gap-3">
               <a
-                href={`/dashboard/invitations/${invitationId}/edit`}
+                href={`/cliente/invitaciones/${invitationId}`}
                 className="rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold text-[#5F4B35] shadow-sm"
               >
                 ← Regresar
               </a>
-              <span className="rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#8A6D3B] shadow-sm">
+              <a
+                href={publicPreviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#8A6D3B] shadow-sm"
+              >
                 Vista previa
-              </span>
+              </a>
             </div>
             {showHint && (
               <div className="pointer-events-none mx-auto mt-3 max-w-[430px] rounded-2xl border border-[#E6D8BD] bg-[#FFFDF8]/95 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8A6D3B] shadow-sm">

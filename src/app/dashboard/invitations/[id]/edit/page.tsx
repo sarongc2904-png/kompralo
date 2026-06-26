@@ -355,7 +355,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         {isWizardView ? (
           <WizardShell invitation={invitation} plan={plan} previewUrl={previewUrl} />
         ) : (
-        <VisualEditorMobileEntry invitationId={invitation.id} editableElements={editableElements}>
+        <VisualEditorMobileEntry invitationId={invitation.id} slug={invitation.slug} editableElements={editableElements}>
         <>
           {/* ── 1. Datos del evento ──────────────────────────────────────────── */}
         <Section id="visual-editor-event" title="Datos del evento">

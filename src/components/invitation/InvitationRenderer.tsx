@@ -251,9 +251,9 @@ export default function InvitationRenderer({
         })()}
       </FeatureGate>
 
-      <FeatureGate feature="showCountdown" features={features}>
+      {plan.features.showCountdown && invitation.eventDate && (
         <Countdown eventDate={invitation.eventDate} theme={effectiveTheme} />
-      </FeatureGate>
+      )}
 
       <FeatureGate feature="showParents" features={features}>
         <Parents parents={invitation.parents} theme={effectiveTheme} editablePreview={editablePreview} />
