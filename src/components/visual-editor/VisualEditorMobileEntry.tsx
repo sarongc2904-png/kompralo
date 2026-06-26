@@ -168,13 +168,13 @@ export function VisualEditorMobileEntry({
       <div className="md:hidden" ref={previewRef}>
         <section className="relative -mx-4 mb-6 min-h-[calc(100dvh-92px)] overflow-hidden bg-[#F6F0E4] px-3 pb-4 pt-0">
           <div
-            className="sticky top-0 z-30 -mx-3 border-b border-[#E6D8BD] bg-[#F6F0E4]/95 px-3 pb-3 pt-3 shadow-sm backdrop-blur"
+            className="pointer-events-none sticky top-0 z-30 -mx-3 border-b border-[#E6D8BD] bg-[#F6F0E4]/95 px-3 pb-3 pt-3 shadow-sm backdrop-blur"
             style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}
           >
             <div className="mx-auto flex max-w-[430px] items-center justify-between gap-3">
               <a
-                href={`/cliente/invitaciones/${invitationId}`}
-                className="rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold text-[#5F4B35] shadow-sm"
+                href="/cliente"
+                className="pointer-events-auto rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold text-[#5F4B35] shadow-sm"
               >
                 ← Regresar
               </a>
@@ -182,7 +182,7 @@ export function VisualEditorMobileEntry({
                 href={publicPreviewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#8A6D3B] shadow-sm"
+                className="pointer-events-auto rounded-full border border-[#E6D8BD] bg-[#FFFDF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#8A6D3B] shadow-sm"
               >
                 Vista previa
               </a>
@@ -210,7 +210,7 @@ export function VisualEditorMobileEntry({
             <iframe
               src={previewUrl}
               title="Vista previa de la invitaciÃ³n"
-              className="block w-full border-0"
+              className="relative z-0 block w-full border-0 pointer-events-auto"
               style={{ height: previewHeight }}
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
               scrolling="yes"
