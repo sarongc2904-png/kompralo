@@ -7,10 +7,12 @@ import { motion } from 'framer-motion';
 import ElegantInvitationCard from './ElegantInvitationCard';
 import SectionShell from './SectionShell';
 import SectionHeader from './SectionHeader';
+import { EditableText } from '@/components/visual-editor/EditableText';
 
 interface ParentsProps {
   parents: ParentCouple[];
   theme: Theme;
+  editablePreview?: boolean;
 }
 
 // Ornament SVG
@@ -34,11 +36,16 @@ function Ornament() {
 function FamilyCard({
   couple,
   index,
+  editablePreview,
 }: {
   couple: ParentCouple;
   index: number;
+  editablePreview: boolean;
 }) {
-  const cardTitle = couple.side === 'bride' ? 'Padres de la Novia' : 'Padres del Novio';
+  const sidePrefix = couple.side === 'bride' ? 'bride' : 'groom';
+  const cardTitle = couple.title || (couple.side === 'bride' ? 'Padres de la Novia' : 'Padres del Novio');
+  const fatherLabel = couple.fatherLabel || 'Padre';
+  const motherLabel = couple.motherLabel || 'Madre';
 
   return (
     <ElegantInvitationCard
@@ -52,7 +59,7 @@ function FamilyCard({
           className="text-[13px] md:text-[14px] uppercase tracking-[0.25em] font-semibold"
           style={{ color: `var(--v2-color-accent, #C5A880)` }}
         >
-          {cardTitle}
+          <EditableText value={cardTitle} fieldPath={`parents.${sidePrefix}Title`} isEditable={editablePreview} />
         </span>
         <div className="flex justify-center mt-2.5">
           <Ornament />
@@ -83,7 +90,7 @@ function FamilyCard({
               className="text-[11px] md:text-[12px] uppercase tracking-[0.2em] mb-1 font-semibold"
               style={{ color: `var(--v2-color-text-muted, #8A7665)` }}
             >
-              Padre
+              <EditableText value={fatherLabel} fieldPath={`parents.${sidePrefix}FatherLabel`} isEditable={editablePreview} />
             </p>
             <p 
               className="text-xl md:text-2xl font-normal tracking-wide leading-snug" 
@@ -92,7 +99,7 @@ function FamilyCard({
                 color: `var(--v2-color-text-primary, #1F1A16)` 
               }}
             >
-              {couple.fatherName}
+              <EditableText value={couple.fatherName} fieldPath={`parents.${sidePrefix}FatherName`} isEditable={editablePreview} />
             </p>
           </div>
         </div>
@@ -127,7 +134,7 @@ function FamilyCard({
               className="text-[11px] md:text-[12px] uppercase tracking-[0.2em] mb-1 font-semibold"
               style={{ color: `var(--v2-color-text-muted, #8A7665)` }}
             >
-              Madre
+              <EditableText value={motherLabel} fieldPath={`parents.${sidePrefix}MotherLabel`} isEditable={editablePreview} />
             </p>
             <p 
               className="text-xl md:text-2xl font-normal tracking-wide leading-snug" 
@@ -136,7 +143,7 @@ function FamilyCard({
                 color: `var(--v2-color-text-primary, #1F1A16)` 
               }}
             >
-              {couple.motherName}
+              <EditableText value={couple.motherName} fieldPath={`parents.${sidePrefix}MotherName`} isEditable={editablePreview} />
             </p>
           </div>
         </div>
@@ -145,7 +152,7 @@ function FamilyCard({
   );
 }
 
-export default function Parents({ parents, theme }: ParentsProps) {
+export default function Parents({ parents, theme, editablePreview = false }: ParentsProps) {
   if (!parents || parents.length === 0) return null;
 
   const groomParents = parents.find((p) => p.side === 'groom');
@@ -165,10 +172,10 @@ export default function Parents({ parents, theme }: ParentsProps) {
       {/* Cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {groomParents && (
-          <FamilyCard couple={groomParents} index={0} />
+          <FamilyCard couple={groomParents} index={0} editablePreview={editablePreview} />
         )}
         {brideParents && (
-          <FamilyCard couple={brideParents} index={1} />
+          <FamilyCard couple={brideParents} index={1} editablePreview={editablePreview} />
         )}
       </div>
 

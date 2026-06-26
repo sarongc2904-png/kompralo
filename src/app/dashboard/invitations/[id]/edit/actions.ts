@@ -46,6 +46,7 @@ const INLINE_EDIT_COLUMNS = [
   'itinerary',
   'dress_code',
   'gift_registry',
+  'parents',
   'padrinos',
   'hotels',
   'social',
@@ -65,6 +66,7 @@ const INLINE_EDIT_ALLOWED_PATHS = [
   /^dress_code\.(sectionEyebrow|title|type|description|suggestions)$/,
   /^gift_registry\.(sectionEyebrow|sectionTitle|subtitle)$/,
   /^gift_registry\.items\.\d+\.(provider|description)$/,
+  /^parents\.(groomTitle|groomFatherLabel|groomFatherName|groomMotherLabel|groomMotherName|brideTitle|brideFatherLabel|brideFatherName|brideMotherLabel|brideMotherName)$/,
   /^padrinos\.\d+\.rubro$/,
   /^padrinos\.\d+\.names\.\d+$/,
   /^hotels\.\d+\.(name|description|address|distance|priceRange)$/,
@@ -117,6 +119,24 @@ function setNestedTextValue(target: unknown, pathParts: string[], value: string)
   }
 
   return root;
+}
+
+function setParentsTextValue(target: unknown, fieldPath: string, value: string): unknown {
+  const parents = Array.isArray(target) ? [...target] : [];
+  const fieldName = fieldPath.split('.')[1] ?? '';
+  const side = fieldName.startsWith('groom') ? 'groom' : 'bride';
+  const rawKey = fieldName.replace(/^(groom|bride)/, '');
+  const key = rawKey.charAt(0).toLowerCase() + rawKey.slice(1);
+  const existingIndex = parents.findIndex((item) => {
+    return item && typeof item === 'object' && (item as { side?: unknown }).side === side;
+  });
+  const index = existingIndex >= 0 ? existingIndex : parents.length;
+  const existing = parents[index] && typeof parents[index] === 'object'
+    ? { ...(parents[index] as Record<string, unknown>) }
+    : { side, protagonistId: '', fatherName: '', motherName: '' };
+
+  parents[index] = { ...existing, side, [key]: value };
+  return parents;
 }
 
 async function getAuthorizedInvitationRepository(invitationId: string): Promise<IInvitationRepository> {
@@ -346,7 +366,9 @@ export async function updateInlineEditableText(input: {
     const contentRow = (row ?? {}) as Partial<Record<InlineEditColumn, unknown>>;
     const pathParts = fieldPath.split('.').slice(1);
     const currentValue = contentRow[column] ?? (/^\d+$/.test(pathParts[0] ?? '') ? [] : {});
-    const nextValue = setNestedTextValue(currentValue, pathParts, value);
+    const nextValue = column === 'parents'
+      ? setParentsTextValue(currentValue, fieldPath, value)
+      : setNestedTextValue(currentValue, pathParts, value);
 
     const { error: updateError } = await db
       .from('invitation_content')

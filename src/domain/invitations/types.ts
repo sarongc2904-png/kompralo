@@ -98,6 +98,9 @@ export interface ParentCouple {
   protagonistId: string;
   fatherName: string;
   motherName: string;
+  title?: string;
+  fatherLabel?: string;
+  motherLabel?: string;
 }
 
 export interface InvitationParentsInput {
