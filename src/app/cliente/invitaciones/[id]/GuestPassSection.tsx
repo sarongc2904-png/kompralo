@@ -285,8 +285,22 @@ export default function GuestPassSection({ invitationId, appUrl, eventTitle = 'N
           padding: '2rem 1.5rem', textAlign: 'center',
         }}>
           <div style={{ fontSize: '2rem', marginBottom: '.5rem' }}>🎟</div>
-          <p style={{ margin: '0 0 .375rem', fontWeight: 700, color: T.dark }}>Aún no hay pases creados.</p>
-          <p style={{ margin: 0, fontSize: '.8125rem', color: T.light }}>Crea pases para invitados específicos con límite de personas.</p>
+          <p style={{ margin: '0 0 .5rem', fontWeight: 700, color: T.dark, fontSize: '1rem' }}>
+            Crea pases de entrada para tus invitados
+          </p>
+          <p style={{ margin: '0 0 1.25rem', fontSize: '.875rem', color: T.light, lineHeight: 1.6 }}>
+            Los pases te ayudan a controlar la entrada de tus invitados el día del evento.
+          </p>
+          <button
+            onClick={openCreate}
+            style={{
+              padding: '.625rem 1.5rem', background: T.dark, color: T.cream,
+              border: 'none', borderRadius: '.875rem', fontSize: '.875rem', fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Crear primer pase
+          </button>
         </div>
       )}
 

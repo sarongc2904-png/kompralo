@@ -482,6 +482,12 @@ export default async function InvitationDashboard({ params }: Props) {
     rsvpCount: responses.length,
   });
 
+  // Which action is most important right now?
+  const primaryCta =
+    !publicUrl || !inv.title || !inv.event_date ? 'personalizar' :
+    stats.total === 0 ? 'compartir' :
+    'confirmaciones';
+
   return (
     <main style={{
       minHeight:  '100dvh',
@@ -550,15 +556,76 @@ export default async function InvitationDashboard({ params }: Props) {
                 <span>Plan {planLabel}</span>
               </div>
               <div className="event-actions-grid">
-                <a href={publicUrl ?? undefined} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.dark, color: '#F5F0E8', borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none', opacity: publicUrl ? 1 : .55, pointerEvents: publicUrl ? 'auto' : 'none' }}>
+                {/* Ver mi invitación — always secondary */}
+                <a
+                  href={publicUrl ?? undefined}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="db-btn"
+                  style={{
+                    display: 'flex', justifyContent: 'center', alignItems: 'center',
+                    minHeight: '48px', padding: '.8rem 1rem',
+                    background: '#FFFFFF', border: `2px solid ${T.border}`, color: T.dark,
+                    borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800,
+                    textDecoration: 'none',
+                    opacity: publicUrl ? 1 : .45,
+                    pointerEvents: publicUrl ? 'auto' : 'none',
+                  }}
+                >
                   👁 Ver mi invitación
                 </a>
-                <a href={editUrl} className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: '#FFFFFF', border: '2px solid #D4B36A', color: T.dark, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
+
+                {/* Personalizar — primary when data is missing */}
+                <a
+                  href={editUrl}
+                  className="db-btn"
+                  style={{
+                    display: 'flex', justifyContent: 'center', alignItems: 'center',
+                    minHeight: '48px', padding: '.8rem 1rem',
+                    background: primaryCta === 'personalizar' ? T.dark : '#FFFFFF',
+                    border: primaryCta === 'personalizar' ? '2px solid transparent' : `2px solid ${T.border}`,
+                    color: primaryCta === 'personalizar' ? '#F5F0E8' : T.dark,
+                    borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800,
+                    textDecoration: 'none',
+                  }}
+                >
                   ✨ Personalizar
                 </a>
-                <a href="#compartir" className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.gold, color: T.dark, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
-                  📤 Compartir
-                </a>
+
+                {/* Compartir / Ver confirmaciones — switches based on state */}
+                {primaryCta === 'confirmaciones' ? (
+                  <a
+                    href="#invitados"
+                    className="db-btn"
+                    style={{
+                      display: 'flex', justifyContent: 'center', alignItems: 'center',
+                      minHeight: '48px', padding: '.8rem 1rem',
+                      background: T.dark, color: '#F5F0E8', border: '2px solid transparent',
+                      borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    ✅ Ver confirmaciones
+                  </a>
+                ) : (
+                  <a
+                    href="#compartir"
+                    className="db-btn"
+                    style={{
+                      display: 'flex', justifyContent: 'center', alignItems: 'center',
+                      minHeight: '48px', padding: '.8rem 1rem',
+                      background: primaryCta === 'compartir' ? T.gold : '#FFFFFF',
+                      border: primaryCta === 'compartir' ? '2px solid transparent' : `2px solid ${T.border}`,
+                      color: T.dark,
+                      borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800,
+                      textDecoration: 'none',
+                      opacity: publicUrl ? 1 : .45,
+                      pointerEvents: publicUrl ? 'auto' : 'none',
+                    }}
+                  >
+                    📤 Compartir
+                  </a>
+                )}
               </div>
             </div>
 
@@ -634,13 +701,30 @@ export default async function InvitationDashboard({ params }: Props) {
           </div>
         </div>
 
-        {/* ── Stats ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.875rem', marginBottom: '2rem' }}>
-          <StatCard label="Respuestas" value={stats.total} sub="confirmaciones totales" />
-          <StatCard label="Sí asistirán" value={stats.yesCount} sub="respuestas positivas" accent="#238636" />
-          <StatCard label="No asistirán" value={stats.noCount} sub="respuestas negativas" accent="#D32F2F" />
-          <StatCard label="Personas" value={stats.totalPeople} sub="total real confirmado" accent={T.gold} />
-        </div>
+        {/* ── Stats — only shown when there are responses ── */}
+        {stats.total > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.875rem', marginBottom: '2rem' }}>
+            <StatCard label="Respuestas" value={stats.total} sub="confirmaciones totales" />
+            <StatCard label="Sí asistirán" value={stats.yesCount} sub="respuestas positivas" accent="#238636" />
+            <StatCard label="No asistirán" value={stats.noCount} sub="respuestas negativas" accent="#D32F2F" />
+            <StatCard label="Personas" value={stats.totalPeople} sub="total real confirmado" accent={T.gold} />
+          </div>
+        ) : publicUrl ? (
+          <div style={{
+            marginBottom: '2rem', padding: '1.25rem 1.5rem',
+            background: T.white, border: `1px solid ${T.border}`,
+            borderRadius: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem',
+          }}>
+            <span style={{ fontSize: '1.5rem' }}>📭</span>
+            <p style={{ margin: 0, fontSize: '.9rem', color: T.light, lineHeight: 1.6 }}>
+              Todavía no has recibido confirmaciones.{' '}
+              <a href="#compartir" style={{ color: T.gold, fontWeight: 700, textDecoration: 'none' }}>
+                Comparte tu invitación
+              </a>{' '}
+              para comenzar.
+            </p>
+          </div>
+        ) : null}
 
         {/* ── Two-column layout: full-width on mobile, sidebar on desktop ── */}
         <div className="db-main-grid">
