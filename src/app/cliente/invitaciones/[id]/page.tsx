@@ -9,8 +9,6 @@ import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
 import ShareButtons from './ShareButtons';
 import RsvpModeSelector from './RsvpModeSelector';
-import { getAvailableModules } from '@/domain/modules';
-import type { EventModuleId } from '@/domain/modules';
 
 export const dynamic  = 'force-dynamic';
 export const revalidate = 0;
@@ -47,27 +45,6 @@ const attendanceBg: Record<string, string> = {
   yes: '#E6F4EA', no: '#FCE8E6', maybe: '#FCF8E3',
 };
 
-const quickAccessStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '48px',
-  padding: '.8rem 1rem',
-  background: '#F1E3C8',
-  border: '1px solid #EAD7A3',
-  borderRadius: '.9rem',
-  color: '#0D0A07',
-  fontSize: '.9rem',
-  fontWeight: 800,
-  textDecoration: 'none',
-};
-
-const quickAccessTargets: Partial<Record<EventModuleId, { label: string; href: (ctx: { publicUrl: string | null; editUrl: string }) => string; external?: boolean }>> = {
-  cover:         { label: 'Invitación', href: ({ publicUrl }) => publicUrl ?? '#', external: true },
-  guests:        { label: 'Invitados', href: () => '#invitados' },
-  event_details: { label: 'Evento', href: ({ editUrl }) => editUrl },
-  settings:      { label: 'Configuración', href: () => '#configuracion' },
-};
 
 function formatDate(iso?: string | null): string {
   if (!iso) return '—';
@@ -484,10 +461,6 @@ export default async function InvitationDashboard({ params }: Props) {
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
   const publicUrl = inv.slug ? `${appUrl}/i/${inv.slug}` : null;
   const editUrl   = `/dashboard/invitations/${id}/edit`;
-  const availableModules = getAvailableModules(inv.plan_id);
-  const quickAccessModules = availableModules
-    .map((module) => ({ module, target: quickAccessTargets[module.id] }))
-    .filter((item): item is { module: typeof item.module; target: NonNullable<typeof item.target> } => Boolean(item.target));
 
   // 5. Display helpers
   const eventTitle   = inv.title ?? 'Mi invitación';
@@ -599,35 +572,18 @@ export default async function InvitationDashboard({ params }: Props) {
               <p style={{ margin: '0 0 1rem', color: T.light, fontSize: '.9rem', lineHeight: 1.6 }}>
                 {nextRecommendation.text}
               </p>
-              <a href={nextRecommendation.href ?? editUrl} className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.dark, color: T.cream, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
-                {nextRecommendation.cta}
-              </a>
+              {nextRecommendation.cta === 'Compartir ahora' ? (
+                <p style={{ margin: 0, fontSize: '.875rem', color: T.light, lineHeight: 1.6, fontStyle: 'italic' }}>
+                  Usa el botón <strong style={{ fontStyle: 'normal', color: T.dark }}>📤 Compartir</strong> de la tarjeta principal para enviar tu invitación.
+                </p>
+              ) : (
+                <a href={nextRecommendation.href ?? editUrl} className="db-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '48px', padding: '.8rem 1rem', background: T.dark, color: T.cream, borderRadius: '.9rem', fontSize: '.9rem', fontWeight: 800, textDecoration: 'none' }}>
+                  {nextRecommendation.cta}
+                </a>
+              )}
             </div>
           </div>
 
-          <div className="event-card" style={{ padding: '1rem' }}>
-            <p style={{ margin: '0 0 .75rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: T.gold }}>
-              Accesos rápidos
-            </p>
-            <div className="quick-access-grid">
-              {quickAccessModules.map(({ module, target }) => {
-                const href = target.href({ publicUrl, editUrl });
-                const isExternal = target.external && href !== '#';
-                return (
-                  <a
-                    key={module.id}
-                    href={href}
-                    target={isExternal ? '_blank' : undefined}
-                    rel={isExternal ? 'noopener noreferrer' : undefined}
-                    style={quickAccessStyle}
-                  >
-                    <span aria-hidden="true" style={{ marginRight: 6 }}>{module.icon}</span>
-                    {target.label}
-                  </a>
-                );
-              })}
-            </div>
-          </div>
         </section>
 
         {/* ── Header ── */}
