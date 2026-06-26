@@ -217,10 +217,6 @@ export default function InvitationRenderer({
         `}</style>
       )}
     <ThemeProviderV2 theme={themeV2} injectCssVariables={false}>
-      <MultilayerBackground theme={effectiveTheme} />
-
-      {(effectiveTheme.paperTexture || themeV2.effects.paperTexture) && <div className="paper-noise" />}
-
       {!skipIntro && (
         <FeatureGate feature="showIntro" features={features}>
           <CinematicIntro
@@ -233,6 +229,10 @@ export default function InvitationRenderer({
           />
         </FeatureGate>
       )}
+
+      <MultilayerBackground theme={effectiveTheme} />
+
+      {(effectiveTheme.paperTexture || themeV2.effects.paperTexture) && <div className="paper-noise" />}
 
       <FeatureGate feature="showMusic" features={features}>
         <BackgroundMusicPlayer key={invitation.music?.audioUrl} music={invitation.music} />

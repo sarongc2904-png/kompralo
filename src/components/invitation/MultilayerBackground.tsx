@@ -651,8 +651,7 @@ export default function MultilayerBackground({ theme }: MultilayerBackgroundProp
             backgroundImage: 'var(--kompralo-invitation-paper-bg)',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center center',
-            backgroundAttachment: 'fixed',
+            backgroundPosition: 'center top',
           }}
         />
 

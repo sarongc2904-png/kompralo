@@ -63,8 +63,9 @@ export default function Hospedaje({ hotels, theme, editablePreview = false }: Ho
             animateFrom={i % 2 === 0 ? 'left' : 'right'}
             animateDelay={i * 0.08}
             style={{
-              backgroundPosition: 'left center',
-              backgroundSize: '55% auto',
+              backgroundPosition: 'center center',
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
             }}
           >
             {/* Semi-transparent overlay so text is always legible */}
