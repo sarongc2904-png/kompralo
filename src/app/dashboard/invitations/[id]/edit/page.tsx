@@ -232,9 +232,22 @@ export default async function EditInvitationPage({ params, searchParams }: Props
       .eq('id', id)
       .single();
     const raw = (invRow as { wizard_step_completed?: number } | null)?.wizard_step_completed;
-    const wizardCompleted = (raw ?? 0) >= 3;
-    console.log('[wizard-gate] invRow=%j raw=%s wizardCompleted=%s err=%s', invRow, raw, wizardCompleted, wizardQueryErr?.message ?? null);
-    if (!wizardCompleted) {
+    const { data: contentRow, error: contentWizardErr } = await createServiceRoleSupabaseClient()
+      .from('invitation_content')
+      .select('hero')
+      .eq('invitation_id', id)
+      .maybeSingle();
+    const hero = (contentRow as { hero?: { wizardExpressCompleted?: boolean } } | null)?.hero;
+    const wizardExpressCompleted = hero?.wizardExpressCompleted === true;
+    console.log(
+      '[wizard-gate] invRow=%j raw=%s wizardExpressCompleted=%s err=%s contentErr=%s',
+      invRow,
+      raw,
+      wizardExpressCompleted,
+      wizardQueryErr?.message ?? null,
+      contentWizardErr?.message ?? null,
+    );
+    if (!wizardExpressCompleted) {
       const brideName = invitation.protagonists.find((p) => p.role === 'novia' || p.role === 'bride')?.name ?? '';
       const groomName = invitation.protagonists.find((p) => p.role === 'novio' || p.role === 'groom')?.name ?? '';
       return (

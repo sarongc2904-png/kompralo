@@ -80,6 +80,53 @@ function getInlineEditColumn(fieldPath: string): InlineEditColumn | null {
   return INLINE_EDIT_COLUMNS.find((column) => column === root) ?? null;
 }
 
+async function markWizardExpressCompleted(invitationId: string): Promise<void> {
+  const db = createServiceRoleSupabaseClient();
+  const now = new Date().toISOString();
+
+  const { data: contentRow, error: readError } = await db
+    .from('invitation_content')
+    .select('hero')
+    .eq('invitation_id', invitationId)
+    .maybeSingle();
+
+  if (readError) {
+    throw new Error(`[QuickStart] wizard completion read failed: ${readError.message}`);
+  }
+
+  const existingHero =
+    contentRow?.hero && typeof contentRow.hero === 'object' && !Array.isArray(contentRow.hero)
+      ? contentRow.hero as Record<string, unknown>
+      : {};
+
+  const { error: contentError } = await db
+    .from('invitation_content')
+    .update({
+      hero: {
+        ...existingHero,
+        wizardExpressCompleted: true,
+      },
+      updated_at: now,
+    })
+    .eq('invitation_id', invitationId);
+
+  if (contentError) {
+    throw new Error(`[QuickStart] wizard completion content update failed: ${contentError.message}`);
+  }
+
+  const { error: invitationError } = await db
+    .from('invitations')
+    .update({
+      wizard_step_completed: 3,
+      updated_at: now,
+    })
+    .eq('id', invitationId);
+
+  if (invitationError) {
+    throw new Error(`[QuickStart] wizard completion invitation update failed: ${invitationError.message}`);
+  }
+}
+
 function setNestedTextValue(target: unknown, pathParts: string[], value: string): unknown {
   const root = Array.isArray(target)
     ? [...target]
@@ -1879,6 +1926,9 @@ export async function startWeddingQuickStart(
       : resolveWeddingThemeId(selectedStyle ?? 'elegante');
     await repo.updateThemeSelection(invitationId, { themeId: resolvedThemeId });
     console.log('[QuickStart] Set theme_id to:', resolvedThemeId);
+
+    await markWizardExpressCompleted(invitationId);
+    console.log('[QuickStart] Marked WizardExpress completed for invitation:', invitationId);
 
     // ─── 7. Revalidate all relevant routes ────────────────────────────────
     revalidatePath(`/dashboard/invitations/${invitationId}/edit`);
