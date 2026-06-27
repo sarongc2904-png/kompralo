@@ -264,6 +264,10 @@ export default function InvitationRenderer({
           <div className="paper-noise" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 2 }} />
         )}
 
+        {/* [DEBUG] REMOVE BEFORE MERGE */}
+        <div style={{ background: 'red', color: 'white', padding: 20, position: 'relative', zIndex: 9999 }}>
+          COUNTDOWN SLOT — showCountdown: {String(features.showCountdown)} — eventDate: {String(invitation.eventDate)}
+        </div>
         {features.showCountdown && (
           <Countdown eventDate={invitation.eventDate ?? ''} eventTime={invitation.eventTime} theme={effectiveTheme} />
         )}
