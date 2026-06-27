@@ -200,7 +200,7 @@ export function DresscodeInspector({
       {colors.length < MAX_COLORS && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <span style={labelStyle}>Agregar color</span>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
             <input
               type="color"
               value={HEX_RE.test(pickerHex) ? pickerHex : '#C5A880'}
@@ -210,7 +210,7 @@ export function DresscodeInspector({
                 setHexError(null);
               }}
               style={{
-                width: 36,
+                width: 40,
                 height: 36,
                 borderRadius: 6,
                 border: '1px solid rgba(200,167,93,0.3)',
@@ -241,11 +241,13 @@ export function DresscodeInspector({
                 fontFamily: 'monospace',
               }}
             />
-            <button
+          </div>
+          <button
               type="button"
               onClick={handleAddColor}
               style={{
-                padding: '8px 12px',
+                width: '100%',
+                padding: '9px 0',
                 borderRadius: 8,
                 border: 'none',
                 background: '#1A1410',
@@ -253,12 +255,10 @@ export function DresscodeInspector({
                 fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer',
-                flexShrink: 0,
               }}
             >
-              Agregar
+              Agregar color
             </button>
-          </div>
           {hexError && (
             <p style={{ fontSize: 11, color: '#c0392b', margin: 0 }}>{hexError}</p>
           )}
