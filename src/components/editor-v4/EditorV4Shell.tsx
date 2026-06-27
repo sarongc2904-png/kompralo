@@ -1,12 +1,12 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { EditorV4Toolbar }    from './EditorV4Toolbar';
-import { EditorV4LayersPanel } from './EditorV4LayersPanel';
+import { EditorV4Toolbar, type SaveStatus } from './EditorV4Toolbar';
+import { EditorV4LayersPanel }  from './EditorV4LayersPanel';
 import { EditorV4Canvas, type EditorV4CanvasHandle, type EditorV4CanvasMode } from './EditorV4Canvas';
-import { InspectorManager }   from './core/InspectorManager';
+import { InspectorManager }    from './core/InspectorManager';
 import { useSelectionManager } from './core/SelectionManager';
-import { useIsMobile }         from './hooks/useIsMobile';
+import { useIsMobile }          from './hooks/useIsMobile';
 import { EDITOR_V4_ELEMENT_SELECTED, INVITATION_SECTIONS } from './editor-v4-events';
 import { SECTION_AUTO_ELEMENT_TYPE, SECTION_CANVAS_MODE } from './core/EditorRegistry';
 import type { InvitationSnapshot } from './core/editor-types';
@@ -16,7 +16,6 @@ interface EditorV4ShellProps {
   invitationTitle: string;
   slug: string;
   classicEditorUrl: string;
-  /** Snapshot of invitation data for prefilling section inspectors (e.g. HeroInspector) */
   invitationSnapshot?: InvitationSnapshot;
 }
 
@@ -33,9 +32,11 @@ export function EditorV4Shell({
   const isMobile  = useIsMobile();
   const canvasRef = useRef<EditorV4CanvasHandle>(null);
 
-  const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [canvasMode, setCanvasMode]       = useState<EditorV4CanvasMode>('normal');
+  const [activeSection, setActiveSection]     = useState<string | null>(null);
+  const [canvasMode, setCanvasMode]           = useState<EditorV4CanvasMode>('normal');
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [saveStatus, setSaveStatus]           = useState<SaveStatus>('idle');
+  const saveStatusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { selectedElement, setSelectedElement, clearSelection } = useSelectionManager();
 
@@ -53,10 +54,8 @@ export function EditorV4Shell({
     const mode        = SECTION_CANVAS_MODE[sectionId] ?? 'normal';
 
     if (elementType) {
-      // Section has a dedicated inspector — select it automatically
       setCanvasMode(mode);
 
-      // Build meta from snapshot for sections that need prefilled data
       let meta: Record<string, string> | undefined;
       if (sectionId === 'hero' && invitationSnapshot) {
         meta = {
@@ -80,7 +79,6 @@ export function EditorV4Shell({
 
       if (isMobile) setMobileSheetOpen(true);
     } else {
-      // Plain section — just scroll the canvas, clear any lingering selection
       if (canvasMode !== 'normal') setCanvasMode('normal');
       clearSelection();
       canvasRef.current?.scrollToSection(sectionId);
@@ -88,21 +86,24 @@ export function EditorV4Shell({
   }, [setSelectedElement, clearSelection, isMobile, canvasMode, invitationSnapshot]);
 
   const handleSaved = useCallback(() => {
+    // Refresh canvas after save
     setTimeout(() => canvasRef.current?.refresh(), 400);
+    // Show save status in toolbar for 3 s
+    setSaveStatus('saved');
+    if (saveStatusTimer.current) clearTimeout(saveStatusTimer.current);
+    saveStatusTimer.current = setTimeout(() => setSaveStatus('idle'), 3000);
   }, []);
 
-  // Desktop ×: clears selection AND resets canvas mode
   const handleDesktopClear = useCallback(() => {
     clearSelection();
     setCanvasMode('normal');
   }, [clearSelection]);
 
-  // Mobile sheet close: hides the sheet UI only — does NOT reset canvas or deselect
   const handleMobileSheetClose = useCallback(() => {
     setMobileSheetOpen(false);
   }, []);
 
-  // Open mobile sheet whenever a new element is selected (mobile only)
+  // Open mobile sheet whenever selection changes (mobile only)
   const prevSelected = useRef(selectedElement);
   if (selectedElement && selectedElement !== prevSelected.current) {
     prevSelected.current = selectedElement;
@@ -116,13 +117,15 @@ export function EditorV4Shell({
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#F0EBE3' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflow: 'hidden', background: '#F0EBE3' }}>
       <EditorV4Toolbar
         invitationTitle={invitationTitle}
         slug={slug}
         invitationId={invitationId}
         onRefresh={handleRefresh}
         classicEditorUrl={classicEditorUrl}
+        isMobile={isMobile}
+        saveStatus={saveStatus}
       />
 
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
@@ -139,9 +142,14 @@ export function EditorV4Shell({
           </div>
         )}
 
-        {/* Canvas — always */}
+        {/* Canvas */}
         <div style={{ flex: 1, minWidth: 0, position: 'relative', overflow: 'hidden' }}>
-          <EditorV4Canvas ref={canvasRef} invitationId={invitationId} mode={canvasMode} />
+          <EditorV4Canvas
+            ref={canvasRef}
+            invitationId={invitationId}
+            mode={canvasMode}
+            isMobile={isMobile}
+          />
         </div>
 
         {/* Right inspector — desktop only */}
@@ -188,7 +196,7 @@ export function EditorV4Shell({
         </div>
       )}
 
-      {/* Mobile backdrop */}
+      {/* Mobile backdrop — pointer-events only when open */}
       {isMobile && mobileSheetOpen && (
         <div
           onClick={handleMobileSheetClose}

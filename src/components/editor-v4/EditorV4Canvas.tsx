@@ -12,19 +12,20 @@ export interface EditorV4CanvasHandle {
 interface EditorV4CanvasProps {
   invitationId: string;
   mode?: EditorV4CanvasMode;
+  /** When true, renders without the desktop device-frame chrome so the
+   *  iframe fills the full area and touch-scroll works naturally on mobile. */
+  isMobile?: boolean;
 }
 
 export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasProps>(
-  function EditorV4Canvas({ invitationId, mode = 'normal' }, ref) {
+  function EditorV4Canvas({ invitationId, mode = 'normal', isMobile = false }, ref) {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [loading, setLoading] = useState(true);
 
     const normalUrl = `/preview/${invitationId}?from=editor&editorPreview=1&skipIntro=1`;
     const introUrl  = `/preview/${invitationId}?from=editor&introOnly=1`;
-
     const currentUrl = mode === 'intro' ? introUrl : normalUrl;
 
-    // Reload iframe when mode switches
     useEffect(() => {
       const iframe = iframeRef.current;
       if (!iframe) return;
@@ -47,9 +48,45 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       },
     }));
 
+    // ── Mobile: full-bleed iframe, no device frame chrome ──────────────────
+    if (isMobile) {
+      return (
+        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#fff' }}>
+          {loading && (
+            <div style={{
+              position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+              justifyContent: 'center', background: '#FAF7F2', zIndex: 10,
+              fontSize: 12, color: '#9B8878',
+            }}>
+              Cargando…
+            </div>
+          )}
+          <iframe
+            ref={iframeRef}
+            src={currentUrl}
+            title="Editor V4 — Vista previa móvil"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              display: 'block',
+              // Ensure touch events reach the iframe on iOS
+              WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
+              touchAction: 'pan-y',
+              overscrollBehavior: 'contain',
+            } as React.CSSProperties}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            onLoad={() => setLoading(false)}
+          />
+        </div>
+      );
+    }
+
+    // ── Desktop: device-frame chrome ───────────────────────────────────────
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%', background: '#F0EBE3' }}>
-        {/* Device frame hint */}
         <div style={{
           position: 'absolute',
           inset: '12px 20px',
@@ -59,14 +96,9 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
           display: 'flex',
           flexDirection: 'column',
           background: '#fff',
-          // In intro mode: push the iframe down so the border-radius (16px) cannot clip
-          // the intro content's top edge. paddingTop > borderRadius guarantees it.
           paddingTop: mode === 'intro' ? 24 : 0,
-          // Background for the padding strip: transparent lets canvas bg (#F0EBE3) show through
-          // — visually the frame appears to float with breathing room above the intro.
           backgroundColor: mode === 'intro' ? 'transparent' : '#fff',
         }}>
-          {/* Loading overlay */}
           {loading && (
             <div style={{
               position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
