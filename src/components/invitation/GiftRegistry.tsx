@@ -50,12 +50,12 @@ export default function GiftRegistry({
   function defaultGiftDescription(logoType: string, provider: string): string {
     if (logoType === 'custom' && provider === 'Lluvia de sobres') return 'En nuestra boda tendremos una urna disponible para quienes deseen obsequiarnos un sobre con su cariño.';
     const map: Record<string, string> = {
-      liverpool:    'Búscanos en Liverpool bajo el nombre de los novios o usa el link para ver nuestra lista directamente.',
+      liverpool:    'Búscanos en Liverpool bajo el nombre de los novios o accede a nuestra lista.',
       palacio:      'Encuéntranos en El Palacio de Hierro o accede directamente a nuestra lista.',
       amazon:       'Visita nuestra lista en Amazon y elige el regalo que más te guste.',
       mercadolibre: 'Explora nuestra lista de deseos en Mercado Libre.',
-      paypal:       'Puedes enviarnos un regalo a través de PayPal usando el botón de abajo.',
-      bank:         'Si prefieres hacer una transferencia, toca \'Revelar datos\' para ver nuestra información bancaria.',
+      paypal:       'Puedes enviarnos un regalo a través de PayPal.',
+      bank:         "Toca 'Revelar datos' para ver nuestra información bancaria.",
     };
     return map[logoType] ?? 'Haz clic abajo para ver la mesa de regalos directamente.';
   }
@@ -276,7 +276,7 @@ export default function GiftRegistry({
                     }}
                   >
                     {acknowledgedIds[item.id] ? (
-                      <><Check className="w-3.5 h-3.5" /> ¡Gracias!</>
+                      <><Check className="w-3.5 h-3.5" /> ¡Anotado!</>
                     ) : 'Lo tendré en cuenta'}
                   </button>
                 ) : (
