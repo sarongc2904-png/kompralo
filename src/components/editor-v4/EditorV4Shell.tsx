@@ -126,6 +126,22 @@ export function EditorV4Shell({
         };
       }
 
+      if (sectionId === 'parents' && invitationSnapshot) {
+        meta = {
+          slug:       invitationSnapshot.slug       ?? slug,
+          planId:     invitationSnapshot.planId     ?? '',
+          parentsJson: invitationSnapshot.parentsJson ?? '{}',
+        };
+      }
+
+      if (sectionId === 'padrinos' && invitationSnapshot) {
+        meta = {
+          slug:        invitationSnapshot.slug        ?? slug,
+          planId:      invitationSnapshot.planId      ?? '',
+          padrinosJson: invitationSnapshot.padrinosJson ?? '[]',
+        };
+      }
+
       const section = INVITATION_SECTIONS.find((s) => s.id === sectionId);
       setSelectedElement({
         type: EDITOR_V4_ELEMENT_SELECTED,

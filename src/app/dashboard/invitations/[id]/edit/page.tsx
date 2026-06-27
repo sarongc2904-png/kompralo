@@ -340,6 +340,15 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           galleryImages:    invitation.gallery?.images               ?? [],
           dressCodeJson:    JSON.stringify(invitation.dressCode      ?? {}),
           finalMessageJson: JSON.stringify(invitation.finalMessage   ?? {}),
+          parentsJson:      JSON.stringify({
+            brideFather: invitation.parents.find((p) => p.side === 'bride')?.fatherName ?? '',
+            brideMother: invitation.parents.find((p) => p.side === 'bride')?.motherName ?? '',
+            groomFather: invitation.parents.find((p) => p.side === 'groom')?.fatherName ?? '',
+            groomMother: invitation.parents.find((p) => p.side === 'groom')?.motherName ?? '',
+          }),
+          padrinosJson:     JSON.stringify(
+            invitation.padrinos.map((p) => ({ rubro: p.rubro, names: p.names }))
+          ),
         }}
       />
     );

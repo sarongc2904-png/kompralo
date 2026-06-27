@@ -60,4 +60,6 @@ export interface InvitationSnapshot {
   galleryImages?: string[];
   dressCodeJson?: string;
   finalMessageJson?: string;
+  parentsJson?: string;
+  padrinosJson?: string;
 }
