@@ -1,7 +1,23 @@
 'use client';
 
-import type { EditorElement } from './editor-types';
+import type { EditorElement, EditorObjectType } from './editor-types';
 import { resolveInspector } from './EditorRegistry';
+
+const TYPE_LABELS: Record<EditorObjectType, string> = {
+  text:     'Editar texto',
+  intro:    'Intro cinematográfico',
+  datetime: 'Fecha del evento',
+  hero:     'Portada',
+};
+
+function humanLabel(element: EditorElement): string {
+  const { label, fieldPath, elementType } = element;
+  // EditableText sets label = fieldPath — both are technical dot-paths, not human text.
+  if (!label || label === fieldPath || /^[\w.[\]]+$/.test(label)) {
+    return TYPE_LABELS[elementType] ?? 'Inspector';
+  }
+  return label;
+}
 
 interface InspectorManagerProps {
   selectedElement: EditorElement | null;
@@ -32,7 +48,7 @@ export function InspectorManager({
         flexShrink: 0,
       }}>
         <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#5C4A3E' }}>
-          {selectedElement?.label ?? 'Inspector'}
+          {selectedElement ? humanLabel(selectedElement) : 'Inspector'}
         </span>
         {selectedElement && (
           <button

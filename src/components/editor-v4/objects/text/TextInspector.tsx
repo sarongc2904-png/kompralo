@@ -106,20 +106,7 @@ export function TextInspector({
           {element.label && element.label !== element.fieldPath ? element.label : 'Editar texto'}
         </p>
       ) : (
-        <>
-          <div>
-            <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#C5A880', fontWeight: 600, marginBottom: 4 }}>
-              Texto
-            </p>
-            <p style={{ fontSize: 11, color: '#9B8878', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-              {element.fieldPath}
-            </p>
-            {element.label && element.label !== element.fieldPath && (
-              <p style={{ fontSize: 12, color: '#5C4A3E', marginTop: 2 }}>{element.label}</p>
-            )}
-          </div>
-          <div style={{ height: 1, background: 'rgba(200,167,93,0.15)' }} />
-        </>
+        <div style={{ height: 1, background: 'rgba(200,167,93,0.15)' }} />
       )}
 
       <div>
