@@ -4,10 +4,23 @@ import type { EditorElement, EditorObjectType } from './editor-types';
 import { resolveInspector } from './EditorRegistry';
 
 const TYPE_LABELS: Record<EditorObjectType, string> = {
-  text:     'Editar texto',
-  intro:    'Intro cinematográfico',
-  datetime: 'Fecha del evento',
-  hero:     'Portada',
+  text:      'Editar texto',
+  intro:     'Intro cinematográfico',
+  datetime:  'Fecha del evento',
+  hero:      'Portada',
+  countdown: 'Cuenta Regresiva',
+  parents:   'Familias',
+  story:     'Historia',
+  gallery:   'Galería',
+  timeline:  'Línea del Tiempo',
+  itinerary: 'Itinerario',
+  location:  'Ubicación',
+  dresscode: 'Código de Vestimenta',
+  gifts:     'Mesa de Regalos',
+  padrinos:  'Padrinos',
+  hotels:    'Hospedaje',
+  hashtag:   'Hashtag / Social',
+  message:   'Mensaje Final',
 };
 
 function humanLabel(element: EditorElement): string {

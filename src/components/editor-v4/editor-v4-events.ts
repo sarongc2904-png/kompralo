@@ -30,6 +30,29 @@ export type EditorV4InboundEvent =
   | EditorV4ElementSelectedEvent
   | EditorV4ElementDeselectedEvent;
 
+// ── Section hover / click events (iframe → parent) ───────────────────────────
+
+export const EDITOR_V4_SECTION_HOVER       = 'EDITOR_V4_SECTION_HOVER'       as const;
+export const EDITOR_V4_SECTION_HOVER_END   = 'EDITOR_V4_SECTION_HOVER_END'   as const;
+export const EDITOR_V4_SECTION_CLICK       = 'EDITOR_V4_SECTION_CLICK'       as const;
+
+export interface SerializedRect {
+  top: number; left: number; width: number; height: number;
+}
+
+export interface EditorV4SectionHoverEvent {
+  type: typeof EDITOR_V4_SECTION_HOVER;
+  sectionId: string;
+  rect: SerializedRect;
+}
+export interface EditorV4SectionHoverEndEvent {
+  type: typeof EDITOR_V4_SECTION_HOVER_END;
+}
+export interface EditorV4SectionClickEvent {
+  type: typeof EDITOR_V4_SECTION_CLICK;
+  sectionId: string;
+}
+
 export function isEditorV4Event(data: unknown): data is EditorV4InboundEvent {
   return (
     typeof data === 'object' &&

@@ -1,6 +1,10 @@
 // ─── Core types for Editor V4 object registry ────────────────────────────────
 
-export type EditorObjectType = 'text' | 'intro' | 'datetime' | 'hero';
+export type EditorObjectType =
+  | 'text' | 'intro' | 'datetime' | 'hero'
+  | 'countdown' | 'parents' | 'story' | 'gallery'
+  | 'timeline' | 'itinerary' | 'location' | 'dresscode'
+  | 'gifts' | 'padrinos' | 'hotels' | 'hashtag' | 'message';
 
 /** Canonical element shape — shared between postMessage events and inspector props */
 export interface EditorElement {

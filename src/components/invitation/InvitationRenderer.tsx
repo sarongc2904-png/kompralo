@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import type { InvitationContent } from '@/domain/invitations/types';
 import type { InvitationFeatures, InvitationPlan } from '@/domain/plans/types';
 import { createThemeCssVariables, type Theme } from '@/domain/themes/types';
@@ -160,6 +160,86 @@ export default function InvitationRenderer({
     );
   }
 
+  // ── Editor hover bridge ───────────────────────────────────────────────────
+  // Fires EDITOR_V4_SECTION_HOVER / _END / _CLICK postMessages to the parent
+  // editor shell so it can render a bounding-box overlay over the canvas iframe.
+  useEffect(() => {
+    if (!editablePreview) return;
+
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'));
+    const cleanups: Array<() => void> = [];
+
+    for (const el of sections) {
+      const sectionId = el.dataset.section ?? '';
+
+      const onEnter = () => {
+        const r = el.getBoundingClientRect();
+        window.parent?.postMessage(
+          { type: 'EDITOR_V4_SECTION_HOVER', sectionId, rect: { top: r.top, left: r.left, width: r.width, height: r.height } },
+          window.location.origin,
+        );
+      };
+      const onLeave = () => {
+        window.parent?.postMessage({ type: 'EDITOR_V4_SECTION_HOVER_END' }, window.location.origin);
+      };
+      const onClick = (e: MouseEvent) => {
+        const t = e.target as HTMLElement | null;
+        if (t?.closest('[data-editable-field]')) return; // EditableText handles its own selection
+        window.parent?.postMessage({ type: 'EDITOR_V4_SECTION_CLICK', sectionId }, window.location.origin);
+      };
+
+      el.addEventListener('mouseenter', onEnter, true);
+      el.addEventListener('mouseleave', onLeave, true);
+      el.addEventListener('click', onClick, true);
+      cleanups.push(() => {
+        el.removeEventListener('mouseenter', onEnter, true);
+        el.removeEventListener('mouseleave', onLeave, true);
+        el.removeEventListener('click', onClick, true);
+      });
+    }
+
+    return () => cleanups.forEach((fn) => fn());
+  }, [editablePreview]);
+
+  // ── Scroll-to-section + highlight (triggered by parent LayersPanel click) ──
+  useEffect(() => {
+    if (!editablePreview) return;
+
+    let clearTimer = 0;
+
+    function handleMessage(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type !== 'KOMPRALO_SCROLL_TO_SECTION') return;
+
+      const sectionId = e.data.sectionId as string;
+      const el = document.querySelector<HTMLElement>(`[data-section="${sectionId}"]`);
+      if (!el) return;
+
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // After scroll settles, report the rect so the canvas overlay appears
+      clearTimeout(clearTimer);
+      setTimeout(() => {
+        const r = el.getBoundingClientRect();
+        window.parent?.postMessage(
+          { type: 'EDITOR_V4_SECTION_HOVER', sectionId, rect: { top: r.top, left: r.left, width: r.width, height: r.height } },
+          window.location.origin,
+        );
+        // Auto-clear the highlight after 2 s
+        clearTimer = window.setTimeout(() => {
+          window.parent?.postMessage({ type: 'EDITOR_V4_SECTION_HOVER_END' }, window.location.origin);
+        }, 2000);
+      }, 450);
+    }
+
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      clearTimeout(clearTimer);
+    };
+  }, [editablePreview]);
+
+  // ── Preview height ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!editablePreview) return;
 
@@ -207,6 +287,16 @@ export default function InvitationRenderer({
     console.log('[features] showAccommodation:', features.showAccommodation, '| hotels:', invitation.hotels?.length ?? 0);
     console.log('[features] showGiftRegistry:', features.showGiftRegistry);
   }
+
+  // Transparent wrapper that marks a section for the editor hover bridge.
+  // Only active in editablePreview — no DOM overhead in public mode.
+  const S = useCallback(
+    ({ id, children }: { id: string; children: React.ReactNode }) =>
+      editablePreview
+        ? <div data-section={id} style={{ display: 'contents' }}>{children}</div>
+        : <>{children}</>,
+    [editablePreview],
+  );
 
   return (
     <div
@@ -258,29 +348,31 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showHero" features={features}>
-        {(() => {
-          const heroVideoUrl = features.showVideo && invitation.hero?.videoLibraryEnabled
-            ? (invitation.hero.videoLibraryUrl ?? null)
-            : null;
-          console.log('[heroVideo/renderer] showVideo:', features.showVideo);
-          console.log('[heroVideo/renderer] videoLibraryEnabled:', invitation.hero?.videoLibraryEnabled);
-          console.log('[heroVideo/renderer] heroVideoUrl:', heroVideoUrl);
-          return (
-            <Hero
-              protagonists={protagonists}
-              eventDate={invitation.eventDate}
-              eventTime={invitation.eventTime}
-              emotionalPhrase={invitation.hero?.emotionalPhrase ?? ''}
-              imageUrl={invitation.hero?.imageUrl ?? ''}
-              videoUrl={invitation.hero?.videoUrl}
-              heroVideoUrl={heroVideoUrl}
-              eventLabel={invitation.hero?.eventLabel || 'Nos casamos'}
-              theme={effectiveTheme}
-              editablePreview={editablePreview}
-              connectorText={invitation.hero?.connectorText}
-            />
-          );
-        })()}
+        <S id="hero">
+          {(() => {
+            const heroVideoUrl = features.showVideo && invitation.hero?.videoLibraryEnabled
+              ? (invitation.hero.videoLibraryUrl ?? null)
+              : null;
+            console.log('[heroVideo/renderer] showVideo:', features.showVideo);
+            console.log('[heroVideo/renderer] videoLibraryEnabled:', invitation.hero?.videoLibraryEnabled);
+            console.log('[heroVideo/renderer] heroVideoUrl:', heroVideoUrl);
+            return (
+              <Hero
+                protagonists={protagonists}
+                eventDate={invitation.eventDate}
+                eventTime={invitation.eventTime}
+                emotionalPhrase={invitation.hero?.emotionalPhrase ?? ''}
+                imageUrl={invitation.hero?.imageUrl ?? ''}
+                videoUrl={invitation.hero?.videoUrl}
+                heroVideoUrl={heroVideoUrl}
+                eventLabel={invitation.hero?.eventLabel || 'Nos casamos'}
+                theme={effectiveTheme}
+                editablePreview={editablePreview}
+                connectorText={invitation.hero?.connectorText}
+              />
+            );
+          })()}
+        </S>
       </FeatureGate>
 
       <MultilayerBackground theme={effectiveTheme}>
@@ -289,57 +381,71 @@ export default function InvitationRenderer({
         )}
 
         {features.showCountdown && (
-          <Countdown eventDate={invitation.eventDate ?? ''} eventTime={invitation.eventTime} theme={effectiveTheme} />
+          <S id="countdown">
+            <Countdown eventDate={invitation.eventDate ?? ''} eventTime={invitation.eventTime} theme={effectiveTheme} />
+          </S>
         )}
 
       <FeatureGate feature="showParents" features={features}>
-        <Parents
-          parents={invitation.parents}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-          sectionEyebrow={invitation.hero?.parentsSectionEyebrow}
-          sectionTitle={invitation.hero?.parentsSectionTitle}
-          sectionSubtitle={invitation.hero?.parentsSectionSubtitle}
-        />
+        <S id="parents">
+          <Parents
+            parents={invitation.parents}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+            sectionEyebrow={invitation.hero?.parentsSectionEyebrow}
+            sectionTitle={invitation.hero?.parentsSectionTitle}
+            sectionSubtitle={invitation.hero?.parentsSectionSubtitle}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showStoryBook" features={features}>
-        <StoryBook
-          slides={invitation.story.slides}
-          theme={effectiveTheme}
-          protagonists={protagonists}
-          editablePreview={editablePreview}
-          sectionEyebrow={invitation.story.sectionEyebrow}
-          sectionTitle={invitation.story.sectionTitle}
-        />
+        <S id="story">
+          <StoryBook
+            slides={invitation.story.slides}
+            theme={effectiveTheme}
+            protagonists={protagonists}
+            editablePreview={editablePreview}
+            sectionEyebrow={invitation.story.sectionEyebrow}
+            sectionTitle={invitation.story.sectionTitle}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showGallery" features={features}>
-        <HorizontalGallery images={galleryImages} theme={effectiveTheme} />
+        <S id="gallery">
+          <HorizontalGallery images={galleryImages} theme={effectiveTheme} />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showTimeline" features={features}>
-        <Timeline
-          events={invitation.timeline}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-          sectionEyebrow={invitation.hero?.timelineSectionEyebrow}
-          sectionTitle={invitation.hero?.timelineSectionTitle}
-        />
+        <S id="timeline">
+          <Timeline
+            events={invitation.timeline}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+            sectionEyebrow={invitation.hero?.timelineSectionEyebrow}
+            sectionTitle={invitation.hero?.timelineSectionTitle}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showItinerary" features={features}>
-        <Itinerary
-          items={invitation.itinerary}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-          sectionEyebrow={invitation.hero?.itinerarySectionEyebrow}
-          sectionTitle={invitation.hero?.itinerarySectionTitle}
-        />
+        <S id="itinerary">
+          <Itinerary
+            items={invitation.itinerary}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+            sectionEyebrow={invitation.hero?.itinerarySectionEyebrow}
+            sectionTitle={invitation.hero?.itinerarySectionTitle}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showMaps" features={features}>
-        <Location location={invitation.location} theme={effectiveTheme} editablePreview={editablePreview} />
+        <S id="location">
+          <Location location={invitation.location} theme={effectiveTheme} editablePreview={editablePreview} />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showQRCode" features={features}>
@@ -347,47 +453,57 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showDressCode" features={features}>
-        <DressCode dressCode={invitation.dressCode} theme={effectiveTheme} editablePreview={editablePreview} />
+        <S id="dresscode">
+          <DressCode dressCode={invitation.dressCode} theme={effectiveTheme} editablePreview={editablePreview} />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showGiftRegistry" features={features}>
-        <GiftRegistry
-          items={invitation.giftRegistry.items}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-          sectionEyebrow={invitation.giftRegistry.sectionEyebrow}
-          sectionTitle={invitation.giftRegistry.sectionTitle}
-          subtitle={invitation.giftRegistry.subtitle}
-        />
+        <S id="gifts">
+          <GiftRegistry
+            items={invitation.giftRegistry.items}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+            sectionEyebrow={invitation.giftRegistry.sectionEyebrow}
+            sectionTitle={invitation.giftRegistry.sectionTitle}
+            subtitle={invitation.giftRegistry.subtitle}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showPadrinos" features={features}>
-        <Padrinos
-          padrinos={invitation.padrinos}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-          sectionEyebrow={invitation.hero?.padrinosSectionEyebrow}
-          sectionTitle={invitation.hero?.padrinosSectionTitle}
-        />
+        <S id="padrinos">
+          <Padrinos
+            padrinos={invitation.padrinos}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+            sectionEyebrow={invitation.hero?.padrinosSectionEyebrow}
+            sectionTitle={invitation.hero?.padrinosSectionTitle}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showAccommodation" features={features}>
-        <Hospedaje
-          hotels={invitation.hotels}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-          sectionEyebrow={invitation.hero?.hospedajeSectionEyebrow}
-          sectionTitle={invitation.hero?.hospedajeSectionTitle}
-        />
+        <S id="hotels">
+          <Hospedaje
+            hotels={invitation.hotels}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+            sectionEyebrow={invitation.hero?.hospedajeSectionEyebrow}
+            sectionTitle={invitation.hero?.hospedajeSectionTitle}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showHashtag" features={features}>
-        <Hashtag
-          social={invitation.social}
-          imageUrl={galleryImages[1] || galleryImages[0]}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-        />
+        <S id="hashtag">
+          <Hashtag
+            social={invitation.social}
+            imageUrl={galleryImages[1] || galleryImages[0]}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+          />
+        </S>
       </FeatureGate>
 
       <FeatureGate feature="showRSVP" features={features}>
@@ -417,16 +533,18 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showFinalMessage" features={features}>
-        <FinalMessage
-          protagonists={protagonists}
-          imageUrl={invitation.finalMessage.imageUrl ?? galleryImages[0]}
-          quote={invitation.finalMessage.quote}
-          message={invitation.finalMessage.message}
-          title={invitation.finalMessage.title}
-          signature={invitation.finalMessage.signature}
-          theme={effectiveTheme}
-          editablePreview={editablePreview}
-        />
+        <S id="message">
+          <FinalMessage
+            protagonists={protagonists}
+            imageUrl={invitation.finalMessage.imageUrl ?? galleryImages[0]}
+            quote={invitation.finalMessage.quote}
+            message={invitation.finalMessage.message}
+            title={invitation.finalMessage.title}
+            signature={invitation.finalMessage.signature}
+            theme={effectiveTheme}
+            editablePreview={editablePreview}
+          />
+        </S>
       </FeatureGate>
       </MultilayerBackground>
     </ThemeProviderV2>

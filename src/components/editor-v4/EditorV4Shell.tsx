@@ -1,13 +1,13 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { EditorV4Toolbar, type SaveStatus } from './EditorV4Toolbar';
 import { EditorV4LayersPanel }  from './EditorV4LayersPanel';
 import { EditorV4Canvas, type EditorV4CanvasHandle, type EditorV4CanvasMode } from './EditorV4Canvas';
 import { InspectorManager }    from './core/InspectorManager';
 import { useSelectionManager } from './core/SelectionManager';
 import { useIsMobile }          from './hooks/useIsMobile';
-import { EDITOR_V4_ELEMENT_SELECTED, INVITATION_SECTIONS } from './editor-v4-events';
+import { EDITOR_V4_ELEMENT_SELECTED, EDITOR_V4_SECTION_CLICK, INVITATION_SECTIONS } from './editor-v4-events';
 import { SECTION_AUTO_ELEMENT_TYPE, SECTION_CANVAS_MODE } from './core/EditorRegistry';
 import type { InvitationSnapshot } from './core/editor-types';
 
@@ -77,6 +77,8 @@ export function EditorV4Shell({
         ...(meta ? { meta } : {}),
       });
 
+      // Scroll canvas to section regardless of whether it has an inspector
+      canvasRef.current?.scrollToSection(sectionId);
       if (isMobile) setMobileSheetOpen(true);
     } else {
       if (canvasMode !== 'normal') setCanvasMode('normal');
@@ -108,6 +110,18 @@ export function EditorV4Shell({
   const handleMobileSheetClose = useCallback(() => {
     setMobileSheetOpen(false);
   }, []);
+
+  // Listen for section-click events from iframe hover bridge
+  useEffect(() => {
+    function handleMessage(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type === EDITOR_V4_SECTION_CLICK) {
+        handleScrollTo(e.data.sectionId as string);
+      }
+    }
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [handleScrollTo]);
 
   // Open mobile sheet whenever selection changes (mobile only)
   const prevSelected = useRef(selectedElement);

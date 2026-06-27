@@ -1,6 +1,11 @@
 'use client';
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import type { SerializedRect } from './editor-v4-events';
+import {
+  EDITOR_V4_SECTION_HOVER,
+  EDITOR_V4_SECTION_HOVER_END,
+} from './editor-v4-events';
 
 export type EditorV4CanvasMode = 'normal' | 'intro';
 
@@ -19,6 +24,11 @@ interface EditorV4CanvasProps {
   isMobile?: boolean;
 }
 
+// Inset of the device-frame wrapper (desktop normal mode).
+// Must match the `inset` value in the device-frame style below.
+const FRAME_TOP  = 12;
+const FRAME_LEFT = 20;
+
 /** Shared full-bleed iframe used in mobile mode and desktop intro mode */
 function FullBleedIframe({
   iframeRef,
@@ -34,7 +44,7 @@ function FullBleedIframe({
   onLoad: () => void;
 }) {
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', background: '#1A1410' }}>
+    <>
       {loading && (
         <div style={{
           position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
@@ -61,7 +71,7 @@ function FullBleedIframe({
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         onLoad={onLoad}
       />
-    </div>
+    </>
   );
 }
 
@@ -69,6 +79,7 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
   function EditorV4Canvas({ invitationId, mode = 'normal', isMobile = false }, ref) {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [loading, setLoading] = useState(true);
+    const [hoveredSection, setHoveredSection] = useState<{ sectionId: string; rect: SerializedRect } | null>(null);
 
     const normalUrl = `/preview/${invitationId}?from=editor&editorPreview=1&skipIntro=1`;
     const introUrl  = `/preview/${invitationId}?from=editor&introOnly=1`;
@@ -80,6 +91,20 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       setLoading(true);
       iframe.src = currentUrl;
     }, [currentUrl]);
+
+    // Listen for section hover/end events fired by the iframe's hover bridge
+    useEffect(() => {
+      function handleMessage(e: MessageEvent) {
+        if (e.origin !== window.location.origin) return;
+        if (e.data?.type === EDITOR_V4_SECTION_HOVER) {
+          setHoveredSection({ sectionId: e.data.sectionId, rect: e.data.rect });
+        } else if (e.data?.type === EDITOR_V4_SECTION_HOVER_END) {
+          setHoveredSection(null);
+        }
+      }
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }, []);
 
     useImperativeHandle(ref, () => ({
       refresh() {
@@ -102,18 +127,43 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       },
     }));
 
+    const isFullBleed = isMobile || mode === 'intro';
+
+    // Bounding-box overlay — positioned relative to the canvas container.
+    // Coordinates from the iframe are viewport-relative; we add the iframe's
+    // inset within the canvas to translate them to canvas-relative coords.
+    const overlay = hoveredSection ? (
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          pointerEvents: 'none',
+          zIndex: 20,
+          top:    (isFullBleed ? 0 : FRAME_TOP)  + hoveredSection.rect.top,
+          left:   (isFullBleed ? 0 : FRAME_LEFT) + hoveredSection.rect.left,
+          width:  hoveredSection.rect.width,
+          height: hoveredSection.rect.height,
+          border: '1.5px solid rgba(200,167,93,0.55)',
+          borderRadius: 4,
+          background: 'rgba(200,167,93,0.04)',
+          transition: 'top 60ms ease, left 60ms ease, width 60ms ease, height 60ms ease',
+        }}
+      />
+    ) : null;
+
     // ── Mobile OR desktop intro: full-bleed — no device frame, no radius, no clip ──
-    // CinematicIntro uses `fixed inset-0` inside the iframe; any border-radius +
-    // overflow:hidden on the wrapper clips the content at the very top edge.
-    if (isMobile || mode === 'intro') {
+    if (isFullBleed) {
       return (
-        <FullBleedIframe
-          iframeRef={iframeRef}
-          src={currentUrl}
-          title={mode === 'intro' ? 'Editor V4 — Intro Cinematográfico' : 'Editor V4 — Vista previa móvil'}
-          loading={loading}
-          onLoad={() => setLoading(false)}
-        />
+        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#1A1410' }}>
+          <FullBleedIframe
+            iframeRef={iframeRef}
+            src={currentUrl}
+            title={mode === 'intro' ? 'Editor V4 — Intro Cinematográfico' : 'Editor V4 — Vista previa móvil'}
+            loading={loading}
+            onLoad={() => setLoading(false)}
+          />
+          {overlay}
+        </div>
       );
     }
 
@@ -122,7 +172,7 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       <div style={{ position: 'relative', width: '100%', height: '100%', background: '#F0EBE3' }}>
         <div style={{
           position: 'absolute',
-          inset: '12px 20px',
+          inset: `${FRAME_TOP}px ${FRAME_LEFT}px`,
           borderRadius: 16,
           boxShadow: '0 0 0 1px rgba(200,167,93,0.2), 0 8px 32px rgba(116,84,38,0.12)',
           overflow: 'hidden',
@@ -148,6 +198,7 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
             onLoad={() => setLoading(false)}
           />
         </div>
+        {overlay}
       </div>
     );
   }
