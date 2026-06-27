@@ -57,6 +57,13 @@ export function EditorV4Shell({
       setCanvasMode(mode);
 
       let meta: Record<string, string> | undefined;
+      if (sectionId === 'countdown' && invitationSnapshot) {
+        meta = {
+          eventDate: invitationSnapshot.eventDate ?? '',
+          eventTime: invitationSnapshot.eventTime ?? '',
+        };
+      }
+
       if (sectionId === 'hero' && invitationSnapshot) {
         meta = {
           date:            invitationSnapshot.eventDate        ?? '',
