@@ -81,7 +81,7 @@ export default function Hero({
   const effectiveTextScale   = editablePreview ? 1         : textScale;
 
   // Date formatting
-  const dateObj     = new Date(eventDate);
+  const dateObj     = new Date(eventDate + 'T12:00:00');
   const formattedDate = dateObj.toLocaleDateString('es-ES', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   }).replace(/^./, (c) => c.toUpperCase());
