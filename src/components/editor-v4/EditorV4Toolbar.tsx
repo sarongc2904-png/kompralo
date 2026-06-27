@@ -85,9 +85,9 @@ export function EditorV4Toolbar({
   }
 
   // ── Mobile toolbar ────────────────────────────────────────────────────────
-  const iconBtn: React.CSSProperties = {
+  const mBtn: React.CSSProperties = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    gap: 4, padding: '6px 10px', borderRadius: 8,
+    padding: '6px 11px', borderRadius: 8,
     fontSize: 12, fontWeight: 600, cursor: 'pointer',
     border: 'none', textDecoration: 'none',
     background: 'rgba(200,167,93,0.12)', color: '#C5A880',
@@ -97,33 +97,33 @@ export function EditorV4Toolbar({
 
   return (
     <div style={{
-      height: 48, display: 'flex', alignItems: 'center', gap: 8,
-      padding: '0 12px',
+      height: 48, display: 'flex', alignItems: 'center', gap: 6,
+      padding: '0 10px',
       borderBottom: '1px solid rgba(200,167,93,0.2)',
       background: '#1A1410', flexShrink: 0, zIndex: 50,
     }}>
       {/* Back */}
-      <a
-        href={classicEditorUrl}
-        style={{ ...iconBtn, background: 'rgba(255,255,255,0.06)', color: '#9B8878', padding: '6px 8px' }}
-        aria-label="Volver"
-      >
-        ←
+      <a href={classicEditorUrl} style={{ ...mBtn, background: 'rgba(255,255,255,0.06)', color: '#9B8878' }}>
+        Salir
       </a>
 
       {/* Save status — fills remaining space */}
-      <span style={{ flex: 1, fontSize: 11, color: saveStatus === 'saved' ? '#C5A880' : 'rgba(200,167,93,0.35)', textAlign: 'center', letterSpacing: '0.02em', transition: 'color 300ms' }}>
-        {saveStatus === 'saved' ? '✓ Guardado' : '—'}
+      <span style={{
+        flex: 1, fontSize: 11, textAlign: 'center', letterSpacing: '0.02em',
+        color: saveStatus === 'saved' ? '#C5A880' : 'rgba(200,167,93,0.3)',
+        transition: 'color 300ms',
+      }}>
+        {saveStatus === 'saved' ? '✓ Guardado' : '·'}
       </span>
 
       {/* Preview */}
-      <a href={previewUrl} target="_blank" rel="noopener noreferrer" style={iconBtn} aria-label="Vista previa">
-        ↗
+      <a href={previewUrl} target="_blank" rel="noopener noreferrer" style={mBtn}>
+        Preview
       </a>
 
       {/* Share */}
-      <button type="button" onClick={handleShare} style={iconBtn} aria-label="Compartir">
-        ⬆
+      <button type="button" onClick={handleShare} style={mBtn}>
+        Compartir
       </button>
     </div>
   );
