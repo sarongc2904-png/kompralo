@@ -6,10 +6,12 @@ export const EDITOR_V4_ELEMENT_DESELECTED = 'EDITOR_V4_ELEMENT_DESELECTED' as co
 
 export interface EditorV4ElementSelectedEvent {
   type: typeof EDITOR_V4_ELEMENT_SELECTED;
-  elementType: 'text' | 'intro';
+  elementType: 'text' | 'intro' | 'datetime';
   fieldPath: string;
   label?: string;
   value?: string;
+  /** Extra key-value data for complex element types (e.g. { date, time } for datetime) */
+  meta?: Record<string, string>;
 }
 
 export interface EditorV4ElementDeselectedEvent {

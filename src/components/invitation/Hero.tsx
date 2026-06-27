@@ -12,6 +12,7 @@ interface HeroProps {
   brideName?: string;
   groomName?: string;
   eventDate: string;
+  eventTime?: string;
   emotionalPhrase: string;
   imageUrl: string;
   videoUrl?: string;
@@ -28,6 +29,7 @@ export default function Hero({
   brideName,
   groomName,
   eventDate,
+  eventTime,
   emotionalPhrase,
   imageUrl,
   videoUrl,
@@ -364,7 +366,24 @@ export default function Hero({
         >
           <p
             className={`text-[16px] md:text-[18px] font-semibold tracking-[0.06em] ${theme.bodyFont} hero-text-champagne`}
-            style={{ color: '#F4DFC0', fontWeight: 600, textShadow: '0 8px 28px rgba(0,0,0,0.45)' }}
+            style={{
+              color: '#F4DFC0',
+              fontWeight: 600,
+              textShadow: '0 8px 28px rgba(0,0,0,0.45)',
+              ...(editablePreview ? { cursor: 'pointer', outline: 'none' } : {}),
+            }}
+            onClick={editablePreview ? () => {
+              window.parent?.postMessage(
+                {
+                  type: 'EDITOR_V4_ELEMENT_SELECTED',
+                  elementType: 'datetime',
+                  fieldPath: 'event',
+                  label: 'Fecha del evento',
+                  meta: { date: eventDate ?? '', time: eventTime ?? '' },
+                },
+                window.location.origin,
+              );
+            } : undefined}
           >
             {formattedDate}
           </p>

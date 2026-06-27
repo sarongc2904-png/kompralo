@@ -4,7 +4,8 @@ import { useCallback, useRef, useState } from 'react';
 import type { SelectedElement } from './useEditorV4Selection';
 import { TextInspector } from './inspectors/TextInspector';
 import { IntroInspector } from './inspectors/IntroInspector';
-import { updateInlineEditableText } from '@/app/dashboard/invitations/[id]/edit/actions';
+import { updateInlineEditableText, updateEventDateTime } from '@/app/dashboard/invitations/[id]/edit/actions';
+import { DateTimeInspector } from './inspectors/DateTimeInspector';
 
 interface EditorV4InspectorProps {
   selectedElement: SelectedElement;
@@ -106,6 +107,43 @@ export function EditorV4Inspector({
             saving={saving}
             stickyActions={isMobileSheet}
           />
+        ) : selectedElement.elementType === 'datetime' ? (
+          <>
+            <DateTimeInspector
+              element={selectedElement}
+              onSave={async (date, time) => {
+                setSaving(true);
+                setSavedField(null);
+                setSaveError(null);
+                try {
+                  const result = await updateEventDateTime({ id: invitationId, eventDate: date, eventTime: time });
+                  if (result.success) {
+                    setSavedField('event');
+                    onSaved?.();
+                  } else {
+                    setSaveError(result.error ?? 'Error al guardar');
+                  }
+                } catch {
+                  setSaveError('Error de red al guardar');
+                } finally {
+                  setSaving(false);
+                }
+              }}
+              onCancel={onClear}
+              saving={saving}
+              stickyActions={isMobileSheet}
+            />
+            {savedField === 'event' && !saving && (
+              <p style={{ fontSize: 11, color: '#C5A880', textAlign: 'center', marginTop: 10 }}>
+                ✓ Guardado
+              </p>
+            )}
+            {saveError && !saving && (
+              <p style={{ fontSize: 11, color: '#c0392b', textAlign: 'center', marginTop: 10 }}>
+                {saveError}
+              </p>
+            )}
+          </>
         ) : selectedElement.elementType === 'text' ? (
           <>
             <TextInspector

@@ -269,6 +269,7 @@ export default function InvitationRenderer({
             <Hero
               protagonists={protagonists}
               eventDate={invitation.eventDate}
+              eventTime={invitation.eventTime}
               emotionalPhrase={invitation.hero?.emotionalPhrase ?? ''}
               imageUrl={invitation.hero?.imageUrl ?? ''}
               videoUrl={invitation.hero?.videoUrl}

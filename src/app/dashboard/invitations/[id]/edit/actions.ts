@@ -505,6 +505,46 @@ export async function updateInvitationBasicInfo(
 }
 
 // =============================================================================
+// updateEventDateTime
+// =============================================================================
+
+export async function updateEventDateTime(input: {
+  id: string;
+  eventDate: string;
+  eventTime: string;
+}): Promise<UpdateInvitationResult> {
+  const id = input.id.trim();
+  if (!id) return { success: false, error: 'ID de invitación no válido.' };
+
+  const normalizedDate = normalizeDateForSave(input.eventDate);
+  const normalizedTime = input.eventTime.trim();
+
+  try {
+    await getAuthorizedInvitationRepository(id);
+    const db = createServiceRoleSupabaseClient();
+
+    const { error: invError } = await db
+      .from('invitations')
+      .update({ event_date: normalizedDate || null })
+      .eq('id', id);
+    if (invError) return { success: false, error: `Error guardando fecha: ${invError.message}` };
+
+    const { error: contentError } = await db
+      .from('invitation_content')
+      .update({ event_time: normalizedTime || null, updated_at: new Date().toISOString() })
+      .eq('invitation_id', id);
+    if (contentError) return { success: false, error: `Error guardando hora: ${contentError.message}` };
+
+    revalidatePath(`/preview/${id}`);
+    revalidatePath(`/dashboard/invitations/${id}/edit`);
+    return { success: true, message: 'Fecha y hora actualizadas.' };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Error inesperado.';
+    return { success: false, error: message };
+  }
+}
+
+// =============================================================================
 // updateInvitationMediaInfo
 // =============================================================================
 
