@@ -54,11 +54,12 @@ export function EditorV4Shell({
       // Only open the bottom sheet when actually on mobile
       if (isMobile) setMobileSheetOpen(true);
     } else {
-      // Switching to any other section resets intro canvas
+      // Reset intro canvas and clear any lingering element selection
       if (canvasMode === 'intro') setCanvasMode('normal');
+      clearSelection();
       canvasRef.current?.scrollToSection(sectionId);
     }
-  }, [setSelectedElement, isMobile, canvasMode]);
+  }, [setSelectedElement, clearSelection, isMobile, canvasMode]);
 
   const handleSaved = useCallback(() => {
     setTimeout(() => canvasRef.current?.refresh(), 400);
