@@ -65,6 +65,18 @@ export function EditorV4Shell({
           name2:           invitationSnapshot.protagonist2Name ?? '',
           venueName:       invitationSnapshot.venueName        ?? '',
           emotionalPhrase: invitationSnapshot.emotionalPhrase  ?? '',
+          planId:          invitationSnapshot.planId            ?? '',
+          slug:            invitationSnapshot.slug             ?? slug,
+          selectedVideoId: invitationSnapshot.selectedVideoId  ?? '',
+          imageUrl:        invitationSnapshot.imageUrl         ?? '',
+          videoUrl:        invitationSnapshot.videoUrl         ?? '',
+          youtubeUrl:      invitationSnapshot.youtubeUrl       ?? '',
+          musicUrl:        invitationSnapshot.musicUrl         ?? '',
+          musicTitle:      invitationSnapshot.musicTitle       ?? '',
+          googleMapsLink:  invitationSnapshot.googleMapsLink   ?? '',
+          wazeLink:        invitationSnapshot.wazeLink         ?? '',
+          eventLabel:      invitationSnapshot.eventLabel       ?? '',
+          connectorText:   invitationSnapshot.connectorText    ?? '',
         };
       }
 
@@ -177,7 +189,7 @@ export function EditorV4Shell({
           <div style={{
             width: PANEL_WIDTH_RIGHT, flexShrink: 0,
             borderLeft: '1px solid rgba(200,167,93,0.2)',
-            background: '#FAF7F2',
+            background: '#FAF7F2', overflowY: 'auto',
             display: 'flex', flexDirection: 'column',
           }}>
             <InspectorManager

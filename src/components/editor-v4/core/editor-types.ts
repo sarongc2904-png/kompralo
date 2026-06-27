@@ -39,4 +39,19 @@ export interface InvitationSnapshot {
   protagonist2Name?: string;
   venueName?: string;
   emotionalPhrase?: string;
+  // Media fields — needed so HeroInspector can preserve other media when saving one field
+  slug?: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  youtubeUrl?: string;
+  musicUrl?: string;
+  musicTitle?: string;
+  googleMapsLink?: string;
+  wazeLink?: string;
+  // Additional hero text
+  eventLabel?: string;
+  connectorText?: string;
+  // Plan and media selection state
+  planId?: string;
+  selectedVideoId?: string;
 }

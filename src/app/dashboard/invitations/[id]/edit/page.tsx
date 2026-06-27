@@ -309,12 +309,24 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         slug={invitation.slug}
         classicEditorUrl={classicUrl}
         invitationSnapshot={{
-          eventDate:        invitation.eventDate        ?? undefined,
-          eventTime:        invitation.eventTime        ?? undefined,
-          protagonist1Name: invitation.protagonists?.[0]?.name ?? undefined,
-          protagonist2Name: invitation.protagonists?.[1]?.name ?? undefined,
-          venueName:        invitation.location?.venueName     ?? undefined,
-          emotionalPhrase:  invitation.hero?.emotionalPhrase   ?? undefined,
+          eventDate:        invitation.eventDate                  ?? undefined,
+          eventTime:        invitation.eventTime                  ?? undefined,
+          protagonist1Name: invitation.protagonists?.[0]?.name   ?? undefined,
+          protagonist2Name: invitation.protagonists?.[1]?.name   ?? undefined,
+          venueName:        invitation.location?.venueName        ?? undefined,
+          emotionalPhrase:  invitation.hero?.emotionalPhrase      ?? undefined,
+          planId:           invitation.planId                     ?? undefined,
+          slug:             invitation.slug                       ?? undefined,
+          selectedVideoId:  invitation.hero?.selectedVideoId      ?? undefined,
+          imageUrl:         invitation.hero?.imageUrl             ?? undefined,
+          videoUrl:         invitation.hero?.videoUrl             ?? undefined,
+          youtubeUrl:       invitation.hero?.youtubeUrl           ?? undefined,
+          musicUrl:         invitation.music?.audioUrl            ?? undefined,
+          musicTitle:       invitation.music?.title               ?? undefined,
+          googleMapsLink:   invitation.location?.googleMapsLink   ?? undefined,
+          wazeLink:         invitation.location?.wazeLink         ?? undefined,
+          eventLabel:       invitation.hero?.eventLabel           ?? undefined,
+          connectorText:    invitation.hero?.connectorText        ?? undefined,
         }}
       />
     );
