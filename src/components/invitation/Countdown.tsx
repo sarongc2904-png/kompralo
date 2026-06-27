@@ -281,15 +281,10 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
   ];
 
   return (
-    <section className="pt-28 pb-24 md:pt-40 md:pb-36 px-4 bg-transparent text-center select-none overflow-visible">
-      {/* [DEBUG] REMOVE BEFORE MERGE */}
-      <div style={{ background: 'blue', color: 'white', padding: 8, position: 'relative', zIndex: 9999 }}>
-        COUNTDOWN MOUNTED — hasValidDate: {String(hasValidDate)} — eventPassed: {String(eventPassed)}
-      </div>
+    <section className="pt-28 pb-24 md:pt-40 md:pb-36 px-4 bg-transparent text-center select-none overflow-visible" style={{ position: 'relative', zIndex: 20 }}>
       <motion.div
+        animate={{ opacity: 1, y: 0 }}
         initial={{ opacity: 1, y: 0 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         className="flex flex-col items-center"
       >
