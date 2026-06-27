@@ -87,9 +87,6 @@ export function HeroInspector({
   isMobileSheet,
   onSaved,
 }: InspectorProps) {
-  console.log('HeroInspector fields count:', ['name1','name2','emotionalPhrase','venueName','date','time','eventLabel','connectorText','imageUrl','videoUrl','musicUrl'].length);
-  console.log('HeroInspector meta:', JSON.stringify(element.meta, null, 2));
-
   // Text drafts — includes both HERO_FIELDS and EXTRA_TEXT_FIELDS keys
   const [drafts, setDrafts] = useState<Record<string, string>>(() => {
     const all = [...HERO_FIELDS, ...EXTRA_TEXT_FIELDS];
@@ -406,12 +403,6 @@ export function HeroInspector({
         </button>
       </div>
 
-      <div style={{
-        background: 'red', color: 'white',
-        padding: 16, marginTop: 16, fontSize: 14,
-      }}>
-        ✓ FIN DEL INSPECTOR — si ves esto, el scroll funciona
-      </div>
     </div>
   );
 }
