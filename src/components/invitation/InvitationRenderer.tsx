@@ -113,6 +113,15 @@ export default function InvitationRenderer({
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
 
+  // Derive display names for components that accept brideName/groomName props.
+  // Role-based lookup (novia/bride first, novio/groom second) takes priority over index order.
+  const storyBrideName =
+    protagonists.find((p) => p.role === 'novia' || p.role === 'bride')?.name ??
+    protagonists[0]?.name;
+  const storyGroomName =
+    protagonists.find((p) => p.role === 'novio' || p.role === 'groom')?.name ??
+    protagonists[1]?.name;
+
   // V2 theme — resolved from the preview override (if any) or the invitation's saved themeId.
   // Priority: preview override > saved invitation theme > fallback to 'editorial'
   const resolvedThemeId = themePreviewId ?? invitation.themeId;
@@ -405,6 +414,8 @@ export default function InvitationRenderer({
             slides={invitation.story.slides}
             theme={effectiveTheme}
             protagonists={protagonists}
+            brideName={storyBrideName}
+            groomName={storyGroomName}
             editablePreview={editablePreview}
             sectionEyebrow={invitation.story.sectionEyebrow}
             sectionTitle={invitation.story.sectionTitle}
