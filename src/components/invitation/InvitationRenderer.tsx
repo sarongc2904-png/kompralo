@@ -293,7 +293,7 @@ export default function InvitationRenderer({
   const S = useCallback(
     ({ id, children }: { id: string; children: React.ReactNode }) =>
       editablePreview
-        ? <div data-section={id} style={{ display: 'contents' }}>{children}</div>
+        ? <div data-section={id}>{children}</div>
         : <>{children}</>,
     [editablePreview],
   );
