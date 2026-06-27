@@ -42,8 +42,9 @@ export function EditorV4Shell({
 
   const { selectedElement, setSelectedElement, clearSelection } = useSelectionManager();
 
-  const [showTour, setShowTour] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
+  const [showTour,     setShowTour]     = useState(false);
+  const [showHelp,     setShowHelp]     = useState(false);
+  const [sectionTourId, setSectionTourId] = useState<string | null>(null);
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
@@ -318,8 +319,22 @@ export function EditorV4Shell({
         />
       )}
 
-      {showTour && <EditorTour onClose={() => setShowTour(false)} />}
-      {showHelp && <EditorHelpModal onClose={() => setShowHelp(false)} />}
+      {showTour && (
+        <EditorTour
+          sectionId={sectionTourId ?? undefined}
+          onClose={() => { setShowTour(false); setSectionTourId(null); }}
+        />
+      )}
+      {showHelp && (
+        <EditorHelpModal
+          onClose={() => setShowHelp(false)}
+          onNavigate={(id) => canvasRef.current?.scrollToSection(id)}
+          onStartSectionTour={(id) => {
+            setSectionTourId(id);
+            setShowTour(true);
+          }}
+        />
+      )}
     </div>
   );
 }

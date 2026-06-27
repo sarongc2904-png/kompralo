@@ -1,75 +1,176 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface EditorHelpModalProps {
-  onClose: () => void;
+  onClose:            () => void;
+  onNavigate:         (sectionId: string) => void;
+  onStartSectionTour: (sectionId: string) => void;
 }
 
-interface SectionItem {
+// ─── Section list ─────────────────────────────────────────────────────────────
+
+interface NavItem {
+  id:    string;
   icon:  string;
-  name:  string;
-  desc:  string;
-  plan?: 'premium' | 'deluxe';
+  label: string;
+  plan?: 'Premium' | 'Deluxe';
 }
 
-const SECTIONS: SectionItem[] = [
-  { icon: '💍', name: 'Portada',            desc: 'Nombres, fecha, lugar, foto de fondo, video y música.' },
-  { icon: '🎬', name: 'Intro',              desc: 'Título de bienvenida y botón animado para abrir la invitación.' },
-  { icon: '⏳', name: 'Cuenta regresiva',   desc: 'Se actualiza automáticamente con la fecha que configures en Portada.' },
-  { icon: '📖', name: 'Nuestra historia',   desc: 'Hasta 10 momentos con texto, foto y fecha cada uno.',           plan: 'premium' },
-  { icon: '🖼',  name: 'Galería',            desc: 'Sube hasta 20 fotos desde tu dispositivo.',                     plan: 'premium' },
-  { icon: '📍', name: 'Ubicación',          desc: 'Links de Google Maps y Waze; textos editables al tocar.' },
-  { icon: '👗', name: 'Código de vestimenta', desc: 'Tipo de dress code y paleta de colores (máx 6).' },
-  { icon: '👨‍👩‍👧', name: 'Familias',           desc: 'Nombres de los padres de los novios.',                         plan: 'deluxe' },
-  { icon: '⭐', name: 'Padrinos',           desc: 'Categorías editables: rubro, ícono y lista de nombres.',         plan: 'deluxe' },
-  { icon: '🎁', name: 'Mesa de regalos',    desc: 'Links de tiendas y datos bancarios editables al tocar.' },
-  { icon: '💌', name: 'Mensaje final',      desc: 'Texto de cierre y foto de fondo.' },
+const NAV: NavItem[] = [
+  { id: 'portada',    icon: '💍', label: 'Portada' },
+  { id: 'intro',      icon: '🎬', label: 'Intro' },
+  { id: 'countdown',  icon: '⏳', label: 'Cuenta regresiva' },
+  { id: 'story',      icon: '📖', label: 'Historia' },
+  { id: 'gallery',    icon: '🖼',  label: 'Galería',          plan: 'Premium' },
+  { id: 'location',   icon: '📍', label: 'Ubicación' },
+  { id: 'dresscode',  icon: '👗', label: 'Vestimenta' },
+  { id: 'parents',    icon: '👨‍👩‍👧', label: 'Familias',         plan: 'Deluxe' },
+  { id: 'godparents', icon: '⭐', label: 'Padrinos',          plan: 'Deluxe' },
+  { id: 'gifts',      icon: '🎁', label: 'Mesa de regalos' },
+  { id: 'message',    icon: '💌', label: 'Mensaje final' },
 ];
 
+// ─── Section help content ─────────────────────────────────────────────────────
+
+interface SectionHelp {
+  title:         string;
+  steps:         string[];
+  tourSectionId: string;
+}
+
+const SECTION_HELP: Record<string, SectionHelp> = {
+  portada: {
+    title: 'Portada',
+    tourSectionId: 'hero',
+    steps: [
+      'Toca el nombre de la novia o el novio directamente en la invitación para editarlo.',
+      'Para cambiar la fecha, abre el inspector → sección "Fecha y lugar".',
+      'Para cambiar foto o video de fondo, inspector → sección "Fondo".',
+      'La música se configura en inspector → sección "Música".',
+    ],
+  },
+  intro: {
+    title: 'Intro Cinematográfico',
+    tourSectionId: 'intro',
+    steps: [
+      'Toca el título o el texto del botón directamente en la pantalla de intro.',
+      'El inspector de Intro permite editar el título, subtítulo y texto del botón.',
+    ],
+  },
+  countdown: {
+    title: 'Cuenta Regresiva',
+    tourSectionId: 'countdown',
+    steps: [
+      'La cuenta regresiva se actualiza automáticamente con la fecha que configures en Portada.',
+      'No necesitas editar nada aquí — solo asegúrate de tener la fecha correcta en Portada.',
+    ],
+  },
+  story: {
+    title: 'Historia',
+    tourSectionId: 'story',
+    steps: [
+      'La sección Historia tiene 3 momentos. Haz clic en "Historia" en el panel izquierdo.',
+      'En el inspector verás "Momento 1", "Momento 2" y "Momento 3" — expande cada uno.',
+      'Edita el texto de cada momento y sube una foto tocando "Cambiar foto".',
+      'El título de la sección se edita tocando directamente el texto en la invitación.',
+    ],
+  },
+  gallery: {
+    title: 'Galería',
+    tourSectionId: 'gallery',
+    steps: [
+      'Haz clic en "Galería" en el panel izquierdo para abrir el inspector.',
+      'Toca "+ Agregar foto" para subir una imagen desde tu teléfono o computadora.',
+      'Para eliminar una foto, toca la ✕ en la esquina de cada imagen.',
+      'Puedes agregar hasta 20 fotos.',
+    ],
+  },
+  location: {
+    title: 'Ubicación',
+    tourSectionId: 'location',
+    steps: [
+      'El nombre del lugar y la dirección se editan tocando el texto directamente.',
+      'Para agregar Google Maps: abre el inspector → pega el link de Maps → Guardar.',
+      'Para agregar Waze: igual, pega el link de Waze en el inspector.',
+    ],
+  },
+  dresscode: {
+    title: 'Código de Vestimenta',
+    tourSectionId: 'dresscode',
+    steps: [
+      'El tipo de vestimenta (Formal, Semi-formal, etc.) se edita tocando el texto.',
+      'La descripción y sugerencias también se editan tocando el texto.',
+      'Para cambiar los colores de la paleta, abre el inspector → usa el selector de color.',
+    ],
+  },
+  parents: {
+    title: 'Familias',
+    tourSectionId: 'parents',
+    steps: [
+      'Los nombres de los padres se editan tocando directamente el texto en la invitación.',
+      'Esta sección requiere Plan Deluxe.',
+    ],
+  },
+  godparents: {
+    title: 'Padrinos',
+    tourSectionId: 'godparents',
+    steps: [
+      'Abre el inspector de Padrinos para ver todas las categorías.',
+      'Puedes editar el rubro, los nombres, agregar nuevas categorías o eliminarlas.',
+      'Presiona "Guardar todo" cuando termines.',
+      'Esta sección requiere Plan Deluxe.',
+    ],
+  },
+  gifts: {
+    title: 'Mesa de Regalos',
+    tourSectionId: 'gifts',
+    steps: [
+      'Toca el nombre de la tienda directamente en la invitación para editarlo.',
+      'El link de la tienda y los datos bancarios también se editan tocando el texto.',
+    ],
+  },
+  message: {
+    title: 'Mensaje Final',
+    tourSectionId: 'message',
+    steps: [
+      'El título y el mensaje se editan tocando directamente el texto.',
+      'Para cambiar la foto de fondo, abre el inspector → sube una foto.',
+    ],
+  },
+};
+
 const PLAN_STYLE: Record<string, React.CSSProperties> = {
-  premium: { background: '#EDE8FF', color: '#5340A8' },
-  deluxe:  { background: '#FFF3DC', color: '#8B5E00' },
+  Premium: { background: '#EDE8FF', color: '#5340A8' },
+  Deluxe:  { background: '#FFF3DC', color: '#8B5E00' },
 };
 
-const PLAN_LABEL: Record<string, string> = {
-  premium: 'Premium',
-  deluxe:  'Deluxe',
-};
+// ─── Component ────────────────────────────────────────────────────────────────
 
-export function EditorHelpModal({ onClose }: EditorHelpModalProps) {
+export function EditorHelpModal({ onClose, onNavigate, onStartSectionTour }: EditorHelpModalProps) {
+  const [selected, setSelected] = useState<string>('portada');
+
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
-    }
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  const head: React.CSSProperties = {
-    fontSize: 10, fontWeight: 700, color: '#9B8878',
-    textTransform: 'uppercase', letterSpacing: '0.09em',
-    margin: '20px 0 10px',
-  };
+  const help = SECTION_HELP[selected];
 
-  const tip: React.CSSProperties = {
-    background: 'rgba(200,167,93,0.08)',
-    border: '1px solid rgba(200,167,93,0.22)',
-    borderRadius: 8,
-    padding: '10px 12px',
-    fontSize: 12,
-    color: '#7B5E3A',
-    lineHeight: 1.55,
-    marginBottom: 10,
-  };
+  function handleShowInEditor() {
+    onClose();
+    onNavigate(help.tourSectionId);
+    onStartSectionTour(help.tourSectionId);
+  }
 
   return (
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
-        background: 'rgba(10,8,4,0.65)',
+        background: 'rgba(10,8,4,0.7)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '16px',
+        padding: 16,
       }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -81,154 +182,170 @@ export function EditorHelpModal({ onClose }: EditorHelpModalProps) {
           background: '#FAF7F2',
           borderRadius: 16,
           width: '100%',
-          maxWidth: 480,
+          maxWidth: 580,
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.3)',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.32)',
         }}
       >
         {/* Header */}
         <div style={{
           background: '#1a1208',
-          padding: '18px 20px',
+          padding: '16px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexShrink: 0,
         }}>
           <div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#F5EDD8', marginBottom: 2 }}>
+            <p style={{ fontSize: 15, fontWeight: 700, color: '#F5EDD8', marginBottom: 1 }}>
               Guía del editor
             </p>
-            <p style={{ fontSize: 11, color: '#9B8878' }}>Editor V4 · KOMPRALO</p>
+            <p style={{ fontSize: 11, color: '#9B8878' }}>Selecciona una sección para ver cómo editarla</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Cerrar guía"
             style={{
-              width: 32, height: 32, borderRadius: '50%',
+              width: 30, height: 30, borderRadius: '50%',
               border: '1px solid rgba(200,167,93,0.25)',
               background: 'rgba(200,167,93,0.1)',
-              color: '#C5A880', fontSize: 16,
-              cursor: 'pointer', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
+              color: '#C5A880', fontSize: 16, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
           >
             ×
           </button>
         </div>
 
-        {/* Scrollable body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '4px 20px 20px' }}>
+        {/* Two-column body */}
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
 
-          {/* Cómo funciona */}
-          <p style={head}>Cómo funciona</p>
-          <div style={tip}>
-            Toca cualquier texto en la invitación (nombres, fechas, frases) para editarlo al instante. Sin formularios, sin guardar manualmente.
+          {/* Left nav */}
+          <div style={{
+            width: 148,
+            flexShrink: 0,
+            borderRight: '1px solid rgba(200,167,93,0.15)',
+            overflowY: 'auto',
+            background: '#F5F0E8',
+          }}>
+            {NAV.map((item) => {
+              const isActive = item.id === selected;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setSelected(item.id)}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    width: '100%',
+                    padding: '9px 12px',
+                    border: 'none',
+                    borderLeft: isActive ? '3px solid #C9A96E' : '3px solid transparent',
+                    background: isActive ? '#FFF8EE' : 'transparent',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'background 0.15s',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontSize: 13 }}>{item.icon}</span>
+                    <span style={{
+                      fontSize: 12,
+                      fontWeight: isActive ? 600 : 400,
+                      color: isActive ? '#8B5E00' : '#5C4A3E',
+                    }}>
+                      {item.label}
+                    </span>
+                  </div>
+                  {item.plan && (
+                    <span style={{
+                      marginTop: 3,
+                      marginLeft: 19,
+                      fontSize: 9,
+                      fontWeight: 700,
+                      padding: '1px 6px',
+                      borderRadius: 4,
+                      letterSpacing: '0.03em',
+                      ...PLAN_STYLE[item.plan],
+                    }}>
+                      {item.plan}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 4 }}>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>📋</span>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1410', marginBottom: 2 }}>Panel de secciones</p>
-                <p style={{ fontSize: 11, color: '#9B8878', lineHeight: 1.5 }}>
-                  El panel izquierdo lista todas las secciones de tu invitación. Haz clic para navegar y ver las opciones de edición.
-                </p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 18, flexShrink: 0, marginTop: 1 }}>🎛️</span>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1410', marginBottom: 2 }}>Inspector</p>
-                <p style={{ fontSize: 11, color: '#9B8878', lineHeight: 1.5 }}>
-                  El panel derecho muestra controles para fotos, videos, colores y links — cosas que no son texto simple.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* Right panel */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 12px' }}>
 
-          {/* Secciones */}
-          <p style={head}>Secciones disponibles</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {SECTIONS.map((s, i) => (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'flex-start', gap: 10,
-                padding: '9px 10px', borderRadius: 8,
-                background: i % 2 === 0 ? 'rgba(200,167,93,0.04)' : 'transparent',
-              }}>
-                <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>{s.icon}</span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1410' }}>{s.name}</span>
-                    {s.plan && (
-                      <span style={{
-                        fontSize: 9, fontWeight: 700, padding: '1px 6px',
-                        borderRadius: 4, letterSpacing: '0.04em',
-                        ...PLAN_STYLE[s.plan],
+              {/* Section title */}
+              <p style={{ fontSize: 16, fontWeight: 500, color: '#1A1410', marginBottom: 18 }}>
+                {help.title}
+              </p>
+
+              {/* Steps */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {help.steps.map((step, i) => (
+                  <div key={i}>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 0' }}>
+                      <div style={{
+                        width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
+                        background: 'rgba(200,167,93,0.15)',
+                        border: '1px solid rgba(200,167,93,0.4)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: 10, fontWeight: 700, color: '#C9A96E',
+                        marginTop: 1,
                       }}>
-                        {PLAN_LABEL[s.plan]}
-                      </span>
+                        {i + 1}
+                      </div>
+                      <p style={{ fontSize: 13, color: '#5C4A3E', lineHeight: 1.6, flex: 1 }}>
+                        {step}
+                      </p>
+                    </div>
+                    {i < help.steps.length - 1 && (
+                      <div style={{ height: 1, background: 'rgba(200,167,93,0.1)', marginLeft: 34 }} />
                     )}
                   </div>
-                  <p style={{ fontSize: 11, color: '#9B8878', lineHeight: 1.4 }}>{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Compartir */}
-          <p style={head}>Compartir tu invitación</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>↗</span>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1410', marginBottom: 2 }}>Vista previa</p>
-                <p style={{ fontSize: 11, color: '#9B8878', lineHeight: 1.4 }}>
-                  Ve exactamente cómo la verán tus invitados antes de compartirla.
-                </p>
+                ))}
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>🔗</span>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1410', marginBottom: 2 }}>Compartir</p>
-                <p style={{ fontSize: 11, color: '#9B8878', lineHeight: 1.4 }}>
-                  Copia el link y envíalo por WhatsApp, Instagram o el medio que prefieras.
-                </p>
-              </div>
+
+            {/* Show in editor button */}
+            <div style={{
+              padding: '12px 20px 16px',
+              borderTop: '1px solid rgba(200,167,93,0.15)',
+              flexShrink: 0,
+            }}>
+              <button
+                type="button"
+                onClick={handleShowInEditor}
+                style={{
+                  width: '100%',
+                  padding: '10px 0',
+                  borderRadius: 9,
+                  border: 'none',
+                  background: '#1a1208',
+                  color: '#C9A96E',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                ✦ Mostrar en el editor
+              </button>
             </div>
           </div>
-          <div style={tip}>
-            Los cambios se reflejan automáticamente. No necesitas reenviar el link cada vez que editas.
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div style={{
-          borderTop: '1px solid rgba(200,167,93,0.15)',
-          padding: '14px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexShrink: 0,
-          background: '#FAF7F2',
-        }}>
-          <span style={{ fontSize: 11, color: '#B0A090' }}>¿Más dudas? kompralo.com.mx</span>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              padding: '7px 18px', borderRadius: 8, border: 'none',
-              background: 'rgba(200,167,93,0.85)', color: '#1A1410',
-              fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-            }}
-          >
-            Entendido
-          </button>
         </div>
       </div>
     </div>

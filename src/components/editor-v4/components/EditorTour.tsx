@@ -9,6 +9,59 @@ interface Step {
   desc:  string;
 }
 
+// ─── Section-specific mini-tour steps ────────────────────────────────────────
+
+type SectionStepMap = Record<string, Step[]>;
+
+const SECTION_TOUR_STEPS: SectionStepMap = {
+  hero: [
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Toca el nombre',        desc: 'Haz clic directamente sobre el nombre en la invitación para editarlo.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Inspector de Portada',   desc: 'Aquí cambias foto de fondo, video, música y fecha del evento.' },
+  ],
+  intro: [
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Edita el intro',         desc: 'Toca el título o el botón directamente en la pantalla de intro para editarlos.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Inspector de Intro',     desc: 'Aquí ajustas el título, subtítulo y texto del botón de apertura.' },
+  ],
+  countdown: [
+    { id: 'editor-v4-layers',    label: 'Navegación',    title: 'Sección de Portada',     desc: 'La cuenta regresiva usa la fecha de Portada. Ve ahí para actualizarla.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Fecha del evento',       desc: 'Cambia la fecha aquí y la cuenta regresiva se actualiza automáticamente.' },
+  ],
+  story: [
+    { id: 'editor-v4-layers',    label: 'Navegación',    title: 'Sección Historia',       desc: 'Haz clic en "Historia" en el panel para abrir sus opciones.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Momentos de la historia', desc: 'Expande cada momento para editar su texto y subir una foto.' },
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Título de la sección',   desc: 'El título "Nuestra Historia" se edita tocando el texto en la invitación.' },
+  ],
+  gallery: [
+    { id: 'editor-v4-layers',    label: 'Navegación',    title: 'Sección Galería',        desc: 'Haz clic en "Galería" para abrir el inspector de fotos.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Agregar y eliminar fotos', desc: 'Usa "+ Agregar foto" para subir y la ✕ en cada miniatura para eliminar. Máximo 20.' },
+  ],
+  location: [
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Nombre del lugar',       desc: 'Toca el nombre del venue o la dirección para editarlos directamente.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Links de navegación',    desc: 'Pega el link de Google Maps y el link de Waze aquí, luego guarda.' },
+  ],
+  dresscode: [
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Tipo de vestimenta',     desc: 'Toca el texto del dress code en la invitación para editarlo.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Paleta de colores',      desc: 'Usa el selector de color para cambiar o agregar colores a la paleta (máx 6).' },
+  ],
+  parents: [
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Nombres de los padres',  desc: 'Toca directamente los nombres en la invitación para editarlos.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Inspector de Familias',  desc: 'Aquí ves los nombres actuales. Esta sección requiere Plan Deluxe.' },
+  ],
+  godparents: [
+    { id: 'editor-v4-layers',    label: 'Navegación',    title: 'Sección Padrinos',       desc: 'Haz clic en "Padrinos" para abrir el editor de categorías.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Editor de Padrinos',     desc: 'Agrega o elimina categorías, cambia el rubro, ícono y lista de nombres.' },
+  ],
+  gifts: [
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Mesa de regalos',        desc: 'Toca el nombre de la tienda, el link o los datos bancarios para editarlos.' },
+  ],
+  message: [
+    { id: 'editor-v4-canvas',    label: 'Texto inline',  title: 'Texto del mensaje',      desc: 'Toca el título o el mensaje para editarlos directamente.' },
+    { id: 'editor-v4-inspector', label: 'Inspector',     title: 'Foto de fondo',          desc: 'Sube una foto de fondo desde el inspector de Mensaje Final.' },
+  ],
+};
+
+// ─── Full tour steps ──────────────────────────────────────────────────────────
+
 const STEPS: Step[] = [
   {
     id:    'editor-v4-layers',
@@ -90,10 +143,12 @@ function tooltipPos(rect: Rect): { top: number; left: number } {
 }
 
 interface EditorTourProps {
-  onClose: () => void;
+  onClose:    () => void;
+  sectionId?: string;
 }
 
-export function EditorTour({ onClose }: EditorTourProps) {
+export function EditorTour({ onClose, sectionId }: EditorTourProps) {
+  const activeSteps = sectionId ? (SECTION_TOUR_STEPS[sectionId] ?? STEPS) : STEPS;
   const [step,    setStep]    = useState(0);
   const [rect,    setRect]    = useState<Rect | null>(null);
   const [ttPos,   setTtPos]   = useState({ top: 0, left: 0 });
@@ -101,11 +156,11 @@ export function EditorTour({ onClose }: EditorTourProps) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updatePositions = useCallback((idx: number) => {
-    const r = getRect(STEPS[idx]?.id ?? '');
+    const r = getRect(activeSteps[idx]?.id ?? '');
     if (!r) return;
     setRect(r);
     setTtPos(tooltipPos(r));
-  }, []);
+  }, [activeSteps]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -126,14 +181,14 @@ export function EditorTour({ onClose }: EditorTourProps) {
   }, [step, updatePositions]);
 
   function finish() {
-    if (typeof localStorage !== 'undefined') {
+    if (!sectionId && typeof localStorage !== 'undefined') {
       localStorage.setItem('kompralo_editor_tour_seen', '1');
     }
     onClose();
   }
 
   function next() {
-    if (step < STEPS.length - 1) {
+    if (step < activeSteps.length - 1) {
       setStep((s) => s + 1);
     } else {
       finish();
@@ -202,7 +257,7 @@ export function EditorTour({ onClose }: EditorTourProps) {
       <div style={ttStyle} role="dialog" aria-modal="true" aria-label={`Paso ${step + 1} del tour`}>
         {/* Progress bars */}
         <div style={{ display: 'flex', gap: 4, marginBottom: 12 }}>
-          {STEPS.map((_, i) => (
+          {activeSteps.map((_, i) => (
             <div key={i} style={{
               flex: 1, height: 3, borderRadius: 2,
               background: i <= step ? '#C9A96E' : '#EDE0CC',
@@ -212,18 +267,18 @@ export function EditorTour({ onClose }: EditorTourProps) {
         </div>
 
         {/* Label */}
-        <p style={labelStyle}>{STEPS[step].label}</p>
+        <p style={labelStyle}>{activeSteps[step].label}</p>
 
         {/* Title */}
-        <p style={titleStyle}>{STEPS[step].title}</p>
+        <p style={titleStyle}>{activeSteps[step].title}</p>
 
         {/* Desc */}
-        <p style={descStyle}>{STEPS[step].desc}</p>
+        <p style={descStyle}>{activeSteps[step].desc}</p>
 
         {/* Footer */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 11, color: '#B0A090', fontWeight: 600 }}>
-            {step + 1} / {STEPS.length}
+            {step + 1} / {activeSteps.length}
           </span>
           <div style={{ display: 'flex', gap: 6 }}>
             <button
