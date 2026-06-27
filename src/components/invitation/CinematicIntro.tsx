@@ -303,20 +303,13 @@ export default function CinematicIntro({
         This avoids the classic overflow-y:auto + flex:center issue where the top
         of overflowing centered content ends up above y=0 and is unreachable.
       */}
-      {/* DEBUG: lime = centering wrapper */}
       <div
         className="relative min-h-full flex items-center justify-center"
-        style={{ paddingTop: 'clamp(48px, 8vh, 96px)', paddingBottom: 'clamp(48px, 8vh, 96px)', outline: '2px solid lime' }}
+        style={{ paddingTop: 'clamp(48px, 8vh, 96px)', paddingBottom: 'clamp(48px, 8vh, 96px)' }}
       >
 
-      {/* Content — DEBUG: blue = contentRef parent */}
-      <div ref={contentRef} className="relative z-20 max-w-lg w-full px-6 text-center flex flex-col items-center select-none"
-        style={{ outline: '2px solid blue', background: 'rgba(0,0,255,.08)' }}
-      >
-        {/* DEBUG MARKER — remove after diagnosis */}
-        <p style={{ color: 'yellow', fontSize: 10, fontFamily: 'monospace', marginBottom: 8, zIndex: 9999, position: 'relative' }}>
-          DEBUG INTRO COMPONENT ACTIVE
-        </p>
+      {/* Content */}
+      <div ref={contentRef} className="relative z-20 max-w-lg w-full px-6 text-center flex flex-col items-center select-none">
 
         {/* Decorative ornament top */}
         <motion.div
@@ -333,7 +326,6 @@ export default function CinematicIntro({
           </svg>
         </motion.div>
 
-        {/* DEBUG: red = introTitle element */}
         <motion.p
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
@@ -345,8 +337,6 @@ export default function CinematicIntro({
             paddingBottom: '0.25em',
             overflow: 'visible',
             display: 'block',
-            outline: '2px solid red',
-            background: 'rgba(255,0,0,.15)',
           }}
         >
           {introTitle ?? 'Estás Invitado a Celebrar'}

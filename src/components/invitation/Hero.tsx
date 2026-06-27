@@ -248,6 +248,10 @@ export default function Hero({
           alignItems: 'center',
           justifyContent: 'flex-end',
           paddingBottom: 'clamp(48px, 8vh, 88px)',
+          // In the editor canvas the hero fills a fixed-size device frame; without a
+          // top safe-area the eyebrow text ("NUESTRA BODA") can end up at y≈0 and be
+          // clipped by the section's overflow:hidden.
+          paddingTop: editablePreview ? 'clamp(48px, 8vh, 96px)' : undefined,
           willChange: 'transform, opacity',
         }}
       >
