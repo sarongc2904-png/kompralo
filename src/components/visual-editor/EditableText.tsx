@@ -144,6 +144,20 @@ export function EditableText({
           syncEmptyAttr(event.currentTarget);
         }
       : undefined,
+    onFocus: isEditable
+      ? () => {
+          window.parent?.postMessage(
+            {
+              type: 'EDITOR_V4_ELEMENT_SELECTED',
+              elementType: 'text',
+              fieldPath,
+              label: fieldPath,
+              value: ref.current?.textContent ?? value ?? '',
+            },
+            window.location.origin,
+          );
+        }
+      : undefined,
     onBlur: isEditable ? commit : undefined,
     onPaste: isEditable
       ? (event: React.ClipboardEvent<HTMLElement>) => {

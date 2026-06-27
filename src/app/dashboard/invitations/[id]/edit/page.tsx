@@ -5,6 +5,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { isAdminUser } from '@/lib/admin';
 import { normalizePlanId } from '@/domain/plans/types';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { EditorV4Shell } from '@/components/editor-v4/EditorV4Shell';
 import EditForm from './EditForm';
 import MediaForm from './MediaForm';
 import LocationForm from './LocationForm';
@@ -122,10 +123,12 @@ export async function generateMetadata({ params }: Props) {
 export default async function EditInvitationPage({ params, searchParams }: Props) {
   const { id } = await params;
   const sp = await searchParams;
-  const fromAdmin    = sp.from  === 'admin';
-  const isWizardView = sp.view  === 'wizard';
+  const fromAdmin    = sp.from     === 'admin';
+  const isWizardView = sp.view     === 'wizard';
+  const isEditorV4   = sp.editor   === 'v4';
   const wizardHref   = fromAdmin ? '?from=admin&view=wizard' : '?view=wizard';
   const scrollHref   = fromAdmin ? '?from=admin' : '?';
+  const v4Href       = fromAdmin ? `?from=admin&editor=v4` : '?editor=v4';
   const invitation = await invitationRepository.getById(id);
 
   if (!invitation) {
@@ -294,6 +297,21 @@ export default async function EditInvitationPage({ params, searchParams }: Props
 
   const previewUrl = `/preview/${invitation.id}?from=editor`;
 
+  // ── Editor V4 gate ──────────────────────────────────────────────────────────
+  if (isEditorV4) {
+    const classicUrl = fromAdmin
+      ? `/dashboard/invitations/${id}/edit?from=admin`
+      : `/dashboard/invitations/${id}/edit`;
+    return (
+      <EditorV4Shell
+        invitationId={invitation.id}
+        invitationTitle={invitation.title}
+        slug={invitation.slug}
+        classicEditorUrl={classicUrl}
+      />
+    );
+  }
+
   return (
     <div
       className="relative"
@@ -328,7 +346,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           </p>
 
           {/* Wizard / scroll toggle */}
-          <div style={{ marginTop: 12 }}>
+          <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
             {isWizardView ? (
               <Link
                 href={scrollHref}
@@ -349,6 +367,18 @@ export default async function EditInvitationPage({ params, searchParams }: Props
                 ✦ Asistente paso a paso
               </Link>
             )}
+            <Link
+              href={v4Href}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                fontSize: '0.75rem', fontWeight: 600,
+                background: 'rgba(197,168,128,0.15)', color: '#C5A880',
+                border: '1px solid rgba(197,168,128,0.4)',
+                padding: '6px 14px', borderRadius: 8, textDecoration: 'none',
+              }}
+            >
+              ✦ Probar Editor V4
+            </Link>
           </div>
         </div>
 
