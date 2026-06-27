@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { EditorV4Toolbar, type SaveStatus } from './EditorV4Toolbar';
+import { EditorTour }      from './components/EditorTour';
+import { EditorHelpModal } from './components/EditorHelpModal';
 import { EditorV4LayersPanel }  from './EditorV4LayersPanel';
 import { EditorV4Canvas, type EditorV4CanvasHandle, type EditorV4CanvasMode } from './EditorV4Canvas';
 import { InspectorManager }    from './core/InspectorManager';
@@ -39,6 +41,9 @@ export function EditorV4Shell({
   const saveStatusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { selectedElement, setSelectedElement, clearSelection } = useSelectionManager();
+
+  const [showTour, setShowTour] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
@@ -191,6 +196,14 @@ export function EditorV4Shell({
     setMobileSheetOpen(false);
   }, []);
 
+  // Auto-start tour on first visit
+  useEffect(() => {
+    if (typeof localStorage !== 'undefined' && !localStorage.getItem('kompralo_editor_tour_seen')) {
+      const t = setTimeout(() => setShowTour(true), 800);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
   // Listen for section-click events from iframe hover bridge
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
@@ -223,6 +236,7 @@ export function EditorV4Shell({
         slug={slug}
         invitationId={invitationId}
         onRefresh={handleRefresh}
+        onHelp={() => setShowHelp(true)}
         classicEditorUrl={classicEditorUrl}
         isMobile={isMobile}
         saveStatus={saveStatus}
@@ -232,7 +246,7 @@ export function EditorV4Shell({
 
         {/* Left panel — desktop only */}
         {!isMobile && (
-          <div style={{
+          <div id="editor-v4-layers" style={{
             width: PANEL_WIDTH_LEFT, flexShrink: 0,
             borderRight: '1px solid rgba(200,167,93,0.2)',
             background: '#FAF7F2', overflowY: 'auto',
@@ -243,7 +257,7 @@ export function EditorV4Shell({
         )}
 
         {/* Canvas */}
-        <div style={{ flex: 1, minWidth: 0, position: 'relative', overflow: 'hidden' }}>
+        <div id="editor-v4-canvas" style={{ flex: 1, minWidth: 0, position: 'relative', overflow: 'hidden' }}>
           <EditorV4Canvas
             ref={canvasRef}
             invitationId={invitationId}
@@ -254,7 +268,7 @@ export function EditorV4Shell({
 
         {/* Right inspector — desktop only */}
         {!isMobile && (
-          <div style={{
+          <div id="editor-v4-inspector" style={{
             width: PANEL_WIDTH_RIGHT, flexShrink: 0,
             borderLeft: '1px solid rgba(200,167,93,0.2)',
             background: '#FAF7F2', overflowY: 'auto',
@@ -303,6 +317,9 @@ export function EditorV4Shell({
           style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(26,20,16,0.3)' }}
         />
       )}
+
+      {showTour && <EditorTour onClose={() => setShowTour(false)} />}
+      {showHelp && <EditorHelpModal onClose={() => setShowHelp(false)} />}
     </div>
   );
 }

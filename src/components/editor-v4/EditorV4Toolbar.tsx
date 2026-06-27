@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 export type SaveStatus = 'idle' | 'saved';
 
 interface EditorV4ToolbarProps {
@@ -7,6 +9,7 @@ interface EditorV4ToolbarProps {
   slug: string;
   invitationId: string;
   onRefresh: () => void;
+  onHelp: () => void;
   classicEditorUrl: string;
   isMobile?: boolean;
   saveStatus?: SaveStatus;
@@ -17,6 +20,7 @@ export function EditorV4Toolbar({
   slug,
   invitationId,
   onRefresh,
+  onHelp,
   classicEditorUrl,
   isMobile = false,
   saveStatus = 'idle',
@@ -74,12 +78,32 @@ export function EditorV4Toolbar({
         <button type="button" onClick={onRefresh} style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }} title="Refrescar preview">
           ↻ Refrescar
         </button>
-        <a href={previewUrl} target="_blank" rel="noopener noreferrer" style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }}>
+        <a id="editor-v4-preview-btn" href={previewUrl} target="_blank" rel="noopener noreferrer" style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }}>
           ↗ Vista previa
         </a>
+        <button id="editor-v4-share-btn" type="button" onClick={handleShare} style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }}>
+          Compartir
+        </button>
         <a href={classicEditorUrl} style={{ ...btnBase, background: 'rgba(255,255,255,0.06)', color: '#9B8878' }}>
           ← Editor clásico
         </a>
+        <button
+          id="editor-v4-help-btn"
+          type="button"
+          onClick={onHelp}
+          title="Guía del editor"
+          aria-label="Abrir guía del editor"
+          style={{
+            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+            border: '1px solid rgba(200,167,93,0.4)',
+            background: 'rgba(200,167,93,0.1)',
+            color: '#C9A96E', fontSize: 14, fontWeight: 700,
+            cursor: 'pointer', display: 'inline-flex',
+            alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          ?
+        </button>
       </div>
     );
   }
@@ -117,13 +141,24 @@ export function EditorV4Toolbar({
       </span>
 
       {/* Preview */}
-      <a href={previewUrl} target="_blank" rel="noopener noreferrer" style={mBtn}>
+      <a id="editor-v4-preview-btn" href={previewUrl} target="_blank" rel="noopener noreferrer" style={mBtn}>
         Preview
       </a>
 
       {/* Share */}
-      <button type="button" onClick={handleShare} style={mBtn}>
+      <button id="editor-v4-share-btn" type="button" onClick={handleShare} style={mBtn}>
         Compartir
+      </button>
+
+      {/* Help */}
+      <button
+        id="editor-v4-help-btn"
+        type="button"
+        onClick={onHelp}
+        aria-label="Abrir guía del editor"
+        style={{ ...mBtn, width: 36, padding: '6px', fontWeight: 700, fontSize: 14 }}
+      >
+        ?
       </button>
     </div>
   );
