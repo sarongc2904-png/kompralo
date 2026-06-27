@@ -54,4 +54,7 @@ export interface InvitationSnapshot {
   // Plan and media selection state
   planId?: string;
   selectedVideoId?: string;
+  storySectionTitle?: string;
+  storySectionEyebrow?: string;
+  storySlidesJson?: string;
 }

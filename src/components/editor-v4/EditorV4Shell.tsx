@@ -87,6 +87,15 @@ export function EditorV4Shell({
         };
       }
 
+      if (sectionId === 'story' && invitationSnapshot) {
+        meta = {
+          slug:          invitationSnapshot.slug              ?? slug,
+          sectionTitle:  invitationSnapshot.storySectionTitle  ?? '',
+          sectionEyebrow: invitationSnapshot.storySectionEyebrow ?? '',
+          slidesJson:    invitationSnapshot.storySlidesJson    ?? '[]',
+        };
+      }
+
       const section = INVITATION_SECTIONS.find((s) => s.id === sectionId);
       setSelectedElement({
         type: EDITOR_V4_ELEMENT_SELECTED,

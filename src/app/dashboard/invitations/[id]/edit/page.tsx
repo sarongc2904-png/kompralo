@@ -327,6 +327,16 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           wazeLink:         invitation.location?.wazeLink         ?? undefined,
           eventLabel:       invitation.hero?.eventLabel           ?? undefined,
           connectorText:    invitation.hero?.connectorText        ?? undefined,
+          storySectionTitle:  invitation.story?.sectionTitle       ?? undefined,
+          storySectionEyebrow: invitation.story?.sectionEyebrow    ?? undefined,
+          storySlidesJson: JSON.stringify(invitation.story?.slides.map((s) => ({
+            id:       s.id,
+            title:    s.title,
+            subtitle: s.subtitle ?? '',
+            text:     s.text,
+            imageUrl: s.imageUrl,
+            date:     s.date ?? '',
+          })) ?? []),
         }}
       />
     );
