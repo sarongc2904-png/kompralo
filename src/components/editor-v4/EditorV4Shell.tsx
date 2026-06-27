@@ -31,8 +31,10 @@ export function EditorV4Shell({
   const [canvasMode, setCanvasMode] = useState<EditorV4CanvasMode>('normal');
   const { selectedElement, setSelectedElement, clearSelection } = useEditorV4Selection();
 
-  // Mobile-only: bottom sheet open state
-  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
+  // Mobile-only sheet open state — never touches desktop logic
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+
+  // ── Actions ───────────────────────────────────────────────────────────────
 
   const handleRefresh = useCallback(() => {
     canvasRef.current?.refresh();
@@ -49,43 +51,46 @@ export function EditorV4Shell({
         fieldPath: 'intro',
         label: 'Intro Cinematográfico',
       });
-      setMobileInspectorOpen(true);
+      // Only open the bottom sheet when actually on mobile
+      if (isMobile) setMobileSheetOpen(true);
     } else {
-      setCanvasMode('normal');
+      // Switching to any other section resets intro canvas
+      if (canvasMode === 'intro') setCanvasMode('normal');
       canvasRef.current?.scrollToSection(sectionId);
     }
-  }, [setSelectedElement]);
+  }, [setSelectedElement, isMobile, canvasMode]);
 
   const handleSaved = useCallback(() => {
     setTimeout(() => canvasRef.current?.refresh(), 400);
   }, []);
 
-  const handleClearSelection = useCallback(() => {
+  // Desktop ×: clears selection AND resets canvas mode
+  const handleDesktopClear = useCallback(() => {
     clearSelection();
     setCanvasMode('normal');
-    setMobileInspectorOpen(false);
   }, [clearSelection]);
 
-  // Open mobile sheet when a new element is selected
+  // Mobile sheet close: hides the sheet UI only — does NOT reset canvas or deselect
+  const handleMobileSheetClose = useCallback(() => {
+    setMobileSheetOpen(false);
+  }, []);
+
+  // Open mobile sheet whenever a new element is selected (mobile only)
   const prevSelected = useRef(selectedElement);
   if (selectedElement && selectedElement !== prevSelected.current) {
     prevSelected.current = selectedElement;
-    if (isMobile) setMobileInspectorOpen(true);
+    if (isMobile) setMobileSheetOpen(true);
   }
   if (!selectedElement && prevSelected.current) {
     prevSelected.current = null;
+    setMobileSheetOpen(false);
   }
 
-  const inspectorProps = {
-    selectedElement,
-    onClear: handleClearSelection,
-    invitationId,
-    onSaved: handleSaved,
-  };
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#F0EBE3' }}>
-      {/* ── Toolbar ── */}
+      {/* Toolbar */}
       <EditorV4Toolbar
         invitationTitle={invitationTitle}
         slug={slug}
@@ -94,10 +99,10 @@ export function EditorV4Shell({
         classicEditorUrl={classicEditorUrl}
       />
 
-      {/* ── Main area ── */}
+      {/* Main area */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
 
-        {/* Left panel — desktop only */}
+        {/* Left panel — desktop only, JS-gated */}
         {!isMobile && (
           <div style={{
             width: PANEL_WIDTH_LEFT,
@@ -112,12 +117,12 @@ export function EditorV4Shell({
           </div>
         )}
 
-        {/* Canvas — always visible */}
+        {/* Canvas — always */}
         <div style={{ flex: 1, minWidth: 0, position: 'relative', overflow: 'hidden' }}>
           <EditorV4Canvas ref={canvasRef} invitationId={invitationId} mode={canvasMode} />
         </div>
 
-        {/* Right inspector panel — desktop only */}
+        {/* Right inspector — desktop only, JS-gated */}
         {!isMobile && (
           <div style={{
             width: PANEL_WIDTH_RIGHT,
@@ -127,13 +132,18 @@ export function EditorV4Shell({
             display: 'flex',
             flexDirection: 'column',
           }}>
-            <EditorV4Inspector {...inspectorProps} />
+            <EditorV4Inspector
+              selectedElement={selectedElement}
+              onClear={handleDesktopClear}
+              invitationId={invitationId}
+              onSaved={handleSaved}
+            />
           </div>
         )}
       </div>
 
-      {/* ── Mobile: Inspector bottom sheet (mobile only, JS-gated) ── */}
-      {isMobile && mobileInspectorOpen && selectedElement && (
+      {/* Mobile bottom sheet — JS-gated: only renders when isMobile is true */}
+      {isMobile && mobileSheetOpen && selectedElement && (
         <div style={{
           position: 'fixed',
           bottom: 0,
@@ -149,21 +159,25 @@ export function EditorV4Shell({
           flexDirection: 'column',
           overflow: 'hidden',
         }}>
-          {/* Drag handle */}
           <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 4px', flexShrink: 0 }}>
             <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(200,167,93,0.3)' }} />
           </div>
-
           <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
-            <EditorV4Inspector {...inspectorProps} isMobileSheet />
+            <EditorV4Inspector
+              selectedElement={selectedElement}
+              onClear={handleMobileSheetClose}
+              invitationId={invitationId}
+              onSaved={handleSaved}
+              isMobileSheet
+            />
           </div>
         </div>
       )}
 
-      {/* ── Mobile: backdrop (mobile only, JS-gated) ── */}
-      {isMobile && mobileInspectorOpen && (
+      {/* Mobile backdrop — JS-gated */}
+      {isMobile && mobileSheetOpen && (
         <div
-          onClick={handleClearSelection}
+          onClick={handleMobileSheetClose}
           style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(26,20,16,0.3)' }}
         />
       )}
