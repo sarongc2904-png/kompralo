@@ -305,7 +305,7 @@ export default function CinematicIntro({
       */}
       <div
         className="relative min-h-full flex items-center justify-center"
-        style={{ paddingTop: 'clamp(48px, 8vh, 96px)', paddingBottom: 'clamp(48px, 8vh, 96px)' }}
+        style={{ paddingTop: 'clamp(16px, 4vh, 48px)', paddingBottom: 'clamp(16px, 4vh, 48px)' }}
       >
 
       {/* Content */}
@@ -316,7 +316,7 @@ export default function CinematicIntro({
           initial={{ opacity: 0.55, y: 0 }}
           animate={{ opacity: 0.55, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-7"
+          className="mb-4"
         >
           <svg width="60" height="28" viewBox="0 0 60 28" fill="none">
             <line x1="0"  y1="14" x2="22" y2="14" stroke="#C5A880" strokeWidth="0.7" />
@@ -357,7 +357,7 @@ export default function CinematicIntro({
           initial={{ opacity: 0.75 }}
           animate={{ opacity: 0.75 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className={`text-sm tracking-widest uppercase mb-10 ${theme.bodyText} ${theme.bodyFont}`}
+          className={`text-sm tracking-widest uppercase mb-6 ${theme.bodyText} ${theme.bodyFont}`}
         >
           {formattedDate} — {subtitle}
         </motion.p>
