@@ -104,6 +104,13 @@ export function EditorV4Shell({
         };
       }
 
+      if (sectionId === 'dresscode' && invitationSnapshot) {
+        meta = {
+          slug:         invitationSnapshot.slug         ?? slug,
+          dressCodeJson: invitationSnapshot.dressCodeJson ?? '{}',
+        };
+      }
+
       if (sectionId === 'location' && invitationSnapshot) {
         meta = {
           slug:           invitationSnapshot.slug           ?? slug,
