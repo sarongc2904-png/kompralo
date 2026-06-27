@@ -104,6 +104,14 @@ export function EditorV4Shell({
         };
       }
 
+      if (sectionId === 'location' && invitationSnapshot) {
+        meta = {
+          slug:           invitationSnapshot.slug           ?? slug,
+          googleMapsLink: invitationSnapshot.googleMapsLink ?? '',
+          wazeLink:       invitationSnapshot.wazeLink       ?? '',
+        };
+      }
+
       const section = INVITATION_SECTIONS.find((s) => s.id === sectionId);
       setSelectedElement({
         type: EDITOR_V4_ELEMENT_SELECTED,
