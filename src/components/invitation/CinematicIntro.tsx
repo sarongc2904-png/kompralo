@@ -287,18 +287,26 @@ export default function CinematicIntro({
   if (isDismissed) return null;
 
   return (
-    <div 
-      ref={containerRef} 
+    <div
+      ref={containerRef}
       onClick={handleOpen}
       onTouchStart={handleOpen}
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto cursor-pointer"
+      className="fixed inset-0 z-[9999] overflow-y-auto cursor-pointer"
     >
-      {/* Curtains */}
-      <div ref={leftCurtainRef}  className={`absolute inset-y-0 left-0 w-1/2 ${theme.bodyBg} border-r ${theme.cardBorder}`} />
-      <div ref={rightCurtainRef} className={`absolute inset-y-0 right-0 w-1/2 ${theme.bodyBg}`} />
+      {/* Curtains — fixed to the viewport, behind scrollable content */}
+      <div ref={leftCurtainRef}  className={`fixed inset-y-0 left-0 w-1/2 ${theme.bodyBg} border-r ${theme.cardBorder}`} />
+      <div ref={rightCurtainRef} className={`fixed inset-y-0 right-0 w-1/2 ${theme.bodyBg}`} />
+
+      {/*
+        Centering wrapper: min-h-full so it fills the viewport when content is short
+        (flex centering works), but grows taller when content overflows (scroll works).
+        This avoids the classic overflow-y:auto + flex:center issue where the top
+        of overflowing centered content ends up above y=0 and is unreachable.
+      */}
+      <div className="relative min-h-full flex items-center justify-center py-12 sm:py-16 md:py-20">
 
       {/* Content */}
-      <div ref={contentRef} className="relative z-20 max-w-lg w-full px-6 py-10 md:py-16 text-center flex flex-col items-center select-none">
+      <div ref={contentRef} className="relative z-20 max-w-lg w-full px-6 text-center flex flex-col items-center select-none">
 
         {/* Decorative ornament top */}
         <motion.div
@@ -358,6 +366,7 @@ export default function CinematicIntro({
 
 
       </div>
+      </div>{/* end centering wrapper */}
     </div>
   );
 }
