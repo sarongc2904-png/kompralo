@@ -157,6 +157,28 @@ function HeroImageUploader({
   const [savedOk,    setSavedOk]    = useState(false);
   const [previewUrl, setPreviewUrl] = useState(currentImageUrl);
 
+  async function handleRemoveImage() {
+    setUploadErr(null);
+    setSavedOk(false);
+    try {
+      await updateInvitationMediaInfo({
+        id:           invitationId,
+        slug,
+        heroImageUrl:  '',
+        heroVideoUrl:  currentVideoUrl,
+        youtubeUrl:    currentYoutubeUrl,
+        musicUrl:      currentMusicUrl,
+        musicTitle:    currentMusicTitle,
+        googleMapsUrl: currentGoogleMapsLink,
+        wazeUrl:       currentWazeLink,
+      });
+      setPreviewUrl('');
+      onSaved();
+    } catch (err) {
+      setUploadErr(err instanceof Error ? err.message : 'Error al eliminar la imagen.');
+    }
+  }
+
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -210,6 +232,7 @@ function HeroImageUploader({
           </div>
         )}
 
+        <div style={{ flex: 1, display: 'flex', gap: 8 }}>
         <button
           type="button"
           disabled={uploading}
@@ -241,6 +264,26 @@ function HeroImageUploader({
             '📷 Subir foto'
           )}
         </button>
+
+        {previewUrl && !uploading && (
+          <button
+            type="button"
+            onClick={handleRemoveImage}
+            style={{
+              background: 'none',
+              border: '1px solid #e0d0c0',
+              borderRadius: 6,
+              padding: '6px 12px',
+              fontSize: 12,
+              color: '#999',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            Eliminar
+          </button>
+        )}
+        </div>
       </div>
 
       {uploadErr && (
