@@ -69,6 +69,7 @@ function FullBleedIframe({
           display: 'block',
           touchAction: 'pan-y',
           overscrollBehavior: 'contain',
+          WebkitOverflowScrolling: 'touch',
         } as React.CSSProperties}
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         onLoad={onLoad}
@@ -172,7 +173,7 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
     // ── Mobile OR desktop intro: full-bleed — no device frame, no radius, no clip ──
     if (isFullBleed) {
       return (
-        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#1A1410' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#1A1410', overflow: 'hidden' }}>
           <FullBleedIframe
             iframeRef={iframeRef}
             src={currentUrl}

@@ -63,5 +63,8 @@ export interface InvitationSnapshot {
   parentsJson?: string;
   padrinosJson?: string;
   hotelsJson?: string;
+  itineraryJson?: string;
+  timelineJson?: string;
+  giftRegistryJson?: string;
   hiddenSections?: string[];
 }

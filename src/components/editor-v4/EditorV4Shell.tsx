@@ -159,15 +159,26 @@ export function EditorV4Shell({
 
       if (sectionId === 'gifts' && invitationSnapshot) {
         meta = {
-          slug:     invitationSnapshot.slug ?? slug,
-          isHidden: String((invitationSnapshot.hiddenSections ?? []).includes('gifts')),
+          slug:             invitationSnapshot.slug ?? slug,
+          planId:           invitationSnapshot.planId ?? '',
+          giftRegistryJson: invitationSnapshot.giftRegistryJson ?? '[]',
+          isHidden:         String((invitationSnapshot.hiddenSections ?? []).includes('gifts')),
         };
       }
 
       if (sectionId === 'itinerary' && invitationSnapshot) {
         meta = {
-          slug:     invitationSnapshot.slug ?? slug,
-          isHidden: String((invitationSnapshot.hiddenSections ?? []).includes('itinerary')),
+          slug:          invitationSnapshot.slug ?? slug,
+          itineraryJson: invitationSnapshot.itineraryJson ?? '[]',
+          isHidden:      String((invitationSnapshot.hiddenSections ?? []).includes('itinerary')),
+        };
+      }
+
+      if (sectionId === 'timeline' && invitationSnapshot) {
+        meta = {
+          slug:         invitationSnapshot.slug ?? slug,
+          planId:       invitationSnapshot.planId ?? '',
+          timelineJson: invitationSnapshot.timelineJson ?? '[]',
         };
       }
 
