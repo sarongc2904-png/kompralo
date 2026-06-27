@@ -73,6 +73,13 @@ export default function Hero({
   const textOpacity = useTransform(smooth, [0, 0.65], [1, 0]);
   const textScale   = useTransform(smooth, [0, 0.65], [1, 0.94]);
 
+  // In the editor canvas the section fills a fixed device-frame with no real scroll,
+  // so textY can produce a large negative translateY that overflow:hidden clips.
+  // Freeze all text transforms to their at-rest (scroll=0) values in editor mode.
+  const effectiveTextY       = editablePreview ? 0         : textY;
+  const effectiveTextOpacity = editablePreview ? 1         : textOpacity;
+  const effectiveTextScale   = editablePreview ? 1         : textScale;
+
   // Date formatting
   const dateObj     = new Date(eventDate);
   const formattedDate = dateObj.toLocaleDateString('es-ES', {
@@ -239,19 +246,15 @@ export default function Hero({
       {/* ── Layer 3: Content (fastest — floats toward viewer) ───────────── */}
       <motion.div
         style={{
-          y: textY,
-          opacity: textOpacity,
-          scale: textScale,
+          y: effectiveTextY,
+          opacity: effectiveTextOpacity,
+          scale: effectiveTextScale,
           position: 'absolute', inset: 0,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'flex-end',
           paddingBottom: 'clamp(48px, 8vh, 88px)',
-          // In the editor canvas the hero fills a fixed-size device frame; without a
-          // top safe-area the eyebrow text ("NUESTRA BODA") can end up at y≈0 and be
-          // clipped by the section's overflow:hidden.
-          paddingTop: editablePreview ? 'clamp(48px, 8vh, 96px)' : undefined,
           willChange: 'transform, opacity',
         }}
       >
