@@ -308,6 +308,14 @@ export default async function EditInvitationPage({ params, searchParams }: Props
         invitationTitle={invitation.title}
         slug={invitation.slug}
         classicEditorUrl={classicUrl}
+        invitationSnapshot={{
+          eventDate:        invitation.eventDate        ?? undefined,
+          eventTime:        invitation.eventTime        ?? undefined,
+          protagonist1Name: invitation.protagonists?.[0]?.name ?? undefined,
+          protagonist2Name: invitation.protagonists?.[1]?.name ?? undefined,
+          venueName:        invitation.location?.venueName     ?? undefined,
+          emotionalPhrase:  invitation.hero?.emotionalPhrase   ?? undefined,
+        }}
       />
     );
   }
