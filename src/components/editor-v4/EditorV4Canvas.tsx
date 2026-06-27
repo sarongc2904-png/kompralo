@@ -133,10 +133,12 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
         setLoading(true);
         const onLoad = () => {
           iframe.removeEventListener('load', onLoad);
-          iframe.contentWindow?.postMessage(
-            { type: 'KOMPRALO_SCROLL_TO_SECTION', sectionId },
-            window.location.origin,
-          );
+          setTimeout(() => {
+            iframe.contentWindow?.postMessage(
+              { type: 'KOMPRALO_SCROLL_TO_SECTION', sectionId },
+              window.location.origin,
+            );
+          }, 1500);
         };
         iframe.addEventListener('load', onLoad);
         iframe.src = currentUrl;
