@@ -313,6 +313,10 @@ export default function CinematicIntro({
       <div ref={contentRef} className="relative z-20 max-w-lg w-full px-6 text-center flex flex-col items-center select-none"
         style={{ outline: '2px solid blue', background: 'rgba(0,0,255,.08)' }}
       >
+        {/* DEBUG MARKER — remove after diagnosis */}
+        <p style={{ color: 'yellow', fontSize: 10, fontFamily: 'monospace', marginBottom: 8, zIndex: 9999, position: 'relative' }}>
+          DEBUG INTRO COMPONENT ACTIVE
+        </p>
 
         {/* Decorative ornament top */}
         <motion.div
