@@ -137,6 +137,7 @@ export function EditorV4Shell({
           slug:       invitationSnapshot.slug       ?? slug,
           planId:     invitationSnapshot.planId     ?? '',
           parentsJson: invitationSnapshot.parentsJson ?? '{}',
+          isHidden:   String((invitationSnapshot.hiddenSections ?? []).includes('parents')),
         };
       }
 
@@ -145,6 +146,35 @@ export function EditorV4Shell({
           slug:        invitationSnapshot.slug        ?? slug,
           planId:      invitationSnapshot.planId      ?? '',
           padrinosJson: invitationSnapshot.padrinosJson ?? '[]',
+          isHidden:    String((invitationSnapshot.hiddenSections ?? []).includes('padrinos')),
+        };
+      }
+
+      if (sectionId === 'hashtag' && invitationSnapshot) {
+        meta = {
+          slug:     invitationSnapshot.slug ?? slug,
+          isHidden: String((invitationSnapshot.hiddenSections ?? []).includes('hashtag')),
+        };
+      }
+
+      if (sectionId === 'gifts' && invitationSnapshot) {
+        meta = {
+          slug:     invitationSnapshot.slug ?? slug,
+          isHidden: String((invitationSnapshot.hiddenSections ?? []).includes('gifts')),
+        };
+      }
+
+      if (sectionId === 'itinerary' && invitationSnapshot) {
+        meta = {
+          slug:     invitationSnapshot.slug ?? slug,
+          isHidden: String((invitationSnapshot.hiddenSections ?? []).includes('itinerary')),
+        };
+      }
+
+      if (sectionId === 'hotels' && invitationSnapshot) {
+        meta = {
+          slug:     invitationSnapshot.slug ?? slug,
+          isHidden: String((invitationSnapshot.hiddenSections ?? []).includes('hotels')),
         };
       }
 
@@ -253,7 +283,11 @@ export function EditorV4Shell({
             background: '#FAF7F2', overflowY: 'auto',
             display: 'flex', flexDirection: 'column',
           }}>
-            <EditorV4LayersPanel onScrollTo={handleScrollTo} activeSection={activeSection} />
+            <EditorV4LayersPanel
+              onScrollTo={handleScrollTo}
+              activeSection={activeSection}
+              hiddenSections={invitationSnapshot?.hiddenSections}
+            />
           </div>
         )}
 

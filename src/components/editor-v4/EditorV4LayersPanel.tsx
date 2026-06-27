@@ -6,9 +6,10 @@ interface EditorV4LayersPanelProps {
   /** Scroll the canvas iframe to a section by id */
   onScrollTo?: (sectionId: string) => void;
   activeSection?: string | null;
+  hiddenSections?: string[];
 }
 
-export function EditorV4LayersPanel({ onScrollTo, activeSection }: EditorV4LayersPanelProps) {
+export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections = [] }: EditorV4LayersPanelProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
       {/* Header */}
@@ -26,6 +27,7 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection }: EditorV4Layer
       <nav style={{ flex: 1, padding: '8px 0' }}>
         {INVITATION_SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
+          const isHidden = hiddenSections.includes(section.id);
           return (
             <button
               key={section.id}
@@ -43,6 +45,7 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection }: EditorV4Layer
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'background 120ms',
+                opacity: isHidden ? 0.45 : 1,
               }}
               onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(200,167,93,0.06)'; }}
               onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
@@ -54,9 +57,13 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection }: EditorV4Layer
                 fontSize: 12,
                 color: isActive ? '#C5A880' : '#5C4A3E',
                 fontWeight: isActive ? 600 : 400,
+                flex: 1,
               }}>
                 {section.label}
               </span>
+              {isHidden && (
+                <span style={{ fontSize: 10, color: '#9B8878' }} title="Sección oculta">🙈</span>
+              )}
             </button>
           );
         })}

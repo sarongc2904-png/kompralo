@@ -1444,6 +1444,49 @@ export async function updateFeatureOverrides(
 }
 
 // =============================================================================
+// updateSectionVisibility
+// =============================================================================
+
+export interface UpdateSectionVisibilityInput {
+  id: string;
+  slug: string;
+  sectionId: string;
+  hidden: boolean;
+}
+
+export async function updateSectionVisibility(
+  input: UpdateSectionVisibilityInput,
+): Promise<UpdateInvitationResult> {
+  const { id, slug, sectionId, hidden } = input;
+
+  const inv = await invitationRepository.getById(id);
+  if (!inv) return { success: false, error: 'Invitación no encontrada.' };
+
+  const currentOverrides: FeatureOverrides = (inv.featureOverrides as FeatureOverrides) ?? {};
+  const currentHidden = currentOverrides.hiddenSections ?? [];
+
+  const newHidden = hidden
+    ? currentHidden.includes(sectionId) ? currentHidden : [...currentHidden, sectionId]
+    : currentHidden.filter((s) => s !== sectionId);
+
+  const newOverrides: FeatureOverrides = { ...currentOverrides, hiddenSections: newHidden };
+
+  try {
+    await invitationRepository.updateFeatureOverrides(id, newOverrides);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[Editor] updateSectionVisibility error:', message);
+    return { success: false, error: `Error al guardar visibilidad: ${message}` };
+  }
+
+  revalidatePath(`/i/${slug}`);
+  revalidatePath(`/preview/${id}`);
+  revalidatePath(`/dashboard/invitations/${id}/edit`);
+
+  return { success: true, message: hidden ? 'Sección oculta.' : 'Sección visible.' };
+}
+
+// =============================================================================
 // updateThemeSelection
 // =============================================================================
 

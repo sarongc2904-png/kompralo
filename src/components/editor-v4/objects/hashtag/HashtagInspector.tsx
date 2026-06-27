@@ -2,8 +2,11 @@
 
 import React from 'react';
 import type { InspectorProps } from '../../core/editor-types';
+import { SectionVisibilityToggle } from '../../components/SectionVisibilityToggle';
 
-export function HashtagInspector({ isMobileSheet }: InspectorProps) {
+export function HashtagInspector({ element, invitationId, isMobileSheet, onSaved }: InspectorProps) {
+  const slug     = element.meta?.slug     ?? '';
+  const isHidden = element.meta?.isHidden === 'true';
   return (
     <div style={{
       display: 'flex',
@@ -14,6 +17,14 @@ export function HashtagInspector({ isMobileSheet }: InspectorProps) {
       {!isMobileSheet && (
         <div style={{ height: 1, background: 'rgba(200,167,93,0.15)', marginBottom: 4 }} />
       )}
+
+      <SectionVisibilityToggle
+        sectionId="hashtag"
+        hidden={isHidden}
+        invitationId={invitationId}
+        slug={slug}
+        onSaved={onSaved}
+      />
 
       <div style={{
         background: 'rgba(200,167,93,0.07)',

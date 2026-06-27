@@ -62,4 +62,5 @@ export interface InvitationSnapshot {
   finalMessageJson?: string;
   parentsJson?: string;
   padrinosJson?: string;
+  hiddenSections?: string[];
 }

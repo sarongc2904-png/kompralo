@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import type { InspectorProps } from '../../core/editor-types';
 import type { PadrinoIcon } from '@/domain/invitations';
 import { updateInvitationPadrinos } from '@/app/dashboard/invitations/[id]/edit/actions';
+import { SectionVisibilityToggle } from '../../components/SectionVisibilityToggle';
 
 // ─── Icon options ─────────────────────────────────────────────────────────────
 
@@ -81,8 +82,9 @@ export function PadrinosInspector({
   isMobileSheet,
   onSaved,
 }: InspectorProps) {
-  const planId = element.meta?.planId ?? '';
-  const slug   = element.meta?.slug   ?? '';
+  const planId   = element.meta?.planId   ?? '';
+  const slug     = element.meta?.slug     ?? '';
+  const isHidden = element.meta?.isHidden === 'true';
   const isDeluxe = planId === 'deluxe';
 
   const [items,   setItems]   = useState<PadrinoEntry[]>(() => parsePadrinos(element.meta?.padrinosJson));
@@ -161,6 +163,17 @@ export function PadrinosInspector({
     }}>
       {!isMobileSheet && (
         <div style={{ height: 1, background: 'rgba(200,167,93,0.15)', marginBottom: 4 }} />
+      )}
+
+      {/* Visibility toggle */}
+      {isDeluxe && (
+        <SectionVisibilityToggle
+          sectionId="padrinos"
+          hidden={isHidden}
+          invitationId={invitationId}
+          slug={slug}
+          onSaved={onSaved}
+        />
       )}
 
       {/* Plan gate */}

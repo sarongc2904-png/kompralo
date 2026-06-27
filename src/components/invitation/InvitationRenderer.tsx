@@ -2,7 +2,7 @@
 
 import React, { useEffect, useCallback } from 'react';
 import type { InvitationContent } from '@/domain/invitations/types';
-import type { InvitationFeatures, InvitationPlan } from '@/domain/plans/types';
+import type { InvitationFeatureKey, InvitationFeatures, InvitationPlan } from '@/domain/plans/types';
 import { createThemeCssVariables, type Theme } from '@/domain/themes/types';
 import { resolveTheme, ThemeProviderV2 } from '@/domain/themes-v2';
 import { ivoryEditorialThemeV1 } from '@/domain/themes-v2/themes/ivory-editorial';
@@ -112,6 +112,26 @@ export default function InvitationRenderer({
 }: InvitationRendererProps) {
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
+
+  // User-controlled section visibility — overrides plan-level feature flags.
+  const hiddenSections: string[] = (invitation.featureOverrides as { hiddenSections?: string[] } | undefined)?.hiddenSections ?? [];
+  const SECTION_FEATURE_MAP: Partial<Record<string, InvitationFeatureKey>> = {
+    parents:   'showParents',
+    padrinos:  'showPadrinos',
+    hashtag:   'showHashtag',
+    gifts:     'showGiftRegistry',
+    itinerary: 'showItinerary',
+    hotels:    'showAccommodation',
+  };
+  const effectiveFeatures: InvitationFeatures = hiddenSections.length === 0
+    ? features
+    : (() => {
+        const ef = { ...features };
+        for (const [sid, fKey] of Object.entries(SECTION_FEATURE_MAP)) {
+          if (fKey && hiddenSections.includes(sid)) ef[fKey] = false;
+        }
+        return ef;
+      })();
 
   // Derive display names for components that accept brideName/groomName props.
   // Role-based lookup (novia/bride first, novio/groom second) takes priority over index order.
@@ -395,7 +415,7 @@ export default function InvitationRenderer({
           </S>
         )}
 
-      <FeatureGate feature="showParents" features={features}>
+      <FeatureGate feature="showParents" features={effectiveFeatures}>
         <S id="parents">
           <Parents
             parents={invitation.parents}
@@ -441,7 +461,7 @@ export default function InvitationRenderer({
         </S>
       </FeatureGate>
 
-      <FeatureGate feature="showItinerary" features={features}>
+      <FeatureGate feature="showItinerary" features={effectiveFeatures}>
         <S id="itinerary">
           <Itinerary
             items={invitation.itinerary}
@@ -469,7 +489,7 @@ export default function InvitationRenderer({
         </S>
       </FeatureGate>
 
-      <FeatureGate feature="showGiftRegistry" features={features}>
+      <FeatureGate feature="showGiftRegistry" features={effectiveFeatures}>
         <S id="gifts">
           <GiftRegistry
             items={invitation.giftRegistry.items}
@@ -482,7 +502,7 @@ export default function InvitationRenderer({
         </S>
       </FeatureGate>
 
-      <FeatureGate feature="showPadrinos" features={features}>
+      <FeatureGate feature="showPadrinos" features={effectiveFeatures}>
         <S id="padrinos">
           <Padrinos
             padrinos={invitation.padrinos}
@@ -494,7 +514,7 @@ export default function InvitationRenderer({
         </S>
       </FeatureGate>
 
-      <FeatureGate feature="showAccommodation" features={features}>
+      <FeatureGate feature="showAccommodation" features={effectiveFeatures}>
         <S id="hotels">
           <Hospedaje
             hotels={invitation.hotels}
@@ -506,7 +526,7 @@ export default function InvitationRenderer({
         </S>
       </FeatureGate>
 
-      <FeatureGate feature="showHashtag" features={features}>
+      <FeatureGate feature="showHashtag" features={effectiveFeatures}>
         <S id="hashtag">
           <Hashtag
             social={invitation.social}

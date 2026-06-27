@@ -354,6 +354,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
               names: p.names ?? [],
             })) ?? []
           ),
+          hiddenSections:   (invitation.featureOverrides as { hiddenSections?: string[] } | undefined)?.hiddenSections ?? [],
         }}
       />
     );

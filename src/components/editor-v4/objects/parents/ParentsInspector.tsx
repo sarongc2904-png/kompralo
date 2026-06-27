@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { InspectorProps } from '../../core/editor-types';
+import { SectionVisibilityToggle } from '../../components/SectionVisibilityToggle';
 
 interface ParentsData {
   brideFather: string;
@@ -45,9 +46,11 @@ const emptyStyle: React.CSSProperties = {
   fontStyle: 'italic',
 };
 
-export function ParentsInspector({ element, isMobileSheet }: InspectorProps) {
-  const planId = element.meta?.planId ?? '';
-  const parents = parseParents(element.meta?.parentsJson);
+export function ParentsInspector({ element, invitationId, isMobileSheet, onSaved }: InspectorProps) {
+  const planId   = element.meta?.planId   ?? '';
+  const slug     = element.meta?.slug     ?? '';
+  const isHidden = element.meta?.isHidden === 'true';
+  const parents  = parseParents(element.meta?.parentsJson);
 
   const isDeluxe = planId === 'deluxe';
 
@@ -60,6 +63,17 @@ export function ParentsInspector({ element, isMobileSheet }: InspectorProps) {
     }}>
       {!isMobileSheet && (
         <div style={{ height: 1, background: 'rgba(200,167,93,0.15)', marginBottom: 4 }} />
+      )}
+
+      {/* Visibility toggle */}
+      {isDeluxe && (
+        <SectionVisibilityToggle
+          sectionId="parents"
+          hidden={isHidden}
+          invitationId={invitationId}
+          slug={slug}
+          onSaved={onSaved}
+        />
       )}
 
       {/* Plan gate */}

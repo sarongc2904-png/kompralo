@@ -97,7 +97,7 @@ export type InvitationFeatureKey =
 
 export type InvitationFeatures = Record<InvitationFeatureKey, boolean>;
 
-export type FeatureOverrides = Partial<InvitationFeatures>;
+export type FeatureOverrides = Partial<InvitationFeatures> & { hiddenSections?: string[] };
 
 export interface InvitationPlan {
   id: PlanId;
