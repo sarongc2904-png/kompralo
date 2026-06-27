@@ -52,7 +52,7 @@ export function HeroInspector({
     const value = drafts[key] ?? '';
 
     if (key === 'date' || key === 'time') {
-      // Save date+time together
+      // Structural change — full reload so Countdown, Itinerary etc. update
       await save(
         'datetime',
         () => updateEventDateTime({
@@ -60,7 +60,7 @@ export function HeroInspector({
           eventDate: key === 'date' ? value : drafts['date'] ?? element.meta?.date ?? '',
           eventTime: key === 'time' ? value : drafts['time'] ?? element.meta?.time ?? '',
         }),
-        onSaved,
+        () => onSaved(), // no args → reload
       );
       return;
     }
@@ -70,7 +70,7 @@ export function HeroInspector({
     await save(
       key,
       () => updateInlineEditableText({ id: invitationId, fieldPath, value }),
-      onSaved,
+      () => onSaved(fieldPath, value), // text → postMessage, no reload
     );
   }
 

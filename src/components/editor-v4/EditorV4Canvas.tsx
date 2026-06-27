@@ -7,6 +7,8 @@ export type EditorV4CanvasMode = 'normal' | 'intro';
 export interface EditorV4CanvasHandle {
   refresh: () => void;
   scrollToSection: (sectionId: string) => void;
+  /** Push a field value change into the live iframe without reloading */
+  sendFieldUpdate: (fieldPath: string, value: string) => void;
 }
 
 interface EditorV4CanvasProps {
@@ -43,6 +45,12 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       scrollToSection(sectionId: string) {
         iframeRef.current?.contentWindow?.postMessage(
           { type: 'KOMPRALO_SCROLL_TO_SECTION', sectionId },
+          window.location.origin,
+        );
+      },
+      sendFieldUpdate(fieldPath: string, value: string) {
+        iframeRef.current?.contentWindow?.postMessage(
+          { type: 'EDITOR_V4_FIELD_SAVED', fieldPath, value },
           window.location.origin,
         );
       },

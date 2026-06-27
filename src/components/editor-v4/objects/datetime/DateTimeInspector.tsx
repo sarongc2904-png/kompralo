@@ -56,7 +56,7 @@ export function DateTimeInspector({
         onClick={() => save(
           'event',
           () => updateEventDateTime({ id: invitationId, eventDate: date, eventTime: time }),
-          onSaved,
+          () => onSaved(), // structural — reload so Countdown/Itinerary refresh
         )}
         disabled={saving || !isDirty}
         style={{

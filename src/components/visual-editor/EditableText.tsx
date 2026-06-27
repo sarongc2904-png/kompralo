@@ -74,6 +74,28 @@ export function EditableText({
     if (isEditable) ensurePlaceholderStyle();
   }, [isEditable]);
 
+  // Listen for field updates pushed from the parent editor frame.
+  // When the V4 inspector saves a text field it sends EDITOR_V4_FIELD_SAVED
+  // instead of reloading the iframe, so the scroll position is preserved.
+  useEffect(() => {
+    if (!isEditable) return;
+    function handleFieldSaved(event: MessageEvent) {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type !== 'EDITOR_V4_FIELD_SAVED') return;
+      if (event.data.fieldPath !== fieldPath) return;
+      const el = ref.current;
+      if (!el) return;
+      // Don't overwrite a field the user is actively editing
+      if (document.activeElement === el) return;
+      const newValue = String(event.data.value ?? '');
+      el.textContent = newValue;
+      originalValueRef.current = newValue;
+      syncEmptyAttr(el);
+    }
+    window.addEventListener('message', handleFieldSaved);
+    return () => window.removeEventListener('message', handleFieldSaved);
+  }, [isEditable, fieldPath]);
+
   useEffect(() => {
     originalValueRef.current = value ?? '';
     if (ref.current && document.activeElement !== ref.current) {

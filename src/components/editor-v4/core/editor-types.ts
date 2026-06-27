@@ -17,7 +17,14 @@ export interface InspectorProps {
   invitationId: string;
   isMobileSheet: boolean;
   onCancel: () => void;
-  onSaved: () => void;
+  /**
+   * Called after a successful save.
+   * - Text fields: pass (fieldPath, value) so the shell can push the change
+   *   directly into the iframe without a full reload.
+   * - Structural fields (datetime, hero images, …): call with no args to
+   *   signal that the shell should do a full iframe refresh.
+   */
+  onSaved: (fieldPath?: string, value?: string) => void;
 }
 
 /** Invitation data passed at page-load so section inspectors can prefill fields */

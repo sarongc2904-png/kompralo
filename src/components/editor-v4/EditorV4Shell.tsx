@@ -85,13 +85,19 @@ export function EditorV4Shell({
     }
   }, [setSelectedElement, clearSelection, isMobile, canvasMode, invitationSnapshot]);
 
-  const handleSaved = useCallback(() => {
-    // Refresh canvas after save
-    setTimeout(() => canvasRef.current?.refresh(), 400);
+  const handleSaved = useCallback((fieldPath?: string, value?: string) => {
     // Show save status in toolbar for 3 s
     setSaveStatus('saved');
     if (saveStatusTimer.current) clearTimeout(saveStatusTimer.current);
     saveStatusTimer.current = setTimeout(() => setSaveStatus('idle'), 3000);
+
+    if (fieldPath !== undefined && value !== undefined) {
+      // Text field — push change directly into the iframe DOM, no reload
+      canvasRef.current?.sendFieldUpdate(fieldPath, value);
+    } else {
+      // Structural change (datetime, hero section, …) — full iframe refresh
+      setTimeout(() => canvasRef.current?.refresh(), 400);
+    }
   }, []);
 
   const handleDesktopClear = useCallback(() => {

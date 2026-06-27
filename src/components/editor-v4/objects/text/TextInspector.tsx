@@ -43,10 +43,11 @@ export function TextInspector({
   const isSaved = savedKey === element.fieldPath;
 
   async function handleSave() {
+    const savedValue = draft; // capture before any async state change
     await save(
       element.fieldPath,
-      () => updateInlineEditableText({ id: invitationId, fieldPath: element.fieldPath, value: draft }),
-      onSaved,
+      () => updateInlineEditableText({ id: invitationId, fieldPath: element.fieldPath, value: savedValue }),
+      () => onSaved(element.fieldPath, savedValue),
     );
   }
 

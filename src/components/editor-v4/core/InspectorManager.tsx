@@ -8,7 +8,7 @@ interface InspectorManagerProps {
   invitationId: string;
   isMobileSheet?: boolean;
   onClear: () => void;
-  onSaved?: () => void;
+  onSaved?: (fieldPath?: string, value?: string) => void;
 }
 
 export function InspectorManager({
@@ -61,7 +61,7 @@ export function InspectorManager({
             invitationId={invitationId}
             isMobileSheet={isMobileSheet}
             onCancel={onClear}
-            onSaved={onSaved ?? (() => {})}
+            onSaved={onSaved ?? ((_fp, _v) => {})}
           />
         ) : null}
       </div>

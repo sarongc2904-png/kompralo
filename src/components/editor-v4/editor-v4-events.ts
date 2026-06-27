@@ -6,6 +6,17 @@ import type { EditorElement } from './core/editor-types';
 export const EDITOR_V4_ELEMENT_SELECTED   = 'EDITOR_V4_ELEMENT_SELECTED'   as const;
 export const EDITOR_V4_ELEMENT_DESELECTED = 'EDITOR_V4_ELEMENT_DESELECTED' as const;
 
+/**
+ * Sent FROM the parent editor TO the iframe after a successful field save.
+ * EditableText listens for this to update its DOM without a full reload.
+ */
+export const EDITOR_V4_FIELD_SAVED = 'EDITOR_V4_FIELD_SAVED' as const;
+export interface EditorV4FieldSavedEvent {
+  type: typeof EDITOR_V4_FIELD_SAVED;
+  fieldPath: string;
+  value: string;
+}
+
 /** Extends EditorElement with the postMessage discriminant */
 export interface EditorV4ElementSelectedEvent extends EditorElement {
   type: typeof EDITOR_V4_ELEMENT_SELECTED;

@@ -87,11 +87,14 @@ export function IntroInspector({
 
             <button
               type="button"
-              onClick={() => save(
-                field.fieldPath,
-                () => updateInlineEditableText({ id: invitationId, fieldPath: field.fieldPath, value: draft }),
-                onSaved,
-              )}
+              onClick={() => {
+                const savedValue = draft;
+                save(
+                  field.fieldPath,
+                  () => updateInlineEditableText({ id: invitationId, fieldPath: field.fieldPath, value: savedValue }),
+                  () => onSaved(field.fieldPath, savedValue),
+                );
+              }}
               disabled={saving || !isDirty}
               style={{
                 padding: '7px 0', borderRadius: 8, border: 'none',
