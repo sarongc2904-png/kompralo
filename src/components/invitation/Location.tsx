@@ -163,10 +163,17 @@ export default function Location({ location, theme, editablePreview = false }: L
               style={{ borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.20))', opacity: 0.6 }} 
             />
 
-            <div className="w-full h-full relative z-10 rounded-[calc(var(--v2-card-radius,24px)-8px)] overflow-hidden">
+            <div
+              className="w-full h-full relative z-10 rounded-[calc(var(--v2-card-radius,24px)-8px)] overflow-hidden"
+              style={{
+                backgroundImage: "url('/images/invitaciones/mapa.png')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
               <svg
-                className="w-full h-full select-none"
-                style={{ background: 'var(--v2-section-bg-alt, #F5ECD9)' }}
+                className="w-full h-full select-none relative"
+                style={{ background: 'transparent' }}
                 viewBox="0 0 400 300"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
