@@ -83,10 +83,8 @@ export function EditorV4Shell({
             borderRight: '1px solid rgba(200,167,93,0.2)',
             background: '#FAF7F2',
             overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
           }}
-          className="hidden md:flex"
+          className="hidden md:flex flex-col"
         >
           <EditorV4LayersPanel
             onScrollTo={handleScrollTo}
@@ -109,10 +107,8 @@ export function EditorV4Shell({
             flexShrink: 0,
             borderLeft: '1px solid rgba(200,167,93,0.2)',
             background: '#FAF7F2',
-            display: 'flex',
-            flexDirection: 'column',
           }}
-          className="hidden md:flex"
+          className="hidden md:flex flex-col"
         >
           <EditorV4Inspector
             selectedElement={selectedElement}
@@ -126,7 +122,7 @@ export function EditorV4Shell({
       {/* ── Mobile: Inspector bottom sheet ── */}
       {mobileInspectorOpen && selectedElement && (
         <div
-          className="md:hidden"
+          className="md:hidden flex flex-col"
           style={{
             position: 'fixed',
             bottom: 0,
@@ -139,8 +135,6 @@ export function EditorV4Shell({
             boxShadow: '0 -8px 32px rgba(116,84,38,0.15)',
             maxHeight: '60vh',
             overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
           }}
         >
           {/* Drag handle */}
@@ -164,10 +158,7 @@ export function EditorV4Shell({
         <div
           className="md:hidden"
           onClick={handleClearSelection}
-          style={{
-            position: 'fixed', inset: 0, zIndex: 999,
-            background: 'rgba(26,20,16,0.3)',
-          }}
+          style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(26,20,16,0.3)' }}
         />
       )}
     </div>

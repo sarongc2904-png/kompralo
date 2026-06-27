@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { SelectedElement } from './useEditorV4Selection';
 import { TextInspector } from './inspectors/TextInspector';
 
@@ -19,7 +19,14 @@ export function EditorV4Inspector({
   onSaved,
 }: EditorV4InspectorProps) {
   const [saving, setSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [savedField, setSavedField] = useState<string | null>(null);
+
+  // Clear "Guardado" badge when a different element is selected
+  const prevFieldPath = useRef<string | null>(null);
+  if (selectedElement?.fieldPath !== prevFieldPath.current) {
+    prevFieldPath.current = selectedElement?.fieldPath ?? null;
+    if (savedField !== null) setSavedField(null);
+  }
 
   const handleSave = useCallback(async (fieldPath: string, value: string) => {
     setSaving(true);
@@ -34,7 +41,7 @@ export function EditorV4Inspector({
           window.location.origin,
         );
       });
-      setLastSaved(fieldPath);
+      setSavedField(fieldPath);
       onSaved?.();
     } finally {
       setSaving(false);
@@ -93,7 +100,7 @@ export function EditorV4Inspector({
               onCancel={onClear}
               saving={saving}
             />
-            {lastSaved === selectedElement.fieldPath && !saving && (
+            {savedField === selectedElement.fieldPath && !saving && (
               <p style={{ fontSize: 11, color: '#C5A880', textAlign: 'center', marginTop: 10 }}>
                 ✓ Guardado
               </p>
