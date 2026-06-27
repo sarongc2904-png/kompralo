@@ -19,6 +19,52 @@ interface EditorV4CanvasProps {
   isMobile?: boolean;
 }
 
+/** Shared full-bleed iframe used in mobile mode and desktop intro mode */
+function FullBleedIframe({
+  iframeRef,
+  src,
+  title,
+  loading,
+  onLoad,
+}: {
+  iframeRef: React.RefObject<HTMLIFrameElement | null>;
+  src: string;
+  title: string;
+  loading: boolean;
+  onLoad: () => void;
+}) {
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', background: '#1A1410' }}>
+      {loading && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+          justifyContent: 'center', background: '#1A1410', zIndex: 10,
+          fontSize: 12, color: '#9B8878',
+        }}>
+          Cargando…
+        </div>
+      )}
+      <iframe
+        ref={iframeRef}
+        src={src}
+        title={title}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          display: 'block',
+          touchAction: 'pan-y',
+          overscrollBehavior: 'contain',
+        } as React.CSSProperties}
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        onLoad={onLoad}
+      />
+    </div>
+  );
+}
+
 export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasProps>(
   function EditorV4Canvas({ invitationId, mode = 'normal', isMobile = false }, ref) {
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -56,43 +102,22 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       },
     }));
 
-    // ── Mobile: full-bleed iframe, no device frame chrome ──────────────────
-    if (isMobile) {
+    // ── Mobile OR desktop intro: full-bleed — no device frame, no radius, no clip ──
+    // CinematicIntro uses `fixed inset-0` inside the iframe; any border-radius +
+    // overflow:hidden on the wrapper clips the content at the very top edge.
+    if (isMobile || mode === 'intro') {
       return (
-        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#fff' }}>
-          {loading && (
-            <div style={{
-              position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-              justifyContent: 'center', background: '#FAF7F2', zIndex: 10,
-              fontSize: 12, color: '#9B8878',
-            }}>
-              Cargando…
-            </div>
-          )}
-          <iframe
-            ref={iframeRef}
-            src={currentUrl}
-            title="Editor V4 — Vista previa móvil"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              border: 'none',
-              display: 'block',
-              // Ensure touch events reach the iframe on iOS
-              WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
-              touchAction: 'pan-y',
-              overscrollBehavior: 'contain',
-            } as React.CSSProperties}
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            onLoad={() => setLoading(false)}
-          />
-        </div>
+        <FullBleedIframe
+          iframeRef={iframeRef}
+          src={currentUrl}
+          title={mode === 'intro' ? 'Editor V4 — Intro Cinematográfico' : 'Editor V4 — Vista previa móvil'}
+          loading={loading}
+          onLoad={() => setLoading(false)}
+        />
       );
     }
 
-    // ── Desktop: device-frame chrome ───────────────────────────────────────
+    // ── Desktop normal: device-frame chrome ───────────────────────────────────
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%', background: '#F0EBE3' }}>
         <div style={{
@@ -104,10 +129,6 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
           display: 'flex',
           flexDirection: 'column',
           background: '#fff',
-          // In intro mode push the iframe down so the border-radius (16px) cannot
-          // clip the intro heading. 36px > 16px with comfortable margin on desktop.
-          paddingTop: mode === 'intro' ? 36 : 0,
-          backgroundColor: mode === 'intro' ? 'transparent' : '#fff',
         }}>
           {loading && (
             <div style={{
@@ -115,14 +136,13 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
               justifyContent: 'center', background: '#FAF7F2', zIndex: 10,
               fontSize: 12, color: '#9B8878',
             }}>
-              {mode === 'intro' ? 'Cargando intro…' : 'Cargando invitación…'}
+              Cargando invitación…
             </div>
           )}
-
           <iframe
             ref={iframeRef}
             src={currentUrl}
-            title={mode === 'intro' ? 'Editor V4 — Intro Cinematográfico' : 'Editor V4 — Vista previa'}
+            title="Editor V4 — Vista previa"
             style={{ flex: 1, border: 'none', display: 'block' }}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             onLoad={() => setLoading(false)}
