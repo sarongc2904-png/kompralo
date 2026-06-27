@@ -14,6 +14,8 @@ export interface EditorV4CanvasHandle {
   scrollToSection: (sectionId: string) => void;
   /** Push a field value change into the live iframe without reloading */
   sendFieldUpdate: (fieldPath: string, value: string) => void;
+  /** Reload the iframe, then scroll to sectionId once it finishes loading */
+  refreshAndScrollTo: (sectionId: string) => void;
 }
 
 interface EditorV4CanvasProps {
@@ -124,6 +126,20 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
           { type: 'EDITOR_V4_FIELD_SAVED', fieldPath, value },
           window.location.origin,
         );
+      },
+      refreshAndScrollTo(sectionId: string) {
+        const iframe = iframeRef.current;
+        if (!iframe) return;
+        setLoading(true);
+        const onLoad = () => {
+          iframe.removeEventListener('load', onLoad);
+          iframe.contentWindow?.postMessage(
+            { type: 'KOMPRALO_SCROLL_TO_SECTION', sectionId },
+            window.location.origin,
+          );
+        };
+        iframe.addEventListener('load', onLoad);
+        iframe.src = currentUrl;
       },
     }));
 

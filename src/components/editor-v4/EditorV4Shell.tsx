@@ -133,10 +133,16 @@ export function EditorV4Shell({
       // Text field — push change directly into the iframe DOM, no reload
       canvasRef.current?.sendFieldUpdate(fieldPath, value);
     } else {
-      // Structural change (datetime, hero section, …) — full iframe refresh
-      setTimeout(() => canvasRef.current?.refresh(), 400);
+      // Structural change — reload iframe, then scroll back to the active section
+      setTimeout(() => {
+        if (activeSection) {
+          canvasRef.current?.refreshAndScrollTo(activeSection);
+        } else {
+          canvasRef.current?.refresh();
+        }
+      }, 400);
     }
-  }, []);
+  }, [activeSection]);
 
   const handleDesktopClear = useCallback(() => {
     clearSelection();
