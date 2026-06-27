@@ -337,6 +337,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
             imageUrl: s.imageUrl,
             date:     s.date ?? '',
           })) ?? []),
+          galleryImages:    invitation.gallery?.images               ?? [],
         }}
       />
     );
