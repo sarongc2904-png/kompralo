@@ -16,6 +16,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ajustada la paleta de tarjetas y acciones hacia marfil, champagne, dorado suave y verde suave.
 - Sin cambios en login, ownership, órdenes, RSVP ni rutas existentes.
 
+### Fixed
+
+#### `fix(editor)` — Estabilización del Editor Visual
+
+- **WizardExpress** ahora depende únicamente de `hero.wizardExpressCompleted`; eliminada la condición `hasMinimalData` que bloqueaba la entrada cuando la invitación ya tenía datos por defecto.
+- **Hero con video YouTube** responsivo usando técnica absolute-center: `position: absolute; top: 50%; left: 50%; minWidth: 177.78%; transform: translate(-50%, -50%)` — reemplaza `objectFit: cover` que los navegadores ignoran en `<iframe>`.
+- **Placeholder persistente en `EditableText`** cuando el contenido está vacío; corrección de sincronización entre modo editor y vista pública.
+- **`SectionHeader`** ahora acepta `eyebrowFieldPath` y `titleFieldPath` — envuelve eyebrow/title en `EditableText` cuando se proveen los paths.
+- **StoryBook**: títulos editables inline vía `story.sectionEyebrow` / `story.sectionTitle`.
+- **GiftRegistry**: títulos y subtítulos editables vía `gift_registry.sectionEyebrow` / `.sectionTitle` / `.subtitle`.
+- **Location**: encabezados editables vía `location.sectionEyebrow` / `.sectionTitle`.
+- **DressCode**: encabezados editables vía `dress_code.sectionEyebrow` / `.title`.
+- **Hashtag**: encabezado editable vía `social.sectionEyebrow`.
+- **Hospedaje**: encabezados editables vía `hero.hospedajeSectionEyebrow` / `.hospedajeSectionTitle`.
+- **`InvitationRenderer`** actualizado para propagar `editablePreview` y section labels a todas las secciones de forma consistente.
+- **`actions.ts`** y **`types.ts`** actualizados con nuevos fieldPaths en `INLINE_EDIT_ALLOWED_PATHS` e interfaz `InvitationHero`.
+
+#### `fix(invitation)` — Countdown — Investigación completa y corrección en tres capas
+
+El Countdown no aparecía en producción. Se diagnosticó mediante marcadores visuales temporales, descartando causas una por una.
+
+**Capa 1 — Condición de fecha eliminada**
+
+```diff
+- {features.showCountdown && invitation.eventDate && (
++ {features.showCountdown && (
+```
+
+`normalizeDateString(null)` retorna `''` (falsy). Si `event_date` es `NULL` en la tabla `invitations`, la condición cortocircuitaba y Countdown nunca se montaba. El componente ya soporta fecha vacía — muestra “Fecha por confirmar”.
+
+**Capa 2 — Fuente de features corregida**
+
+```diff
+- {plan.features.showCountdown && (
++ {features.showCountdown && (
+```
+
+`plan.features` es el objeto raw del plan en memoria. `features` es el resultado de `mergePlanFeatures(plan.features, invitation.featureOverrides)` — el único valor que el renderer debe usar para decidir visibilidad de secciones.
+
+**Capa 3 — Stacking context vs. paper-noise overlay**
+
+`MultilayerBackground` renderiza un overlay `paper-noise` con `position: absolute; zIndex: 2`. El `<section>` de Countdown no tenía `position` declarado, por lo que quedaba por debajo del overlay en el orden de apilamiento. Las demás secciones usan `SectionShell` que establece `position: relative` y crea su propio stacking context.
+
+**Fix:** `<section>` de Countdown ahora tiene `position: relative; zIndex: 20`.
+
+**Capa 4 — Animación whileInView eliminada**
+
+`motion.div` con `initial={{ opacity: 0 }}` y `whileInView` podía quedar invisible permanentemente dentro de contenedores con `overflow: hidden` (el IntersectionObserver usa el contenedor como root y puede no dispararse). Reemplazado por `animate` con estado inicial visible.
+
+**Commits relacionados:** `b5d85f6` · `74dab50` · `68a35f7` · `4491e37`
+
 ---
 
 ## [0.9.0] — 2026-06-26
