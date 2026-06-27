@@ -10,6 +10,8 @@ interface EditorV4InspectorProps {
   invitationId: string;
   /** Called after a successful save so caller can refresh iframe */
   onSaved?: () => void;
+  /** True when rendered inside the mobile bottom sheet */
+  isMobileSheet?: boolean;
 }
 
 export function EditorV4Inspector({
@@ -17,6 +19,7 @@ export function EditorV4Inspector({
   onClear,
   invitationId,
   onSaved,
+  isMobileSheet = false,
 }: EditorV4InspectorProps) {
   const [saving, setSaving] = useState(false);
   const [savedField, setSavedField] = useState<string | null>(null);
@@ -99,6 +102,7 @@ export function EditorV4Inspector({
               onSave={handleSave}
               onCancel={onClear}
               saving={saving}
+              stickyActions={isMobileSheet}
             />
             {savedField === selectedElement.fieldPath && !saving && (
               <p style={{ fontSize: 11, color: '#C5A880', textAlign: 'center', marginTop: 10 }}>

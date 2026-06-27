@@ -133,21 +133,26 @@ export function EditorV4Shell({
             borderTop: '1px solid rgba(200,167,93,0.3)',
             borderRadius: '16px 16px 0 0',
             boxShadow: '0 -8px 32px rgba(116,84,38,0.15)',
-            maxHeight: '60vh',
+            // dvh shrinks when the virtual keyboard opens, keeping buttons visible
+            maxHeight: '85dvh',
+            display: 'flex',
+            flexDirection: 'column',
             overflow: 'hidden',
           }}
         >
           {/* Drag handle */}
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 4px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 4px', flexShrink: 0 }}>
             <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(200,167,93,0.3)' }} />
           </div>
 
-          <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 env(safe-area-inset-bottom, 16px)' }}>
+          {/* Scrollable body — grows to fill available space above the keyboard */}
+          <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
             <EditorV4Inspector
               selectedElement={selectedElement}
               onClear={handleClearSelection}
               invitationId={invitationId}
               onSaved={handleSaved}
+              isMobileSheet
             />
           </div>
         </div>
