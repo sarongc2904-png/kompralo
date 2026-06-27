@@ -291,14 +291,14 @@ export default function CinematicIntro({
       ref={containerRef} 
       onClick={handleOpen}
       onTouchStart={handleOpen}
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden cursor-pointer"
+      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto cursor-pointer"
     >
       {/* Curtains */}
       <div ref={leftCurtainRef}  className={`absolute inset-y-0 left-0 w-1/2 ${theme.bodyBg} border-r ${theme.cardBorder}`} />
       <div ref={rightCurtainRef} className={`absolute inset-y-0 right-0 w-1/2 ${theme.bodyBg}`} />
 
       {/* Content */}
-      <div ref={contentRef} className="relative z-20 max-w-lg px-6 text-center flex flex-col items-center select-none">
+      <div ref={contentRef} className="relative z-20 max-w-lg w-full px-6 py-10 md:py-16 text-center flex flex-col items-center select-none">
 
         {/* Decorative ornament top */}
         <motion.div
