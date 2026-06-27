@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import type { SelectedElement } from './useEditorV4Selection';
 import { TextInspector } from './inspectors/TextInspector';
 import { IntroInspector } from './inspectors/IntroInspector';
+import { updateInlineEditableText } from '@/app/dashboard/invitations/[id]/edit/actions';
 
 interface EditorV4InspectorProps {
   selectedElement: SelectedElement;
@@ -24,33 +25,36 @@ export function EditorV4Inspector({
 }: EditorV4InspectorProps) {
   const [saving, setSaving] = useState(false);
   const [savedField, setSavedField] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Clear "Guardado" badge when a different element is selected
+  // Clear status badges when a different element is selected
   const prevFieldPath = useRef<string | null>(null);
   if (selectedElement?.fieldPath !== prevFieldPath.current) {
     prevFieldPath.current = selectedElement?.fieldPath ?? null;
     if (savedField !== null) setSavedField(null);
+    if (saveError !== null) setSaveError(null);
   }
 
   const handleSave = useCallback(async (fieldPath: string, value: string) => {
     setSaving(true);
+    setSavedField(null);
+    setSaveError(null);
     try {
-      // Reuse the existing KOMPRALO_INLINE_EDIT postMessage channel —
-      // the preview iframe's own handler already saves via Server Action.
-      // We post the message to ALL iframes on the page (there's only one).
-      const iframes = document.querySelectorAll('iframe');
-      iframes.forEach((iframe) => {
-        iframe.contentWindow?.postMessage(
-          { type: 'KOMPRALO_INLINE_EDIT', fieldPath, value },
-          window.location.origin,
-        );
-      });
-      setSavedField(fieldPath);
-      onSaved?.();
+      // Call the Server Action directly — the same one VisualEditorMobileEntry uses.
+      // Posting to the iframe (child) is wrong: the listener lives in the parent window.
+      const result = await updateInlineEditableText({ id: invitationId, fieldPath, value });
+      if (result.success) {
+        setSavedField(fieldPath);
+        onSaved?.();
+      } else {
+        setSaveError(result.error ?? 'Error al guardar');
+      }
+    } catch {
+      setSaveError('Error de red al guardar');
     } finally {
       setSaving(false);
     }
-  }, [onSaved]);
+  }, [invitationId, onSaved]);
 
   const panelStyle: React.CSSProperties = {
     display: 'flex',
@@ -114,6 +118,11 @@ export function EditorV4Inspector({
             {savedField === selectedElement.fieldPath && !saving && (
               <p style={{ fontSize: 11, color: '#C5A880', textAlign: 'center', marginTop: 10 }}>
                 ✓ Guardado
+              </p>
+            )}
+            {saveError && !saving && (
+              <p style={{ fontSize: 11, color: '#c0392b', textAlign: 'center', marginTop: 10 }}>
+                {saveError}
               </p>
             )}
           </>
