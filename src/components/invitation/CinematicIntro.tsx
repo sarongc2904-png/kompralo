@@ -303,7 +303,10 @@ export default function CinematicIntro({
         This avoids the classic overflow-y:auto + flex:center issue where the top
         of overflowing centered content ends up above y=0 and is unreachable.
       */}
-      <div className="relative min-h-full flex items-center justify-center py-12 sm:py-16 md:py-20">
+      <div
+        className="relative min-h-full flex items-center justify-center"
+        style={{ paddingTop: 'clamp(48px, 8vh, 96px)', paddingBottom: 'clamp(48px, 8vh, 96px)' }}
+      >
 
       {/* Content */}
       <div ref={contentRef} className="relative z-20 max-w-lg w-full px-6 text-center flex flex-col items-center select-none">
