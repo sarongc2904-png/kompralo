@@ -305,6 +305,7 @@ export function PadrinosInspector({
               <button
                 type="button"
                 onClick={() => removeCategory(ci)}
+                disabled={items.length === 1}
                 style={{
                   width: '100%',
                   padding: '7px 0',
@@ -314,7 +315,8 @@ export function PadrinosInspector({
                   color: '#c0392b',
                   fontSize: 11,
                   fontWeight: 600,
-                  cursor: 'pointer',
+                  cursor: items.length === 1 ? 'not-allowed' : 'pointer',
+                  opacity: items.length === 1 ? 0.4 : 1,
                 }}
               >
                 Eliminar categoría
