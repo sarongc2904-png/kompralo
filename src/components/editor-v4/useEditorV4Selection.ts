@@ -31,5 +31,5 @@ export function useEditorV4Selection() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  return { selectedElement, clearSelection };
+  return { selectedElement, setSelectedElement, clearSelection };
 }

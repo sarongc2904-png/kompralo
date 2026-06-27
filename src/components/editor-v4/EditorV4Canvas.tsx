@@ -1,6 +1,8 @@
 'use client';
 
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+
+export type EditorV4CanvasMode = 'normal' | 'intro';
 
 export interface EditorV4CanvasHandle {
   refresh: () => void;
@@ -9,22 +11,33 @@ export interface EditorV4CanvasHandle {
 
 interface EditorV4CanvasProps {
   invitationId: string;
+  mode?: EditorV4CanvasMode;
 }
 
 export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasProps>(
-  function EditorV4Canvas({ invitationId }, ref) {
+  function EditorV4Canvas({ invitationId, mode = 'normal' }, ref) {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [loading, setLoading] = useState(true);
 
-    // Preview URL with editorPreview=1 enables editablePreview mode in InvitationRenderer
-    const previewUrl = `/preview/${invitationId}?from=editor&editorPreview=1`;
+    const normalUrl = `/preview/${invitationId}?from=editor&editorPreview=1&skipIntro=1`;
+    const introUrl  = `/preview/${invitationId}?from=editor&introOnly=1`;
+
+    const currentUrl = mode === 'intro' ? introUrl : normalUrl;
+
+    // Reload iframe when mode switches
+    useEffect(() => {
+      const iframe = iframeRef.current;
+      if (!iframe) return;
+      setLoading(true);
+      iframe.src = currentUrl;
+    }, [currentUrl]);
 
     useImperativeHandle(ref, () => ({
       refresh() {
         const iframe = iframeRef.current;
         if (!iframe) return;
         setLoading(true);
-        iframe.src = previewUrl;
+        iframe.src = currentUrl;
       },
       scrollToSection(sectionId: string) {
         iframeRef.current?.contentWindow?.postMessage(
@@ -54,14 +67,14 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
               justifyContent: 'center', background: '#FAF7F2', zIndex: 10,
               fontSize: 12, color: '#9B8878',
             }}>
-              Cargando invitación…
+              {mode === 'intro' ? 'Cargando intro…' : 'Cargando invitación…'}
             </div>
           )}
 
           <iframe
             ref={iframeRef}
-            src={previewUrl}
-            title="Editor V4 — Vista previa"
+            src={currentUrl}
+            title={mode === 'intro' ? 'Editor V4 — Intro Cinematográfico' : 'Editor V4 — Vista previa'}
             style={{ flex: 1, border: 'none', display: 'block' }}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             onLoad={() => setLoading(false)}

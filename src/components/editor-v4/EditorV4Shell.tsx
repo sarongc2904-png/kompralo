@@ -3,9 +3,10 @@
 import { useCallback, useRef, useState } from 'react';
 import { EditorV4Toolbar } from './EditorV4Toolbar';
 import { EditorV4LayersPanel } from './EditorV4LayersPanel';
-import { EditorV4Canvas, type EditorV4CanvasHandle } from './EditorV4Canvas';
+import { EditorV4Canvas, type EditorV4CanvasHandle, type EditorV4CanvasMode } from './EditorV4Canvas';
 import { EditorV4Inspector } from './EditorV4Inspector';
 import { useEditorV4Selection } from './useEditorV4Selection';
+import { EDITOR_V4_ELEMENT_SELECTED } from './editor-v4-events';
 
 interface EditorV4ShellProps {
   invitationId: string;
@@ -26,7 +27,8 @@ export function EditorV4Shell({
 }: EditorV4ShellProps) {
   const canvasRef = useRef<EditorV4CanvasHandle>(null);
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const { selectedElement, clearSelection } = useEditorV4Selection();
+  const [canvasMode, setCanvasMode] = useState<EditorV4CanvasMode>('normal');
+  const { selectedElement, setSelectedElement, clearSelection } = useEditorV4Selection();
 
   // Mobile: inspector bottom-sheet visibility
   const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
@@ -38,8 +40,21 @@ export function EditorV4Shell({
 
   const handleScrollTo = useCallback((sectionId: string) => {
     setActiveSection(sectionId);
-    canvasRef.current?.scrollToSection(sectionId);
-  }, []);
+    if (sectionId === 'intro') {
+      // Switch to isolated intro canvas and open intro inspector
+      setCanvasMode('intro');
+      setSelectedElement({
+        type: EDITOR_V4_ELEMENT_SELECTED,
+        elementType: 'intro',
+        fieldPath: 'intro',
+        label: 'Intro Cinematográfico',
+      });
+      setMobileInspectorOpen(true);
+    } else {
+      setCanvasMode('normal');
+      canvasRef.current?.scrollToSection(sectionId);
+    }
+  }, [setSelectedElement]);
 
   const handleSaved = useCallback(() => {
     // Small delay so the postMessage reaches iframe before refresh
@@ -48,6 +63,7 @@ export function EditorV4Shell({
 
   const handleClearSelection = useCallback(() => {
     clearSelection();
+    setCanvasMode('normal');
     setMobileInspectorOpen(false);
   }, [clearSelection]);
 
@@ -97,6 +113,7 @@ export function EditorV4Shell({
           <EditorV4Canvas
             ref={canvasRef}
             invitationId={invitationId}
+            mode={canvasMode}
           />
         </div>
 

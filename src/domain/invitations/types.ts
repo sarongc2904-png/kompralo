@@ -251,6 +251,10 @@ export interface InvitationHero {
   hospedajeSectionTitle?: string;
   padrinosSectionEyebrow?: string;
   padrinosSectionTitle?: string;
+  // Cinematic intro customizable text (stored in hero JSONB as side-channel):
+  introTitle?: string;
+  introSubtitle?: string;
+  introButtonText?: string;
 }
 
 export interface InvitationHeroVideoInput {

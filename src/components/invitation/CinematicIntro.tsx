@@ -14,6 +14,8 @@ interface CinematicIntroProps {
   eventDate: string;
   theme: Theme;
   onEnter: () => void;
+  introTitle?: string;
+  introButtonText?: string;
 }
 
 function formatEventDate(dateStr: string): string {
@@ -123,7 +125,7 @@ function GoldenHeart({ onClick, showConjunction = true }: { onClick: () => void;
 
 // ─── BUTTON ──────────────────────────────────────────────────────────────────
 
-function PremiumButton({ onClick }: { onClick: () => void }) {
+function PremiumButton({ onClick, label = 'Abrir Invitación' }: { onClick: () => void; label?: string }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -161,7 +163,7 @@ function PremiumButton({ onClick }: { onClick: () => void }) {
             <line x1="0" y1="4" x2="8" y2="4" stroke="#C5A880" strokeWidth="0.8" />
             <path d="M9 1 L13 4 L9 7" stroke="#C5A880" strokeWidth="0.8" fill="none" />
           </svg>
-          Abrir Invitación
+          {label}
           <svg width="14" height="8" viewBox="0 0 14 8" fill="none" style={{ transform: 'scaleX(-1)' }}>
             <line x1="0" y1="4" x2="8" y2="4" stroke="#C5A880" strokeWidth="0.8" />
             <path d="M9 1 L13 4 L9 7" stroke="#C5A880" strokeWidth="0.8" fill="none" />
@@ -224,6 +226,8 @@ export default function CinematicIntro({
   eventDate,
   theme,
   onEnter,
+  introTitle,
+  introButtonText,
 }: CinematicIntroProps) {
   const [isDismissed, setIsDismissed] = useState(false);
   const isOpeningRef = useRef(false);
@@ -317,7 +321,7 @@ export default function CinematicIntro({
           transition={{ duration: 0.6 }}
           className={`text-xs uppercase tracking-[0.25em] mb-8 ${theme.accentText} ${theme.bodyFont}`}
         >
-          Estás Invitado a Celebrar
+          {introTitle ?? 'Estás Invitado a Celebrar'}
         </motion.p>
 
         {/* Names — layout adapts to 1 or 2 protagonists */}
@@ -340,7 +344,7 @@ export default function CinematicIntro({
           {formattedDate} — {subtitle}
         </motion.p>
 
-        <PremiumButton onClick={handleOpen} />
+        <PremiumButton onClick={handleOpen} label={introButtonText ?? 'Abrir Invitación'} />
 
         <motion.p
           initial={{ opacity: 0.45 }}

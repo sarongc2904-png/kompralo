@@ -95,6 +95,8 @@ interface InvitationRendererProps {
   skipIntro?: boolean;
   /** Enables contentEditable text only inside editor preview iframe. */
   editablePreview?: boolean;
+  /** Renders only the CinematicIntro (isolated, for editor intro-editing mode). */
+  showIntroOnly?: boolean;
 }
 
 export default function InvitationRenderer({
@@ -106,6 +108,7 @@ export default function InvitationRenderer({
   themePreviewId,
   skipIntro = false,
   editablePreview = false,
+  showIntroOnly = false,
 }: InvitationRendererProps) {
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
@@ -138,6 +141,24 @@ export default function InvitationRenderer({
   const handleEnterInvitation = () => {
     // Platinum: CinematicIntro calls this when user taps "Entrar"
   };
+
+  // Intro-only mode: render just the CinematicIntro for the editor's isolated intro canvas
+  if (showIntroOnly) {
+    return (
+      <ThemeProviderV2 theme={themeV2} injectCssVariables={false}>
+        <CinematicIntro
+          protagonists={invitation.protagonists}
+          title={invitation.title}
+          subtitle={invitation.subtitle}
+          eventDate={invitation.eventDate ?? ''}
+          theme={effectiveTheme}
+          onEnter={() => {}}
+          introTitle={invitation.hero?.introTitle}
+          introButtonText={invitation.hero?.introButtonText}
+        />
+      </ThemeProviderV2>
+    );
+  }
 
   useEffect(() => {
     if (!editablePreview) return;
@@ -226,6 +247,8 @@ export default function InvitationRenderer({
             eventDate={invitation.eventDate}
             theme={effectiveTheme}
             onEnter={handleEnterInvitation}
+            introTitle={invitation.hero?.introTitle}
+            introButtonText={invitation.hero?.introButtonText}
           />
         </FeatureGate>
       )}

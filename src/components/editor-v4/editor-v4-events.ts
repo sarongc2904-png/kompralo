@@ -6,7 +6,7 @@ export const EDITOR_V4_ELEMENT_DESELECTED = 'EDITOR_V4_ELEMENT_DESELECTED' as co
 
 export interface EditorV4ElementSelectedEvent {
   type: typeof EDITOR_V4_ELEMENT_SELECTED;
-  elementType: 'text';
+  elementType: 'text' | 'intro';
   fieldPath: string;
   label?: string;
   value?: string;
@@ -34,6 +34,7 @@ export function isEditorV4Event(data: unknown): data is EditorV4InboundEvent {
 
 // Sections shown in the layers panel — order matches InvitationRenderer render order
 export const INVITATION_SECTIONS = [
+  { id: 'intro',        label: 'Intro Cinematográfico', icon: '🎬' },
   { id: 'hero',         label: 'Portada',           icon: '🖼' },
   { id: 'countdown',   label: 'Cuenta Regresiva',   icon: '⏳' },
   { id: 'parents',     label: 'Familias',            icon: '👨‍👩‍👧' },

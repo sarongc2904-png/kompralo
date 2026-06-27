@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import type { SelectedElement } from './useEditorV4Selection';
 import { TextInspector } from './inspectors/TextInspector';
+import { IntroInspector } from './inspectors/IntroInspector';
 
 interface EditorV4InspectorProps {
   selectedElement: SelectedElement;
@@ -95,6 +96,12 @@ export function EditorV4Inspector({
               Haz clic sobre cualquier texto de la invitación para editarlo
             </p>
           </div>
+        ) : selectedElement.elementType === 'intro' ? (
+          <IntroInspector
+            onSave={handleSave}
+            saving={saving}
+            stickyActions={isMobileSheet}
+          />
         ) : selectedElement.elementType === 'text' ? (
           <>
             <TextInspector

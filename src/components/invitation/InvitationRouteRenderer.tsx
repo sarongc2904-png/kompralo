@@ -19,6 +19,8 @@ interface InvitationRouteRendererProps {
   skipIntro?: boolean;
   /** Enables inline editing only for editor iframe previews. */
   editablePreview?: boolean;
+  /** Renders only the CinematicIntro for isolated editor intro-editing mode. */
+  showIntroOnly?: boolean;
 }
 
 export default function InvitationRouteRenderer({
@@ -31,6 +33,7 @@ export default function InvitationRouteRenderer({
   themePreviewId,
   skipIntro = false,
   editablePreview = false,
+  showIntroOnly = false,
 }: InvitationRouteRendererProps) {
   const pathname    = usePathname();
   const searchParams = useSearchParams();
@@ -116,6 +119,7 @@ export default function InvitationRouteRenderer({
         themePreviewId={themePreviewId}
         skipIntro={skipIntro}
         editablePreview={editablePreview}
+        showIntroOnly={showIntroOnly}
       />
     </>
   );
