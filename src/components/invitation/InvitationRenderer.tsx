@@ -264,7 +264,7 @@ export default function InvitationRenderer({
           <div className="paper-noise" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 2 }} />
         )}
 
-        {plan.features.showCountdown && (
+        {features.showCountdown && (
           <Countdown eventDate={invitation.eventDate ?? ''} eventTime={invitation.eventTime} theme={effectiveTheme} />
         )}
 
