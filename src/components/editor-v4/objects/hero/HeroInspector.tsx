@@ -12,6 +12,7 @@ import {
 } from '@/app/dashboard/invitations/[id]/edit/actions';
 import { HERO_VIDEO_LIBRARY, getHeroVideoById } from '@/lib/video/heroVideoLibrary';
 import { MUSIC_LIBRARY } from '@/lib/music/musicLibrary';
+import { uploadInvitationAsset } from '@/lib/storage';
 
 // ── Field definitions ─────────────────────────────────────────────────────────
 
@@ -121,6 +122,132 @@ function TextField({
       <button type="button" onClick={onSave} disabled={saving || !dirty} style={btnStyle(dirty && !saving)}>
         {saving ? 'Guardando…' : 'Guardar'}
       </button>
+    </div>
+  );
+}
+
+// ── HeroImageUploader ─────────────────────────────────────────────────────────
+
+function HeroImageUploader({
+  invitationId,
+  slug,
+  currentImageUrl,
+  currentVideoUrl,
+  currentYoutubeUrl,
+  currentMusicUrl,
+  currentMusicTitle,
+  currentGoogleMapsLink,
+  currentWazeLink,
+  onSaved,
+}: {
+  invitationId: string;
+  slug: string;
+  currentImageUrl: string;
+  currentVideoUrl: string;
+  currentYoutubeUrl: string;
+  currentMusicUrl: string;
+  currentMusicTitle: string;
+  currentGoogleMapsLink: string;
+  currentWazeLink: string;
+  onSaved: () => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading,  setUploading]  = useState(false);
+  const [uploadErr,  setUploadErr]  = useState<string | null>(null);
+  const [savedOk,    setSavedOk]    = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(currentImageUrl);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadErr(null);
+    setSavedOk(false);
+
+    try {
+      const { url } = await uploadInvitationAsset(file, 'hero', invitationId);
+      await updateInvitationMediaInfo({
+        id:           invitationId,
+        slug,
+        heroImageUrl:  url,
+        heroVideoUrl:  currentVideoUrl,
+        youtubeUrl:    currentYoutubeUrl,
+        musicUrl:      currentMusicUrl,
+        musicTitle:    currentMusicTitle,
+        googleMapsUrl: currentGoogleMapsLink,
+        wazeUrl:       currentWazeLink,
+      });
+      setPreviewUrl(url);
+      setSavedOk(true);
+      setTimeout(() => setSavedOk(false), 3000);
+      onSaved();
+    } catch (err) {
+      setUploadErr(err instanceof Error ? err.message : 'Error al subir la imagen.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <label style={{ fontSize: 11, color: '#9B8878', fontWeight: 500 }}>Foto de fondo</label>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+
+      {/* Thumbnail + upload button row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {previewUrl && (
+          <div style={{ flexShrink: 0, width: 60, height: 60, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(200,167,93,0.3)', background: '#EEE' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={previewUrl} alt="Foto de fondo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        )}
+
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => { setUploadErr(null); fileInputRef.current?.click(); }}
+          style={{
+            flex: 1, padding: '9px 12px', borderRadius: 8,
+            border: `1px solid ${savedOk ? '#A5D6A7' : 'rgba(200,167,93,0.4)'}`,
+            background: savedOk ? '#E8F5E9' : '#FAFAF8',
+            color:      savedOk ? '#2E7D32' : '#1A1410',
+            fontSize: 13, fontWeight: 500, cursor: uploading ? 'default' : 'pointer',
+            opacity: uploading ? 0.7 : 1, transition: 'all 150ms',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}
+        >
+          {uploading ? (
+            <>
+              <span style={{
+                display: 'inline-block', width: 14, height: 14, borderRadius: '50%',
+                border: '2px solid currentColor', borderTopColor: 'transparent',
+                animation: 'spin 0.7s linear infinite',
+              }} />
+              Subiendo…
+            </>
+          ) : savedOk ? (
+            '✓ Foto guardada'
+          ) : previewUrl ? (
+            '📷 Cambiar foto'
+          ) : (
+            '📷 Subir foto'
+          )}
+        </button>
+      </div>
+
+      {uploadErr && (
+        <p style={{ fontSize: 11, color: '#C62828', margin: 0 }}>{uploadErr}</p>
+      )}
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
@@ -550,8 +677,6 @@ export function HeroInspector({
     connectorText:   element.meta?.connectorText   ?? '',
   }));
 
-  const [imageUrl,    setImageUrl]    = useState(element.meta?.imageUrl ?? '');
-
   const { saving, savedKey, error, save } = useSaveManager();
   const { saving: mSaving, savedKey: mSavedKey, error: mError, save: mSave } = useSaveManager();
 
@@ -583,24 +708,6 @@ export function HeroInspector({
     if (!fieldPath) return;
     await save(key, () => updateInlineEditableText({ id: invitationId, fieldPath, value }),
       () => onSaved(fieldPath, value));
-  }
-
-  // ── Image save ────────────────────────────────────────────────────────────────
-
-  const isImageDirty = imageUrl !== (element.meta?.imageUrl ?? '');
-
-  async function handleImageSave() {
-    await mSave('imageUrl', () => updateInvitationMediaInfo({
-      id:           invitationId,
-      slug:         element.meta?.slug          ?? '',
-      heroImageUrl:  imageUrl.trim(),
-      heroVideoUrl:  element.meta?.videoUrl     ?? '',
-      youtubeUrl:    element.meta?.youtubeUrl   ?? '',
-      musicUrl:      element.meta?.musicUrl     ?? '',
-      musicTitle:    element.meta?.musicTitle   ?? '',
-      googleMapsUrl: element.meta?.googleMapsLink ?? '',
-      wazeUrl:       element.meta?.wazeLink     ?? '',
-    }), () => onSaved());
   }
 
   // ── Render ────────────────────────────────────────────────────────────────────
@@ -635,24 +742,18 @@ export function HeroInspector({
       {/* ── 3. Fondo ───────────────────────────────────────────────── */}
       <CollapsibleSection title="Fondo" defaultOpen={false}>
         {/* Foto */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <label style={{ fontSize: 11, color: '#9B8878', fontWeight: 500 }}>URL de foto de fondo</label>
-            {mSavedKey === 'imageUrl' && !mSaving && <span style={{ fontSize: 10, color: '#C5A880' }}>✓ Guardado</span>}
-          </div>
-          <input
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://..."
-            style={inputStyle}
-            onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(200,167,93,0.7)'; }}
-            onBlur={(e)  => { e.currentTarget.style.borderColor = 'rgba(200,167,93,0.3)'; }}
-          />
-          <button type="button" onClick={handleImageSave} disabled={mSaving || !isImageDirty} style={btnStyle(isImageDirty && !mSaving)}>
-            {mSaving ? 'Guardando…' : 'Guardar'}
-          </button>
-        </div>
+        <HeroImageUploader
+          invitationId={invitationId}
+          slug={element.meta?.slug ?? ''}
+          currentImageUrl={element.meta?.imageUrl ?? ''}
+          currentVideoUrl={element.meta?.videoUrl ?? ''}
+          currentYoutubeUrl={element.meta?.youtubeUrl ?? ''}
+          currentMusicUrl={element.meta?.musicUrl ?? ''}
+          currentMusicTitle={element.meta?.musicTitle ?? ''}
+          currentGoogleMapsLink={element.meta?.googleMapsLink ?? ''}
+          currentWazeLink={element.meta?.wazeLink ?? ''}
+          onSaved={onSaved}
+        />
 
         {/* Video selector */}
         <MiniVideoSelector
