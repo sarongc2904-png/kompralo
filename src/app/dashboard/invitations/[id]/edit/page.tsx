@@ -347,7 +347,12 @@ export default async function EditInvitationPage({ params, searchParams }: Props
             groomMother: invitation.parents.find((p) => p.side === 'groom')?.motherName ?? '',
           }),
           padrinosJson:     JSON.stringify(
-            invitation.padrinos.map((p) => ({ rubro: p.rubro, names: p.names }))
+            invitation.padrinos?.map((p) => ({
+              id:    p.id,
+              rubro: p.rubro,
+              icon:  p.icon,
+              names: p.names ?? [],
+            })) ?? []
           ),
         }}
       />
