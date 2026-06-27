@@ -52,7 +52,7 @@ export function InspectorManager({
     : null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Header */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -76,7 +76,7 @@ export function InspectorManager({
       </div>
 
       {/* Body */}
-      <div style={{ padding: 16, flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: 16, flex: 1, overflowY: 'visible' }}>
         {!selectedElement ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, paddingTop: 48, textAlign: 'center' }}>
             <div style={{ fontSize: 32, opacity: 0.35 }}>✦</div>
