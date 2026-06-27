@@ -84,7 +84,7 @@ function GiftCard({
   onRemove: () => void;
 }) {
   const [open, setOpen] = useState(index === 0);
-  const isEnvelope = item.logoType === 'custom' && item.provider === 'Lluvia de sobres';
+  const isEnvelope = item.logoType === 'custom';
 
   const inputS: React.CSSProperties = {
     width: '100%', border: '1px solid rgba(200,167,93,0.3)', borderRadius: 6,
@@ -239,10 +239,20 @@ export function GiftsInspector({ element, invitationId, isMobileSheet, onSaved }
   const isHidden = element.meta?.isHidden === 'true';
   const isDeluxe = planId === 'deluxe';
 
-  const [items,  setItems]  = useState<GiftItemLocal[]>(() => parseItems(element.meta?.giftRegistryJson));
-  const [saving, setSaving] = useState(false);
-  const [error,  setError]  = useState<string | null>(null);
-  const [saved,  setSaved]  = useState(false);
+  const [items,      setItems]      = useState<GiftItemLocal[]>(() => parseItems(element.meta?.giftRegistryJson));
+  const [saving,     setSaving]     = useState(false);
+  const [error,      setError]      = useState<string | null>(null);
+  const [saved,      setSaved]      = useState(false);
+  const [dupMsg,     setDupMsg]     = useState<string | null>(null);
+
+  function alreadyExists(logoType: string) {
+    return items.some((it) => it.logoType === logoType);
+  }
+
+  function showDup(label: string) {
+    setDupMsg(`"${label}" ya está agregado`);
+    setTimeout(() => setDupMsg(null), 2000);
+  }
 
   function updateItem(idx: number, patch: Partial<GiftItemLocal>) {
     setSaved(false);
@@ -252,10 +262,13 @@ export function GiftsInspector({ element, invitationId, isMobileSheet, onSaved }
   function addItem(type: 'envelope' | 'store' | 'bank') {
     setSaved(false);
     if (type === 'envelope') {
+      if (alreadyExists('custom')) { showDup('Lluvia de sobres'); return; }
       setItems((prev) => [...prev, { id: String(Date.now()), provider: 'Lluvia de sobres', logoType: 'custom', link: '#rsvp-name', description: '', bankDetails: { bankName: '', accountOwner: '', clabe: '' } }]);
     } else if (type === 'store') {
+      if (alreadyExists('liverpool')) { showDup('Mesa de regalo'); return; }
       setItems((prev) => [...prev, newStore('liverpool')]);
     } else {
+      if (alreadyExists('bank')) { showDup('Transferencia'); return; }
       setItems((prev) => [...prev, { id: String(Date.now()), provider: '', logoType: 'bank', link: '', description: '', bankDetails: { bankName: '', accountOwner: '', clabe: '' } }]);
     }
   }
@@ -264,12 +277,9 @@ export function GiftsInspector({ element, invitationId, isMobileSheet, onSaved }
     for (let i = 0; i < items.length; i++) {
       const it = items[i];
       if (!it.provider.trim()) { setError(`El proveedor #${i + 1} necesita un nombre.`); return; }
-      if (it.logoType !== 'bank') {
-        const isEnvelope = it.logoType === 'custom' && it.provider === 'Lluvia de sobres';
-        if (!isEnvelope) {
-          if (!it.link.trim()) { setError(`"${it.provider}" necesita una URL.`); return; }
-        }
-      } else {
+      if (it.logoType !== 'bank' && it.logoType !== 'custom') {
+        if (!it.link.trim()) { setError(`"${it.provider}" necesita una URL.`); return; }
+      } else if (it.logoType === 'bank') {
         if (!it.bankDetails.bankName.trim())     { setError(`La transferencia "${it.provider || `#${i + 1}`}" necesita nombre de banco.`); return; }
         if (!it.bankDetails.accountOwner.trim()) { setError(`La transferencia "${it.provider || `#${i + 1}`}" necesita titular.`); return; }
         if (!/^\d{18}$/.test(it.bankDetails.clabe)) { setError(`La CLABE de "${it.provider || `#${i + 1}`}" debe tener exactamente 18 dígitos.`); return; }
@@ -341,25 +351,34 @@ export function GiftsInspector({ element, invitationId, isMobileSheet, onSaved }
           {/* Add buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <p style={{ fontSize: 10, fontWeight: 700, color: '#9B8878', textTransform: 'uppercase', letterSpacing: '0.07em', margin: 0 }}>Agregar opción</p>
+            {dupMsg && <p style={{ fontSize: 11, color: '#B07A40', margin: 0 }}>{dupMsg}</p>}
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {([
-                { type: 'envelope' as const, label: '✉️ Lluvia de sobres' },
-                { type: 'store'    as const, label: '🛍 Mesa de regalo' },
-                { type: 'bank'     as const, label: '🏦 Transferencia' },
-              ]).map(({ type, label }) => (
+                { type: 'envelope' as const, label: '✉️ Lluvia de sobres', logoType: 'custom'    },
+                { type: 'store'    as const, label: '🛍 Mesa de regalo',    logoType: 'liverpool' },
+                { type: 'bank'     as const, label: '🏦 Transferencia',     logoType: 'bank'      },
+              ]).map(({ type, label, logoType }) => {
+                const taken = alreadyExists(logoType);
+                return (
                 <button
                   key={type}
                   type="button"
                   onClick={() => addItem(type)}
+                  disabled={taken}
                   style={{
                     padding: '5px 10px', borderRadius: 7,
                     border: '1.5px dashed rgba(200,167,93,0.4)', background: 'transparent',
-                    color: '#C9A96E', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+                    color: taken ? '#C9A96E' : '#C9A96E',
+                    fontSize: 11, fontWeight: 600,
+                    cursor: taken ? 'not-allowed' : 'pointer',
+                    fontFamily: 'inherit',
+                    opacity: taken ? 0.4 : 1,
                   }}
                 >
                   {label}
                 </button>
-              ))}
+              );
+              })}
             </div>
           </div>
 

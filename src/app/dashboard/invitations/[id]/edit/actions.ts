@@ -938,14 +938,14 @@ export async function updateInvitationGiftRegistry(
     if (!item.provider.trim()) {
       return { success: false, error: `El proveedor #${i + 1} necesita un nombre.` };
     }
-    if (item.logoType !== 'bank') {
+    if (item.logoType !== 'bank' && item.logoType !== 'custom') {
       if (!item.link.trim()) {
         return { success: false, error: `El proveedor "${item.provider}" necesita una URL.` };
       }
       if (!isValidUrl(item.link.trim())) {
         return { success: false, error: `La URL del proveedor "${item.provider}" no es válida.` };
       }
-    } else {
+    } else if (item.logoType === 'bank') {
       if (!item.bankName.trim())     return { success: false, error: `La transferencia "${item.provider}" necesita nombre de banco.` };
       if (!item.accountOwner.trim()) return { success: false, error: `La transferencia "${item.provider}" necesita nombre del titular.` };
       if (!item.clabe.trim())        return { success: false, error: `La transferencia "${item.provider}" necesita la CLABE.` };
