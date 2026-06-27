@@ -1,2 +1,64 @@
-import { makePlaceholderInspector } from '../shared/makePlaceholderInspector';
-export const HashtagInspector = makePlaceholderInspector('Hashtag / Social');
+'use client';
+
+import React from 'react';
+import type { InspectorProps } from '../../core/editor-types';
+
+export function HashtagInspector({ isMobileSheet }: InspectorProps) {
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12,
+      paddingBottom: isMobileSheet ? 12 : undefined,
+    }}>
+      {!isMobileSheet && (
+        <div style={{ height: 1, background: 'rgba(200,167,93,0.15)', marginBottom: 4 }} />
+      )}
+
+      <div style={{
+        background: 'rgba(200,167,93,0.07)',
+        border: '1px solid rgba(200,167,93,0.2)',
+        borderRadius: 8,
+        padding: '12px 14px',
+      }}>
+        <p style={{ fontSize: 13, color: '#5C4A3E', fontWeight: 600, margin: '0 0 6px' }}>
+          Hashtag y Redes Sociales
+        </p>
+        <p style={{ fontSize: 12, color: '#9B8878', lineHeight: 1.6, margin: 0 }}>
+          Toca directamente el texto en la invitación para editar el hashtag, handles de Instagram y TikTok, y las URLs de Facebook y YouTube.
+        </p>
+      </div>
+
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 6,
+        padding: '10px 14px',
+        background: '#FAFAF8',
+        borderRadius: 8,
+        border: '1px solid rgba(200,167,93,0.15)',
+      }}>
+        <p style={{ fontSize: 11, color: '#9B8878', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>
+          Campos editables inline
+        </p>
+        {[
+          '#Hashtag del evento',
+          '@Instagram',
+          '@TikTok',
+          'Facebook URL',
+          'YouTube URL',
+          'Nota / texto de invitación',
+        ].map((field) => (
+          <div key={field} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ color: '#C5A880', fontSize: 12 }}>✓</span>
+            <span style={{ fontSize: 12, color: '#6B5B4E' }}>{field}</span>
+          </div>
+        ))}
+      </div>
+
+      <p style={{ fontSize: 11, color: '#B0A090', lineHeight: 1.5, margin: 0 }}>
+        La foto de fondo se toma automáticamente de la galería de fotos.
+      </p>
+    </div>
+  );
+}

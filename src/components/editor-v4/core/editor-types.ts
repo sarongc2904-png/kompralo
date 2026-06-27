@@ -59,4 +59,5 @@ export interface InvitationSnapshot {
   storySlidesJson?: string;
   galleryImages?: string[];
   dressCodeJson?: string;
+  finalMessageJson?: string;
 }

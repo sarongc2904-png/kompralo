@@ -111,6 +111,13 @@ export function EditorV4Shell({
         };
       }
 
+      if (sectionId === 'message' && invitationSnapshot) {
+        meta = {
+          slug:             invitationSnapshot.slug             ?? slug,
+          finalMessageJson: invitationSnapshot.finalMessageJson ?? '{}',
+        };
+      }
+
       if (sectionId === 'location' && invitationSnapshot) {
         meta = {
           slug:           invitationSnapshot.slug           ?? slug,
