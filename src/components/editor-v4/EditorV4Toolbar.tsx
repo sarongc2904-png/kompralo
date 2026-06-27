@@ -3,6 +3,9 @@
 import React from 'react';
 
 export type SaveStatus = 'idle' | 'saved';
+export type EditorDevice = 'desktop' | 'tablet' | 'mobile';
+
+const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5];
 
 interface EditorV4ToolbarProps {
   invitationTitle: string;
@@ -13,6 +16,10 @@ interface EditorV4ToolbarProps {
   classicEditorUrl: string;
   isMobile?: boolean;
   saveStatus?: SaveStatus;
+  zoom?: number;
+  device?: EditorDevice;
+  onZoomChange?: (z: number) => void;
+  onDeviceChange?: (d: EditorDevice) => void;
 }
 
 export function EditorV4Toolbar({
@@ -24,6 +31,10 @@ export function EditorV4Toolbar({
   classicEditorUrl,
   isMobile = false,
   saveStatus = 'idle',
+  zoom = 1,
+  device = 'desktop',
+  onZoomChange,
+  onDeviceChange,
 }: EditorV4ToolbarProps) {
   const previewUrl = `/preview/${invitationId}`;
   const publicUrl  = typeof window !== 'undefined'
@@ -72,6 +83,66 @@ export function EditorV4Toolbar({
             ✓ Guardado
           </span>
         )}
+
+        <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
+
+        {/* Device switch */}
+        {([
+          { key: 'desktop' as EditorDevice, icon: '🖥' },
+          { key: 'tablet'  as EditorDevice, icon: '⬜' },
+          { key: 'mobile'  as EditorDevice, icon: '📱' },
+        ]).map(({ key, icon }) => (
+          <button
+            key={key}
+            type="button"
+            title={key.charAt(0).toUpperCase() + key.slice(1)}
+            onClick={() => onDeviceChange?.(key)}
+            style={{
+              background: device === key ? 'rgba(201,169,110,0.2)' : 'transparent',
+              color: device === key ? '#C9A96E' : 'rgba(255,255,255,0.4)',
+              border: 'none', cursor: 'pointer', borderRadius: 6,
+              width: 28, height: 28, fontSize: 14, flexShrink: 0,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            {icon}
+          </button>
+        ))}
+
+        <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
+
+        {/* Zoom controls */}
+        <button
+          type="button"
+          onClick={() => {
+            const idx = ZOOM_LEVELS.indexOf(zoom);
+            if (idx > 0) onZoomChange?.(ZOOM_LEVELS[idx - 1]);
+          }}
+          disabled={zoom <= 0.5}
+          style={{
+            background: 'transparent', border: 'none', color: '#C9A96E',
+            fontSize: 16, cursor: zoom <= 0.5 ? 'default' : 'pointer',
+            opacity: zoom <= 0.5 ? 0.35 : 1, flexShrink: 0,
+            width: 24, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >−</button>
+        <span style={{ fontSize: 11, color: '#C9A96E', fontFamily: 'monospace', flexShrink: 0, minWidth: 34, textAlign: 'center' }}>
+          {Math.round(zoom * 100)}%
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            const idx = ZOOM_LEVELS.indexOf(zoom);
+            if (idx < ZOOM_LEVELS.length - 1) onZoomChange?.(ZOOM_LEVELS[idx + 1]);
+          }}
+          disabled={zoom >= 1.5}
+          style={{
+            background: 'transparent', border: 'none', color: '#C9A96E',
+            fontSize: 16, cursor: zoom >= 1.5 ? 'default' : 'pointer',
+            opacity: zoom >= 1.5 ? 0.35 : 1, flexShrink: 0,
+            width: 24, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >＋</button>
 
         <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
 

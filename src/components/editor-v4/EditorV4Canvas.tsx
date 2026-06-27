@@ -24,6 +24,10 @@ interface EditorV4CanvasProps {
   /** When true, renders without the desktop device-frame chrome so the
    *  iframe fills the full area and touch-scroll works naturally on mobile. */
   isMobile?: boolean;
+  /** Scale factor applied to the preview (desktop only). Default: 1 */
+  zoom?: number;
+  /** Fixed pixel width for device simulation (undefined = fill available). Desktop only. */
+  deviceWidth?: number;
 }
 
 // Inset of the device-frame wrapper (desktop normal mode).
@@ -79,7 +83,7 @@ function FullBleedIframe({
 }
 
 export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasProps>(
-  function EditorV4Canvas({ invitationId, mode = 'normal', isMobile = false }, ref) {
+  function EditorV4Canvas({ invitationId, mode = 'normal', isMobile = false, zoom = 1, deviceWidth }: EditorV4CanvasProps, ref) {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const [loading, setLoading] = useState(true);
     const [hoveredSection, setHoveredSection] = useState<{ sectionId: string; rect: SerializedRect } | null>(null);
@@ -187,35 +191,51 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
     }
 
     // ── Desktop normal: device-frame chrome ───────────────────────────────────
+    const hasDevice = deviceWidth !== undefined;
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%', background: '#F0EBE3' }}>
+        {/* Outer inset — acts as the visual padding around the preview */}
         <div style={{
           position: 'absolute',
           inset: `${FRAME_TOP}px ${FRAME_LEFT}px`,
-          borderRadius: 16,
-          boxShadow: '0 0 0 1px rgba(200,167,93,0.2), 0 8px 32px rgba(116,84,38,0.12)',
-          overflow: 'hidden',
           display: 'flex',
-          flexDirection: 'column',
-          background: '#fff',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          overflow: 'hidden',
         }}>
-          {loading && (
-            <div style={{
-              position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
-              justifyContent: 'center', background: '#FAF7F2', zIndex: 10,
-              fontSize: 12, color: '#9B8878',
-            }}>
-              Cargando invitación…
-            </div>
-          )}
-          <iframe
-            ref={iframeRef}
-            src={currentUrl}
-            title="Editor V4 — Vista previa"
-            style={{ flex: 1, border: 'none', display: 'block' }}
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            onLoad={() => setLoading(false)}
-          />
+          {/* Scalable device frame */}
+          <div style={{
+            width: hasDevice ? deviceWidth : '100%',
+            height: '100%',
+            flexShrink: 0,
+            transform: `scale(${zoom})`,
+            transformOrigin: 'top center',
+            borderRadius: hasDevice ? 16 : undefined,
+            overflow: 'hidden',
+            boxShadow: hasDevice
+              ? '0 0 0 1px rgba(200,167,93,0.2), 0 8px 32px rgba(116,84,38,0.18)'
+              : '0 0 0 1px rgba(200,167,93,0.2), 0 8px 32px rgba(116,84,38,0.12)',
+            background: '#fff',
+            position: 'relative',
+          }}>
+            {loading && (
+              <div style={{
+                position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', background: '#FAF7F2', zIndex: 10,
+                fontSize: 12, color: '#9B8878',
+              }}>
+                Cargando invitación…
+              </div>
+            )}
+            <iframe
+              ref={iframeRef}
+              src={currentUrl}
+              title="Editor V4 — Vista previa"
+              style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              onLoad={() => setLoading(false)}
+            />
+          </div>
         </div>
         {overlay}
       </div>

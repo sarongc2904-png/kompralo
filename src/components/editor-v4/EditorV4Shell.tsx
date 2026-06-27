@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { EditorV4Toolbar, type SaveStatus } from './EditorV4Toolbar';
+import { EditorV4Toolbar, type SaveStatus, type EditorDevice } from './EditorV4Toolbar';
 import { EditorTour }      from './components/EditorTour';
 import { EditorHelpModal } from './components/EditorHelpModal';
 import { EditorV4LayersPanel }  from './EditorV4LayersPanel';
@@ -38,6 +38,26 @@ export function EditorV4Shell({
   const [canvasMode, setCanvasMode]           = useState<EditorV4CanvasMode>('normal');
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const [saveStatus, setSaveStatus]           = useState<SaveStatus>('idle');
+  const [zoom,   setZoomState]   = useState<number>(() => {
+    if (typeof localStorage === 'undefined') return 1;
+    const v = parseFloat(localStorage.getItem('kompralo_editor_zoom') ?? '');
+    return isNaN(v) ? 1 : v;
+  });
+  const [device, setDeviceState] = useState<EditorDevice>(() => {
+    if (typeof localStorage === 'undefined') return 'desktop';
+    const v = localStorage.getItem('kompralo_editor_device');
+    return (v === 'tablet' || v === 'mobile' || v === 'desktop') ? v : 'desktop';
+  });
+
+  function handleZoomChange(z: number) {
+    setZoomState(z);
+    localStorage.setItem('kompralo_editor_zoom', String(z));
+  }
+
+  function handleDeviceChange(d: EditorDevice) {
+    setDeviceState(d);
+    localStorage.setItem('kompralo_editor_device', d);
+  }
   const saveStatusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { selectedElement, setSelectedElement, clearSelection } = useSelectionManager();
@@ -284,6 +304,10 @@ export function EditorV4Shell({
         classicEditorUrl={classicEditorUrl}
         isMobile={isMobile}
         saveStatus={saveStatus}
+        zoom={zoom}
+        device={device}
+        onZoomChange={handleZoomChange}
+        onDeviceChange={handleDeviceChange}
       />
 
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
@@ -311,6 +335,13 @@ export function EditorV4Shell({
             invitationId={invitationId}
             mode={canvasMode}
             isMobile={isMobile}
+            zoom={isMobile ? 1 : zoom}
+            deviceWidth={
+              isMobile ? undefined :
+              device === 'tablet' ? 768 :
+              device === 'mobile' ? 390 :
+              undefined
+            }
           />
         </div>
 
