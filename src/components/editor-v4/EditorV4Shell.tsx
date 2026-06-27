@@ -173,8 +173,10 @@ export function EditorV4Shell({
 
       if (sectionId === 'hotels' && invitationSnapshot) {
         meta = {
-          slug:     invitationSnapshot.slug ?? slug,
-          isHidden: String((invitationSnapshot.hiddenSections ?? []).includes('hotels')),
+          slug:      invitationSnapshot.slug ?? slug,
+          planId:    invitationSnapshot.planId ?? '',
+          hotelsJson: invitationSnapshot.hotelsJson ?? '[]',
+          isHidden:  String((invitationSnapshot.hiddenSections ?? []).includes('hotels')),
         };
       }
 

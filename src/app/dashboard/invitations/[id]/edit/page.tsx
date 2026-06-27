@@ -354,6 +354,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
               names: p.names ?? [],
             })) ?? []
           ),
+          hotelsJson:       JSON.stringify(invitation.hotels ?? []),
           hiddenSections:   (invitation.featureOverrides as { hiddenSections?: string[] } | undefined)?.hiddenSections ?? [],
         }}
       />
