@@ -331,6 +331,13 @@ export default function CinematicIntro({
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
           className={`text-xs uppercase tracking-[0.25em] mb-8 ${theme.accentText} ${theme.bodyFont}`}
+          style={{
+            lineHeight: 1.35,
+            paddingTop: '0.25em',
+            paddingBottom: '0.25em',
+            overflow: 'visible',
+            display: 'block',
+          }}
         >
           {introTitle ?? 'Estás Invitado a Celebrar'}
         </motion.p>
