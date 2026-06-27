@@ -13,6 +13,8 @@ interface TimelineProps {
   events: TimelineEvent[];
   theme: Theme;
   editablePreview?: boolean;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
 }
 
 // ── Mobile single-column item ─────────────────────────────────────────────────
@@ -179,7 +181,7 @@ function DesktopItem({
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
-export default function Timeline({ events, theme, editablePreview = false }: TimelineProps) {
+export default function Timeline({ events, theme, editablePreview = false, sectionEyebrow, sectionTitle }: TimelineProps) {
   const desktopRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -192,11 +194,14 @@ export default function Timeline({ events, theme, editablePreview = false }: Tim
   return (
     <SectionShell variant="alt" className="select-none" contentClassName="max-w-4xl mx-auto">
       {/* Section header */}
-      <SectionHeader 
-        eyebrow="Nuestra Historia" 
-        title="Línea del Tiempo" 
+      <SectionHeader
+        eyebrow={sectionEyebrow ?? 'Nuestra Historia'}
+        title={sectionTitle ?? 'Línea del Tiempo'}
         theme={theme}
         className="mb-16 md:mb-24"
+        editablePreview={editablePreview}
+        eyebrowFieldPath="hero.timelineSectionEyebrow"
+        titleFieldPath="hero.timelineSectionTitle"
       />
 
       {/* ── MOBILE layout (block on < md, hidden on ≥ md) ── */}

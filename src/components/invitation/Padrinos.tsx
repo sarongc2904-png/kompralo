@@ -11,6 +11,8 @@ interface PadrinosProps {
   padrinos: Padrino[];
   theme: Theme;
   editablePreview?: boolean;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
 }
 
 // Icon map per rubro
@@ -110,7 +112,7 @@ function RubroIcon({ icon, size = 20, stroke = 'var(--v2-color-accent, #C8A75D)'
   );
 }
 
-export default function Padrinos({ padrinos, theme, editablePreview = false }: PadrinosProps) {
+export default function Padrinos({ padrinos, theme, editablePreview = false, sectionEyebrow, sectionTitle }: PadrinosProps) {
   if (!padrinos || padrinos.length === 0) return null;
 
   return (
@@ -126,10 +128,18 @@ export default function Padrinos({ padrinos, theme, editablePreview = false }: P
           className="text-center mb-14"
         >
           <p className={`text-xs uppercase tracking-[0.28em] mb-3 ${theme.accentText} ${theme.bodyFont}`}>
-            Quienes hacen posible este día
+            <EditableText
+              value={sectionEyebrow ?? 'Quienes hacen posible este día'}
+              fieldPath="hero.padrinosSectionEyebrow"
+              isEditable={editablePreview}
+            />
           </p>
           <h3 className={`text-3xl md:text-4xl font-light tracking-wide ${theme.headingFont} ${theme.bodyText}`}>
-            Nuestros Padrinos
+            <EditableText
+              value={sectionTitle ?? 'Nuestros Padrinos'}
+              fieldPath="hero.padrinosSectionTitle"
+              isEditable={editablePreview}
+            />
           </h3>
           <div className="flex items-center justify-center gap-3 mt-6 mb-5">
             <div className="h-px w-10" style={{ background: `var(--v2-divider-color, ${theme.colors.accent})`, opacity: 0.6 }} />

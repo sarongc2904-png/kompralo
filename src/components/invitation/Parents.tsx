@@ -13,6 +13,9 @@ interface ParentsProps {
   parents: ParentCouple[];
   theme: Theme;
   editablePreview?: boolean;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
+  sectionSubtitle?: string;
 }
 
 // Ornament SVG
@@ -152,7 +155,7 @@ function FamilyCard({
   );
 }
 
-export default function Parents({ parents, theme, editablePreview = false }: ParentsProps) {
+export default function Parents({ parents, theme, editablePreview = false, sectionEyebrow, sectionTitle, sectionSubtitle }: ParentsProps) {
   if (!parents || parents.length === 0) return null;
 
   const groomParents = parents.find((p) => p.side === 'groom');
@@ -161,12 +164,15 @@ export default function Parents({ parents, theme, editablePreview = false }: Par
   return (
     <SectionShell variant="alt" className="select-none" contentClassName="max-w-3xl mx-auto">
       {/* Header */}
-      <SectionHeader 
-        eyebrow="Con la bendición de nuestros padres" 
-        title="Nuestras Familias" 
-        subtitle="Este día no sería posible sin el amor y apoyo incondicional de nuestras familias."
+      <SectionHeader
+        eyebrow={sectionEyebrow ?? 'Con la bendición de nuestros padres'}
+        title={sectionTitle ?? 'Nuestras Familias'}
+        subtitle={sectionSubtitle ?? 'Este día no sería posible sin el amor y apoyo incondicional de nuestras familias.'}
         theme={theme}
         className="mb-14"
+        editablePreview={editablePreview}
+        eyebrowFieldPath="hero.parentsSectionEyebrow"
+        titleFieldPath="hero.parentsSectionTitle"
       />
 
       {/* Cards grid */}

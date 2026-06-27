@@ -232,11 +232,25 @@ export interface InvitationHero {
   videoUrl?: string;
   youtubeUrl?: string;
   eventLabel: string;
+  connectorText?: string;
   // Library video fields (stored alongside hero in the same JSONB column)
   selectedVideoId?: string;
   videoLibraryUrl?: string | null;
   videoLibraryEnabled?: boolean;
   videoLibraryTitle?: string;
+  wizardExpressCompleted?: boolean;
+  // Section header labels for array-based sections (stored in hero JSONB as side-channel):
+  itinerarySectionEyebrow?: string;
+  itinerarySectionTitle?: string;
+  timelineSectionEyebrow?: string;
+  timelineSectionTitle?: string;
+  parentsSectionEyebrow?: string;
+  parentsSectionTitle?: string;
+  parentsSectionSubtitle?: string;
+  hospedajeSectionEyebrow?: string;
+  hospedajeSectionTitle?: string;
+  padrinosSectionEyebrow?: string;
+  padrinosSectionTitle?: string;
 }
 
 export interface InvitationHeroVideoInput {

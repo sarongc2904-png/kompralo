@@ -13,6 +13,8 @@ interface ItineraryProps {
   items: ItineraryItem[];
   theme: Theme;
   editablePreview?: boolean;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
 }
 
 const iconMap = {
@@ -23,7 +25,7 @@ const iconMap = {
   music: Music,
 };
 
-export default function Itinerary({ items, theme, editablePreview = false }: ItineraryProps) {
+export default function Itinerary({ items, theme, editablePreview = false, sectionEyebrow, sectionTitle }: ItineraryProps) {
   const validItems = items
     ?.map((item, originalIndex) => ({ item, originalIndex }))
     .filter(({ item }) => item && (item.title || item.time || item.location)) ?? [];
@@ -33,7 +35,15 @@ export default function Itinerary({ items, theme, editablePreview = false }: Iti
   return (
     <SectionShell className="select-none" contentClassName="max-w-5xl mx-auto">
       {/* Section Header */}
-      <SectionHeader eyebrow="El Gran Día" title="Itinerario del Evento" theme={theme} className="mb-16 md:mb-20" />
+      <SectionHeader
+        eyebrow={sectionEyebrow ?? 'El Gran Día'}
+        title={sectionTitle ?? 'Itinerario del Evento'}
+        theme={theme}
+        className="mb-16 md:mb-20"
+        editablePreview={editablePreview}
+        eyebrowFieldPath="hero.itinerarySectionEyebrow"
+        titleFieldPath="hero.itinerarySectionTitle"
+      />
       
       {/* Itinerary Cards — flex wrap so 1 or 2 cards stay centred */}
       <div className="flex flex-wrap justify-center gap-6 md:gap-8">

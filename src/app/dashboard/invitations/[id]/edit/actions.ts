@@ -57,7 +57,7 @@ type InlineEditColumn = typeof INLINE_EDIT_COLUMNS[number];
 
 const INLINE_EDIT_ALLOWED_PATHS = [
   /^protagonists\.\d+\.name$/,
-  /^hero\.(eventLabel|emotionalPhrase|connectorText)$/,
+  /^hero\.(eventLabel|emotionalPhrase|connectorText|itinerarySectionEyebrow|itinerarySectionTitle|timelineSectionEyebrow|timelineSectionTitle|parentsSectionEyebrow|parentsSectionTitle|parentsSectionSubtitle|hospedajeSectionEyebrow|hospedajeSectionTitle|padrinosSectionEyebrow|padrinosSectionTitle)$/,
   /^location\.(sectionEyebrow|sectionTitle|venueName|address)$/,
   /^story\.(sectionEyebrow|sectionTitle)$/,
   /^story\.slides\.\d+\.(title|subtitle|text|date)$/,

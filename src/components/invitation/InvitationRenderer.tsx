@@ -253,7 +253,7 @@ export default function InvitationRenderer({
               eventLabel={invitation.hero?.eventLabel || 'Nos casamos'}
               theme={effectiveTheme}
               editablePreview={editablePreview}
-              connectorText={(invitation.hero as { connectorText?: string } | undefined)?.connectorText}
+              connectorText={invitation.hero?.connectorText}
             />
           );
         })()}
@@ -269,7 +269,14 @@ export default function InvitationRenderer({
         )}
 
       <FeatureGate feature="showParents" features={features}>
-        <Parents parents={invitation.parents} theme={effectiveTheme} editablePreview={editablePreview} />
+        <Parents
+          parents={invitation.parents}
+          theme={effectiveTheme}
+          editablePreview={editablePreview}
+          sectionEyebrow={invitation.hero?.parentsSectionEyebrow}
+          sectionTitle={invitation.hero?.parentsSectionTitle}
+          sectionSubtitle={invitation.hero?.parentsSectionSubtitle}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showStoryBook" features={features}>
@@ -288,11 +295,23 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showTimeline" features={features}>
-        <Timeline events={invitation.timeline} theme={effectiveTheme} editablePreview={editablePreview} />
+        <Timeline
+          events={invitation.timeline}
+          theme={effectiveTheme}
+          editablePreview={editablePreview}
+          sectionEyebrow={invitation.hero?.timelineSectionEyebrow}
+          sectionTitle={invitation.hero?.timelineSectionTitle}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showItinerary" features={features}>
-        <Itinerary items={invitation.itinerary} theme={effectiveTheme} editablePreview={editablePreview} />
+        <Itinerary
+          items={invitation.itinerary}
+          theme={effectiveTheme}
+          editablePreview={editablePreview}
+          sectionEyebrow={invitation.hero?.itinerarySectionEyebrow}
+          sectionTitle={invitation.hero?.itinerarySectionTitle}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showMaps" features={features}>
@@ -319,11 +338,23 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showPadrinos" features={features}>
-        <Padrinos padrinos={invitation.padrinos} theme={effectiveTheme} editablePreview={editablePreview} />
+        <Padrinos
+          padrinos={invitation.padrinos}
+          theme={effectiveTheme}
+          editablePreview={editablePreview}
+          sectionEyebrow={invitation.hero?.padrinosSectionEyebrow}
+          sectionTitle={invitation.hero?.padrinosSectionTitle}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showAccommodation" features={features}>
-        <Hospedaje hotels={invitation.hotels} theme={effectiveTheme} editablePreview={editablePreview} />
+        <Hospedaje
+          hotels={invitation.hotels}
+          theme={effectiveTheme}
+          editablePreview={editablePreview}
+          sectionEyebrow={invitation.hero?.hospedajeSectionEyebrow}
+          sectionTitle={invitation.hero?.hospedajeSectionTitle}
+        />
       </FeatureGate>
 
       <FeatureGate feature="showHashtag" features={features}>

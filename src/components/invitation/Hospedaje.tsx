@@ -14,6 +14,8 @@ interface HospedajeProps {
   hotels: Hotel[];
   theme: Theme;
   editablePreview?: boolean;
+  sectionEyebrow?: string;
+  sectionTitle?: string;
 }
 
 function StarRating({ count }: { count: number }) {
@@ -41,18 +43,21 @@ function PriceTag({ range, fieldPath, editablePreview }: { range: string; fieldP
   );
 }
 
-export default function Hospedaje({ hotels, theme, editablePreview = false }: HospedajeProps) {
+export default function Hospedaje({ hotels, theme, editablePreview = false, sectionEyebrow, sectionTitle }: HospedajeProps) {
   if (!hotels || hotels.length === 0) return null;
 
   return (
     <SectionShell className="select-none" contentClassName="max-w-3xl mx-auto">
       {/* Header */}
-      <SectionHeader 
-        eyebrow="Para nuestros invitados foráneos" 
-        title="Hospedaje" 
+      <SectionHeader
+        eyebrow={sectionEyebrow ?? 'Para nuestros invitados foráneos'}
+        title={sectionTitle ?? 'Hospedaje'}
         subtitle="Te recomendamos reservar con anticipación. Estos hoteles están cerca del venue y cuentan con excelentes reseñas."
         theme={theme}
         className="mb-14"
+        editablePreview={editablePreview}
+        eyebrowFieldPath="hero.hospedajeSectionEyebrow"
+        titleFieldPath="hero.hospedajeSectionTitle"
       />
 
       {/* Hotel cards */}
