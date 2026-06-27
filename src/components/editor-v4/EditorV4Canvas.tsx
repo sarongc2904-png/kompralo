@@ -59,6 +59,12 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
           display: 'flex',
           flexDirection: 'column',
           background: '#fff',
+          // In intro mode: push the iframe down so the border-radius (16px) cannot clip
+          // the intro content's top edge. paddingTop > borderRadius guarantees it.
+          paddingTop: mode === 'intro' ? 24 : 0,
+          // Background for the padding strip: transparent lets canvas bg (#F0EBE3) show through
+          // — visually the frame appears to float with breathing room above the intro.
+          backgroundColor: mode === 'intro' ? 'transparent' : '#fff',
         }}>
           {/* Loading overlay */}
           {loading && (
