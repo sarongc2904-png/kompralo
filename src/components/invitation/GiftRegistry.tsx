@@ -29,6 +29,7 @@ export default function GiftRegistry({
 }: GiftRegistryProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [revealedIds, setRevealedIds] = useState<Record<string, boolean>>({});
+  const [acknowledgedIds, setAcknowledgedIds] = useState<Record<string, boolean>>({});
 
   if (!items || items.length === 0) return null;
 
@@ -41,6 +42,23 @@ export default function GiftRegistry({
   const toggleReveal = (id: string) => {
     setRevealedIds((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const toggleAcknowledge = (id: string) => {
+    setAcknowledgedIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  function defaultGiftDescription(logoType: string, provider: string): string {
+    if (logoType === 'custom' && provider === 'Lluvia de sobres') return 'En nuestra boda tendremos una urna disponible para quienes deseen obsequiarnos un sobre con su cariño.';
+    const map: Record<string, string> = {
+      liverpool:    'Búscanos en Liverpool bajo el nombre de los novios o usa el link para ver nuestra lista directamente.',
+      palacio:      'Encuéntranos en El Palacio de Hierro o accede directamente a nuestra lista.',
+      amazon:       'Visita nuestra lista en Amazon y elige el regalo que más te guste.',
+      mercadolibre: 'Explora nuestra lista de deseos en Mercado Libre.',
+      paypal:       'Puedes enviarnos un regalo a través de PayPal usando el botón de abajo.',
+      bank:         'Si prefieres hacer una transferencia, toca \'Revelar datos\' para ver nuestra información bancaria.',
+    };
+    return map[logoType] ?? 'Haz clic abajo para ver la mesa de regalos directamente.';
+  }
 
   return (
     <SectionShell className="select-none relative z-20" contentClassName="max-w-4xl mx-auto">
@@ -175,23 +193,13 @@ export default function GiftRegistry({
                   </div>
                 )}
 
-                {/* Standard description for normal links */}
-                {(item.logoType !== 'bank' || editablePreview) && (
+                {/* Description for non-bank cards */}
+                {item.logoType !== 'bank' && (
                   <p className={`text-[13px] md:text-[14px] opacity-75 mb-4 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
                     <EditableText
-                      value={item.description || 'Haz clic abajo para ver la mesa de regalos directamente.'}
+                      value={item.description || defaultGiftDescription(item.logoType, item.provider)}
                       fieldPath={`gift_registry.items.${idx}.description`}
                       isEditable={editablePreview}
-                    />
-                  </p>
-                )}
-                {editablePreview && item.logoType !== 'bank' && (
-                  <p className={`text-[11px] opacity-70 break-all max-w-[220px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
-                    <EditableText
-                      value={item.link ?? ''}
-                      fieldPath={`gift_registry.items.${idx}.link`}
-                      isEditable={editablePreview}
-                      placeholder="URL de mesa de regalos…"
                     />
                   </p>
                 )}
@@ -251,22 +259,42 @@ export default function GiftRegistry({
                       </div>
                     )}
                   </>
+                ) : isInternalAnchor ? (
+                  /* Envelope / lluvia de sobres — local toggle, no navigation */
+                  <button
+                    type="button"
+                    onClick={() => toggleAcknowledge(item.id)}
+                    className={`w-full py-3 border text-[12px] md:text-[13px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
+                    style={{
+                      borderRadius: '30px',
+                      borderColor: acknowledgedIds[item.id] ? 'rgba(60,160,80,0.4)' : 'var(--v2-color-border, rgba(200, 167, 93, 0.35))',
+                      background: acknowledgedIds[item.id]
+                        ? 'linear-gradient(180deg, rgba(220,255,230,0.85) 0%, rgba(200,245,215,0.6) 100%)'
+                        : 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,250,238,0.6) 100%)',
+                      color: acknowledgedIds[item.id] ? '#2A8040' : 'var(--v2-color-text-primary, #1F1A16)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    {acknowledgedIds[item.id] ? (
+                      <><Check className="w-3.5 h-3.5" /> ¡Gracias!</>
+                    ) : 'Lo tendré en cuenta'}
+                  </button>
                 ) : (
                   <a
                     href={actionHref}
-                    target={isInternalAnchor ? undefined : '_blank'}
-                    rel={isInternalAnchor ? undefined : 'noopener noreferrer'}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`w-full py-3 border text-[12px] md:text-[13px] uppercase tracking-[0.22em] font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow hover:-translate-y-0.5 ${theme.bodyFont}`}
-                    style={{ 
-                      borderRadius: '30px', 
-                      borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.35))', 
+                    style={{
+                      borderRadius: '30px',
+                      borderColor: 'var(--v2-color-border, rgba(200, 167, 93, 0.35))',
                       background: 'linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,250,238,0.6) 100%)',
                       color: 'var(--v2-color-text-primary, #1F1A16)',
                       backdropFilter: 'blur(8px)',
                     }}
                   >
-                    {isInternalAnchor ? 'Confirmar asistencia' : 'Ver Mesa'}
-                    {!isInternalAnchor && <ExternalLink className="w-3 h-3 opacity-60" />}
+                    Ver Mesa
+                    <ExternalLink className="w-3 h-3 opacity-60" />
                   </a>
                 )}
               </div>

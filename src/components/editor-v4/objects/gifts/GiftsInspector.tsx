@@ -133,7 +133,7 @@ function GiftCard({
           {item.logoType !== 'bank' && !isEnvelope && (
             <>
               <div style={fieldS}>
-                <label style={labelS}>Tienda</label>
+                <label style={labelS}>Nombre de la tienda</label>
                 <select
                   value={item.logoType}
                   onChange={(e) => {
@@ -154,11 +154,11 @@ function GiftCard({
               {item.logoType === 'custom' && (
                 <div style={fieldS}>
                   <label style={labelS}>Nombre de la tienda *</label>
-                  <input type="text" value={item.provider} onChange={(e) => onChange({ provider: e.target.value })} placeholder="Ej: El Palacio de los Novios" style={inputS} />
+                  <input type="text" value={item.provider} onChange={(e) => onChange({ provider: e.target.value })} placeholder="Ej: Liverpool, Amazon, etc." style={inputS} />
                 </div>
               )}
               <div style={fieldS}>
-                <label style={labelS}>Link de la mesa *</label>
+                <label style={labelS}>Link de la mesa de regalos *</label>
                 <input type="url" value={item.link} onChange={(e) => onChange({ link: e.target.value })} placeholder="https://…" style={inputS} />
               </div>
               <div style={fieldS}>
@@ -344,7 +344,7 @@ export function GiftsInspector({ element, invitationId, isMobileSheet, onSaved }
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {([
                 { type: 'envelope' as const, label: '✉️ Lluvia de sobres' },
-                { type: 'store'    as const, label: '🛍 Tienda' },
+                { type: 'store'    as const, label: '🛍 Mesa de regalo' },
                 { type: 'bank'     as const, label: '🏦 Transferencia' },
               ]).map(({ type, label }) => (
                 <button
