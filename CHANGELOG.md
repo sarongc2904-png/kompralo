@@ -18,6 +18,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0] — 2026-06-26
+
+### Fixed
+
+#### `fix(invitation)` — Countdown visible en todos los estados (`4491e37`, `68a35f7`, `dc6f7db`)
+
+El Countdown no aparecía en producción a pesar de estar habilitado en el plan. Tres causas encontradas y corregidas de forma sucesiva mediante marcadores visuales de diagnóstico:
+
+| # | Causa | Fix |
+|---|---|---|
+| 1 | Condición `&& invitation.eventDate` cortocircuitaba cuando `event_date` es NULL en DB | Eliminada la guarda — Countdown maneja fecha vacía mostrando “Fecha por confirmar” |
+| 2 | `plan.features.showCountdown` (raw) en vez de `features.showCountdown` (merged) | Cambiado a `features.showCountdown` para respetar el resultado de `mergePlanFeatures` |
+| 3 | `<section>` sin `position: relative` ni `z-index` — el overlay `paper-noise` (`position: absolute; zIndex: 2`) lo cubría completamente | Añadido `position: relative; zIndex: 20` a la sección. Removido `whileInView / initial opacity: 0` que también podía impedir visibilidad en contenedores con overflow |
+
+**Archivos modificados:**
+- `src/components/invitation/InvitationRenderer.tsx` — condición y uso de `features`
+- `src/components/invitation/Countdown.tsx` — stacking context y animación de entrada
+
+---
+
+### Added
+
+#### `feat(invitation)` — Headers de sección editables en todas las secciones array (`74dab50`)
+
+Las secciones basadas en arrays JSONB (Itinerary, Timeline, Parents, Hospedaje, Padrinos) tenían sus títulos y subtítulos hardcodeados — no eran editables inline. Se implementó almacenamiento de labels en el JSONB `hero` existente como canal lateral, sin cambios de schema.
+
+**Campos nuevos en `hero` JSONB (todos opcionales):**
+- `itinerarySectionEyebrow` / `itinerarySectionTitle`
+- `timelineSectionEyebrow` / `timelineSectionTitle`
+- `parentsSectionEyebrow` / `parentsSectionTitle` / `parentsSectionSubtitle`
+- `hospedajeSectionEyebrow` / `hospedajeSectionTitle`
+- `padrinosSectionEyebrow` / `padrinosSectionTitle`
+
+**Comportamiento:** Muestra el valor guardado si existe, o el texto hardcodeado como placeholder. En modo `editablePreview`, el usuario puede hacer clic y editar inline. El cambio se guarda vía `INLINE_EDIT_ALLOWED_PATHS` en `actions.ts`.
+
+**Archivos modificados:**
+- `src/domain/invitations/types.ts` — `InvitationHero` extendido con 11 campos de section labels + `connectorText` + `wizardExpressCompleted`
+- `src/app/dashboard/invitations/[id]/edit/actions.ts` — regex `hero.*` extendida para cubrir los 11 nuevos fieldPaths
+- `src/components/invitation/InvitationRenderer.tsx` — pasa section labels desde `invitation.hero` a cada componente; elimina type cast de `connectorText`
+- `src/components/invitation/Itinerary.tsx` — `SectionHeader` editable vía `hero.itinerarySectionEyebrow/Title`
+- `src/components/invitation/Timeline.tsx` — `SectionHeader` editable vía `hero.timelineSectionEyebrow/Title`
+- `src/components/invitation/Parents.tsx` — `SectionHeader` editable vía `hero.parentsSectionEyebrow/Title`
+- `src/components/invitation/Hospedaje.tsx` — `SectionHeader` editable vía `hero.hospedajeSectionEyebrow/Title`
+- `src/components/invitation/Padrinos.tsx` — header custom envuelto en `EditableText` vía `hero.padrinos*`
+
+---
+
+### Fixed (sesión anterior — editor-v3, commits `b5d85f6`…`351d67c`)
+
+#### `fix(invitation)` — Regresiones post-merge: Hero, WizardExpress, Countdown, EditableText
+
+Cuatro regresiones detectadas y corregidas en el editor visual:
+
+**Hero video (`Hero.tsx`):**
+- `objectFit: cover` ignorado por navegadores en `<iframe>` — reemplazado por técnica absolute-center + `minWidth: 177.78%`
+- Altura en modo `editablePreview` limitada a `min(100svh, 820px)`
+
+**WizardExpress (`edit/page.tsx`):**
+- Condición `!hasMinimalData` impedía mostrar el wizard cuando la invitación ya tenía datos por defecto
+- Simplificado a `!hero.wizardExpressCompleted` — único flag autoritativo
+
+**ADMIN_ONLY_FEATURE_KEYS (`features.ts`):**
+- Overrides de DB podían deshabilitar `showCountdown`, `showIntro`, `showRSVP` para clientes
+- Set `ADMIN_ONLY_FEATURE_KEYS` en `mergePlanFeatures` descarta esas keys antes de mezclar
+- `FeaturesForm.tsx` filtrado para no mostrar features con `editableByCustomer: false`
+
+**EditableText (`EditableText.tsx`, `SectionHeader.tsx`, `InvitationRenderer.tsx`):**
+- Reescritura de `EditableText` con placeholder CSS, `syncEmptyAttr`, lógica editor vs público
+- `SectionHeader` acepta `eyebrowFieldPath`/`titleFieldPath` — secciones objeto (Story, GiftRegistry, Location, DressCode, Social) ya tienen headers editables
+- Whitelist `INLINE_EDIT_ALLOWED_PATHS` completa para todos los fieldPaths de la invitación
+
+---
+
 ## [0.8.0] — 2026-06-23
 
 ### Fixed
