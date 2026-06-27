@@ -104,7 +104,9 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
           display: 'flex',
           flexDirection: 'column',
           background: '#fff',
-          paddingTop: mode === 'intro' ? 24 : 0,
+          // In intro mode push the iframe down so the border-radius (16px) cannot
+          // clip the intro heading. 36px > 16px with comfortable margin on desktop.
+          paddingTop: mode === 'intro' ? 36 : 0,
           backgroundColor: mode === 'intro' ? 'transparent' : '#fff',
         }}>
           {loading && (
