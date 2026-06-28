@@ -9,6 +9,7 @@ export function CentroControlHelpButton() {
   return (
     <>
       <button
+        id="centro-control-help-btn"
         type="button"
         onClick={() => setShowHelp(true)}
         aria-label="Guía del Centro de Control"

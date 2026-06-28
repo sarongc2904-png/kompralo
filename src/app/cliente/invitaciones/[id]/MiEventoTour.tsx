@@ -153,7 +153,99 @@ function tooltipPos(rect: Rect): { top: number; left: number } {
   return { top, left };
 }
 
-function TourUI({ onClose }: { onClose: () => void }) {
+// ─── HELP HINT (post-tour spotlight on the ? button) ──────────────────────────
+
+function HelpHint({ onDismiss }: { onDismiss: () => void }) {
+  const [rect, setRect] = useState<Rect | null>(null);
+
+  useEffect(() => {
+    const el = document.getElementById('centro-control-help-btn');
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+    }
+    const t = setTimeout(onDismiss, 6000);
+    return () => clearTimeout(t);
+  }, [onDismiss]);
+
+  if (!rect) return null;
+
+  const rPad = 8;
+  const ww   = typeof window !== 'undefined' ? window.innerWidth : 375;
+  const wh   = typeof window !== 'undefined' ? window.innerHeight : 812;
+
+  // Place tooltip above or below the button
+  const tipH     = 72;
+  const tipW     = 200;
+  const belowY   = rect.top + rect.height + 10;
+  const aboveY   = rect.top - tipH - 10;
+  const tipTop   = belowY + tipH < wh - 12 ? belowY : aboveY;
+  const tipLeft  = clamp(rect.left + rect.width / 2 - tipW / 2, 8, ww - tipW - 8);
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes hint-ring { 0%,100% { box-shadow: 0 0 0 0 rgba(201,169,110,0.55); } 60% { box-shadow: 0 0 0 10px rgba(201,169,110,0); } }
+        @keyframes hint-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+      ` }} />
+
+      {/* Dim overlay — tap to dismiss */}
+      <div
+        onClick={onDismiss}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 1490,
+          background: 'rgba(10,8,4,0.40)',
+        }}
+      />
+
+      {/* Pulsing ring around ? button */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          top:    rect.top  - rPad,
+          left:   rect.left - rPad,
+          width:  rect.width  + rPad * 2,
+          height: rect.height + rPad * 2,
+          borderRadius: '50%',
+          border: '2px solid #C9A96E',
+          zIndex: 1492,
+          pointerEvents: 'none',
+          animation: 'hint-ring 1.4s ease-out infinite',
+        }}
+      />
+
+      {/* Tooltip */}
+      <div
+        style={{
+          position: 'fixed',
+          top:  tipTop,
+          left: tipLeft,
+          width: tipW,
+          zIndex: 1493,
+          background: '#FFFDF9',
+          border: '1px solid #E8DFC8',
+          borderRadius: 12,
+          padding: '11px 15px',
+          boxShadow: '0 8px 28px rgba(0,0,0,0.18)',
+          animation: 'hint-fade-in 0.3s ease',
+          pointerEvents: 'none',
+        }}
+      >
+        <p style={{ fontSize: 13, fontWeight: 700, color: '#1A1410', margin: '0 0 4px' }}>
+          ¿Tienes dudas?
+        </p>
+        <p style={{ fontSize: 11.5, color: '#7B5E3A', lineHeight: 1.55, margin: 0 }}>
+          Toca <strong>?</strong> para abrir la guía del Centro de Control.
+        </p>
+      </div>
+    </>
+  );
+}
+
+// ─── TOUR UI ──────────────────────────────────────────────────────────────────
+
+function TourUI({ onClose }: { onClose: (completed: boolean) => void }) {
   const [step,    setStep]    = useState(0);
   const [rect,    setRect]    = useState<Rect | null>(null);
   const [ttPos,   setTtPos]   = useState({ top: 0, left: 0 });
@@ -199,7 +291,7 @@ function TourUI({ onClose }: { onClose: () => void }) {
 
   function next() {
     if (step < steps.length - 1) setStep(s => s + 1);
-    else onClose();
+    else onClose(true);
   }
 
   function prev() {
@@ -275,7 +367,7 @@ function TourUI({ onClose }: { onClose: () => void }) {
             {step + 1} / {steps.length}
           </span>
           <div style={{ display: 'flex', gap: 6 }}>
-            <button type="button" onClick={onClose} style={{ ...btnBase, background: 'transparent', color: '#9B8878' }}>
+            <button type="button" onClick={() => onClose(false)} style={{ ...btnBase, background: 'transparent', color: '#9B8878' }}>
               Saltar
             </button>
             {step > 0 && (
@@ -293,8 +385,11 @@ function TourUI({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ─── EXPORTED COMPONENT ───────────────────────────────────────────────────────
+
 export function MiEventoTour() {
-  const [show, setShow] = useState(false);
+  const [show,     setShow]     = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem(LS_KEY)) {
@@ -312,15 +407,27 @@ export function MiEventoTour() {
     return () => window.removeEventListener(EV_OPEN, handleOpen);
   }, []);
 
-  if (!show) return null;
+  if (!show && !showHint) return null;
 
   return (
-    <TourUI
-      onClose={() => {
-        localStorage.setItem(LS_KEY, '1');
-        setShow(false);
-      }}
-    />
+    <>
+      {show && (
+        <TourUI
+          onClose={(completed) => {
+            localStorage.setItem(LS_KEY, '1');
+            setShow(false);
+            if (completed) {
+              // Brief delay to let tour UI unmount before showing hint
+              setTimeout(() => setShowHint(true), 350);
+            }
+          }}
+        />
+      )}
+
+      {showHint && (
+        <HelpHint onDismiss={() => setShowHint(false)} />
+      )}
+    </>
   );
 }
 
