@@ -102,10 +102,18 @@ function TourUI({ onClose }: { onClose: () => void }) {
   const activeSteps = availableSteps.length > 0 ? availableSteps : STEPS;
 
   const updatePositions = useCallback((idx: number) => {
-    const r = getRect(activeSteps[idx]?.id ?? '');
-    if (!r) return;
-    setRect(r);
-    setTtPos(tooltipPos(r));
+    const id = activeSteps[idx]?.id ?? '';
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'instant', block: 'center' });
+    }
+    // Wait one frame for scroll to settle before measuring
+    requestAnimationFrame(() => {
+      const r = getRect(id);
+      if (!r) return;
+      setRect(r);
+      setTtPos(tooltipPos(r));
+    });
   }, [activeSteps]);
 
   useEffect(() => {
