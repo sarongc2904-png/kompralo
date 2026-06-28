@@ -43,11 +43,18 @@ function PriceTag({ range, fieldPath, editablePreview }: { range: string; fieldP
   );
 }
 
+const BG: React.CSSProperties = {
+  backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_3.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+};
+
 export default function Hospedaje({ hotels, theme, editablePreview = false, sectionEyebrow, sectionTitle }: HospedajeProps) {
   if (!hotels || hotels.length === 0) return null;
 
   return (
-    <SectionShell className="select-none" contentClassName="max-w-3xl mx-auto">
+    <SectionShell className="select-none" contentClassName="max-w-3xl mx-auto" style={BG}>
       {/* Header */}
       <SectionHeader
         eyebrow={sectionEyebrow ?? 'Para nuestros invitados foráneos'}
