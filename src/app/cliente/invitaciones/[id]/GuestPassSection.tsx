@@ -414,8 +414,8 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                 id="tour-btn-crear"
                 onClick={openCreate}
                 style={{
-                  marginLeft: 'auto', padding: '.45rem 1rem', background: '#1A1208', color: '#FFFFFF',
-                  border: 'none', borderRadius: '2rem', fontSize: '.75rem', fontWeight: 700,
+                  marginLeft: 'auto', padding: '0.5rem 1rem', background: '#dc2626', color: '#fff',
+                  border: 'none', borderRadius: '999px', fontSize: '.75rem', fontWeight: 700,
                   cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s'
                 }}
                 className="db-btn"
