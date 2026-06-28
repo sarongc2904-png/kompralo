@@ -1,0 +1,146 @@
+{
+  "id": "tierra-nocturna",
+  "catalog": {
+    "label": "Tierra Nocturna",
+    "description": "Boho dramático con fuego, textura y romance de noche.",
+    "previewColor": "#241714",
+    "accentColor": "#A84E2D",
+    "category": "playful",
+    "isNewTheme": true,
+    "featured": false
+  },
+  "theme": {
+    "name": "Tierra Nocturna",
+    "description": "Boho dramático con fuego, textura y romance de noche.",
+    "categorySupport": ["wedding", "birthday"],
+    "colors": {
+      "pageBackground": "#241714",
+      "surface": "rgba(51,33,27,0.95)",
+      "surfaceAlt": "#3D2820",
+      "surfaceElevated": "#2E1A14",
+      "textPrimary": "#F7E7D0",
+      "textSecondary": "#C9A98F",
+      "textMuted": "#8A7060",
+      "accent": "#A84E2D",
+      "accentSoft": "rgba(168,78,45,0.15)",
+      "accentHover": "#C05A35",
+      "border": "rgba(92,58,46,0.65)",
+      "borderStrong": "rgba(92,58,46,0.90)",
+      "overlay": "rgba(36,23,20,0.92)"
+    },
+    "typography": {
+      "headingFamily": "\"Cormorant Garamond\", \"Georgia\", serif",
+      "bodyFamily": "\"Nunito Sans\", system-ui, sans-serif",
+      "scriptFamily": "\"Sacramento\", cursive",
+      "headingWeight": "600",
+      "headingTracking": "0.06em",
+      "bodyTracking": "0.01em",
+      "headingClass": "font-editorial font-semibold tracking-wide",
+      "bodyClass": "font-sans",
+      "scriptClass": "font-calligraphy"
+    },
+    "spacing": {
+      "sectionPaddingY": "6.5rem",
+      "cardPaddingX": "2.25rem",
+      "cardPaddingY": "2rem",
+      "stackGap": "1.75rem"
+    },
+    "shapes": {
+      "radiusSm": "8px",
+      "radiusMd": "14px",
+      "radiusLg": "20px",
+      "radiusXl": "28px",
+      "radiusFull": "9999px",
+      "cardStyle": "rounded"
+    },
+    "effects": {
+      "glassBlur": "blur(18px)",
+      "glassSaturation": "saturate(105%)",
+      "glassBackground": "rgba(51,33,27,0.88)",
+      "paperTexture": true,
+      "grain": true,
+      "particles": false,
+      "parallax": true,
+      "lightSweep": false,
+      "grainIntensity": 0.08
+    },
+    "shadows": {
+      "soft": "0 6px 18px rgba(0,0,0,0.40)",
+      "card": "0 14px 44px rgba(0,0,0,0.50), inset 0 1px 0 rgba(168,78,45,0.12)",
+      "elevated": "0 24px 64px rgba(0,0,0,0.60)",
+      "book": "0 40px 100px rgba(0,0,0,0.70)"
+    },
+    "button": {
+      "background": "rgba(168,78,45,0.14)",
+      "text": "#F7E7D0",
+      "border": "1px solid rgba(168,78,45,0.65)",
+      "hoverBackground": "#A84E2D",
+      "hoverText": "#F7E7D0",
+      "borderRadius": "10px",
+      "fontClass": "font-editorial font-semibold tracking-widest text-xs uppercase",
+      "shadow": "0 0 20px rgba(168,78,45,0.22)",
+      "paddingX": "2.75rem",
+      "paddingY": "0.95rem"
+    },
+    "divider": {
+      "color": "rgba(168,78,45,0.45)",
+      "variant": "ornamental",
+      "thickness": "1.5px",
+      "opacity": 0.9,
+      "ornamentChar": "❖",
+      "gradientFrom": "rgba(168,78,45,0.0)",
+      "gradientTo": "rgba(168,78,45,0.0)"
+    },
+    "backgrounds": {
+      "main": "#241714",
+      "hero": "linear-gradient(180deg, rgba(0,0,0,0.28) 0%, transparent 40%, rgba(36,23,20,0.98) 100%)",
+      "sections": "#33211B",
+      "storyBook": "#241714",
+      "gallery": "transparent",
+      "final": "linear-gradient(160deg, #33211B 0%, #241714 100%)"
+    },
+    "assets": {
+      "backgroundLayer1": "",
+      "backgroundLayer2": "",
+      "backgroundLayer3": ""
+    },
+    "dressCodeSwatches": ["#4B211A", "#A84E2D", "#B8894D", "#D8B08C", "#2F3A2F"],
+    "cssVariables": {
+      "--v2-color-page-bg": "#241714",
+      "--v2-color-surface": "linear-gradient(152deg, rgba(51,33,27,0.97), rgba(61,40,32,0.92))",
+      "--v2-color-surface-alt": "#3D2820",
+      "--v2-color-surface-elevated": "#2E1A14",
+      "--v2-color-text-primary": "#F7E7D0",
+      "--v2-color-text-secondary": "#C9A98F",
+      "--v2-color-text-muted": "#8A7060",
+      "--v2-color-accent": "#A84E2D",
+      "--v2-color-accent-soft": "rgba(168,78,45,0.15)",
+      "--v2-color-accent-hover": "#C05A35",
+      "--v2-color-border": "rgba(92,58,46,0.65)",
+      "--v2-color-border-strong": "rgba(92,58,46,0.90)",
+      "--v2-color-overlay": "rgba(36,23,20,0.92)",
+      "--v2-radius-sm": "8px",
+      "--v2-radius-md": "14px",
+      "--v2-radius-lg": "20px",
+      "--v2-radius-xl": "28px",
+      "--v2-shadow-card": "0 14px 44px rgba(0,0,0,0.50), inset 0 1px 0 rgba(168,78,45,0.12)",
+      "--v2-shadow-elevated": "0 24px 64px rgba(0,0,0,0.60)",
+      "--v2-glass-bg": "rgba(51,33,27,0.88)",
+      "--v2-btn-bg": "rgba(168,78,45,0.14)",
+      "--v2-btn-text": "#F7E7D0",
+      "--v2-btn-border": "1px solid rgba(168,78,45,0.65)",
+      "--v2-btn-hover-bg": "#A84E2D",
+      "--v2-btn-hover-text": "#F7E7D0",
+      "--v2-divider-color": "rgba(168,78,45,0.45)",
+      "--v2-background-main": "#241714",
+      "--v2-background-story": "#241714",
+      "--v2-background-sections": "#33211B",
+      "--v2-background-final": "linear-gradient(160deg, #33211B 0%, #241714 100%)",
+      "--v2-font-heading": "\"Cormorant Garamond\", \"Georgia\", serif",
+      "--v2-font-body": "\"Nunito Sans\", system-ui, sans-serif",
+      "--v2-bg-layer-1": "",
+      "--v2-bg-layer-2": "",
+      "--v2-bg-layer-3": ""
+    }
+  }
+}
