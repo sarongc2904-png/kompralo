@@ -252,6 +252,12 @@ export default function CinematicIntro({
       (window as unknown as Record<string, { stop?: () => void }>).lenis?.stop?.();
       document.body.style.overflow = 'hidden';
     }, 50);
+    // Always restore scroll when the intro unmounts — handles the case where
+    // handleOpen's early ref-check returns before restoring overflow.
+    return () => {
+      document.body.style.overflow = '';
+      (window as unknown as Record<string, { start?: () => void }>).lenis?.start?.();
+    };
   }, []);
 
   const handleOpen = (e?: React.SyntheticEvent) => {
