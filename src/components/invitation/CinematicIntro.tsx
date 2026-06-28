@@ -179,7 +179,7 @@ function PremiumButton({ onClick, label = 'Abrir Invitación' }: { onClick: () =
 
 function NamesDisplay({ protagonists, onHeartClick }: { protagonists: InvitationProtagonist[]; onHeartClick: () => void }) {
   const nameStyle: React.CSSProperties = {
-    fontSize: 'clamp(52px, 10vw, 78px)',
+    fontSize: 'clamp(32px, 6.5svh, 68px)',
     lineHeight: 1.2,
   };
 
@@ -306,8 +306,8 @@ export default function CinematicIntro({
         of overflowing centered content ends up above y=0 and is unreachable.
       */}
       <div
-        className="relative min-h-full flex items-start justify-center"
-        style={{ paddingTop: 'max(140px, env(safe-area-inset-top, 0px) + 140px)', paddingBottom: 'clamp(24px, 6vh, 64px)' }}
+        className="relative min-h-full flex items-center justify-center"
+        style={{ paddingTop: 'clamp(60px, 9svh, 120px)', paddingBottom: 'clamp(20px, 3svh, 50px)' }}
       >
 
       {/* Content */}
