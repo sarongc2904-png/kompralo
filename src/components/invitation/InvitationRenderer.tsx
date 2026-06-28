@@ -363,10 +363,12 @@ export default function InvitationRenderer({
       style={{
         ...(themeV2.cssVariables as React.CSSProperties),
         ...invitationPaperVariables,
-        backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
-        backgroundSize: '100% auto',
-        backgroundPosition: 'top center',
-        backgroundRepeat: 'repeat-y',
+        ...(themeV2.id === 'ivory-editorial' ? {
+          backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
+          backgroundSize: '100% auto',
+          backgroundPosition: 'top center',
+          backgroundRepeat: 'repeat-y',
+        } : {}),
       }}
     >
       {editablePreview && (
