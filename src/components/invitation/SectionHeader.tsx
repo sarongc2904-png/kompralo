@@ -31,8 +31,8 @@ export default function SectionHeader({
     <div data-section-header="" className={`text-center mb-12 select-none ${className}`}>
       {showEyebrow && (
         <p
-          className={`text-[11px] sm:text-[13px] uppercase tracking-[0.35em] mb-4 ${theme.accentText} ${theme.bodyFont}`}
-          style={{ color: 'var(--v2-color-accent, inherit)', opacity: 0.9 }}
+          className={`uppercase mb-4 ${theme.bodyFont}`}
+          style={{ fontSize: 10, letterSpacing: '4px', color: '#c9a84c' }}
         >
           {canEditEyebrow ? (
             <EditableText
@@ -49,10 +49,10 @@ export default function SectionHeader({
       <h3
         className={`font-normal leading-snug tracking-wide ${theme.headingFont} ${theme.bodyText}`}
         style={{
-          fontFamily: 'var(--v2-font-heading, inherit)',
-          fontSize: 'clamp(2rem, 4vw + 0.5rem, 2.85rem)',
-          fontWeight: 'var(--v2-font-heading-weight, 400)',
-          color: 'var(--v2-color-text-primary, inherit)',
+          fontFamily: 'var(--v2-font-heading, serif)',
+          fontSize: 'clamp(28px, 5vw, 42px)',
+          fontWeight: 400,
+          color: '#2c1810',
         }}
       >
         {canEditTitle ? (
@@ -75,19 +75,8 @@ export default function SectionHeader({
         </p>
       )}
 
-      {/* Ornamental Divider */}
-      <div
-        className="flex items-center justify-center mt-6 text-amber-800/40"
-        style={{ color: 'var(--v2-divider-color, var(--v2-color-accent, inherit))' }}
-      >
-        <svg className="w-32 h-4" viewBox="0 0 120 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <line x1="0" y1="8" x2="48" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.3" />
-          <path d="M60 3 L64 8 L60 13 L56 8 Z" fill="currentColor" fillOpacity="0.8" />
-          <circle cx="52" cy="8" r="1.5" fill="currentColor" fillOpacity="0.5" />
-          <circle cx="68" cy="8" r="1.5" fill="currentColor" fillOpacity="0.5" />
-          <line x1="72" y1="8" x2="120" y2="8" stroke="currentColor" strokeWidth="0.75" strokeOpacity="0.3" />
-        </svg>
-      </div>
+      {/* Gold separator */}
+      <div style={{ width: 40, height: 1, background: '#c9a84c', margin: '8px auto 0' }} />
     </div>
   );
 }

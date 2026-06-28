@@ -9,14 +9,11 @@ import { motion } from 'framer-motion';
 // Uses --v2 CSS custom properties with warm-ivory fallbacks.
 
 export const CARD_BASE: React.CSSProperties = {
-  backgroundImage: 'url(/images/invitaciones/floral-gold-bg.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  border: '1px solid var(--v2-card-border, rgba(200,167,93,0.35))',
-  borderRadius: 'var(--v2-card-radius, 24px)',
-  boxShadow:
-    'var(--v2-shadow-card, 0 2px 6px rgba(116,84,38,0.06), 0 16px 40px rgba(120,88,40,0.13), inset 0 1px 0 rgba(255,255,255,0.85))',
+  background: 'rgba(255,255,255,0.75)',
+  border: '1px solid rgba(201,168,76,0.3)',
+  borderRadius: '8px',
+  boxShadow: '0 2px 12px rgba(116,84,38,0.08), 0 8px 24px rgba(120,88,40,0.06)',
+  backdropFilter: 'blur(4px)',
   overflow: 'hidden',
   position: 'relative',
 };
@@ -45,8 +42,8 @@ function InnerBorder() {
       aria-hidden="true"
       style={{
         position: 'absolute',
-        inset: '6px',
-        borderRadius: 'calc(var(--v2-card-radius, 24px) - 4px)',
+        inset: '4px',
+        borderRadius: '4px',
         border: '1px solid var(--v2-color-border, rgba(200,167,93,0.20))',
         pointerEvents: 'none',
         zIndex: 1,
