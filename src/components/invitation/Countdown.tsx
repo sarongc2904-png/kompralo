@@ -144,25 +144,25 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
           <div style={{ display: 'flex', justifyContent: 'center', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
             {units.map((u, i) => (
               <React.Fragment key={u.label}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ textAlign: 'center' }}>
                   <span style={{
+                    fontSize: 'clamp(56px, 10vw, 96px)',
                     fontFamily: 'serif',
                     fontWeight: 300,
-                    fontSize: 'clamp(56px, 10vw, 96px)',
                     color: '#2c1810',
                     lineHeight: 1,
                   }}>
                     {String(u.value).padStart(u.max, '0')}
                   </span>
-                  <span style={{
-                    fontSize: 10,
+                  <p style={{
+                    fontSize: '10px',
                     letterSpacing: '4px',
                     color: '#8B6914',
                     textTransform: 'uppercase',
-                    marginTop: 8,
+                    margin: '8px 0 0',
                   }}>
                     {u.label}
-                  </span>
+                  </p>
                 </div>
                 {i < units.length - 1 && (
                   <span style={{ color: '#c9a84c', fontSize: 32, lineHeight: 1, alignSelf: 'flex-start', paddingTop: 12 }}>·</span>
