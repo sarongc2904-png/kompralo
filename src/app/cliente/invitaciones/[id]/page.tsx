@@ -10,7 +10,7 @@ import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
 import ShareButtons from './ShareButtons';
 import RsvpModeSelector from './RsvpModeSelector';
-import { MiEventoTour } from './MiEventoTour';
+import { MiEventoTour, MiEventoTourHelpButton } from './MiEventoTour';
 
 export const dynamic  = 'force-dynamic';
 export const revalidate = 0;
@@ -506,9 +506,12 @@ export default async function InvitationDashboard({ params }: Props) {
         background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)',
         zIndex: 10,
       }}>
-        <Link href="/cliente" style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.dark, textDecoration: 'none' }}>
-          ← Mis invitaciones
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+          <Link href="/cliente" style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.dark, textDecoration: 'none' }}>
+            ← Mis invitaciones
+          </Link>
+          <MiEventoTourHelpButton />
+        </div>
         <SignOutButton style={{ fontSize: '.8125rem', color: T.light, fontWeight: 500 }}>
           Cerrar sesión
         </SignOutButton>
