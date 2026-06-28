@@ -567,11 +567,6 @@ export default async function ClientePage({ searchParams }: Props) {
     return !!invitationDataMap[o.invitationId];
   });
 
-  // Skip the listing and go straight to the only paid invitation (after filtering).
-  if (orders.length === 1 && orders[0].status === 'paid' && orders[0].invitationId) {
-    redirect(`/cliente/invitaciones/${orders[0].invitationId}`);
-  }
-
   const firstPaidOrder = orders.find(o => o.status === 'paid' && !!o.invitationId);
   const firstTitle = firstPaidOrder?.invitationId
     ? (invitationDataMap[firstPaidOrder.invitationId]?.title ?? null)
