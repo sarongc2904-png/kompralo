@@ -354,6 +354,7 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           timelineJson:     JSON.stringify(invitation.timeline ?? []),
           giftRegistryJson: JSON.stringify(invitation.giftRegistry?.items ?? []),
           hiddenSections:   (invitation.featureOverrides as { hiddenSections?: string[] } | undefined)?.hiddenSections ?? [],
+          themeId:          invitation.themeId ?? undefined,
         }}
       />
     );

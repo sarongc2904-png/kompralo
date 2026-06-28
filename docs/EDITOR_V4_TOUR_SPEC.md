@@ -83,7 +83,27 @@ Dos sistemas complementarios:
 
 ---
 
-## 5. Comportamiento
+## 5. FASE 2 — Modal Selector de Plantillas
+
+| Componente | Archivo |
+|-----------|---------|
+| `TemplateCard` | `src/components/template-selector/TemplateCard.tsx` |
+| `TemplateGrid` | `src/components/template-selector/TemplateGrid.tsx` |
+| `TemplateSelectorModal` | `src/components/template-selector/TemplateSelectorModal.tsx` |
+
+**Feature flag:** `NEXT_PUBLIC_TEMPLATE_SELECTOR=true` → `FEATURE_FLAGS.templateSelectorV2`
+
+**Trigger:** Botón `🎨 Cambiar plantilla` (`#editor-v4-template-btn`) en toolbar (desktop: entre Zoom y Refrescar; móvil: entre Preview y Compartir).
+
+**Modal:** Portal a `document.body`, overlay con blur, ancho máximo 1100px, header fijo con tabs "Destacadas"/"Todas", grid scrollable (3 col / 2 col / 1 col), footer fijo con botón "Aplicar plantilla".
+
+**Apply:** Llama a `updateThemeSelection({ id, slug, themeId })` → éxito: cierra modal + `refreshAndScrollTo('hero')` + muestra "✓ Guardado". Error: `alert()` con mensaje.
+
+**⚠️ Restricción:** `VALID_THEME_IDS` en `actions.ts` no incluye los 10 temas JSON nuevos (`blanco-linea`, `gatsby-dorado`, etc.). NO modificar `updateThemeSelection`.
+
+---
+
+## 6. Comportamiento
 
 Trigger del tour (no automático, solo manual):
 ```ts

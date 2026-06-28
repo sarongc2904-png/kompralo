@@ -12,6 +12,9 @@ import { useIsMobile }          from './hooks/useIsMobile';
 import { EDITOR_V4_ELEMENT_SELECTED, EDITOR_V4_SECTION_CLICK, INVITATION_SECTIONS } from './editor-v4-events';
 import { SECTION_AUTO_ELEMENT_TYPE, SECTION_CANVAS_MODE } from './core/EditorRegistry';
 import type { InvitationSnapshot } from './core/editor-types';
+import { FEATURE_FLAGS } from '@/lib/feature-flags';
+import { TemplateSelectorModal } from '@/components/template-selector/TemplateSelectorModal';
+import { updateThemeSelection } from '@/app/dashboard/invitations/[id]/edit/actions';
 
 interface EditorV4ShellProps {
   invitationId: string;
@@ -60,9 +63,10 @@ export function EditorV4Shell({
 
   const { selectedElement, setSelectedElement, clearSelection } = useSelectionManager();
 
-  const [showTour,     setShowTour]     = useState(false);
-  const [showHelp,     setShowHelp]     = useState(false);
-  const [sectionTourId, setSectionTourId] = useState<string | null>(null);
+  const [showTour,              setShowTour]              = useState(false);
+  const [showHelp,              setShowHelp]              = useState(false);
+  const [sectionTourId,         setSectionTourId]         = useState<string | null>(null);
+  const [isTemplateModalOpen,   setIsTemplateModalOpen]   = useState(false);
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
@@ -299,6 +303,7 @@ export function EditorV4Shell({
         invitationId={invitationId}
         onRefresh={handleRefresh}
         onHelp={() => setShowHelp(true)}
+        onOpenTemplateModal={FEATURE_FLAGS.templateSelectorV2 ? () => setIsTemplateModalOpen(true) : undefined}
         isMobile={isMobile}
         saveStatus={saveStatus}
         zoom={zoom}
@@ -407,6 +412,24 @@ export function EditorV4Shell({
           onStartSectionTour={(id) => {
             setSectionTourId(id);
             setShowTour(true);
+          }}
+        />
+      )}
+      {FEATURE_FLAGS.templateSelectorV2 && isTemplateModalOpen && (
+        <TemplateSelectorModal
+          currentThemeId={invitationSnapshot?.themeId}
+          onClose={() => setIsTemplateModalOpen(false)}
+          onApply={async (themeId) => {
+            const result = await updateThemeSelection({ id: invitationId, slug, themeId });
+            if (result.success) {
+              setIsTemplateModalOpen(false);
+              canvasRef.current?.refreshAndScrollTo('hero');
+              setSaveStatus('saved');
+              if (saveStatusTimer.current) clearTimeout(saveStatusTimer.current);
+              saveStatusTimer.current = setTimeout(() => setSaveStatus('idle'), 3000);
+            } else {
+              alert(result.error ?? 'Error al aplicar la plantilla.');
+            }
           }}
         />
       )}

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { FEATURE_FLAGS } from '@/lib/feature-flags';
 
 export type SaveStatus = 'idle' | 'saved';
 export type EditorDevice = 'desktop' | 'tablet' | 'mobile';
@@ -13,6 +14,7 @@ interface EditorV4ToolbarProps {
   invitationId: string;
   onRefresh: () => void;
   onHelp: () => void;
+  onOpenTemplateModal?: () => void;
   isMobile?: boolean;
   saveStatus?: SaveStatus;
   zoom?: number;
@@ -27,6 +29,7 @@ export function EditorV4Toolbar({
   invitationId,
   onRefresh,
   onHelp,
+  onOpenTemplateModal,
   isMobile = false,
   saveStatus = 'idle',
   zoom = 1,
@@ -69,11 +72,13 @@ export function EditorV4Toolbar({
           KOMPRALO
         </span>
         <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
-        <span style={{ fontSize: 12, color: '#F5EDD8', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {invitationTitle}
-        </span>
-        <span style={{ fontSize: 11, color: '#9B8878', fontFamily: 'monospace', flexShrink: 0 }}>
-          /{slug}
+        <span id="editor-v4-title-area" style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0 }}>
+          <span style={{ fontSize: 12, color: '#F5EDD8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {invitationTitle}
+          </span>
+          <span style={{ fontSize: 11, color: '#9B8878', fontFamily: 'monospace', flexShrink: 0 }}>
+            /{slug}
+          </span>
         </span>
 
         {saveStatus === 'saved' && (
@@ -85,6 +90,7 @@ export function EditorV4Toolbar({
         <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
 
         {/* Device switch */}
+        <span id="editor-v4-device-switch" style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
         {([
           { key: 'desktop' as EditorDevice, label: 'PC'   },
           { key: 'tablet'  as EditorDevice, label: 'Tab'  },
@@ -113,10 +119,12 @@ export function EditorV4Toolbar({
             </button>
           );
         })}
+        </span>
 
         <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
 
         {/* Zoom controls */}
+        <span id="editor-v4-zoom-controls" style={{ display: 'inline-flex', alignItems: 'center' }}>
         <button
           type="button"
           onClick={() => {
@@ -148,10 +156,22 @@ export function EditorV4Toolbar({
             width: 24, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
           }}
         >＋</button>
+        </span>
 
         <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
 
-        <button type="button" onClick={onRefresh} style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }} title="Refrescar preview">
+        {FEATURE_FLAGS.templateSelectorV2 && (
+          <button
+            id="editor-v4-template-btn"
+            type="button"
+            onClick={onOpenTemplateModal}
+            style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }}
+            title="Cambiar plantilla"
+          >
+            🎨 Cambiar plantilla
+          </button>
+        )}
+        <button id="editor-v4-refresh-btn" type="button" onClick={onRefresh} style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }} title="Refrescar preview">
           ↻ Refrescar
         </button>
         <a id="editor-v4-preview-btn" href={previewUrl} target="_blank" rel="noopener noreferrer" style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }}>
@@ -217,6 +237,18 @@ export function EditorV4Toolbar({
       <a id="editor-v4-preview-btn" href={previewUrl} target="_blank" rel="noopener noreferrer" style={mBtn}>
         Preview
       </a>
+
+      {/* Template selector — mobile */}
+      {FEATURE_FLAGS.templateSelectorV2 && (
+        <button
+          id="editor-v4-template-btn"
+          type="button"
+          onClick={onOpenTemplateModal}
+          style={mBtn}
+        >
+          🎨
+        </button>
+      )}
 
       {/* Share */}
       <button id="editor-v4-share-btn" type="button" onClick={handleShare} style={mBtn}>
