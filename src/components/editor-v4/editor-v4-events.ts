@@ -68,11 +68,11 @@ export function isEditorV4Event(data: unknown): data is EditorV4InboundEvent {
 // Sections shown in the layers panel — order matches InvitationRenderer render order
 export const INVITATION_SECTIONS = [
   { id: 'intro',      label: 'Intro Cinematográfico', icon: '🎬' },
-  { id: 'hero',       label: 'Portada',               icon: '🖼' },
+  { id: 'hero',       label: 'Portada',               icon: '🌅' },
   { id: 'countdown',  label: 'Cuenta Regresiva',      icon: '⏳' },
   { id: 'parents',    label: 'Familias',               icon: '👨‍👩‍👧' },
   { id: 'story',      label: 'Historia',               icon: '📖' },
-  { id: 'gallery',    label: 'Galería',                icon: '🖼' },
+  { id: 'gallery',    label: 'Galería',                icon: '📷' },
   { id: 'timeline',   label: 'Línea del Tiempo',       icon: '📅' },
   { id: 'itinerary',  label: 'Itinerario',             icon: '📋' },
   { id: 'location',   label: 'Ubicación',              icon: '📍' },
@@ -80,6 +80,6 @@ export const INVITATION_SECTIONS = [
   { id: 'gifts',      label: 'Mesa de Regalos',        icon: '🎁' },
   { id: 'padrinos',   label: 'Padrinos',               icon: '🌟' },
   { id: 'hotels',     label: 'Hospedaje',              icon: '🏨' },
-  { id: 'hashtag',    label: 'Hashtag / Social',       icon: '#'  },
+  { id: 'hashtag',    label: 'Hashtag / Social',       icon: '🏷️' },
   { id: 'message',    label: 'Mensaje Final',          icon: '💌' },
 ] as const;

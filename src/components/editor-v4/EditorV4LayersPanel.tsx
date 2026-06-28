@@ -20,7 +20,7 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
         borderBottom: '1px solid rgba(200,167,93,0.15)',
         flexShrink: 0,
       }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(201,169,110,0.5)' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.9)' }}>
           Secciones
         </span>
       </div>
@@ -77,7 +77,7 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
 
       {/* Footer hint */}
       <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(200,167,93,0.1)', flexShrink: 0, background: '#1a1208' }}>
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', lineHeight: 1.5 }}>
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
           Haz clic en una sección para navegar
         </p>
       </div>
