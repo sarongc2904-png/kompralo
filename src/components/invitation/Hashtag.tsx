@@ -16,6 +16,13 @@ interface HashtagProps {
   editablePreview?: boolean;
 }
 
+const BG: React.CSSProperties = {
+  backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_2.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+};
+
 // ─── Platform detection ───────────────────────────────────────────────────────
 
 type SocialPlatform = 'instagram' | 'tiktok' | 'facebook' | 'youtube';
@@ -193,7 +200,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
   if (!hasSocialContent && !editablePreview) return null;
 
   return (
-    <SectionShell className="select-none" contentClassName="max-w-[420px] mx-auto">
+    <SectionShell className="select-none" contentClassName="max-w-[420px] mx-auto" style={BG}>
       {/* Header */}
       <SectionHeader
         eyebrow={social.sectionEyebrow ?? 'Comparte el momento'}
