@@ -44,6 +44,7 @@ function PriceTag({ range, fieldPath, editablePreview }: { range: string; fieldP
 }
 
 const BG: React.CSSProperties = {
+  backgroundColor: '#ede3d2',
   backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_3.png)',
   backgroundSize: 'cover',
   backgroundPosition: 'center',

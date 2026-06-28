@@ -19,6 +19,7 @@ interface ParentsProps {
 }
 
 const BG: React.CSSProperties = {
+  backgroundColor: '#f7f0e6',
   backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
   backgroundSize: 'cover',
   backgroundPosition: 'center',

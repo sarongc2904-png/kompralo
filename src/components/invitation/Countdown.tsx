@@ -83,6 +83,7 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
       style={{
         position: 'relative',
         zIndex: 20,
+        backgroundColor: '#ede3d2',
         backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_3.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',

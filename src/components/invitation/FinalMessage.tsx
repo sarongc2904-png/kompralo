@@ -358,6 +358,7 @@ export default function FinalMessage({
       ref={sectionRef}
       className="relative py-24 md:py-36 px-6 md:px-8 text-center select-none overflow-hidden"
       style={{
+        backgroundColor: '#f7f0e6',
         backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
