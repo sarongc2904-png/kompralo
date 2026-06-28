@@ -158,12 +158,6 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
     return () => { document.body.style.overflow = ''; };
   }, [showForm, qrPass]);
 
-  // ── Computed stats ──────────────────────────────────────────────────────────
-  const totalFamilies  = passes.length;
-  const totalPersonas  = passes.reduce((acc, p) => acc + p.allowedGuests, 0);
-  const totalConfirmed = passes.filter(p => p.status === 'confirmed' || p.status === 'used').length;
-  const totalPending   = passes.filter(p => p.status === 'pending').length;
-
   // ── Filtered list ───────────────────────────────────────────────────────────
   const q = searchQuery.toLowerCase().trim();
   const filteredPasses = passes.filter(p => {
@@ -321,39 +315,6 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
         </div>
       </div>
 
-      {/* ── Summary stats (only when there are passes) ── */}
-      {passes.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.75rem', marginBottom: '1.5rem' }} className="sm:grid-cols-4">
-          <StatCard
-            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>}
-            label="Familias invitadas"
-            value={totalFamilies}
-            iconBg="#E7F5EC"
-            iconColor="#1A7A45"
-          />
-          <StatCard
-            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
-            label="Confirmados"
-            value={totalConfirmed}
-            iconBg="#E7F5EC"
-            iconColor="#1A7A45"
-          />
-          <StatCard
-            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
-            label="Personas invitadas"
-            value={totalPersonas}
-            iconBg="#FAF6EB"
-            iconColor="#C9A84C"
-          />
-          <StatCard
-            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>}
-            label="Pendientes"
-            value={totalPending}
-            iconBg="#FBEAEA"
-            iconColor="#B43232"
-          />
-        </div>
-      )}
 
       {/* ── Error banner ── */}
       {deleteErr && (
@@ -874,31 +835,6 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
         </div>
       )}
     </section>
-  );
-}
-
-// ── Stat card ──────────────────────────────────────────────────────────────────
-function StatCard({ icon, label, value, iconBg, iconColor }: { icon: React.ReactNode; label: string; value: number; iconBg: string; iconColor: string }) {
-  return (
-    <div style={{
-      background: '#FFFFFF', border: '1px solid #E5D2A8',
-      borderRadius: '1rem', padding: '1rem',
-      display: 'flex', alignItems: 'center', gap: '0.75rem',
-      boxShadow: '0 2px 8px rgba(26,18,8,0.01)',
-    }}>
-      <div style={{
-        width: 38, height: 38, borderRadius: '0.5rem',
-        background: iconBg, color: iconColor,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '1.1rem', flexShrink: 0,
-      }}>
-        {icon}
-      </div>
-      <div>
-        <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#1A1208', lineHeight: 1 }}>{value}</p>
-        <p style={{ margin: '.125rem 0 0', fontSize: '.75rem', fontWeight: 600, color: '#7A6A5B', lineHeight: 1.1 }}>{label}</p>
-      </div>
-    </div>
   );
 }
 
