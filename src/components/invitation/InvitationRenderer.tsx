@@ -360,7 +360,15 @@ export default function InvitationRenderer({
       data-render-mode={mode}
       data-plan-id={plan.id}
       data-theme-v2={themeV2.id}
-      style={{ ...(themeV2.cssVariables as React.CSSProperties), ...invitationPaperVariables }}
+      style={{
+        ...(themeV2.cssVariables as React.CSSProperties),
+        ...invitationPaperVariables,
+        backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
     >
       {editablePreview && (
         <style>{`

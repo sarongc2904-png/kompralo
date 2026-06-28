@@ -118,13 +118,6 @@ export default function Padrinos({ padrinos, theme, editablePreview = false, sec
   return (
     <section
       className="py-20 md:py-28 px-6 md:px-8 select-none"
-      style={{
-        backgroundColor: '#ede3d2',
-        backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_3.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
     >
       <div className="max-w-4xl mx-auto">
 

@@ -19,13 +19,6 @@ interface GiftRegistryProps {
   subtitle?: string;
 }
 
-const BG: React.CSSProperties = {
-  backgroundColor: '#f2e8d8',
-  backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_2.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-};
 
 export default function GiftRegistry({
   items,
@@ -69,7 +62,7 @@ export default function GiftRegistry({
   }
 
   return (
-    <SectionShell className="select-none relative z-20" contentClassName="max-w-4xl mx-auto" style={BG}>
+    <SectionShell className="select-none relative z-20" contentClassName="max-w-4xl mx-auto">
       {/* Header */}
       <SectionHeader
         eyebrow={sectionEyebrow ?? 'Detalles'}

@@ -80,15 +80,7 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
   return (
     <section
       className="pt-28 pb-24 md:pt-40 md:pb-36 px-4 text-center select-none overflow-visible"
-      style={{
-        position: 'relative',
-        zIndex: 20,
-        backgroundColor: '#ede3d2',
-        backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_3.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
+      style={{ position: 'relative', zIndex: 20 }}
     >
       <motion.div
         animate={{ opacity: 1, y: 0 }}

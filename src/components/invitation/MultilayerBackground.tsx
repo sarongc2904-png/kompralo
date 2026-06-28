@@ -638,18 +638,24 @@ export default function MultilayerBackground({ theme, children }: MultilayerBack
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
       {/* 0. Section-scoped Ambient Glow Background */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-        {/* Base gradient — V2 background-main token with v1 fallback */}
+        {/* Base gradient — transparent for ivory-editorial (fondo único on root wrapper) */}
         <div
           className="absolute inset-0 transition-colors duration-1000"
-          style={{ background: `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})` }}
+          style={{
+            background: (themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial')
+              ? 'transparent'
+              : `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})`,
+          }}
         />
 
-        {/* Shared editorial paper background. One scroll layer, no tiling. */}
+        {/* Paper texture — disabled for ivory-editorial (fondo único handles it) */}
         <div
           className="absolute inset-0"
           aria-hidden="true"
           style={{
-            backgroundImage: 'var(--kompralo-invitation-paper-bg)',
+            backgroundImage: (themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial')
+              ? 'none'
+              : 'var(--kompralo-invitation-paper-bg)',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center top',

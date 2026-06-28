@@ -18,10 +18,7 @@ export default function SectionShell({
   return (
     <section
       className={`py-20 md:py-28 px-6 md:px-8 transition-colors duration-500 ${className}`}
-      style={{
-        ...(variant === 'alt' ? { backgroundColor: 'var(--v2-section-bg-alt, transparent)' } : {}),
-        ...style,
-      }}
+      style={style}
     >
       <div className={contentClassName}>{children}</div>
     </section>

@@ -25,13 +25,6 @@ const iconMap = {
   music: Music,
 };
 
-const BG: React.CSSProperties = {
-  backgroundColor: '#f2e8d8',
-  backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_2.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-};
 
 export default function Itinerary({ items, theme, editablePreview = false, sectionEyebrow, sectionTitle }: ItineraryProps) {
   const validItems = items
@@ -41,7 +34,7 @@ export default function Itinerary({ items, theme, editablePreview = false, secti
   if (validItems.length === 0) return null;
 
   return (
-    <SectionShell className="select-none" contentClassName="max-w-5xl mx-auto" style={BG}>
+    <SectionShell className="select-none" contentClassName="max-w-5xl mx-auto">
       {/* Section Header */}
       <SectionHeader
         eyebrow={sectionEyebrow ?? 'El Gran Día'}

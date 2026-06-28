@@ -191,7 +191,7 @@ export default function HorizontalGallery({ images, theme }: HorizontalGalleryPr
       ref={sectionRef}
       id="gallery-section"
       className="relative overflow-hidden"
-      style={{ backgroundColor: '#fdf6ec', zIndex: 2 }}
+      style={{ zIndex: 2 }}
     >
       {/* Desktop Horizontal Scroll Track */}
       <div className="hidden md:flex h-screen items-center relative">
