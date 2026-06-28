@@ -179,8 +179,8 @@ function PremiumButton({ onClick, label = 'Abrir Invitación' }: { onClick: () =
 
 function NamesDisplay({ protagonists, onHeartClick }: { protagonists: InvitationProtagonist[]; onHeartClick: () => void }) {
   const nameStyle: React.CSSProperties = {
-    fontSize: 'clamp(52px, 10vw, 78px)',
-    lineHeight: 1.2,
+    fontSize: 'clamp(36px, 8vw, 68px)',
+    lineHeight: 1.15,
   };
 
   if (protagonists.length >= 2) {
@@ -307,7 +307,7 @@ export default function CinematicIntro({
       */}
       <div
         className="relative min-h-full flex items-center justify-center"
-        style={{ paddingTop: 'clamp(16px, 4vh, 48px)', paddingBottom: 'clamp(16px, 4vh, 48px)' }}
+        style={{ paddingTop: 'clamp(12px, 2vh, 32px)', paddingBottom: 'clamp(12px, 2vh, 32px)' }}
       >
 
       {/* Content */}
