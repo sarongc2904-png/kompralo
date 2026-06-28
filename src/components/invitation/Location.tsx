@@ -74,7 +74,7 @@ export default function Location({ location, theme, editablePreview = false }: L
   const textPrimaryVar = `var(--v2-color-text-primary, ${theme.colors.textPrimary})`;
 
   return (
-    <SectionShell className="select-none" contentClassName="max-w-4xl mx-auto">
+    <SectionShell className="select-none" contentClassName="max-w-4xl mx-auto" style={{ backgroundColor: '#fdf6ec' }}>
       {/* Header */}
       <SectionHeader
         eyebrow={location.sectionEyebrow ?? 'Ubicación'}
