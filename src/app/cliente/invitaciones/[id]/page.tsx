@@ -649,7 +649,7 @@ export default async function InvitationDashboard({ params }: Props) {
         {/* ════════════════════════════════════════════════
             ESTADO 5 — DÍA DEL EVENTO
         ════════════════════════════════════════════════ */}
-        {phase === 'dia' && (
+        {(phase === 'semana' || phase === 'dia') && (
           <>
             <div className="cc-card" style={{ background: '#1A1208', border: '1px solid rgba(201,169,110,0.25)', padding: 'clamp(1.75rem,5vw,2.5rem)', marginBottom: '1.5rem', textAlign: 'center' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '.875rem' }}>🎉</div>
