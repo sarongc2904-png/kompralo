@@ -60,29 +60,30 @@ function TemplateSelectorModalContent({
   const canApply = selectedThemeId && selectedThemeId !== currentThemeId;
 
   return (
-    <>
-      {/* Overlay */}
-      <div
-        onClick={onClose}
-        style={{
-          position: 'fixed', inset: 0, zIndex: 2000,
-          background: 'rgba(26,20,16,0.6)',
-          backdropFilter: 'blur(4px)',
-        }}
-      />
-
-      {/* Modal */}
+    /* Overlay — también actúa de flex wrapper para centrar el modal */
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 2000,
+        background: 'rgba(26,20,16,0.6)',
+        backdropFilter: 'blur(4px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+      }}
+    >
+      {/* Modal — altura fija para que footer nunca salga del viewport */}
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Seleccionar plantilla"
+        onClick={(e) => e.stopPropagation()}
         style={{
-          position: 'fixed',
-          top: '50%', left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 2001,
-          width: 'min(1100px, 95vw)',
-          maxHeight: '90dvh',
+          width: '90vw',
+          maxWidth: 1100,
+          height: '85vh',
+          maxHeight: '85vh',
           background: '#FAF7F2',
           borderRadius: 16,
           boxShadow: '0 24px 80px rgba(0,0,0,0.35)',
@@ -209,7 +210,7 @@ function TemplateSelectorModalContent({
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
