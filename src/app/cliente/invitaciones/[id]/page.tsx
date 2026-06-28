@@ -642,12 +642,12 @@ export default async function InvitationDashboard({ params }: Props) {
                 Todo está listo. Controla la entrada de tus invitados y sigue las confirmaciones en tiempo real.
               </p>
               <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-                <a href="#mis-invitados" className="db-btn" style={{ ...btnGold, padding: '.9rem 2rem', fontSize: '.9375rem', minHeight: '50px' }}>
+                <a href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, padding: '.9rem 2rem', fontSize: '.9375rem', minHeight: '50px', fontWeight: 600 }}>
                   Preparar entrada
                 </a>
                 {publicUrl && (
                   <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn"
-                    style={{ ...btnBase, background: 'rgba(255,253,249,0.1)', border: '1.5px solid rgba(255,253,249,0.22)', color: '#fffdf9', minHeight: '50px', fontSize: '.9375rem', fontWeight: 600 }}
+                    style={{ ...btnBase, background: 'transparent', border: '1.5px solid rgba(255,255,255,0.4)', color: '#fff', minHeight: '50px', fontSize: '.9375rem', fontWeight: 500 }}
                   >
                     Ver invitación
                   </a>
