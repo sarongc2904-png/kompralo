@@ -93,6 +93,11 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
   const [form,       setForm]       = useState<FormState>(emptyForm);
   const [saving,     setSaving]     = useState(false);
   const [formError,  setFormError]  = useState('');
+  const [guestsInputValue, setGuestsInputValue] = useState(String(emptyForm.allowedGuests));
+
+  useEffect(() => {
+    setGuestsInputValue(String(form.allowedGuests));
+  }, [form.allowedGuests]);
 
   // QR modal state
   const [qrPass,    setQrPass]    = useState<GuestPass | null>(null);
@@ -718,9 +723,24 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
               <span style={{ display: 'block', fontSize: '.75rem', color: T.light, marginBottom: '.375rem' }}>Máximo de personas que pueden confirmar con este pase.</span>
               <input
                 type="number"
-                min={1} max={20}
-                value={form.allowedGuests}
-                onChange={(e) => setForm(f => ({ ...f, allowedGuests: Math.max(1, Math.min(20, Number(e.target.value) || 1)) }))}
+                max={20}
+                value={guestsInputValue}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  if (raw === '' || /^\d+$/.test(raw)) {
+                    setGuestsInputValue(raw);
+                    const num = parseInt(raw, 10);
+                    if (!isNaN(num)) {
+                      setForm(f => ({ ...f, allowedGuests: num }));
+                    }
+                  }
+                }}
+                onBlur={() => {
+                  const num = parseInt(guestsInputValue, 10);
+                  const clamped = isNaN(num) ? 1 : Math.max(1, Math.min(20, num));
+                  setGuestsInputValue(String(clamped));
+                  setForm(f => ({ ...f, allowedGuests: clamped }));
+                }}
                 style={{
                   width: '100%', padding: '.625rem .875rem',
                   background: T.cream, border: `1px solid ${T.border}`,
