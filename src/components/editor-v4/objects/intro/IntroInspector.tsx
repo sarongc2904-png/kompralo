@@ -5,9 +5,9 @@ import type { InspectorProps } from '../../core/editor-types';
 import { updateInlineEditableText } from '@/app/dashboard/invitations/[id]/edit/actions';
 
 const INTRO_FIELDS = [
-  { fieldPath: 'hero.introTitle',      label: 'Texto superior',  placeholder: 'Estás Invitado a Celebrar' },
-  { fieldPath: 'hero.introSubtitle',   label: 'Subtítulo',       placeholder: 'Nuestra Boda' },
-  { fieldPath: 'hero.introButtonText', label: 'Texto del botón', placeholder: 'Abrir Invitación' },
+  { fieldPath: 'hero.introTitle',      label: 'Texto eyebrow (arriba)',      placeholder: 'ej. NUESTRA BODA' },
+  { fieldPath: 'hero.introSubtitle',   label: 'Subtítulo (debajo de nombres)', placeholder: 'ej. Con todo nuestro amor' },
+  { fieldPath: 'hero.introButtonText', label: 'Texto del botón',             placeholder: 'ej. ABRIR' },
 ] as const;
 
 export function IntroInspector({ invitationId, isMobileSheet, onSaved }: InspectorProps) {
