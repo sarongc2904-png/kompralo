@@ -638,28 +638,9 @@ export default async function InvitationDashboard({ params }: Props) {
               <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: 700, color: '#fffdf9', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.08 }}>
                 Hoy es tu gran día
               </h2>
-              <p style={{ margin: '0 auto 1.75rem', color: 'rgba(255,253,249,0.65)', fontSize: '.9375rem', lineHeight: 1.7, maxWidth: '440px' }}>
+              <p style={{ margin: '0 auto 0', color: 'rgba(255,253,249,0.65)', fontSize: '.9375rem', lineHeight: 1.7, maxWidth: '440px' }}>
                 Todo está listo. Controla la entrada de tus invitados y sigue las confirmaciones en tiempo real.
               </p>
-              {publicUrl && (
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <a
-                    href={publicUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="db-btn"
-                    style={{
-                      background: '#C9A96E', color: '#1a1a1a',
-                      border: 'none', borderRadius: '8px',
-                      padding: '0.75rem 1.5rem', fontWeight: 600,
-                      fontSize: '0.95rem', cursor: 'pointer',
-                      textDecoration: 'none', display: 'inline-block',
-                    }}
-                  >
-                    Ver invitación
-                  </a>
-                </div>
-              )}
             </div>
 
             {/* Control de acceso */}
