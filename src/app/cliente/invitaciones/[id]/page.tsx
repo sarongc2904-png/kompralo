@@ -581,24 +581,6 @@ export default async function InvitationDashboard({ params }: Props) {
                 Ver invitación
               </a>
             )}
-            {publicUrl && (
-              <a
-                id="tour-btn-compartir"
-                href="#compartir"
-                className="cc-pill db-btn"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-                  padding: '0.5rem 1.25rem', borderRadius: '9999px',
-                  border: '1px solid #B8DFC4', background: '#E7F5EC',
-                  color: '#1A7A45', fontSize: '0.85rem', fontWeight: 600,
-                  textDecoration: 'none', transition: 'all 0.2s',
-                  boxShadow: '0 2px 6px rgba(26,18,8,0.02)'
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
-                Compartir enlace
-              </a>
-            )}
             {stats.total > 0 && (
               <a
                 id="tour-btn-stats"
@@ -1017,17 +999,44 @@ export default async function InvitationDashboard({ params }: Props) {
         {/* ── Compartir ── */}
         {publicUrl && (phase === 'lista' || phase === 'confirmaciones' || phase === 'semana') && (
           <div id="compartir" className="cc-card" style={{ padding: '1.5rem', marginTop: '2rem' }}>
-            <p style={{ margin: '0 0 .875rem', fontSize: '.6875rem', fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
-              Compartir invitación
-            </p>
-            <ShareButtons publicUrl={publicUrl} eventTitle={eventTitle} />
-          </div>
-        )}
+            {/* Opción A — Con pase personalizado (destacada) */}
+            <div style={{
+              background: '#f9f5ee',
+              border: '1px solid #C9A96E',
+              borderRadius: '10px',
+              padding: '1rem 1.25rem',
+              marginBottom: '1rem',
+            }}>
+              <p style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', margin: '0 0 0.25rem' }}>
+                ✨ Envía invitación + pase personalizado
+              </p>
+              <p style={{ fontSize: '0.8rem', color: '#666', margin: '0 0 0.75rem', lineHeight: 1.55 }}>
+                Desde la sección &ldquo;Mis invitados&rdquo; puedes enviar a cada familia su invitación junto con su pase de acceso personalizado por WhatsApp.
+              </p>
+              <a
+                href="#tour-mis-invitados"
+                style={{
+                  display: 'inline-block',
+                  background: '#1a1a1a',
+                  color: '#fff',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  fontSize: '0.8rem',
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                }}
+              >
+                Ir a Mis invitados →
+              </a>
+            </div>
 
-        {/* QR — lista/confirmaciones (semana/dia → shown inline in RSVP header) */}
-        {(phase === 'lista' || phase === 'confirmaciones') && publicUrl && (
-          <div style={{ marginTop: '1.5rem' }}>
-            <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
+            {/* Separador */}
+            <p style={{ fontSize: '0.75rem', color: '#999', textAlign: 'center', margin: '0.75rem 0' }}>
+              O comparte la invitación general (sin pase)
+            </p>
+
+            {/* Opción B — ShareButtons */}
+            <ShareButtons publicUrl={publicUrl} eventTitle={eventTitle} />
           </div>
         )}
 
