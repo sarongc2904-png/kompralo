@@ -3,16 +3,16 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-interface NavItem { id: string; icon: string; label: string }
+interface NavItem { id: string; icon: string; label: string; anchorId?: string }
 
 const NAV: NavItem[] = [
-  { id: 'resumen',         icon: '📊', label: 'Resumen' },
+  { id: 'resumen',         icon: '📊', label: 'Resumen',          anchorId: 'tour-header' },
   { id: 'countdown',       icon: '⏳', label: 'Cuenta regresiva' },
-  { id: 'confirmaciones',  icon: '👥', label: 'Confirmaciones' },
-  { id: 'confirmados',     icon: '✅', label: 'Confirmados' },
-  { id: 'mis-invitados',   icon: '❤️', label: 'Mis invitados' },
-  { id: 'pases',           icon: '🎫', label: 'Pases de entrada' },
-  { id: 'compartir',       icon: '📤', label: 'Compartir' },
+  { id: 'confirmaciones',  icon: '👥', label: 'Confirmaciones',   anchorId: 'tour-stats-row' },
+  { id: 'confirmados',     icon: '✅', label: 'Confirmados',      anchorId: 'tour-tabla-confirmados' },
+  { id: 'mis-invitados',   icon: '❤️', label: 'Mis invitados',   anchorId: 'tour-mis-invitados' },
+  { id: 'pases',           icon: '🎫', label: 'Pases de entrada', anchorId: 'tour-btn-crear' },
+  { id: 'compartir',       icon: '📤', label: 'Compartir',        anchorId: 'tour-mis-invitados' },
 ];
 
 interface Block { header: string; items: string[] }
@@ -121,8 +121,9 @@ interface Props { onClose: () => void }
 export function CentroControlHelpModal({ onClose }: Props) {
   const [selected, setSelected] = useState<string>('resumen');
   const [mounted,  setMounted]  = useState(false);
-  const isMobile = useIsMobile();
-  const help = HELP[selected];
+  const isMobile  = useIsMobile();
+  const help      = HELP[selected];
+  const activeNav = NAV.find(n => n.id === selected);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -198,7 +199,7 @@ export function CentroControlHelpModal({ onClose }: Props) {
                 fontSize: '0.85rem', fontFamily: 'inherit', whiteSpace: 'nowrap',
               }}
             >
-              🎬 Ver tutorial guiado
+              🎬 Ver tutorial completo
             </button>
             <button
               type="button"
@@ -373,6 +374,40 @@ export function CentroControlHelpModal({ onClose }: Props) {
                   </div>
                 ))}
               </div>
+            )}
+
+            {/* Ver en mi panel */}
+            {activeNav?.anchorId && (
+              <button
+                type="button"
+                onClick={() => {
+                  const targetId = activeNav.anchorId!;
+                  onClose();
+                  setTimeout(() => {
+                    const el = document.getElementById(targetId);
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      el.style.transition = 'box-shadow 0.3s ease';
+                      el.style.boxShadow = '0 0 0 4px rgba(201,169,110,0.6)';
+                      setTimeout(() => { el.style.boxShadow = ''; }, 2500);
+                    }
+                  }, 200);
+                }}
+                style={{
+                  marginTop: '1.5rem',
+                  background: '#C9A96E',
+                  color: '#1a1a1a',
+                  padding: '0.6rem 1.2rem',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontFamily: 'inherit',
+                }}
+              >
+                👀 Ver en mi panel
+              </button>
             )}
           </div>
         </div>
