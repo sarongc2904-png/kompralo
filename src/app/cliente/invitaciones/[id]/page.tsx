@@ -10,6 +10,7 @@ import GuestPassSection from './GuestPassSection';
 import QrCard from './QrCard';
 import ShareButtons from './ShareButtons';
 import RsvpModeSelector from './RsvpModeSelector';
+import { MiEventoTour } from './MiEventoTour';
 
 export const dynamic  = 'force-dynamic';
 export const revalidate = 0;
@@ -163,7 +164,7 @@ function PageStyles() {
           grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
         }
         .event-actions-grid {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
         .quick-access-grid {
           grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -206,6 +207,7 @@ function PageStyles() {
       .rsvp-table .col-phone { white-space: nowrap; min-width: 100px; }
       .rsvp-table .col-msg   { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .rsvp-table .col-pass  { white-space: nowrap; }
+      .rsvp-table .col-checkin { white-space: nowrap; font-size: .75rem; }
 
       @media (max-width: 767px) {
         .rsvp-table-wrap { display: none; }
@@ -454,7 +456,9 @@ export default async function InvitationDashboard({ params }: Props) {
   const stats = buildStats(responses);
 
   // Derived from existing responses — no new API calls
-  const checkedInCount = responses.filter(r => r.checkedInAt).length;
+  const arrivedGuests  = responses.filter(r => !!r.checkedInAt);
+  const pendingGuests  = responses.filter(r => r.attendance === 'yes' && !r.checkedInAt);
+  const checkedInCount = arrivedGuests.length;
   const lastCheckIn = responses
     .filter((r): r is RSVPResponse & { checkedInAt: string } => !!r.checkedInAt)
     .sort((a, b) => new Date(b.checkedInAt).getTime() - new Date(a.checkedInAt).getTime())[0];
@@ -494,9 +498,9 @@ export default async function InvitationDashboard({ params }: Props) {
     textDecoration: 'none', border: '1.5px solid transparent',
     letterSpacing: '.005em', transition: 'all .13s ease',
   };
-  const btnPrimary: React.CSSProperties   = { ...btnBase, background: '#1C1713', color: '#FFF7EA', boxShadow: '0 2px 8px rgba(28,23,19,0.18)' };
+  const btnPrimary: React.CSSProperties   = { ...btnBase, background: '#1a1208', color: '#C9A96E', boxShadow: '0 2px 8px rgba(28,23,19,0.18)' };
   const btnGold: React.CSSProperties      = { ...btnBase, background: T.gold, color: '#1C1713', boxShadow: '0 4px 16px rgba(200,169,91,0.35)', fontWeight: 800 };
-  const btnSecondary: React.CSSProperties = { ...btnBase, background: '#FFFBF4', border: '1.5px solid #D4BF96', color: '#3D2F20', fontWeight: 600 };
+  const btnSecondary: React.CSSProperties = { ...btnBase, background: 'transparent', border: '1.5px solid #1a1208', color: '#1a1208', fontWeight: 600 };
 
   return (
     <main style={{
@@ -531,13 +535,18 @@ export default async function InvitationDashboard({ params }: Props) {
       <div style={{ maxWidth: '1100px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
 
         {/* ── Page header ── */}
-        <section style={{ marginBottom: '1.5rem' }}>
+        <section id="mi-evento-header" style={{ marginBottom: '1.5rem' }}>
           <p style={{ fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.22em', color: T.gold, textTransform: 'uppercase', margin: '0 0 .375rem' }}>
             Centro de Control
           </p>
-          <h1 style={{ fontSize: 'clamp(2rem, 9vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .625rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.05 }}>
-            Mi Evento
+          <h1 style={{ fontSize: 'clamp(2rem, 9vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .25rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.05 }}>
+            {eventTitle}
           </h1>
+          {eventDate !== '—' && (
+            <p style={{ margin: '0 0 .625rem', fontSize: '.9375rem', color: T.light, fontWeight: 500 }}>
+              {eventDate}
+            </p>
+          )}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem', alignItems: 'center' }}>
             {daysUntilEvent !== null && (
               <span style={{
@@ -553,6 +562,12 @@ export default async function InvitationDashboard({ params }: Props) {
             )}
             <span style={{ background: eventStatus.bg, border: `1px solid ${eventStatus.border}`, borderRadius: '2rem', padding: '.45rem .875rem', fontSize: '.8rem', fontWeight: 700, color: eventStatus.color, letterSpacing: '.01em' }}>
               {eventStatus.label}
+            </span>
+            <span style={{ background: inv.status === 'published' ? '#E7F5EC' : '#FBF5E3', border: `1px solid ${inv.status === 'published' ? '#B8DFC4' : '#E8D8AD'}`, borderRadius: '2rem', padding: '.45rem .875rem', fontSize: '.8rem', fontWeight: 700, color: inv.status === 'published' ? '#247A45' : '#8A6D3B', letterSpacing: '.01em' }}>
+              {inv.status === 'published' ? 'Publicada' : 'Borrador'}
+            </span>
+            <span style={{ background: T.cream, border: `1px solid ${T.border}`, borderRadius: '2rem', padding: '.45rem .875rem', fontSize: '.8rem', fontWeight: 700, color: T.dark, letterSpacing: '.01em' }}>
+              Plan {planLabel}
             </span>
           </div>
         </section>
@@ -621,8 +636,8 @@ export default async function InvitationDashboard({ params }: Props) {
                 </div>
               )}
 
-              <a href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, display: 'flex' }}>
-                📷 Escanear invitados
+              <a id="mi-evento-scanner" href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, display: 'flex' }}>
+                📷 Escanear invitados al entrar
               </a>
             </div>
           </>
@@ -660,7 +675,12 @@ export default async function InvitationDashboard({ params }: Props) {
                 </a>
                 {publicUrl && (
                   <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ ...btnSecondary, display: 'inline-flex' }}>
-                    👁 Ver mi invitación
+                    👁 Ver como mis invitados
+                  </a>
+                )}
+                {daysUntilEvent !== null && daysUntilEvent <= 2 && (
+                  <a id="mi-evento-scanner" href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, display: 'inline-flex' }}>
+                    📷 Escanear invitados al entrar
                   </a>
                 )}
               </div>
@@ -708,16 +728,16 @@ export default async function InvitationDashboard({ params }: Props) {
                 <span>·</span>
                 <span>Plan {planLabel}</span>
               </div>
-              <div className="event-actions-grid">
-                {phase === 'lista' ? (
-                  <a href="#compartir" className="db-btn" style={btnGold}>
-                    📤 Compartir invitación
-                  </a>
-                ) : (
-                  <a href="#invitados" className="db-btn" style={btnPrimary}>
-                    ✅ Ver confirmaciones
-                  </a>
-                )}
+              <div id="mi-evento-acciones" className="event-actions-grid">
+                <a href="#compartir" className="db-btn" style={btnPrimary}>
+                  📤 Compartir con confirmación de asistencia
+                </a>
+                <a href="#compartir" className="db-btn" style={btnPrimary}>
+                  🎫 Compartir con pases por familia
+                </a>
+                <a href={editUrl} className="db-btn" style={btnSecondary}>
+                  ✨ Personalizar mi invitación
+                </a>
                 <a
                   href={publicUrl ?? undefined}
                   target="_blank"
@@ -725,10 +745,7 @@ export default async function InvitationDashboard({ params }: Props) {
                   className="db-btn"
                   style={{ ...btnSecondary, opacity: publicUrl ? 1 : .45, pointerEvents: publicUrl ? 'auto' : 'none' }}
                 >
-                  👁 Ver mi invitación
-                </a>
-                <a href={editUrl} className="db-btn" style={btnSecondary}>
-                  ✨ Personalizar
+                  👁 Ver como mis invitados
                 </a>
               </div>
             </div>
@@ -785,7 +802,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
         {/* ── Stats — solo cuando hay respuestas, nunca en configurando ── */}
         {stats.total > 0 && phase !== 'configurando' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.875rem', marginBottom: '2rem' }}>
+          <div id="mi-evento-metricas" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '.875rem', marginBottom: '2rem' }}>
             <StatCard label="Confirmaron" value={stats.total} sub="respondieron la invitación" />
             <StatCard label="Asistirán" value={stats.yesCount} sub="confirmaciones positivas" accent="#247A45" />
             <StatCard label="No asistirán" value={stats.noCount} sub="declinaron la invitación" accent="#B43232" />
@@ -825,7 +842,7 @@ export default async function InvitationDashboard({ params }: Props) {
             {/* Lista RSVP — confirmaciones, semana, dia */}
             {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
               <>
-                <div id="invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '.75rem' }}>
+                <div id="mi-evento-invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2rem', marginBottom: '1rem', flexWrap: 'wrap', gap: '.75rem' }}>
                   <div>
                     <h2 style={{ margin: '0 0 .125rem', fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
                       Invitados confirmados
@@ -863,6 +880,7 @@ export default async function InvitationDashboard({ params }: Props) {
                             <th className="col-phone">Teléfono</th>
                             <th className="col-msg">Mensaje</th>
                             <th className="col-pass">Pase</th>
+                            <th className="col-checkin">Entró</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -895,6 +913,9 @@ export default async function InvitationDashboard({ params }: Props) {
                                     <span style={{ fontSize: '.75rem', color: T.light, opacity: 0.5 }}>—</span>
                                   )}
                                 </td>
+                                <td className="col-checkin" style={{ color: r.checkedInAt ? '#247A45' : T.light }}>
+                                  {r.checkedInAt ? formatDateTime(r.checkedInAt) : '—'}
+                                </td>
                               </tr>
                             );
                           })}
@@ -911,9 +932,49 @@ export default async function InvitationDashboard({ params }: Props) {
               </>
             )}
 
+            {/* Check-in dos columnas — 2 días antes y el día del evento */}
+            {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') &&
+              daysUntilEvent !== null && daysUntilEvent <= 2 && daysUntilEvent >= 0 && (
+              <div style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', padding: '1.25rem', marginTop: '1.5rem', marginBottom: '.5rem' }}>
+                <p style={{ margin: '0 0 1rem', fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: T.gold }}>
+                  Control de acceso
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <p style={{ margin: '0 0 .625rem', fontSize: '.8125rem', fontWeight: 700, color: '#247A45' }}>
+                      ✅ Ya llegaron ({arrivedGuests.length})
+                    </p>
+                    {arrivedGuests.length === 0 ? (
+                      <p style={{ margin: 0, fontSize: '.8rem', color: T.light, lineHeight: 1.5 }}>Aún no ha llegado nadie.</p>
+                    ) : (
+                      <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
+                        {arrivedGuests.map(r => (
+                          <li key={r.id} style={{ fontSize: '.8125rem', color: T.dark, fontWeight: 500 }}>{r.name}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div>
+                    <p style={{ margin: '0 0 .625rem', fontSize: '.8125rem', fontWeight: 700, color: '#B43232' }}>
+                      ⏳ Aún no llegan ({pendingGuests.length})
+                    </p>
+                    {pendingGuests.length === 0 ? (
+                      <p style={{ margin: 0, fontSize: '.8rem', color: T.light, lineHeight: 1.5 }}>¡Todos han llegado!</p>
+                    ) : (
+                      <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
+                        {pendingGuests.map(r => (
+                          <li key={r.id} style={{ fontSize: '.8125rem', color: T.dark, fontWeight: 500 }}>{r.name}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Pases de entrada — confirmaciones, semana, dia (después de RSVP) */}
             {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
-              <div id="mis-invitados">
+              <div id="mi-evento-pases">
                 <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} publicUrl={publicUrl} />
               </div>
             )}
@@ -942,6 +1003,8 @@ export default async function InvitationDashboard({ params }: Props) {
 
         <div style={{ height: '2rem' }} />
       </div>
+
+      <MiEventoTour />
     </main>
   );
 }
