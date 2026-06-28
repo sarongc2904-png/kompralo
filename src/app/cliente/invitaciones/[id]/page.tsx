@@ -713,45 +713,15 @@ export default async function InvitationDashboard({ params }: Props) {
                   Todo está listo. Revisa las últimas confirmaciones y prepara los pases de entrada.
                 </p>
               </div>
-              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', color: '#EAD7A3' }} className="hidden sm:flex">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9Z" />
-                </svg>
+              <div style={{ marginLeft: 'auto', flexShrink: 0 }} className="hidden sm:flex">
+                <img
+                  src="/images/invitaciones/invitation-paper-detail.webp"
+                  alt="Miniatura invitación"
+                  style={{ width: 72, height: 72, borderRadius: '0.625rem', objectFit: 'cover', border: '1px solid #EAD7A3', display: 'block' }}
+                />
               </div>
             </div>
 
-            {/* Invitation horizontal card */}
-            <div id="tour-card-invitacion" className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
-              {/* Image thumbnail from public assets */}
-              <img src="/images/invitaciones/invitation-paper-detail.webp" alt="Wedding invitation thumbnail" style={{ width: 120, height: 120, borderRadius: '0.75rem', objectFit: 'cover', flexShrink: 0, border: '1px solid #E5D2A8' }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: '0 0 .375rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: T.dark }}>
-                  {eventTitle}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', margin: '0 0 1.25rem', fontSize: '0.875rem', color: T.light, fontWeight: 500 }}>
-                  <span>Fecha</span>
-                  <span>&bull;</span>
-                  <span>{eventDate}</span>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem' }}>
-                  <a id="tour-btn-administrar" href="#tour-mis-invitados" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    Administrar invitados
-                  </a>
-                  {publicUrl && (
-                    <a id="tour-btn-ver-invitados" href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                      Ver cómo mis invitados
-                    </a>
-                  )}
-                  {daysUntilEvent !== null && daysUntilEvent <= 2 && (
-                    <a id="mi-evento-scanner" href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#C9A84C', color: '#1A1208', fontSize: '0.875rem', fontWeight: 800, textDecoration: 'none', transition: 'all 0.2s' }}>
-                      📷 Escanear invitados al entrar
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
           </>
         )}
 
@@ -778,34 +748,6 @@ export default async function InvitationDashboard({ params }: Props) {
         ════════════════════════════════════════════════ */}
         {(phase === 'lista' || phase === 'confirmaciones') && (
           <>
-            {/* Horizontal invitation card */}
-            <div id="tour-card-invitacion" className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
-              {/* Image thumbnail from public assets */}
-              <img src="/images/invitaciones/invitation-paper-detail.webp" alt="Wedding invitation thumbnail" style={{ width: 120, height: 120, borderRadius: '0.75rem', objectFit: 'cover', flexShrink: 0, border: '1px solid #E5D2A8' }} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: '0 0 .375rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: T.dark }}>
-                  {eventTitle}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', margin: '0 0 1.25rem', fontSize: '0.875rem', color: T.light, fontWeight: 500 }}>
-                  <span>Fecha</span>
-                  <span>&bull;</span>
-                  <span>{eventDate}</span>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem' }}>
-                  <a id="tour-btn-administrar" href="#tour-mis-invitados" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    Administrar invitados
-                  </a>
-                  {publicUrl && (
-                    <a id="tour-btn-ver-invitados" href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                      Ver cómo mis invitados
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-
             {/* Last confirmation hint for confirmaciones phase */}
             {phase === 'confirmaciones' && responses.length > 0 && (
               <div className="cc-card" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
