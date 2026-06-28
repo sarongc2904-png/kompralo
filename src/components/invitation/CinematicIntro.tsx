@@ -248,33 +248,45 @@ export default function CinematicIntro({
     if (leftCurtainRef.current && rightCurtainRef.current) {
       gsap.set([leftCurtainRef.current, rightCurtainRef.current], { xPercent: 0 });
     }
-    setTimeout(() => {
+    // FIX 1 — capturar el timer para poder cancelarlo en cleanup.
+    // Sin clearTimeout, si el componente desmonta antes de 50 ms (Strict Mode,
+    // remount) el callback dispara DESPUÉS del cleanup y re-bloquea el scroll.
+    const timerId = window.setTimeout(() => {
       (window as unknown as Record<string, { stop?: () => void }>).lenis?.stop?.();
       document.body.style.overflow = 'hidden';
     }, 50);
-    // Always restore scroll when the intro unmounts — handles the case where
-    // handleOpen's early ref-check returns before restoring overflow.
     return () => {
+      window.clearTimeout(timerId);
       document.body.style.overflow = '';
-      (window as unknown as Record<string, { start?: () => void }>).lenis?.start?.();
+      // FIX 4 — forzar recálculo de bounds tras desmontar el intro.
+      const lenis = (window as unknown as Record<string, { start?: () => void; resize?: () => void }>).lenis;
+      if (lenis) {
+        lenis.start?.();
+        lenis.resize?.();
+      }
     };
   }, []);
 
   const handleOpen = (e?: React.SyntheticEvent) => {
-    if (e) {
-      e.stopPropagation();
-    }
+    // FIX 2 — NO llamar stopPropagation. Lenis escucha touchstart en window
+    // para registrar la secuencia táctil; si lo detenemos aquí, el primer
+    // touchmove posterior queda bloqueado en iOS aunque Lenis esté activo.
+    // El guard isOpeningRef previene el doble-trigger.
     if (isOpeningRef.current) return;
     isOpeningRef.current = true;
 
     if (!containerRef.current || !contentRef.current) return;
 
-    onEnter();
-
-    if (typeof window !== 'undefined') {
-      (window as unknown as Record<string, { start?: () => void }>).lenis?.start?.();
-      document.body.style.overflow = '';
+    // FIX 3 — restaurar scroll ANTES de cualquier animación GSAP, no después.
+    // Lenis necesita estar activo antes de que el siguiente touchmove llegue.
+    document.body.style.overflow = '';
+    const lenis = (window as unknown as Record<string, { start?: () => void; resize?: () => void }>).lenis;
+    if (lenis) {
+      lenis.start?.();
+      lenis.resize?.();
     }
+
+    onEnter();
 
     const colors = ['#C5A880', '#E3D9C6', '#FAF8F5', '#E5B1A8', '#8D7D64'];
     confetti({ particleCount: 80, angle: 60,  spread: 70, origin: { x: 0, y: 0.8 }, colors });
