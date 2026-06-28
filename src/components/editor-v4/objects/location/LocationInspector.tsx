@@ -61,6 +61,23 @@ export function LocationInspector({
     }
   }
 
+  async function handleClearUrl(type: 'maps' | 'waze') {
+    if (type === 'maps') setMapsUrl('');
+    if (type === 'waze') setWazeUrl('');
+    setError(null);
+    const result = await updateInvitationLocation({
+      id:            invitationId,
+      slug,
+      googleMapsUrl: type === 'maps' ? '' : mapsUrl,
+      wazeUrl:       type === 'waze' ? '' : wazeUrl,
+    });
+    if (result.success) {
+      onSaved();
+    } else {
+      setError(result.error ?? 'Error al limpiar');
+    }
+  }
+
   return (
     <div style={{
       display: 'flex',
@@ -87,25 +104,63 @@ export function LocationInspector({
       {/* Google Maps */}
       <div>
         <label style={labelStyle}>Google Maps URL</label>
-        <input
-          type="url"
-          value={mapsUrl}
-          onChange={(e) => setMapsUrl(e.target.value)}
-          placeholder="https://maps.google.com/..."
-          style={inputStyle}
-        />
+        <div style={{ position: 'relative' }}>
+          <input
+            type="url"
+            value={mapsUrl}
+            onChange={(e) => setMapsUrl(e.target.value)}
+            placeholder="https://maps.google.com/..."
+            style={{ ...inputStyle, paddingRight: mapsUrl ? '2rem' : '12px' }}
+          />
+          {mapsUrl && (
+            <button
+              type="button"
+              onClick={() => void handleClearUrl('maps')}
+              title="Eliminar URL"
+              style={{
+                position: 'absolute', right: '0.5rem', top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none', border: 'none',
+                cursor: 'pointer', color: '#999', fontSize: '1rem',
+                lineHeight: 1, padding: 0,
+              }}
+            >✕</button>
+          )}
+        </div>
+        <p style={{ fontSize: '0.75rem', color: '#888', marginTop: '0.25rem', margin: '0.25rem 0 0' }}>
+          Si no ingresas una URL, el botón &ldquo;Cómo llegar&rdquo; no aparecerá en la invitación.
+        </p>
       </div>
 
       {/* Waze */}
       <div>
         <label style={labelStyle}>Waze URL</label>
-        <input
-          type="url"
-          value={wazeUrl}
-          onChange={(e) => setWazeUrl(e.target.value)}
-          placeholder="https://waze.com/ul?..."
-          style={inputStyle}
-        />
+        <div style={{ position: 'relative' }}>
+          <input
+            type="url"
+            value={wazeUrl}
+            onChange={(e) => setWazeUrl(e.target.value)}
+            placeholder="https://waze.com/ul?..."
+            style={{ ...inputStyle, paddingRight: wazeUrl ? '2rem' : '12px' }}
+          />
+          {wazeUrl && (
+            <button
+              type="button"
+              onClick={() => void handleClearUrl('waze')}
+              title="Eliminar URL"
+              style={{
+                position: 'absolute', right: '0.5rem', top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none', border: 'none',
+                cursor: 'pointer', color: '#999', fontSize: '1rem',
+                lineHeight: 1, padding: 0,
+              }}
+            >✕</button>
+          )}
+        </div>
+        <p style={{ fontSize: '0.75rem', color: '#888', marginTop: '0.25rem', margin: '0.25rem 0 0' }}>
+          Si no ingresas una URL, el botón de Waze no aparecerá en la invitación.
+        </p>
       </div>
 
       {/* Feedback */}
