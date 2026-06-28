@@ -183,6 +183,7 @@ export default function InvitationRenderer({
           theme={effectiveTheme}
           onEnter={() => {}}
           introTitle={invitation.hero?.introTitle}
+          introSubtitle={invitation.hero?.introSubtitle}
           introButtonText={invitation.hero?.introButtonText}
         />
       </ThemeProviderV2>
@@ -393,6 +394,7 @@ export default function InvitationRenderer({
             theme={effectiveTheme}
             onEnter={handleEnterInvitation}
             introTitle={invitation.hero?.introTitle}
+            introSubtitle={invitation.hero?.introSubtitle}
             introButtonText={invitation.hero?.introButtonText}
           />
         </FeatureGate>

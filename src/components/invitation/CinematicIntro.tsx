@@ -15,6 +15,7 @@ interface CinematicIntroProps {
   theme: Theme;
   onEnter: () => void;
   introTitle?: string;
+  introSubtitle?: string;
   introButtonText?: string;
 }
 
@@ -227,6 +228,7 @@ export default function CinematicIntro({
   theme,
   onEnter,
   introTitle,
+  introSubtitle,
   introButtonText,
 }: CinematicIntroProps) {
   const [isDismissed, setIsDismissed] = useState(false);
@@ -345,6 +347,21 @@ export default function CinematicIntro({
         {/* Names — layout adapts to 1 or 2 protagonists */}
         <NamesDisplay protagonists={protagonists} onHeartClick={handleOpen} />
 
+        {/* Subtítulo — editable via IntroInspector; fallback to invitation.subtitle if set */}
+        {(() => {
+          const display = introSubtitle || (subtitle && subtitle !== 'NINGUNO' ? subtitle : '');
+          return display ? (
+            <motion.p
+              initial={{ opacity: 0.7 }}
+              animate={{ opacity: 0.7 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className={`text-xs tracking-[0.2em] uppercase mt-4 ${theme.bodyText} ${theme.bodyFont}`}
+            >
+              {display}
+            </motion.p>
+          ) : null;
+        })()}
+
         <motion.div
           initial={{ opacity: 0.2, scaleX: 1 }}
           animate={{ opacity: 0.2, scaleX: 1 }}
@@ -352,14 +369,14 @@ export default function CinematicIntro({
           className="h-px w-24 bg-current mt-6 mb-5"
         />
 
-        {/* Date + venue — dynamic */}
+        {/* Date */}
         <motion.p
           initial={{ opacity: 0.75 }}
           animate={{ opacity: 0.75 }}
           transition={{ duration: 0.7, delay: 0.15 }}
           className={`text-sm tracking-widest uppercase mb-6 ${theme.bodyText} ${theme.bodyFont}`}
         >
-          {formattedDate} — {subtitle}
+          {formattedDate}
         </motion.p>
 
         <PremiumButton onClick={handleOpen} label={introButtonText ?? 'Abrir Invitación'} />
