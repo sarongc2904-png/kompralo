@@ -17,7 +17,6 @@ interface EditorV4ShellProps {
   invitationId: string;
   invitationTitle: string;
   slug: string;
-  classicEditorUrl: string;
   invitationSnapshot?: InvitationSnapshot;
 }
 
@@ -28,7 +27,6 @@ export function EditorV4Shell({
   invitationId,
   invitationTitle,
   slug,
-  classicEditorUrl,
   invitationSnapshot,
 }: EditorV4ShellProps) {
   const isMobile  = useIsMobile();
@@ -301,7 +299,6 @@ export function EditorV4Shell({
         invitationId={invitationId}
         onRefresh={handleRefresh}
         onHelp={() => setShowHelp(true)}
-        classicEditorUrl={classicEditorUrl}
         isMobile={isMobile}
         saveStatus={saveStatus}
         zoom={zoom}
