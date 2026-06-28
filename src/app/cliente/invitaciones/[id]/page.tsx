@@ -56,6 +56,15 @@ function renderStyledTitle(title: string) {
     const preMatch = leftTrimmed.match(/^(.+?\bde\b\s+)(.+)$/i);
     const prefix = preMatch ? preMatch[1].trim() : null;
     const name1  = preMatch ? preMatch[2].trim() : leftTrimmed;
+    const scriptSpan: React.CSSProperties = {
+      fontFamily: 'var(--font-pinyon)',
+      fontWeight: 'normal',
+      color: T.dark,
+      display: 'inline-block',
+      lineHeight: 1.6,
+      paddingTop: '0.1em',
+      paddingBottom: '0.2em',
+    };
     return (
       <>
         {prefix && (
@@ -63,9 +72,9 @@ function renderStyledTitle(title: string) {
             {prefix}
           </span>
         )}
-        <span style={{ fontFamily: 'var(--font-pinyon)', fontWeight: 'normal', color: T.dark }}>{name1}</span>
-        <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontWeight: 'normal', fontSize: '0.7em', margin: '0 0.15em', display: 'inline-block', verticalAlign: 'middle', lineHeight: 1 }}>&</span>
-        <span style={{ fontFamily: 'var(--font-pinyon)', fontWeight: 'normal', color: T.dark }}>{name2}</span>
+        <span style={scriptSpan}>{name1}</span>
+        <span style={{ ...scriptSpan, margin: '0 0.12em' }}>&</span>
+        <span style={scriptSpan}>{name2}</span>
       </>
     );
   }
@@ -535,7 +544,7 @@ export default async function InvitationDashboard({ params }: Props) {
           <p style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.25em', color: '#B99752', textTransform: 'uppercase', margin: '0 0 .5rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             👑 CENTRO DE CONTROL
           </p>
-          <h1 style={{ fontSize: 'clamp(2.25rem, 6vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.4 }}>
+          <h1 style={{ fontSize: 'clamp(2.25rem, 6vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.6, overflow: 'visible' }}>
             {renderStyledTitle(eventTitle)}
           </h1>
           
