@@ -1007,7 +1007,8 @@ export default async function InvitationDashboard({ params }: Props) {
         )}
 
         {/* ── Mis invitados (GuestPassSection) ── */}
-        {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
+        {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia'
+          || rsvpMode === 'passes_only') && (
           <div id="tour-mis-invitados">
             <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} publicUrl={publicUrl} />
           </div>
