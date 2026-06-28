@@ -88,26 +88,33 @@ export function EditorV4Toolbar({
 
         {/* Device switch */}
         {([
-          { key: 'desktop' as EditorDevice, icon: '🖥' },
-          { key: 'tablet'  as EditorDevice, icon: '⬜' },
-          { key: 'mobile'  as EditorDevice, icon: '📱' },
-        ]).map(({ key, icon }) => (
-          <button
-            key={key}
-            type="button"
-            title={key.charAt(0).toUpperCase() + key.slice(1)}
-            onClick={() => onDeviceChange?.(key)}
-            style={{
-              background: device === key ? 'rgba(201,169,110,0.2)' : 'transparent',
-              color: device === key ? '#C9A96E' : 'rgba(255,255,255,0.4)',
-              border: 'none', cursor: 'pointer', borderRadius: 6,
-              width: 28, height: 28, fontSize: 14, flexShrink: 0,
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
-            {icon}
-          </button>
-        ))}
+          { key: 'desktop' as EditorDevice, label: 'PC'   },
+          { key: 'tablet'  as EditorDevice, label: 'Tab'  },
+          { key: 'mobile'  as EditorDevice, label: 'Móvil' },
+        ]).map(({ key, label }) => {
+          const active = device === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              title={key.charAt(0).toUpperCase() + key.slice(1)}
+              onClick={() => onDeviceChange?.(key)}
+              style={{
+                background: active ? 'rgba(201,169,110,0.15)' : 'transparent',
+                color: active ? '#C9A96E' : 'rgba(255,255,255,0.35)',
+                border: active ? '1px solid #C9A96E' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 6,
+                padding: '4px 8px',
+                fontSize: 11, fontWeight: 600,
+                cursor: 'pointer', flexShrink: 0,
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                lineHeight: 1,
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
 
         <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
 

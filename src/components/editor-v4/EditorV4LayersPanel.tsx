@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { INVITATION_SECTIONS } from './editor-v4-events';
 
 interface EditorV4LayersPanelProps {
@@ -10,6 +11,7 @@ interface EditorV4LayersPanelProps {
 }
 
 export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections = [] }: EditorV4LayersPanelProps) {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
       {/* Header */}
@@ -39,24 +41,28 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
                 gap: 10,
                 width: '100%',
                 padding: '7px 16px',
-                background: isActive ? 'rgba(200,167,93,0.12)' : 'transparent',
+                background: isActive
+                  ? 'rgba(201,169,110,0.12)'
+                  : hoveredId === section.id ? 'rgba(255,255,255,0.05)' : 'transparent',
                 border: 'none',
-                borderLeft: isActive ? '2px solid #C5A880' : '2px solid transparent',
+                borderLeft: isActive ? '3px solid #C9A96E' : '3px solid transparent',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'background 120ms',
                 opacity: isHidden ? 0.45 : 1,
               }}
-              onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = 'rgba(200,167,93,0.06)'; }}
-              onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+              onMouseEnter={() => setHoveredId(section.id)}
+              onMouseLeave={() => setHoveredId(null)}
             >
               <span style={{ fontSize: 14, width: 20, textAlign: 'center', flexShrink: 0 }}>
                 {section.icon}
               </span>
               <span style={{
                 fontSize: 12,
-                color: isActive ? '#C5A880' : '#5C4A3E',
-                fontWeight: isActive ? 600 : 400,
+                color: isActive
+                  ? '#C9A96E'
+                  : hoveredId === section.id ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.5)',
+                fontWeight: isActive ? 500 : 400,
                 flex: 1,
               }}>
                 {section.label}
