@@ -12,10 +12,12 @@ import { blackTieTheme }             from '@/domain/themes-v2/themes/black-tie';
 import { pastelRoseEditorialTheme }  from '@/domain/themes-v2/themes/pastel-rose-editorial';
 import { pastelSageEditorialTheme }  from '@/domain/themes-v2/themes/pastel-sage-editorial';
 import { pastelSkyEditorialTheme }   from '@/domain/themes-v2/themes/pastel-sky-editorial';
+import { FEATURE_FLAGS }             from '@/lib/feature-flags';
+import { loadTemplatesFromJson }     from '@/domain/themes-v2/json-loader';
 
 export const defaultThemeIdV2: ThemeIdV2 = 'ivory-editorial';
 
-export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = {
+const legacyRegistry: Record<ThemeIdV2, InvitationThemeV2> = {
   'luxury-gold':           luxuryGoldTheme,
   'editorial':             editorialTheme,
   'floral':                floralTheme,
@@ -30,6 +32,10 @@ export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = {
   'pastel-sage-editorial': pastelSageEditorialTheme,
   'pastel-sky-editorial':  pastelSkyEditorialTheme,
 };
+
+export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = FEATURE_FLAGS.templatesAsJson
+  ? loadTemplatesFromJson().registry
+  : legacyRegistry;
 
 /**
  * Resolve a theme by id. Falls back to the default theme if the id is unknown.

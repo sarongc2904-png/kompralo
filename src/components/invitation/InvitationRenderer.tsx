@@ -363,16 +363,16 @@ export default function InvitationRenderer({
       data-theme-v2={themeV2.id}
       style={{
         ...(themeV2.cssVariables as React.CSSProperties),
-        ...invitationPaperVariables,
+        ...(themeV2.id === 'ivory-editorial' ? invitationPaperVariables : themeVariables),
       }}
     >
-      {themeV2.id === 'ivory-editorial' && (
+      {!!themeV2.assets?.texture && (
         <div
           aria-hidden="true"
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.webp)',
+            backgroundImage: `url(${themeV2.assets.texture})`,
             backgroundSize: '100% auto',
             backgroundPosition: 'top center',
             backgroundRepeat: 'repeat-y',

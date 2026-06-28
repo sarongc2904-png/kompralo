@@ -67,4 +67,5 @@ export interface InvitationSnapshot {
   timelineJson?: string;
   giftRegistryJson?: string;
   hiddenSections?: string[];
+  themeId?: string;
 }

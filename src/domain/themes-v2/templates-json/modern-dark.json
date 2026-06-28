@@ -1,0 +1,145 @@
+{
+  "id": "modern-dark",
+  "catalog": {
+    "label": "Modern Pastel (Dark)",
+    "description": "Editorial moderno con tonos blush, sage y lavanda suave. Limpio y romántico.",
+    "previewColor": "#F8F3EF",
+    "accentColor": "#D9A7A7",
+    "category": "modern",
+    "isNewTheme": false,
+    "featured": false
+  },
+  "theme": {
+    "name": "Modern Pastel",
+    "description": "Editorial moderno con tonos blush, sage y lavanda suave. Limpio y romántico.",
+    "categorySupport": ["wedding", "birthday"],
+    "colors": {
+      "pageBackground": "#F8F3EF",
+      "surface": "rgba(255,255,255,0.82)",
+      "surfaceAlt": "#EFE7E1",
+      "surfaceElevated": "#FFF9F5",
+      "textPrimary": "#2B2522",
+      "textSecondary": "#4A3F3A",
+      "textMuted": "#7B6F68",
+      "accent": "#D9A7A7",
+      "accentSoft": "rgba(217,167,167,0.15)",
+      "accentHover": "#E8B8B8",
+      "border": "rgba(217,167,167,0.32)",
+      "borderStrong": "rgba(217,167,167,0.65)",
+      "overlay": "rgba(248,243,239,0.85)"
+    },
+    "typography": {
+      "headingFamily": "\"Cinzel\", \"Trajan Pro\", serif",
+      "bodyFamily": "\"Inter\", system-ui, sans-serif",
+      "scriptFamily": "\"Cormorant Garamond\", \"Georgia\", serif",
+      "headingWeight": "400",
+      "headingTracking": "0.12em",
+      "bodyTracking": "0.01em",
+      "headingClass": "font-display tracking-widest",
+      "bodyClass": "font-sans",
+      "scriptClass": "font-editorial font-light italic"
+    },
+    "spacing": {
+      "sectionPaddingY": "6rem",
+      "cardPaddingX": "2rem",
+      "cardPaddingY": "1.75rem",
+      "stackGap": "1.5rem"
+    },
+    "shapes": {
+      "radiusSm": "4px",
+      "radiusMd": "8px",
+      "radiusLg": "14px",
+      "radiusXl": "20px",
+      "radiusFull": "9999px",
+      "cardStyle": "rounded"
+    },
+    "effects": {
+      "glassBlur": "blur(18px)",
+      "glassSaturation": "saturate(110%)",
+      "glassBackground": "rgba(255,255,255,0.78)",
+      "paperTexture": false,
+      "grain": false,
+      "particles": false,
+      "parallax": false,
+      "lightSweep": false,
+      "grainIntensity": 0
+    },
+    "shadows": {
+      "soft": "0 4px 16px rgba(92,68,56,0.10)",
+      "card": "0 8px 32px rgba(92,68,56,0.12), 0 1px 0 rgba(217,167,167,0.20)",
+      "elevated": "0 16px 48px rgba(92,68,56,0.16)",
+      "book": "0 32px 80px rgba(92,68,56,0.20)"
+    },
+    "button": {
+      "background": "rgba(217,167,167,0.15)",
+      "text": "#2B2522",
+      "border": "1px solid rgba(217,167,167,0.55)",
+      "hoverBackground": "#D9A7A7",
+      "hoverText": "#FFFFFF",
+      "borderRadius": "8px",
+      "fontClass": "font-display tracking-widest text-xs uppercase",
+      "shadow": "none",
+      "paddingX": "2.5rem",
+      "paddingY": "0.875rem"
+    },
+    "divider": {
+      "color": "rgba(217,167,167,0.45)",
+      "variant": "line",
+      "thickness": "1px",
+      "opacity": 1,
+      "gradientFrom": "transparent",
+      "gradientTo": "transparent"
+    },
+    "backgrounds": {
+      "main": "#F8F3EF",
+      "hero": "linear-gradient(180deg, rgba(248,243,239,0.10) 0%, transparent 40%, rgba(248,243,239,0.95) 100%)",
+      "sections": "rgba(217,167,167,0.06)",
+      "storyBook": "#F8F3EF",
+      "gallery": "transparent",
+      "final": "linear-gradient(160deg, #F8F3EF 0%, #EFE7E1 100%)"
+    },
+    "assets": {
+      "backgroundLayer1": "/layers/bg_layer1_modern.png",
+      "backgroundLayer2": "/layers/bg_layer2_modern.png",
+      "backgroundLayer3": "/layers/bg_layer3_modern.png"
+    },
+    "dressCodeSwatches": ["#F8F3EF", "#EFE7E1", "#D9A7A7", "#B8C7BA", "#C7B7D8"],
+    "cssVariables": {
+      "--v2-color-page-bg": "#F8F3EF",
+      "--v2-color-surface": "rgba(255,255,255,0.82)",
+      "--v2-color-surface-alt": "#EFE7E1",
+      "--v2-color-surface-elevated": "#FFF9F5",
+      "--v2-color-text-primary": "#2B2522",
+      "--v2-color-text-secondary": "#4A3F3A",
+      "--v2-color-text-muted": "#7B6F68",
+      "--v2-color-accent": "#D9A7A7",
+      "--v2-color-accent-soft": "rgba(217,167,167,0.15)",
+      "--v2-color-accent-hover": "#E8B8B8",
+      "--v2-color-border": "rgba(217,167,167,0.32)",
+      "--v2-color-border-strong": "rgba(217,167,167,0.65)",
+      "--v2-color-overlay": "rgba(248,243,239,0.85)",
+      "--v2-radius-sm": "4px",
+      "--v2-radius-md": "8px",
+      "--v2-radius-lg": "14px",
+      "--v2-radius-xl": "20px",
+      "--v2-shadow-card": "0 8px 32px rgba(92,68,56,0.12), 0 1px 0 rgba(217,167,167,0.20)",
+      "--v2-shadow-elevated": "0 16px 48px rgba(92,68,56,0.16)",
+      "--v2-glass-bg": "rgba(255,255,255,0.78)",
+      "--v2-btn-bg": "rgba(217,167,167,0.15)",
+      "--v2-btn-text": "#2B2522",
+      "--v2-btn-border": "1px solid rgba(217,167,167,0.55)",
+      "--v2-btn-hover-bg": "#D9A7A7",
+      "--v2-btn-hover-text": "#FFFFFF",
+      "--v2-divider-color": "rgba(217,167,167,0.45)",
+      "--v2-background-main": "#F8F3EF",
+      "--v2-background-story": "#F8F3EF",
+      "--v2-background-sections": "rgba(217,167,167,0.06)",
+      "--v2-background-final": "linear-gradient(160deg, #F8F3EF 0%, #EFE7E1 100%)",
+      "--v2-font-heading": "\"Cinzel\", \"Trajan Pro\", serif",
+      "--v2-font-body": "\"Inter\", system-ui, sans-serif",
+      "--v2-bg-layer-1": "/layers/bg_layer1_modern.png",
+      "--v2-bg-layer-2": "/layers/bg_layer2_modern.png",
+      "--v2-bg-layer-3": "/layers/bg_layer3_modern.png"
+    }
+  }
+}
