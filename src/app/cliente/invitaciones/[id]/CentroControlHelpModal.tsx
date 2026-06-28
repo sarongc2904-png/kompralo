@@ -146,14 +146,15 @@ export function CentroControlHelpModal({ onClose }: Props) {
         style={{
           background: '#FAF7F2',
           borderRadius: 16,
-          width: '100%',
-          maxWidth: 580,
+          width: '90vw',
+          maxWidth: 860,
           maxHeight: isMobile ? '92vh' : '85vh',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           boxShadow: '0 24px 60px rgba(0,0,0,0.32)',
-          margin: 'auto',
+          marginTop: '2rem',
+          marginBottom: '2rem',
         }}
       >
         {/* ── Header ── */}
