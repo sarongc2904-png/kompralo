@@ -13,14 +13,14 @@ interface EditorV4LayersPanelProps {
 export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections = [] }: EditorV4LayersPanelProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto', background: '#1A1410' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto', background: '#1a1208' }}>
       {/* Header */}
       <div style={{
         padding: '14px 16px 10px',
         borderBottom: '1px solid rgba(200,167,93,0.15)',
         flexShrink: 0,
       }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(200,167,93,0.6)' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(201,169,110,0.5)' }}>
           Secciones
         </span>
       </div>
@@ -61,7 +61,7 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
                 fontSize: 12,
                 color: isActive
                   ? '#C9A96E'
-                  : hoveredId === section.id ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.5)',
+                  : hoveredId === section.id ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.55)',
                 fontWeight: isActive ? 500 : 400,
                 flex: 1,
               }}>
@@ -76,8 +76,8 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
       </nav>
 
       {/* Footer hint */}
-      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(200,167,93,0.1)', flexShrink: 0, background: '#1A1410' }}>
-        <p style={{ fontSize: 10, color: 'rgba(200,167,93,0.4)', lineHeight: 1.5 }}>
+      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(200,167,93,0.1)', flexShrink: 0, background: '#1a1208' }}>
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', lineHeight: 1.5 }}>
           Haz clic en una sección para navegar
         </p>
       </div>
