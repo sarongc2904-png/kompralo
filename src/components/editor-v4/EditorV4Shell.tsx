@@ -314,10 +314,10 @@ export function EditorV4Shell({
 
         {/* Left panel — desktop only */}
         {!isMobile && (
-          <div id="editor-v4-layers" style={{ background: '#1a1208',
+          <div id="editor-v4-layers" style={{
             width: PANEL_WIDTH_LEFT, flexShrink: 0,
             borderRight: '1px solid rgba(200,167,93,0.2)',
-            background: '#FAF7F2', overflowY: 'auto',
+            overflowY: 'auto',
             display: 'flex', flexDirection: 'column',
           }}>
             <EditorV4LayersPanel

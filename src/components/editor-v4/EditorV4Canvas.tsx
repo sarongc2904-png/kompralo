@@ -85,6 +85,7 @@ function FullBleedIframe({
 export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasProps>(
   function EditorV4Canvas({ invitationId, mode = 'normal', isMobile = false, zoom = 1, deviceWidth }: EditorV4CanvasProps, ref) {
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const [loading, setLoading] = useState(true);
     const [hoveredSection, setHoveredSection] = useState<{ sectionId: string; rect: SerializedRect } | null>(null);
 
@@ -153,8 +154,38 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
     const isFullBleed = isMobile || mode === 'intro';
 
     // Bounding-box overlay — positioned relative to the canvas container.
-    // Coordinates from the iframe are viewport-relative; we add the iframe's
-    // inset within the canvas to translate them to canvas-relative coords.
+    // The rect from the iframe is in the iframe's own viewport (unscaled).
+    // We read the iframe's actual rendered position via getBoundingClientRect()
+    // to get the true offset (accounts for FRAME inset, centering, and the
+    // CSS transform scale). Then we multiply the internal rect by the zoom
+    // factor so the bounding box aligns with the visually scaled content.
+    function getOverlayPosition(rect: SerializedRect): React.CSSProperties {
+      const iframe = iframeRef.current;
+      const container = containerRef.current;
+      if (!iframe || !container) {
+        // Fallback to constants if refs not ready
+        const fb = isFullBleed ? 0 : 1;
+        return {
+          top:    (isFullBleed ? 0 : FRAME_TOP)  + rect.top  * fb,
+          left:   (isFullBleed ? 0 : FRAME_LEFT) + rect.left * fb,
+          width:  rect.width,
+          height: rect.height,
+        };
+      }
+      const iframeBox    = iframe.getBoundingClientRect();
+      const containerBox = container.getBoundingClientRect();
+      const offsetTop    = iframeBox.top  - containerBox.top;
+      const offsetLeft   = iframeBox.left - containerBox.left;
+      // In full-bleed mode there is no CSS scale transform on the iframe
+      const z = isFullBleed ? 1 : zoom;
+      return {
+        top:    offsetTop  + rect.top  * z,
+        left:   offsetLeft + rect.left * z,
+        width:  rect.width  * z,
+        height: rect.height * z,
+      };
+    }
+
     const overlay = hoveredSection ? (
       <div
         aria-hidden
@@ -162,12 +193,9 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
           position: 'absolute',
           pointerEvents: 'none',
           zIndex: 20,
-          top:    (isFullBleed ? 0 : FRAME_TOP)  + hoveredSection.rect.top,
-          left:   (isFullBleed ? 0 : FRAME_LEFT) + hoveredSection.rect.left,
-          width:  hoveredSection.rect.width,
-          height: hoveredSection.rect.height,
-          border: '1.5px solid rgba(200,167,93,0.55)',
-          borderRadius: 4,
+          ...getOverlayPosition(hoveredSection.rect),
+          border: '2px solid #C9A96E',
+          borderRadius: 6,
           background: 'rgba(200,167,93,0.04)',
           transition: 'top 60ms ease, left 60ms ease, width 60ms ease, height 60ms ease',
         }}
@@ -177,7 +205,7 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
     // ── Mobile OR desktop intro: full-bleed — no device frame, no radius, no clip ──
     if (isFullBleed) {
       return (
-        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#1A1410', overflow: 'hidden' }}>
+        <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%', background: '#1A1410', overflow: 'hidden' }}>
           <FullBleedIframe
             iframeRef={iframeRef}
             src={currentUrl}
@@ -193,7 +221,7 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
     // ── Desktop normal: device-frame chrome ───────────────────────────────────
     const hasDevice = deviceWidth !== undefined;
     return (
-      <div style={{ position: 'relative', width: '100%', height: '100%', background: '#F0EBE3' }}>
+      <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%', background: '#F0EBE3' }}>
         {/* Outer inset — acts as the visual padding around the preview */}
         <div style={{
           position: 'absolute',
