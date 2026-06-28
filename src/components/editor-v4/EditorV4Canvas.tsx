@@ -100,19 +100,11 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       iframe.src = currentUrl;
     }, [currentUrl]);
 
-    // Listen for section hover/end events fired by the iframe's hover bridge
-    useEffect(() => {
-      function handleMessage(e: MessageEvent) {
-        if (e.origin !== window.location.origin) return;
-        if (e.data?.type === EDITOR_V4_SECTION_HOVER) {
-          setHoveredSection({ sectionId: e.data.sectionId, rect: e.data.rect });
-        } else if (e.data?.type === EDITOR_V4_SECTION_HOVER_END) {
-          setHoveredSection(null);
-        }
-      }
-      window.addEventListener('message', handleMessage);
-      return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    // Hover highlight disabled — events still emitted by iframe but ignored here.
+    // Selection on click (BoundingBox) is handled separately and remains active.
+    void EDITOR_V4_SECTION_HOVER;
+    void EDITOR_V4_SECTION_HOVER_END;
+    void setHoveredSection;
 
     useImperativeHandle(ref, () => ({
       refresh() {
@@ -186,21 +178,7 @@ export const EditorV4Canvas = forwardRef<EditorV4CanvasHandle, EditorV4CanvasPro
       };
     }
 
-    const overlay = hoveredSection ? (
-      <div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          pointerEvents: 'none',
-          zIndex: 20,
-          ...getOverlayPosition(hoveredSection.rect),
-          border: '2px solid #C9A96E',
-          borderRadius: 6,
-          background: 'rgba(200,167,93,0.04)',
-          transition: 'top 60ms ease, left 60ms ease, width 60ms ease, height 60ms ease',
-        }}
-      />
-    ) : null;
+    const overlay = null; // hover highlight disabled; click selection unchanged
 
     // ── Mobile OR desktop intro: full-bleed — no device frame, no radius, no clip ──
     if (isFullBleed) {
