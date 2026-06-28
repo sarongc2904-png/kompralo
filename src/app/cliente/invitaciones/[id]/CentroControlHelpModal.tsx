@@ -133,7 +133,8 @@ export function CentroControlHelpModal({ onClose }: Props) {
       style={{
         position: 'fixed', inset: 0, zIndex: 2000,
         background: 'rgba(10,8,4,0.72)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+        overflowY: 'auto',
         padding: isMobile ? 8 : 16,
       }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
@@ -152,6 +153,7 @@ export function CentroControlHelpModal({ onClose }: Props) {
           flexDirection: 'column',
           overflow: 'hidden',
           boxShadow: '0 24px 60px rgba(0,0,0,0.32)',
+          margin: 'auto',
         }}
       >
         {/* ── Header ── */}
