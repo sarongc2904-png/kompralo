@@ -12,7 +12,10 @@
   "theme": {
     "name": "Tierra Nocturna",
     "description": "Boho dramático con fuego, textura y romance de noche.",
-    "categorySupport": ["wedding", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#241714",
       "surface": "rgba(51,33,27,0.95)",
@@ -93,18 +96,24 @@
     },
     "backgrounds": {
       "main": "#241714",
-      "hero": "linear-gradient(180deg, rgba(0,0,0,0.28) 0%, transparent 40%, rgba(36,23,20,0.98) 100%)",
-      "sections": "#33211B",
+      "hero": "#241714",
+      "sections": "#241714",
       "storyBook": "#241714",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #33211B 0%, #241714 100%)"
+      "gallery": "#241714",
+      "final": "#241714"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#4B211A", "#A84E2D", "#B8894D", "#D8B08C", "#2F3A2F"],
+    "dressCodeSwatches": [
+      "#4B211A",
+      "#A84E2D",
+      "#B8894D",
+      "#D8B08C",
+      "#2F3A2F"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#241714",
       "--v2-color-surface": "linear-gradient(152deg, rgba(51,33,27,0.97), rgba(61,40,32,0.92))",
@@ -134,8 +143,8 @@
       "--v2-divider-color": "rgba(168,78,45,0.45)",
       "--v2-background-main": "#241714",
       "--v2-background-story": "#241714",
-      "--v2-background-sections": "#33211B",
-      "--v2-background-final": "linear-gradient(160deg, #33211B 0%, #241714 100%)",
+      "--v2-background-sections": "#241714",
+      "--v2-background-final": "#241714",
       "--v2-font-heading": "\"Cormorant Garamond\", \"Georgia\", serif",
       "--v2-font-body": "\"Nunito Sans\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",

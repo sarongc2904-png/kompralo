@@ -12,7 +12,11 @@
   "theme": {
     "name": "Kanso Zen",
     "description": "Minimalismo japonés sin ornamento: espacio, silencio y cerámica wabi-sabi.",
-    "categorySupport": ["wedding", "baptism", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#F4F0E7",
       "surface": "rgba(244,240,231,0.94)",
@@ -93,18 +97,24 @@
     },
     "backgrounds": {
       "main": "#F4F0E7",
-      "hero": "linear-gradient(180deg, rgba(244,240,231,0.06) 0%, transparent 36%, rgba(244,240,231,0.96) 100%)",
-      "sections": "#E7DED0",
+      "hero": "#F4F0E7",
+      "sections": "#F4F0E7",
       "storyBook": "#F4F0E7",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #E7DED0 0%, #F4F0E7 100%)"
+      "gallery": "#F4F0E7",
+      "final": "#F4F0E7"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#F4F0E7", "#7A8A63", "#C8BEAA", "#A65F46", "#2E332B"],
+    "dressCodeSwatches": [
+      "#F4F0E7",
+      "#7A8A63",
+      "#C8BEAA",
+      "#A65F46",
+      "#2E332B"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#F4F0E7",
       "--v2-color-surface": "rgba(244,240,231,0.94)",
@@ -134,8 +144,8 @@
       "--v2-divider-color": "rgba(122,138,99,0.35)",
       "--v2-background-main": "#F4F0E7",
       "--v2-background-story": "#F4F0E7",
-      "--v2-background-sections": "#E7DED0",
-      "--v2-background-final": "linear-gradient(160deg, #E7DED0 0%, #F4F0E7 100%)",
+      "--v2-background-sections": "#F4F0E7",
+      "--v2-background-final": "#F4F0E7",
       "--v2-font-heading": "\"Shippori Mincho\", \"Georgia\", serif",
       "--v2-font-body": "\"Zen Kaku Gothic New\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",

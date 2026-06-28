@@ -12,7 +12,12 @@
   "theme": {
     "name": "Sol y Mar",
     "description": "Vibrante y fresca para bodas de playa con sofisticación tropical.",
-    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "baby-shower",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#FFF4E6",
       "surface": "rgba(255,252,245,0.93)",
@@ -93,18 +98,24 @@
     },
     "backgrounds": {
       "main": "#FFF4E6",
-      "hero": "linear-gradient(180deg, rgba(255,244,230,0.06) 0%, transparent 36%, rgba(255,244,230,0.96) 100%)",
-      "sections": "#EAF7F2",
+      "hero": "#FFF4E6",
+      "sections": "#FFF4E6",
       "storyBook": "#FFF4E6",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #EAF7F2 0%, #FFF4E6 100%)"
+      "gallery": "#FFF4E6",
+      "final": "#FFF4E6"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#007C75", "#FF8A4C", "#F6D36B", "#2E6E4F", "#F7EFE1"],
+    "dressCodeSwatches": [
+      "#007C75",
+      "#FF8A4C",
+      "#F6D36B",
+      "#2E6E4F",
+      "#F7EFE1"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#FFF4E6",
       "--v2-color-surface": "linear-gradient(146deg, rgba(255,252,245,0.96), rgba(255,248,238,0.90))",
@@ -134,8 +145,8 @@
       "--v2-divider-color": "rgba(0,124,117,0.38)",
       "--v2-background-main": "#FFF4E6",
       "--v2-background-story": "#FFF4E6",
-      "--v2-background-sections": "#EAF7F2",
-      "--v2-background-final": "linear-gradient(160deg, #EAF7F2 0%, #FFF4E6 100%)",
+      "--v2-background-sections": "#FFF4E6",
+      "--v2-background-final": "#FFF4E6",
       "--v2-font-heading": "\"Fraunces\", \"Georgia\", serif",
       "--v2-font-body": "\"DM Sans\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",

@@ -12,7 +12,12 @@
   "theme": {
     "name": "Rosa Antiguo",
     "description": "Romanticismo victoriano con rosa polvoso, pergamino y flores en sepia.",
-    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "baby-shower",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#F6E9DF",
       "surface": "rgba(246,233,223,0.94)",
@@ -93,18 +98,24 @@
     },
     "backgrounds": {
       "main": "#F6E9DF",
-      "hero": "linear-gradient(180deg, rgba(246,233,223,0.08) 0%, transparent 36%, rgba(246,233,223,0.96) 100%)",
-      "sections": "#EED8CF",
+      "hero": "#F6E9DF",
+      "sections": "#F6E9DF",
       "storyBook": "#F6E9DF",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #EED8CF 0%, #F6E9DF 100%)"
+      "gallery": "#F6E9DF",
+      "final": "#F6E9DF"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#B76E79", "#E8C7C2", "#8D6E63", "#F3E2D8", "#6B4A45"],
+    "dressCodeSwatches": [
+      "#B76E79",
+      "#E8C7C2",
+      "#8D6E63",
+      "#F3E2D8",
+      "#6B4A45"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#F6E9DF",
       "--v2-color-surface": "linear-gradient(148deg, rgba(246,233,223,0.96), rgba(238,216,207,0.90))",
@@ -134,8 +145,8 @@
       "--v2-divider-color": "rgba(183,110,121,0.40)",
       "--v2-background-main": "#F6E9DF",
       "--v2-background-story": "#F6E9DF",
-      "--v2-background-sections": "#EED8CF",
-      "--v2-background-final": "linear-gradient(160deg, #EED8CF 0%, #F6E9DF 100%)",
+      "--v2-background-sections": "#F6E9DF",
+      "--v2-background-final": "#F6E9DF",
       "--v2-font-heading": "\"Playfair Display\", \"Georgia\", serif",
       "--v2-font-body": "\"Libre Baskerville\", \"Georgia\", serif",
       "--v2-bg-layer-1": "",

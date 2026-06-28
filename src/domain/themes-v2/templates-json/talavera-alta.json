@@ -12,7 +12,12 @@
   "theme": {
     "name": "Talavera Alta",
     "description": "Identidad mexicana refinada con cerámica, azul profundo y calidez artesanal.",
-    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "baby-shower",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#FFF8EF",
       "surface": "rgba(255,248,239,0.94)",
@@ -93,18 +98,24 @@
     },
     "backgrounds": {
       "main": "#FFF8EF",
-      "hero": "linear-gradient(180deg, rgba(255,248,239,0.08) 0%, transparent 36%, rgba(255,248,239,0.96) 100%)",
-      "sections": "#F2E7D5",
+      "hero": "#FFF8EF",
+      "sections": "#FFF8EF",
       "storyBook": "#FFF8EF",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #F2E7D5 0%, #FFF8EF 100%)"
+      "gallery": "#FFF8EF",
+      "final": "#FFF8EF"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#1F5D8C", "#E9D8B8", "#C76A3A", "#7C9A6D", "#F8F1E5"],
+    "dressCodeSwatches": [
+      "#1F5D8C",
+      "#E9D8B8",
+      "#C76A3A",
+      "#7C9A6D",
+      "#F8F1E5"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#FFF8EF",
       "--v2-color-surface": "linear-gradient(148deg, rgba(255,248,239,0.96), rgba(255,241,225,0.90))",
@@ -134,8 +145,8 @@
       "--v2-divider-color": "rgba(31,93,140,0.38)",
       "--v2-background-main": "#FFF8EF",
       "--v2-background-story": "#FFF8EF",
-      "--v2-background-sections": "#F2E7D5",
-      "--v2-background-final": "linear-gradient(160deg, #F2E7D5 0%, #FFF8EF 100%)",
+      "--v2-background-sections": "#FFF8EF",
+      "--v2-background-final": "#FFF8EF",
       "--v2-font-heading": "\"Cormorant Garamond\", \"Georgia\", serif",
       "--v2-font-body": "\"Source Sans 3\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",

@@ -12,7 +12,12 @@
   "theme": {
     "name": "Lavanda Provenza",
     "description": "Rusticidad francesa con lavanda, lino natural y caligrafía romántica.",
-    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "baby-shower",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#FBF3E6",
       "surface": "rgba(251,243,230,0.94)",
@@ -86,25 +91,31 @@
       "color": "rgba(124,106,158,0.38)",
       "variant": "ornamental",
       "thickness": "1px",
-      "opacity": 0.80,
+      "opacity": 0.8,
       "ornamentChar": "✿",
       "gradientFrom": "transparent",
       "gradientTo": "transparent"
     },
     "backgrounds": {
       "main": "#FBF3E6",
-      "hero": "linear-gradient(180deg, rgba(251,243,230,0.08) 0%, transparent 36%, rgba(251,243,230,0.96) 100%)",
-      "sections": "#EFE3CF",
+      "hero": "#FBF3E6",
+      "sections": "#FBF3E6",
       "storyBook": "#FBF3E6",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #EFE3CF 0%, #FBF3E6 100%)"
+      "gallery": "#FBF3E6",
+      "final": "#FBF3E6"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#7C6A9E", "#8A8F5A", "#C88464", "#EFE3CF", "#5E5A46"],
+    "dressCodeSwatches": [
+      "#7C6A9E",
+      "#8A8F5A",
+      "#C88464",
+      "#EFE3CF",
+      "#5E5A46"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#FBF3E6",
       "--v2-color-surface": "linear-gradient(148deg, rgba(251,243,230,0.96), rgba(239,227,207,0.90))",
@@ -134,8 +145,8 @@
       "--v2-divider-color": "rgba(124,106,158,0.38)",
       "--v2-background-main": "#FBF3E6",
       "--v2-background-story": "#FBF3E6",
-      "--v2-background-sections": "#EFE3CF",
-      "--v2-background-final": "linear-gradient(160deg, #EFE3CF 0%, #FBF3E6 100%)",
+      "--v2-background-sections": "#FBF3E6",
+      "--v2-background-final": "#FBF3E6",
       "--v2-font-heading": "\"Cormorant Garamond\", \"Georgia\", serif",
       "--v2-font-body": "\"Lora\", \"Georgia\", serif",
       "--v2-bg-layer-1": "",

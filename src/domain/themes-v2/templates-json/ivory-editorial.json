@@ -102,7 +102,8 @@
     "assets": {
       "backgroundLayer1": "/layers/bg_layer1_champagne.png",
       "backgroundLayer2": "/layers/bg_layer2_champagne.png",
-      "backgroundLayer3": "/layers/bg_layer3_champagne.png"
+      "backgroundLayer3": "/layers/bg_layer3_champagne.png",
+      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.webp"
     },
     "dressCodeSwatches": ["#111111", "#1F2A44", "#6B1E2D", "#4F5D4A", "#C9A646"],
     "cssVariables": {

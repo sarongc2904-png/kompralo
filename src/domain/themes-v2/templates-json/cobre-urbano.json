@@ -12,7 +12,11 @@
   "theme": {
     "name": "Cobre Urbano",
     "description": "Minimalismo industrial con cobre metálico para bodas civiles de ciudad.",
-    "categorySupport": ["wedding", "baptism", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#E7E3DC",
       "surface": "rgba(231,227,220,0.93)",
@@ -93,18 +97,24 @@
     },
     "backgrounds": {
       "main": "#E7E3DC",
-      "hero": "linear-gradient(180deg, rgba(231,227,220,0.08) 0%, transparent 36%, rgba(231,227,220,0.96) 100%)",
-      "sections": "#D1CCC3",
+      "hero": "#E7E3DC",
+      "sections": "#E7E3DC",
       "storyBook": "#E7E3DC",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #D1CCC3 0%, #E7E3DC 100%)"
+      "gallery": "#E7E3DC",
+      "final": "#E7E3DC"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#202020", "#B05A36", "#8F918B", "#D1CCC3", "#3A4A4F"],
+    "dressCodeSwatches": [
+      "#202020",
+      "#B05A36",
+      "#8F918B",
+      "#D1CCC3",
+      "#3A4A4F"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#E7E3DC",
       "--v2-color-surface": "rgba(231,227,220,0.93)",
@@ -134,8 +144,8 @@
       "--v2-divider-color": "rgba(176,90,54,0.40)",
       "--v2-background-main": "#E7E3DC",
       "--v2-background-story": "#E7E3DC",
-      "--v2-background-sections": "#D1CCC3",
-      "--v2-background-final": "linear-gradient(160deg, #D1CCC3 0%, #E7E3DC 100%)",
+      "--v2-background-sections": "#E7E3DC",
+      "--v2-background-final": "#E7E3DC",
       "--v2-font-heading": "\"Barlow Condensed\", system-ui, sans-serif",
       "--v2-font-body": "\"IBM Plex Sans\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",

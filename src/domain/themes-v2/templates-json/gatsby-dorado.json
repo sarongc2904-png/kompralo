@@ -12,7 +12,10 @@
   "theme": {
     "name": "Gatsby Dorado",
     "description": "Glamour geométrico para una boda de noche con brillo cinematográfico.",
-    "categorySupport": ["wedding", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#10151C",
       "surface": "rgba(24,33,43,0.95)",
@@ -93,18 +96,24 @@
     },
     "backgrounds": {
       "main": "#10151C",
-      "hero": "linear-gradient(180deg, rgba(0,0,0,0.25) 0%, transparent 42%, rgba(16,21,28,0.98) 100%)",
-      "sections": "#18212B",
+      "hero": "#10151C",
+      "sections": "#10151C",
       "storyBook": "#10151C",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #18212B 0%, #10151C 100%)"
+      "gallery": "#10151C",
+      "final": "#10151C"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#0D1117", "#D4AF37", "#F5E6C8", "#1D4E5F", "#6F1D1B"],
+    "dressCodeSwatches": [
+      "#0D1117",
+      "#D4AF37",
+      "#F5E6C8",
+      "#1D4E5F",
+      "#6F1D1B"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#10151C",
       "--v2-color-surface": "linear-gradient(152deg, rgba(24,33,43,0.97), rgba(30,43,56,0.92))",
@@ -134,8 +143,8 @@
       "--v2-divider-color": "rgba(212,175,55,0.45)",
       "--v2-background-main": "#10151C",
       "--v2-background-story": "#10151C",
-      "--v2-background-sections": "#18212B",
-      "--v2-background-final": "linear-gradient(160deg, #18212B 0%, #10151C 100%)",
+      "--v2-background-sections": "#10151C",
+      "--v2-background-final": "#10151C",
       "--v2-font-heading": "\"Cinzel\", serif",
       "--v2-font-body": "\"Montserrat\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",

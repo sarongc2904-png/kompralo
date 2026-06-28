@@ -12,7 +12,10 @@
   "theme": {
     "name": "Oro Sombra",
     "description": "Lujo oscuro y dramático: oro envejecido sobre negro para galas de noche.",
-    "categorySupport": ["wedding", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#070606",
       "surface": "rgba(20,16,16,0.96)",
@@ -93,18 +96,24 @@
     },
     "backgrounds": {
       "main": "#070606",
-      "hero": "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, transparent 42%, rgba(7,6,6,0.99) 100%)",
-      "sections": "#141010",
+      "hero": "#070606",
+      "sections": "#070606",
       "storyBook": "#070606",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #141010 0%, #070606 100%)"
+      "gallery": "#070606",
+      "final": "#070606"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#070606", "#B08D57", "#5A1F2E", "#F3E6D0", "#2B1B1F"],
+    "dressCodeSwatches": [
+      "#070606",
+      "#B08D57",
+      "#5A1F2E",
+      "#F3E6D0",
+      "#2B1B1F"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#070606",
       "--v2-color-surface": "linear-gradient(152deg, rgba(20,16,16,0.97), rgba(28,22,22,0.93))",
@@ -134,8 +143,8 @@
       "--v2-divider-color": "rgba(176,141,87,0.48)",
       "--v2-background-main": "#070606",
       "--v2-background-story": "#070606",
-      "--v2-background-sections": "#141010",
-      "--v2-background-final": "linear-gradient(160deg, #141010 0%, #070606 100%)",
+      "--v2-background-sections": "#070606",
+      "--v2-background-final": "#070606",
       "--v2-font-heading": "\"Cinzel Decorative\", serif",
       "--v2-font-body": "\"Cormorant Garamond\", \"Georgia\", serif",
       "--v2-bg-layer-1": "",

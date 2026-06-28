@@ -12,7 +12,12 @@
   "theme": {
     "name": "Blanco Línea",
     "description": "Elegancia limpia para novias que aman lo moderno, sobrio y atemporal.",
-    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "baby-shower",
+      "birthday"
+    ],
     "colors": {
       "pageBackground": "#FAFAF7",
       "surface": "rgba(255,255,255,0.95)",
@@ -93,18 +98,24 @@
     },
     "backgrounds": {
       "main": "#FAFAF7",
-      "hero": "linear-gradient(180deg, rgba(250,250,247,0.06) 0%, transparent 36%, rgba(250,250,247,0.96) 100%)",
-      "sections": "#FFFFFF",
+      "hero": "#FAFAF7",
+      "sections": "#FAFAF7",
       "storyBook": "#FAFAF7",
-      "gallery": "transparent",
-      "final": "linear-gradient(160deg, #F0EDE6 0%, #FAFAF7 100%)"
+      "gallery": "#FAFAF7",
+      "final": "#FAFAF7"
     },
     "assets": {
       "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": ""
     },
-    "dressCodeSwatches": ["#F7F3EC", "#D8D2C7", "#8E938B", "#3B3B38", "#B9A98C"],
+    "dressCodeSwatches": [
+      "#F7F3EC",
+      "#D8D2C7",
+      "#8E938B",
+      "#3B3B38",
+      "#B9A98C"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#FAFAF7",
       "--v2-color-surface": "rgba(255,255,255,0.95)",
@@ -134,8 +145,8 @@
       "--v2-divider-color": "rgba(17,17,17,0.18)",
       "--v2-background-main": "#FAFAF7",
       "--v2-background-story": "#FAFAF7",
-      "--v2-background-sections": "#FFFFFF",
-      "--v2-background-final": "linear-gradient(160deg, #F0EDE6 0%, #FAFAF7 100%)",
+      "--v2-background-sections": "#FAFAF7",
+      "--v2-background-final": "#FAFAF7",
       "--v2-font-heading": "\"Inter\", system-ui, sans-serif",
       "--v2-font-body": "\"Inter\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",
