@@ -23,11 +23,18 @@ interface DressCodeProps {
 }
 
 
+const BG: React.CSSProperties = {
+  backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+};
+
 export default function DressCode({ dressCode, theme, editablePreview = false }: DressCodeProps) {
   if (!dressCode) return null;
 
   return (
-    <SectionShell className="text-center select-none" contentClassName="max-w-xl mx-auto">
+    <SectionShell className="text-center select-none" contentClassName="max-w-xl mx-auto" style={BG}>
       {/* Header */}
       <SectionHeader
         eyebrow={dressCode.sectionEyebrow ?? 'Código de Vestimenta'}

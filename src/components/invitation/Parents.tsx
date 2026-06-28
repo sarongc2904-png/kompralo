@@ -18,6 +18,13 @@ interface ParentsProps {
   sectionSubtitle?: string;
 }
 
+const BG: React.CSSProperties = {
+  backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+};
+
 // Ornament SVG
 function Ornament() {
   return (
@@ -162,7 +169,7 @@ export default function Parents({ parents, theme, editablePreview = false, secti
   const brideParents = parents.find((p) => p.side === 'bride');
 
   return (
-    <SectionShell variant="alt" className="select-none" contentClassName="max-w-3xl mx-auto">
+    <SectionShell variant="alt" className="select-none" contentClassName="max-w-3xl mx-auto" style={BG}>
       {/* Header */}
       <SectionHeader
         eyebrow={sectionEyebrow ?? 'Con la bendición de nuestros padres'}
