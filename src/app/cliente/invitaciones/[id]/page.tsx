@@ -772,7 +772,6 @@ export default async function InvitationDashboard({ params }: Props) {
           </>
         )}
 
-        {/* OCULTO TEMPORALMENTE — no eliminar
         <div id="configuracion" className="cc-card" style={{ padding: '1.25rem 1.25rem .875rem', marginBottom: '1.5rem' }}>
           <RsvpModeSelector
             invitationId={id}
@@ -781,7 +780,6 @@ export default async function InvitationDashboard({ params }: Props) {
             eventTitle={eventTitle}
           />
         </div>
-        */}
 
         {/* ── Stats ── */}
         <div id="tour-stats-row" className="stat-grid" style={{ marginBottom: '2rem' }}>
