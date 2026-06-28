@@ -148,11 +148,13 @@ export function CentroControlHelpModal({ onClose }: Props) {
           borderRadius: 16,
           width: '90vw',
           maxWidth: 860,
+          height: isMobile ? '92vh' : '85vh',
           maxHeight: isMobile ? '92vh' : '85vh',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           boxShadow: '0 24px 60px rgba(0,0,0,0.32)',
+          margin: 'auto',
           marginTop: '2rem',
           marginBottom: '2rem',
         }}
@@ -211,7 +213,7 @@ export function CentroControlHelpModal({ onClose }: Props) {
             flexDirection: 'row',
             WebkitOverflowScrolling: 'touch',
           } : {
-            width: 162,
+            width: 200,
             flexShrink: 0,
             borderRight: '1px solid rgba(200,167,93,0.15)',
             overflowY: 'auto',
