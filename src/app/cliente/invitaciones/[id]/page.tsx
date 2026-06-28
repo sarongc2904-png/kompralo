@@ -470,6 +470,12 @@ export default async function InvitationDashboard({ params }: Props) {
     .filter((r): r is RSVPResponse & { checkedInAt: string } => !!r.checkedInAt)
     .sort((a, b) => new Date(b.checkedInAt).getTime() - new Date(a.checkedInAt).getTime())[0];
 
+  // guest_passes count — controls scanner visibility
+  const { count: guestPassCount } = await svc
+    .from('guest_passes')
+    .select('*', { count: 'exact', head: true })
+    .eq('invitation_id', id);
+
   // 4. Build URLs
   const appUrl    = process.env.NEXT_PUBLIC_APP_URL ?? 'https://kompralo.vercel.app';
   const publicUrl = inv.slug ? `${appUrl}/i/${inv.slug}` : null;
@@ -632,59 +638,59 @@ export default async function InvitationDashboard({ params }: Props) {
             ESTADO 5 — DÍA DEL EVENTO
         ════════════════════════════════════════════════ */}
         {(phase === 'semana' || phase === 'dia') && (
-          <>
-            <div className="cc-card" style={{ background: '#1A1208', border: '1px solid rgba(201,169,110,0.25)', padding: 'clamp(1.75rem,5vw,2.5rem)', marginBottom: '1.5rem', textAlign: 'center' }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '.875rem' }}>🎉</div>
-              <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: 700, color: '#fffdf9', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.08 }}>
-                Hoy es tu gran día
-              </h2>
-              <p style={{ margin: '0 auto 0', color: 'rgba(255,253,249,0.65)', fontSize: '.9375rem', lineHeight: 1.7, maxWidth: '440px' }}>
-                Todo está listo. Controla la entrada de tus invitados y sigue las confirmaciones en tiempo real.
-              </p>
-            </div>
+          <div className="cc-card" style={{ background: '#1A1208', border: '1px solid rgba(201,169,110,0.25)', padding: 'clamp(1.75rem,5vw,2.5rem)', marginBottom: '1.5rem', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '.875rem' }}>🎉</div>
+            <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: 700, color: '#fffdf9', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.08 }}>
+              Hoy es tu gran día
+            </h2>
+            <p style={{ margin: '0 auto 0', color: 'rgba(255,253,249,0.65)', fontSize: '.9375rem', lineHeight: 1.7, maxWidth: '440px' }}>
+              Todo está listo. Controla la entrada de tus invitados y sigue las confirmaciones en tiempo real.
+            </p>
+          </div>
+        )}
 
-            {/* Control de acceso */}
-            <div className="cc-card" id="tour-control-evento" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
-              <p style={{ margin: '0 0 1rem', fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: T.gold }}>
-                Control del evento
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.75rem', marginBottom: '1.25rem' }}>
-                <div className="db-stat-card" style={{ background: '#e7f5ec', border: '1px solid #b8dfc4', borderRadius: '1rem', padding: '1rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#b8dfc4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.125rem', flexShrink: 0 }}>✅</div>
-                  <div>
-                    <p style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#1a7a45', lineHeight: 1 }}>{stats.yesCount}</p>
-                    <p style={{ margin: '.1rem 0 0', fontSize: '.8rem', fontWeight: 600, color: '#1a7a45' }}>Confirmados</p>
-                  </div>
-                </div>
-                <div className="db-stat-card" style={{ background: '#fbf5e3', border: `1px solid #e8d8ad`, borderRadius: '1rem', padding: '1rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#e8d8ad', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.125rem', flexShrink: 0 }}>🚪</div>
-                  <div>
-                    <p style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#8a6d3b', lineHeight: 1 }}>{checkedInCount}</p>
-                    <p style={{ margin: '.1rem 0 0', fontSize: '.8rem', fontWeight: 600, color: '#8a6d3b' }}>Dentro</p>
-                  </div>
+        {/* Control del evento — visible cuando hay al menos 1 pase creado */}
+        {(guestPassCount ?? 0) > 0 && (
+          <div className="cc-card" id="tour-control-evento" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+            <p style={{ margin: '0 0 1rem', fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: T.gold }}>
+              Control del evento
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.75rem', marginBottom: '1.25rem' }}>
+              <div className="db-stat-card" style={{ background: '#e7f5ec', border: '1px solid #b8dfc4', borderRadius: '1rem', padding: '1rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#b8dfc4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.125rem', flexShrink: 0 }}>✅</div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#1a7a45', lineHeight: 1 }}>{stats.yesCount}</p>
+                  <p style={{ margin: '.1rem 0 0', fontSize: '.8rem', fontWeight: 600, color: '#1a7a45' }}>Confirmados</p>
                 </div>
               </div>
-
-              {lastCheckIn ? (
-                <div style={{ background: '#e7f5ec', border: '1px solid #b8dfc4', borderRadius: '.875rem', padding: '.875rem 1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-                  <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>✅</span>
-                  <div>
-                    <p style={{ margin: '0 0 .1rem', fontSize: '.625rem', fontWeight: 700, color: '#4f7d5a', letterSpacing: '.1em', textTransform: 'uppercase' }}>Último ingreso</p>
-                    <p style={{ margin: '0 0 .1rem', fontSize: '.9375rem', fontWeight: 700, color: T.dark }}>{lastCheckIn.name}</p>
-                    <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{formatDateTime(lastCheckIn.checkedInAt)}</p>
-                  </div>
+              <div className="db-stat-card" style={{ background: '#fbf5e3', border: `1px solid #e8d8ad`, borderRadius: '1rem', padding: '1rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#e8d8ad', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.125rem', flexShrink: 0 }}>🚪</div>
+                <div>
+                  <p style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#8a6d3b', lineHeight: 1 }}>{checkedInCount}</p>
+                  <p style={{ margin: '.1rem 0 0', fontSize: '.8rem', fontWeight: 600, color: '#8a6d3b' }}>Dentro</p>
                 </div>
-              ) : (
-                <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: '.875rem', padding: '.875rem 1rem', marginBottom: '1rem' }}>
-                  <p style={{ margin: 0, fontSize: '.875rem', color: T.light, lineHeight: 1.55 }}>Aún no ha ingresado nadie. Los accesos aparecerán aquí conforme lleguen.</p>
-                </div>
-              )}
-
-              <a id="mi-evento-scanner" href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, display: 'flex' }}>
-                📷 Escanear invitados al entrar
-              </a>
+              </div>
             </div>
-          </>
+
+            {lastCheckIn ? (
+              <div style={{ background: '#e7f5ec', border: '1px solid #b8dfc4', borderRadius: '.875rem', padding: '.875rem 1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
+                <span style={{ fontSize: '1.25rem', flexShrink: 0 }}>✅</span>
+                <div>
+                  <p style={{ margin: '0 0 .1rem', fontSize: '.625rem', fontWeight: 700, color: '#4f7d5a', letterSpacing: '.1em', textTransform: 'uppercase' }}>Último ingreso</p>
+                  <p style={{ margin: '0 0 .1rem', fontSize: '.9375rem', fontWeight: 700, color: T.dark }}>{lastCheckIn.name}</p>
+                  <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{formatDateTime(lastCheckIn.checkedInAt)}</p>
+                </div>
+              </div>
+            ) : (
+              <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: '.875rem', padding: '.875rem 1rem', marginBottom: '1rem' }}>
+                <p style={{ margin: 0, fontSize: '.875rem', color: T.light, lineHeight: 1.55 }}>Aún no ha ingresado nadie. Los accesos aparecerán aquí conforme lleguen.</p>
+              </div>
+            )}
+
+            <a id="mi-evento-scanner" href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, display: 'flex' }}>
+              📷 Escanear invitados al entrar
+            </a>
+          </div>
         )}
 
         {/* ════════════════════════════════════════════════
@@ -766,78 +772,59 @@ export default async function InvitationDashboard({ params }: Props) {
           </>
         )}
 
-        {/* Mode selector — configurando/lista */}
-        {(phase === 'configurando' || phase === 'lista') && (
-          <div id="configuracion" className="cc-card" style={{ padding: '1.25rem 1.25rem .875rem', marginBottom: '1.5rem' }}>
-            <RsvpModeSelector
-              invitationId={id}
-              initialMode={rsvpMode}
-              publicUrl={publicUrl ?? ''}
-              eventTitle={eventTitle}
-            />
-          </div>
-        )}
+        {/* Mode selector */}
+        <div id="configuracion" className="cc-card" style={{ padding: '1.25rem 1.25rem .875rem', marginBottom: '1.5rem' }}>
+          <RsvpModeSelector
+            invitationId={id}
+            initialMode={rsvpMode}
+            publicUrl={publicUrl ?? ''}
+            eventTitle={eventTitle}
+          />
+        </div>
 
         {/* ── Stats ── */}
-        {stats.total > 0 && phase !== 'configurando' && (
-          <div id="tour-stats-row" className="stat-grid" style={{ marginBottom: '2rem' }}>
-            <StatCard
-              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
-              label="Confirmaron"
-              value={stats.total}
-              sublabel="respondieron a la invitación"
-              iconBg="#E7F5EC"
-              iconColor="#1A7A45"
-              textColor="#1A7A45"
-            />
-            <StatCard
-              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>}
-              label="Asistirán"
-              value={stats.yesCount}
-              sublabel="confirmaciones positivas"
-              iconBg="#E7F5EC"
-              iconColor="#1A7A45"
-              textColor="#1A7A45"
-            />
-            <StatCard
-              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>}
-              label="No asistirán"
-              value={stats.noCount}
-              sublabel="declinaron la invitación"
-              iconBg="#FBEAEA"
-              iconColor="#B43232"
-              textColor="#B43232"
-            />
-            <StatCard
-              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
-              label="Asistentes"
-              value={stats.totalPeople}
-              sublabel="personas en total"
-              iconBg="#FAF6EB"
-              iconColor="#C9A84C"
-              textColor="#B99752"
-            />
-          </div>
-        )}
-
-        {/* Empty state */}
-        {stats.total === 0 && phase === 'lista' && (
-          <div style={{ marginBottom: '2rem', padding: '1.25rem 1.5rem', background: T.white, border: `1px solid ${T.border}`, borderRadius: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ fontSize: '1.5rem', flexShrink: 0 }}>📭</span>
-            <p style={{ margin: 0, fontSize: '.9rem', color: T.light, lineHeight: 1.6 }}>
-              Todavía nadie ha confirmado.{' '}
-              <a href="#compartir" style={{ color: T.gold, fontWeight: 700, textDecoration: 'none' }}>
-                Comparte tu invitación
-              </a>{' '}
-              para comenzar.
-            </p>
-          </div>
-        )}
+        <div id="tour-stats-row" className="stat-grid" style={{ marginBottom: '2rem' }}>
+          <StatCard
+            icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
+            label="Confirmaron"
+            value={stats.total}
+            sublabel="respondieron a la invitación"
+            iconBg="#E7F5EC"
+            iconColor="#1A7A45"
+            textColor="#1A7A45"
+          />
+          <StatCard
+            icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>}
+            label="Asistirán"
+            value={stats.yesCount}
+            sublabel="confirmaciones positivas"
+            iconBg="#E7F5EC"
+            iconColor="#1A7A45"
+            textColor="#1A7A45"
+          />
+          <StatCard
+            icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>}
+            label="No asistirán"
+            value={stats.noCount}
+            sublabel="declinaron la invitación"
+            iconBg="#FBEAEA"
+            iconColor="#B43232"
+            textColor="#B43232"
+          />
+          <StatCard
+            icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
+            label="Asistentes"
+            value={stats.totalPeople}
+            sublabel="personas en total"
+            iconBg="#FAF6EB"
+            iconColor="#C9A84C"
+            textColor="#B99752"
+          />
+        </div>
 
         {/* ── RSVP section ── */}
-        {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
-          <>
-            {/* Section header */}
+        <>
+          {/* Section header */}
             <div id="tour-tabla-confirmados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#FAF6EB', border: '1px solid #EAD7A3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B99752', flexShrink: 0 }}>
@@ -867,11 +854,9 @@ export default async function InvitationDashboard({ params }: Props) {
                 <p style={{ margin: '0 0 1.25rem', color: T.light, fontSize: '.875rem', lineHeight: 1.6 }}>
                   Cuando tus invitados respondan aparecerán aquí.
                 </p>
-                {(phase === 'confirmaciones' || phase === 'semana') && (
-                  <a href="#compartir" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '.625rem 1.5rem', background: T.dark, color: '#fffdf9', borderRadius: '8px', fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
-                    Compartir invitación
-                  </a>
-                )}
+                <a href="#compartir" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '.625rem 1.5rem', background: T.dark, color: '#fffdf9', borderRadius: '8px', fontSize: '.875rem', fontWeight: 700, textDecoration: 'none' }}>
+                  Compartir invitación
+                </a>
               </div>
             ) : (
               <>
@@ -933,19 +918,15 @@ export default async function InvitationDashboard({ params }: Props) {
                 </div>
               </>
             )}
-          </>
-        )}
+        </>
 
         {/* ── Mis invitados (GuestPassSection) ── */}
-        {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia'
-          || rsvpMode === 'passes_only') && (
-          <div id="tour-mis-invitados">
-            <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} publicUrl={publicUrl} />
-          </div>
-        )}
+        <div id="tour-mis-invitados">
+          <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} publicUrl={publicUrl} />
+        </div>
 
         {/* ── Compartir ── */}
-        {publicUrl && (phase === 'lista' || phase === 'confirmaciones' || phase === 'semana') && (
+        {publicUrl && (
           <div id="compartir" className="cc-card" style={{ padding: '1.5rem', marginTop: '2rem' }}>
             {/* Opción A — Con pase personalizado (destacada) */}
             <div style={{
