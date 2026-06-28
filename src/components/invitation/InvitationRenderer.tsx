@@ -371,7 +371,7 @@ export default function InvitationRenderer({
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
+            backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.webp)',
             backgroundSize: '100% auto',
             backgroundPosition: 'top center',
             backgroundRepeat: 'repeat-y',

@@ -52,14 +52,26 @@ export async function PublicInvitationRoute({ slug, themePreviewId }: PublicInvi
 
   const { theme, plan, features } = resolveInvitationContext(invitation);
 
+  const isIvoryEditorial = !invitation.themeId || invitation.themeId === 'ivory-editorial';
+
   return (
-    <InvitationRouteRenderer
-      invitation={invitation}
-      theme={theme}
-      plan={plan}
-      features={features}
-      mode="public"
-      themePreviewId={themePreviewId}
-    />
+    <>
+      {isIvoryEditorial && (
+        <link
+          rel="preload"
+          as="image"
+          href="https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.webp"
+          type="image/webp"
+        />
+      )}
+      <InvitationRouteRenderer
+        invitation={invitation}
+        theme={theme}
+        plan={plan}
+        features={features}
+        mode="public"
+        themePreviewId={themePreviewId}
+      />
+    </>
   );
 }
