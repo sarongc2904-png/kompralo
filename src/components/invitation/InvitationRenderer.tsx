@@ -363,14 +363,25 @@ export default function InvitationRenderer({
       style={{
         ...(themeV2.cssVariables as React.CSSProperties),
         ...invitationPaperVariables,
-        ...(themeV2.id === 'ivory-editorial' ? {
-          backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
-          backgroundSize: '100% auto',
-          backgroundPosition: 'top center',
-          backgroundRepeat: 'repeat-y',
-        } : {}),
       }}
     >
+      {themeV2.id === 'ivory-editorial' && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
+            backgroundSize: '100% auto',
+            backgroundPosition: 'top center',
+            backgroundRepeat: 'repeat-y',
+            opacity: 0.35,
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+      <div style={{ position: 'relative', zIndex: 1 }}>
       {editablePreview && (
         <style>{`
           [data-editable-field] {
@@ -616,6 +627,7 @@ export default function InvitationRenderer({
       </FeatureGate>
       </MultilayerBackground>
     </ThemeProviderV2>
+      </div>
     </div>
   );
 }
