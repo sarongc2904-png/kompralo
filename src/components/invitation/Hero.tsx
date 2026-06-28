@@ -254,10 +254,8 @@ export default function Hero({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'flex-end',
-          paddingBottom: 'clamp(48px, 8vh, 88px)',
-          // Buffer so justify-content:flex-end overflow doesn't push the eyebrow
-          // above the section's overflow:hidden boundary in the editor device frame.
-          paddingTop: editablePreview ? '5rem' : '4rem',
+          paddingBottom: 'clamp(32px, 5vh, 64px)',
+          paddingTop: editablePreview ? '5rem' : '0',
           willChange: 'transform, opacity',
         }}
       >
