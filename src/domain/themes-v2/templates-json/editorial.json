@@ -1,0 +1,147 @@
+{
+  "id": "editorial",
+  "catalog": {
+    "label": "Editorial",
+    "description": "Tema clásico editorial",
+    "previewColor": "#F5F1EA",
+    "accentColor": "#C5A880",
+    "category": "traditional",
+    "isNewTheme": false,
+    "featured": false
+  },
+  "theme": {
+    "name": "Champagne Editorial",
+    "description": "Champagne base with rich gold accents and soft editorial romance.",
+    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "colors": {
+      "pageBackground": "#F0E8D8",
+      "surface": "rgba(248,242,232,0.75)",
+      "surfaceAlt": "#CDB88E",
+      "surfaceElevated": "#F8F2E8",
+      "textPrimary": "#1A1612",
+      "textSecondary": "#6B4A35",
+      "textMuted": "#D9C4A3",
+      "accent": "#C4A962",
+      "accentSoft": "rgba(196,169,98,0.16)",
+      "accentHover": "#CDB88E",
+      "border": "#EAD7A3",
+      "borderStrong": "#C4A962",
+      "overlay": "rgba(240,228,210,0.42)"
+    },
+    "typography": {
+      "headingFamily": "\"Cormorant Garamond\", \"Georgia\", serif",
+      "bodyFamily": "\"Inter\", system-ui, sans-serif",
+      "scriptFamily": "\"Pinyon Script\", cursive",
+      "headingWeight": "300",
+      "headingTracking": "0.06em",
+      "bodyTracking": "0",
+      "headingClass": "font-editorial font-light tracking-wide",
+      "bodyClass": "font-sans",
+      "scriptClass": "font-calligraphy"
+    },
+    "spacing": {
+      "sectionPaddingY": "5rem",
+      "cardPaddingX": "1.75rem",
+      "cardPaddingY": "1.5rem",
+      "stackGap": "1.25rem"
+    },
+    "shapes": {
+      "radiusSm": "6px",
+      "radiusMd": "12px",
+      "radiusLg": "24px",
+      "radiusXl": "36px",
+      "radiusFull": "9999px",
+      "cardStyle": "rounded"
+    },
+    "effects": {
+      "glassBlur": "blur(28px)",
+      "glassSaturation": "saturate(150%)",
+      "glassBackground": "rgba(248,242,232,0.60)",
+      "paperTexture": true,
+      "grain": true,
+      "particles": true,
+      "parallax": true,
+      "lightSweep": true,
+      "grainIntensity": 0.04
+    },
+    "shadows": {
+      "soft": "0 4px 16px rgba(13,10,7,0.10)",
+      "card": "0 8px 32px rgba(196,169,98,0.12), 0 2px 8px rgba(13,10,7,0.06), inset 0 1px 0 rgba(241,227,200,0.95)",
+      "elevated": "0 8px 40px rgba(13,10,7,0.14), 0 2px 8px rgba(196,169,98,0.12)",
+      "book": "0 28px 70px rgba(13,10,7,0.38), 0 8px 24px rgba(13,10,7,0.20)"
+    },
+    "button": {
+      "background": "#C4A962",
+      "text": "#1A1612",
+      "border": "none",
+      "hoverBackground": "#CDB88E",
+      "hoverText": "#1A1612",
+      "borderRadius": "6px",
+      "fontClass": "font-sans text-sm tracking-wide",
+      "shadow": "0 2px 12px rgba(196,169,98,0.30)",
+      "paddingX": "1.75rem",
+      "paddingY": "0.625rem"
+    },
+    "divider": {
+      "color": "#EAD7A3",
+      "variant": "ornamental",
+      "thickness": "1px",
+      "opacity": 0.6,
+      "ornamentChar": "❧",
+      "gradientFrom": "transparent",
+      "gradientTo": "transparent"
+    },
+    "backgrounds": {
+      "main": "linear-gradient(135deg, #F8F2E8 0%, #F0E8D8 52%, #E8DCCC 100%)",
+      "hero": "linear-gradient(180deg, rgba(13,10,7,0.30) 0%, transparent 48%, #F0E8D8 100%)",
+      "sections": "transparent",
+      "storyBook": "linear-gradient(135deg, #F8F2E8 0%, #F0E8D8 50%, #E4D4B8 100%)",
+      "gallery": "transparent",
+      "final": "linear-gradient(135deg, #F8F2E8 0%, #F0E8D8 50%, #E8DCCC 100%)"
+    },
+    "assets": {
+      "backgroundLayer1": "/layers/bg_layer1_champagne.png",
+      "backgroundLayer2": "/layers/bg_layer2_champagne.png",
+      "backgroundLayer3": "/layers/bg_layer3_champagne.png",
+      "texture": "paper-noise"
+    },
+    "dressCodeSwatches": ["#CDB88E", "#C4A962", "#EAD7A3", "#D9C4A3", "#D8B6A4", "#8A8F6A", "#6B4A35"],
+    "cssVariables": {
+      "--v2-color-page-bg": "#F0E8D8",
+      "--v2-color-surface": "rgba(248,242,232,0.75)",
+      "--v2-color-surface-alt": "#CDB88E",
+      "--v2-color-surface-elevated": "#F8F2E8",
+      "--v2-color-text-primary": "#1A1612",
+      "--v2-color-text-secondary": "#6B4A35",
+      "--v2-color-text-muted": "#D9C4A3",
+      "--v2-color-accent": "#C4A962",
+      "--v2-color-accent-soft": "rgba(196,169,98,0.16)",
+      "--v2-color-accent-hover": "#CDB88E",
+      "--v2-color-border": "#EAD7A3",
+      "--v2-color-border-strong": "#C4A962",
+      "--v2-color-overlay": "rgba(240,228,210,0.42)",
+      "--v2-radius-sm": "6px",
+      "--v2-radius-md": "12px",
+      "--v2-radius-lg": "24px",
+      "--v2-radius-xl": "36px",
+      "--v2-shadow-card": "0 8px 32px rgba(196,169,98,0.12), 0 2px 8px rgba(13,10,7,0.06)",
+      "--v2-shadow-elevated": "0 8px 40px rgba(13,10,7,0.14), 0 2px 8px rgba(196,169,98,0.12)",
+      "--v2-glass-bg": "rgba(248,242,232,0.60)",
+      "--v2-btn-bg": "#C4A962",
+      "--v2-btn-text": "#1A1612",
+      "--v2-btn-border": "none",
+      "--v2-btn-hover-bg": "#CDB88E",
+      "--v2-btn-hover-text": "#1A1612",
+      "--v2-divider-color": "#EAD7A3",
+      "--v2-background-main": "linear-gradient(135deg, #F8F2E8 0%, #F0E8D8 52%, #E8DCCC 100%)",
+      "--v2-background-story": "linear-gradient(135deg, #F8F2E8 0%, #F0E8D8 50%, #E4D4B8 100%)",
+      "--v2-background-final": "linear-gradient(135deg, #F8F2E8 0%, #F0E8D8 50%, #E8DCCC 100%)",
+      "--v2-font-heading": "\"Cormorant Garamond\", \"Georgia\", serif",
+      "--v2-font-body": "\"Inter\", system-ui, sans-serif",
+      "--v2-bg-layer-1": "/layers/bg_layer1_champagne.png",
+      "--v2-bg-layer-2": "/layers/bg_layer2_champagne.png",
+      "--v2-bg-layer-3": "/layers/bg_layer3_champagne.png",
+      "--v2-color-text-over-video": "#F1E3C8"
+    }
+  }
+}

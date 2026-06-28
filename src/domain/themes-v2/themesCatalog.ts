@@ -1,4 +1,6 @@
 import type { ThemeIdV2 } from '@/domain/themes-v2/types';
+import { FEATURE_FLAGS } from '@/lib/feature-flags';
+import { loadTemplatesFromJson } from '@/domain/themes-v2/json-loader';
 
 export interface ThemeCatalogEntry {
   id: ThemeIdV2;
@@ -14,7 +16,7 @@ export interface ThemeCatalogEntry {
  * Wedding themes catalog — metadata for UI selection and preview
  * Organized by visual style for editor theme selector
  */
-export const weddingThemesCatalog: ThemeCatalogEntry[] = [
+const legacyCatalog: ThemeCatalogEntry[] = [
   {
     id: 'ivory-editorial',
     label: 'Ivory Editorial Romance',
@@ -115,6 +117,10 @@ export const weddingThemesCatalog: ThemeCatalogEntry[] = [
     accentColor: '#C4A962',
   },
 ];
+
+export const weddingThemesCatalog: ThemeCatalogEntry[] = FEATURE_FLAGS.templatesAsJson
+  ? loadTemplatesFromJson().catalog
+  : legacyCatalog;
 
 /**
  * Get catalog entry by theme ID (safe lookup with fallback)

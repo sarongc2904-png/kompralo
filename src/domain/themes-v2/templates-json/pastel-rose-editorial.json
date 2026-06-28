@@ -1,0 +1,151 @@
+{
+  "id": "pastel-rose-editorial",
+  "catalog": {
+    "label": "Pastel Rose Editorial",
+    "description": "Romántico con tonos pastel: suave, elegante y delicado",
+    "previewColor": "#FFF7F8",
+    "accentColor": "#B76E79",
+    "category": "traditional",
+    "isNewTheme": true,
+    "featured": true
+  },
+  "theme": {
+    "name": "Pastel Rose Editorial",
+    "description": "Boda romántica con tonos pastel. Suave, elegante y delicado.",
+    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "colors": {
+      "pageBackground": "#FFF7F8",
+      "surface": "rgba(255,255,255,0.95)",
+      "surfaceAlt": "#F5E8EB",
+      "surfaceElevated": "#FFFCFD",
+      "textPrimary": "#3A2A2D",
+      "textSecondary": "#5A3A3D",
+      "textMuted": "#7A5A5D",
+      "accent": "#B76E79",
+      "accentSoft": "rgba(183,110,121,0.12)",
+      "accentHover": "#C9838E",
+      "border": "rgba(183,110,121,0.25)",
+      "borderStrong": "rgba(183,110,121,0.60)",
+      "overlay": "rgba(255,247,248,0.92)"
+    },
+    "typography": {
+      "headingFamily": "\"Cormorant Garamond\", \"Georgia\", serif",
+      "bodyFamily": "\"Inter\", system-ui, sans-serif",
+      "scriptFamily": "\"Pinyon Script\", cursive",
+      "headingWeight": "400",
+      "headingTracking": "0.06em",
+      "bodyTracking": "0.01em",
+      "headingClass": "font-editorial font-normal tracking-wide",
+      "bodyClass": "font-sans",
+      "scriptClass": "font-calligraphy"
+    },
+    "spacing": {
+      "sectionPaddingY": "6rem",
+      "cardPaddingX": "2rem",
+      "cardPaddingY": "1.875rem",
+      "stackGap": "1.5rem"
+    },
+    "shapes": {
+      "radiusSm": "6px",
+      "radiusMd": "12px",
+      "radiusLg": "20px",
+      "radiusXl": "28px",
+      "radiusFull": "9999px",
+      "cardStyle": "rounded"
+    },
+    "effects": {
+      "glassBlur": "blur(16px)",
+      "glassSaturation": "saturate(110%)",
+      "glassBackground": "rgba(255,255,255,0.82)",
+      "paperTexture": true,
+      "grain": true,
+      "particles": false,
+      "parallax": false,
+      "lightSweep": false,
+      "grainIntensity": 0.04
+    },
+    "shadows": {
+      "soft": "0 2px 8px rgba(183,110,121,0.06), 0 8px 24px rgba(183,110,121,0.10)",
+      "card": "0 2px 6px rgba(183,110,121,0.06), 0 16px 40px rgba(183,110,121,0.13), inset 0 1px 0 rgba(255,255,255,0.85)",
+      "elevated": "0 6px 14px rgba(183,110,121,0.08), 0 28px 64px rgba(183,110,121,0.17), inset 0 1px 0 rgba(255,255,255,0.9)",
+      "book": "0 8px 20px rgba(183,110,121,0.10), 0 40px 80px rgba(183,110,121,0.22), inset 0 1px 0 rgba(255,255,255,0.9)"
+    },
+    "button": {
+      "background": "rgba(183,110,121,0.12)",
+      "text": "#3A2A2D",
+      "border": "1px solid rgba(183,110,121,0.50)",
+      "hoverBackground": "#B76E79",
+      "hoverText": "#FFFFFF",
+      "borderRadius": "8px",
+      "fontClass": "font-editorial tracking-widest text-xs uppercase",
+      "shadow": "0 0 20px rgba(183,110,121,0.15)",
+      "paddingX": "2.5rem",
+      "paddingY": "0.875rem"
+    },
+    "divider": {
+      "color": "rgba(183,110,121,0.40)",
+      "variant": "ornamental",
+      "thickness": "1px",
+      "opacity": 0.8,
+      "ornamentChar": "✦",
+      "gradientFrom": "transparent",
+      "gradientTo": "transparent"
+    },
+    "backgrounds": {
+      "main": "#FFF7F8",
+      "hero": "linear-gradient(180deg, rgba(255,247,248,0.08) 0%, transparent 35%, rgba(255,247,248,0.96) 100%)",
+      "sections": "rgba(183,110,121,0.04)",
+      "storyBook": "#FFF7F8",
+      "gallery": "transparent",
+      "final": "linear-gradient(160deg, #F5E8EB 0%, #FFF7F8 100%)"
+    },
+    "assets": {
+      "backgroundLayer1": "/layers/bg_layer1_floral.png",
+      "backgroundLayer2": "/layers/bg_layer2_floral.png",
+      "backgroundLayer3": "/layers/bg_layer3_champagne.png"
+    },
+    "dressCodeSwatches": ["#111111", "#1F2A44", "#6B1E2D", "#4F5D4A", "#C9A646"],
+    "cssVariables": {
+      "--v2-color-page-bg": "#FFF7F8",
+      "--v2-color-surface": "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,248,250,0.90))",
+      "--v2-card-ivory-bg": "linear-gradient(152deg, rgba(255,253,254,0.97) 0%, rgba(255,250,252,0.93) 45%, rgba(250,242,245,0.90) 100%)",
+      "--v2-card-border": "rgba(183,110,121,0.25)",
+      "--v2-card-radius": "24px",
+      "--v2-color-surface-alt": "#F5E8EB",
+      "--v2-color-surface-elevated": "#FFFCFD",
+      "--v2-color-text-primary": "#3A2A2D",
+      "--v2-color-text-secondary": "#5A3A3D",
+      "--v2-color-text-muted": "#7A5A5D",
+      "--v2-color-accent": "#B76E79",
+      "--v2-color-accent-soft": "rgba(183,110,121,0.12)",
+      "--v2-color-accent-hover": "#C9838E",
+      "--v2-color-border": "rgba(183,110,121,0.20)",
+      "--v2-color-border-strong": "rgba(183,110,121,0.60)",
+      "--v2-color-overlay": "rgba(255,247,248,0.92)",
+      "--v2-radius-sm": "6px",
+      "--v2-radius-md": "12px",
+      "--v2-radius-lg": "20px",
+      "--v2-radius-xl": "28px",
+      "--v2-shadow-card": "0 2px 6px rgba(183,110,121,0.06), 0 16px 40px rgba(183,110,121,0.13), inset 0 1px 0 rgba(255,255,255,0.85)",
+      "--v2-shadow-elevated": "0 6px 14px rgba(183,110,121,0.08), 0 28px 64px rgba(183,110,121,0.17), inset 0 1px 0 rgba(255,255,255,0.9)",
+      "--v2-glass-bg": "rgba(255,255,255,0.82)",
+      "--v2-btn-bg": "rgba(183,110,121,0.12)",
+      "--v2-btn-text": "#3A2A2D",
+      "--v2-btn-border": "1px solid rgba(183,110,121,0.50)",
+      "--v2-btn-hover-bg": "#B76E79",
+      "--v2-btn-hover-text": "#FFFFFF",
+      "--v2-divider-color": "rgba(183,110,121,0.40)",
+      "--v2-ornament-color": "rgba(183,110,121,0.40)",
+      "--v2-section-bg-alt": "rgba(245,232,235,0.45)",
+      "--v2-background-main": "#FFF7F8",
+      "--v2-background-story": "#FFF7F8",
+      "--v2-background-sections": "rgba(183,110,121,0.04)",
+      "--v2-background-final": "linear-gradient(160deg, #F5E8EB 0%, #FFF7F8 100%)",
+      "--v2-font-heading": "\"Cormorant Garamond\", \"Georgia\", serif",
+      "--v2-font-body": "\"Inter\", system-ui, sans-serif",
+      "--v2-bg-layer-1": "/layers/bg_layer1_floral.png",
+      "--v2-bg-layer-2": "/layers/bg_layer2_floral.png",
+      "--v2-bg-layer-3": "/layers/bg_layer3_champagne.png"
+    }
+  }
+}
