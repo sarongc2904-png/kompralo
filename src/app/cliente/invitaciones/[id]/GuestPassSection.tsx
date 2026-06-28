@@ -384,7 +384,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
               </svg>
             </div>
             {/* Filter chips + Crear invitado */}
-            <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div id="tour-tabs-filtro" style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
               {(Object.keys(filterLabels) as FilterKey[]).map(key => {
                 const isActive = activeFilter === key;
                 return (
@@ -411,6 +411,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                 );
               })}
               <button
+                id="tour-btn-crear"
                 onClick={openCreate}
                 style={{
                   marginLeft: 'auto', padding: '.45rem 1rem', background: '#1A1208', color: '#FFFFFF',
@@ -446,7 +447,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredPasses.map((p) => (
+                  {filteredPasses.map((p, idx) => (
                     <tr key={p.id}>
                       <td style={{ fontWeight: 600, color: T.dark }}>{p.guestName}</td>
                       <td>
@@ -478,7 +479,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                         </span>
                       </td>
                       <td style={{ fontSize: '.75rem', color: T.light, whiteSpace: 'nowrap' }}>{formatDt(p.createdAt)}</td>
-                      <td>
+                      <td id={idx === 0 ? 'tour-acciones-fila' : undefined}>
                         <div style={{ display: 'flex', gap: '.375rem', flexWrap: 'wrap' }}>
                           <button
                             onClick={() => { setQrPass(p); setQrCopied(false); }}

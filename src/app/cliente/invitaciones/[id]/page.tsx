@@ -656,7 +656,7 @@ export default async function InvitationDashboard({ params }: Props) {
             </div>
 
             {/* Control de acceso */}
-            <div className="cc-card" id="control-acceso" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+            <div className="cc-card" id="tour-control-evento" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
               <p style={{ margin: '0 0 1rem', fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: T.gold }}>
                 Control del evento
               </p>

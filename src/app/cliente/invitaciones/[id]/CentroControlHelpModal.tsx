@@ -182,21 +182,40 @@ export function CentroControlHelpModal({ onClose }: Props) {
               Selecciona una sección para ver cómo usarla
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Cerrar guía"
-            style={{
-              width: 30, height: 30, borderRadius: '50%',
-              border: '1px solid rgba(200,167,93,0.25)',
-              background: 'rgba(200,167,93,0.1)',
-              color: '#C5A880', fontSize: 18, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              lineHeight: 1, flexShrink: 0,
-            }}
-          >
-            ×
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                setTimeout(() => {
+                  window.dispatchEvent(new Event('kompralo:centro-control-tour-open'));
+                }, 100);
+              }}
+              style={{
+                background: '#C9A96E', color: '#1a1a1a',
+                fontWeight: 600, borderRadius: '8px',
+                padding: '0.5rem 1rem', border: 'none', cursor: 'pointer',
+                fontSize: '0.85rem', fontFamily: 'inherit', whiteSpace: 'nowrap',
+              }}
+            >
+              🎬 Ver tutorial guiado
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Cerrar guía"
+              style={{
+                width: 30, height: 30, borderRadius: '50%',
+                border: '1px solid rgba(200,167,93,0.25)',
+                background: 'rgba(200,167,93,0.1)',
+                color: '#C5A880', fontSize: 18, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                lineHeight: 1, flexShrink: 0,
+              }}
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         {/* ── Body ── */}
