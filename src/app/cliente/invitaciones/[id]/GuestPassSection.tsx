@@ -408,6 +408,9 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
       {/* ── Search + filters ── */}
       {!loading && passes.length > 0 && (
         <>
+          <h2 style={{ margin: '0 0 1rem', fontSize: '1.375rem', fontWeight: 700, color: '#1A1208', fontFamily: 'var(--font-playfair, Georgia, serif)', letterSpacing: '-0.01em' }}>
+            Administrador de Invitados
+          </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem', marginBottom: '1.25rem' }} className="sm:flex-row sm:items-center sm:justify-between">
             {/* Search */}
             <div style={{ position: 'relative', flex: 1 }}>
