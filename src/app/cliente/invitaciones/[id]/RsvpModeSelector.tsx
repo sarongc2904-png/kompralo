@@ -76,8 +76,8 @@ export default function RsvpModeSelector({ invitationId, initialMode, publicUrl,
         <ModeCard
           value="open"
           current={mode}
-          label="Invitación con RSVP"
-          description="Comparte la invitación y tus invitados confirmarán asistencia directamente desde ella."
+          label="Invitación con RSVP abierto"
+          description="Comparte el link de tu invitación y cualquiera puede confirmar asistencia desde ahí poniendo su nombre y cantidad de personas."
           icon="✉️"
           disabled={isPending}
           onClick={handleChange}
@@ -85,8 +85,8 @@ export default function RsvpModeSelector({ invitationId, initialMode, publicUrl,
         <ModeCard
           value="passes_only"
           current={mode}
-          label="Invitación + pase QR"
-          description="Crea pases personalizados para controlar cuántas personas puede confirmar cada invitado o familia."
+          label="Invitación con pase personalizado"
+          description="Tú creas un pase por familia con nombre y cantidad de personas asignada. Solo quienes tienen su pase pueden confirmar. El link general muestra un mensaje pidiendo el pase."
           icon="🎟️"
           disabled={isPending}
           onClick={handleChange}

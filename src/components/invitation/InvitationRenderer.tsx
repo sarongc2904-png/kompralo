@@ -29,13 +29,8 @@ import Timeline from '@/components/invitation/Timeline';
 export type InvitationRenderMode = 'public' | 'preview' | 'dev';
 
 // ─── Passes-only notice ───────────────────────────────────────────────────────
-/**
- * @deprecated Ya no se usa en InvitationRenderer — el ternario que condicionaba
- * el render según rsvp_mode fue eliminado para que el link general (/i/<slug>)
- * muestre siempre RSVPForm. La card de pases se muestra directamente en
- * /pass/[token] vía PassCard / GuestPassCard, que no pasan por InvitationRenderer.
- * Mantener temporalmente por si se reactiva la lógica de modo passes_only.
- */
+// Shown on /i/<slug> when rsvpMode === 'passes_only'. Guests must use their
+// personal pass (/pass/<token>) to confirm — the open RSVP form is hidden.
 function PassesOnlyNotice({ theme }: { theme: Theme }) {
   return (
     <section
@@ -592,13 +587,17 @@ export default function InvitationRenderer({
       </FeatureGate>
 
       <FeatureGate feature="showRSVP" features={features}>
-        <RSVPForm
-          invitationId={invitation.id}
-          rsvpWhatsAppNumber={invitation.rsvpWhatsAppNumber}
-          theme={effectiveTheme}
-          eventTitle={invitation.title}
-          eventDate={invitation.eventDate}
-        />
+        {invitation.rsvpMode === 'passes_only' ? (
+          <PassesOnlyNotice theme={effectiveTheme} />
+        ) : (
+          <RSVPForm
+            invitationId={invitation.id}
+            rsvpWhatsAppNumber={invitation.rsvpWhatsAppNumber}
+            theme={effectiveTheme}
+            eventTitle={invitation.title}
+            eventDate={invitation.eventDate}
+          />
+        )}
       </FeatureGate>
 
       <FeatureGate feature="showWhatsApp" features={features}>
