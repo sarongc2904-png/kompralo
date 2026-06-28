@@ -319,19 +319,6 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
             Administra todas las personas invitadas desde un solo lugar.
           </p>
         </div>
-        {passes.length > 0 && (
-          <button
-            onClick={openCreate}
-            style={{
-              padding: '.625rem 1.25rem', background: '#1A1208', color: '#FFFFFF',
-              border: 'none', borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
-              cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s'
-            }}
-            className="db-btn"
-          >
-            + Crear invitado
-          </button>
-        )}
       </div>
 
       {/* ── Summary stats (only when there are passes) ── */}
@@ -435,8 +422,8 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                 <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </div>
-            {/* Filter chips */}
-            <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+            {/* Filter chips + Crear invitado */}
+            <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
               {(Object.keys(filterLabels) as FilterKey[]).map(key => {
                 const isActive = activeFilter === key;
                 return (
@@ -462,6 +449,17 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                   </button>
                 );
               })}
+              <button
+                onClick={openCreate}
+                style={{
+                  marginLeft: 'auto', padding: '.45rem 1rem', background: '#1A1208', color: '#FFFFFF',
+                  border: 'none', borderRadius: '2rem', fontSize: '.75rem', fontWeight: 700,
+                  cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s'
+                }}
+                className="db-btn"
+              >
+                + Crear invitado
+              </button>
             </div>
           </div>
 

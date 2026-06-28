@@ -948,46 +948,6 @@ export default async function InvitationDashboard({ params }: Props) {
           </>
         )}
 
-        {/* Check-in dos columnas — 2 días antes y el día del evento */}
-        {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') &&
-          daysUntilEvent !== null && daysUntilEvent <= 2 && daysUntilEvent >= 0 && (
-          <div className="cc-card" style={{ padding: '1.25rem', marginBottom: '1.5rem' }}>
-            <p style={{ margin: '0 0 1rem', fontSize: '.65rem', fontWeight: 800, letterSpacing: '.22em', textTransform: 'uppercase', color: T.gold }}>
-              Control de acceso
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <div>
-                <p style={{ margin: '0 0 .625rem', fontSize: '.8125rem', fontWeight: 700, color: '#1a7a45' }}>
-                  ✅ Ya llegaron ({arrivedGuests.length})
-                </p>
-                {arrivedGuests.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '.8rem', color: T.light, lineHeight: 1.5 }}>Aún no ha llegado nadie.</p>
-                ) : (
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
-                    {arrivedGuests.map(r => (
-                      <li key={r.id} style={{ fontSize: '.8125rem', color: T.dark, fontWeight: 500 }}>{r.name}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <div>
-                <p style={{ margin: '0 0 .625rem', fontSize: '.8125rem', fontWeight: 700, color: '#b43232' }}>
-                  ⏳ Aún no llegan ({pendingGuests.length})
-                </p>
-                {pendingGuests.length === 0 ? (
-                  <p style={{ margin: 0, fontSize: '.8rem', color: T.light, lineHeight: 1.5 }}>¡Todos han llegado!</p>
-                ) : (
-                  <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
-                    {pendingGuests.map(r => (
-                      <li key={r.id} style={{ fontSize: '.8125rem', color: T.dark, fontWeight: 500 }}>{r.name}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* ── Mis invitados (GuestPassSection) ── */}
         {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia'
           || rsvpMode === 'passes_only') && (
