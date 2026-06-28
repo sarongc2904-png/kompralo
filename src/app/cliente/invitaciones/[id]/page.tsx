@@ -17,13 +17,13 @@ export const revalidate = 0;
 export const metadata: Metadata = { title: 'Dashboard de invitación — Kompralo' };
 
 const T = {
-  bg:     '#FAF7F2',
+  bg:     '#ffffff',
   card:   '#ffffff',
-  dark:   '#1a1208',
-  mid:    '#1a1208',
-  light:  '#6b6050',
-  gold:   '#C9A96E',
-  border: '#E8DFC8',
+  dark:   '#1A1208',
+  mid:    '#1A1208',
+  light:  '#7A6A5B',
+  gold:   '#C9A84C',
+  border: '#E5D2A8',
   white:  '#ffffff',
 } as const;
 
@@ -47,6 +47,19 @@ const attendanceBg: Record<string, string> = {
   yes: '#e7f5ec', no: '#fbeaea', maybe: '#fbf5e3',
 };
 
+function renderStyledTitle(title: string) {
+  if (title.includes('&')) {
+    const parts = title.split('&');
+    return (
+      <>
+        {parts[0]}
+        <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '3rem', fontWeight: 'normal', margin: '0 0.5rem', verticalAlign: 'middle', display: 'inline-block', lineHeight: 0.8 }}>&</span>
+        {parts[1]}
+      </>
+    );
+  }
+  return title;
+}
 
 function formatDate(iso?: string | null): string {
   if (!iso) return '—';
@@ -133,16 +146,16 @@ function PageStyles() {
     <style>{`
       * { box-sizing: border-box; }
       .db-btn { transition: transform .13s ease, box-shadow .13s ease, opacity .13s ease; }
-      .db-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,18,8,0.13); }
+      .db-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(26,18,8,0.06); }
       .db-btn:active { transform: translateY(0); box-shadow: none; }
       .db-stat-card { transition: transform .2s ease, box-shadow .2s ease; }
-      .db-stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,18,8,0.08); }
+      .db-stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,18,8,0.04); }
 
       .cc-card {
         background: #ffffff;
-        border: 1px solid #E8DFC8;
-        border-radius: 1rem;
-        box-shadow: 0 1px 4px rgba(26,18,8,0.04);
+        border: 1px solid #E5D2A8;
+        border-radius: 1.25rem;
+        box-shadow: 0 4px 20px rgba(26,18,8,0.02);
       }
 
       .cc-pill {
@@ -151,21 +164,17 @@ function PageStyles() {
         border-radius: 2rem;
         font-size: .8125rem; font-weight: 600;
         text-decoration: none; cursor: pointer;
-        border: 1.5px solid #1a1208; color: #1a1208;
-        background: transparent;
-        transition: background .12s, color .12s;
+        border: 1px solid #E5D2A8; color: #1A1208;
+        background: #ffffff;
+        transition: all .15s;
         font-family: inherit;
       }
-      .cc-pill:hover { background: #1a1208; color: #C9A96E; }
-      .cc-pill-gold {
-        background: #1a1208; color: #C9A96E; border-color: #1a1208;
-      }
-      .cc-pill-gold:hover { background: #2d1f0a; }
+      .cc-pill:hover { background: #FAF6EB; border-color: #C9A84C; color: #B99752; }
 
       .stat-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: .875rem;
+        gap: 1rem;
       }
       @media (min-width: 640px) {
         .stat-grid { grid-template-columns: repeat(4, 1fr); }
@@ -173,24 +182,29 @@ function PageStyles() {
 
       .event-actions-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: .75rem;
+      }
+      @media (min-width: 640px) {
+        .event-actions-grid {
+          grid-template-columns: 1fr 1fr;
+        }
       }
 
       .rsvp-table { width: 100%; border-collapse: collapse; font-size: .875rem; table-layout: auto; }
       .rsvp-table th {
-        padding: .75rem 1rem; text-align: left;
+        padding: 1rem .75rem; text-align: left;
         font-size: .75rem; font-weight: 700;
         letter-spacing: .06em; text-transform: uppercase;
-        color: #6b6050; border-bottom: 1px solid #E8DFC8;
+        color: #7A6A5B; border-bottom: 1px solid #E5D2A8;
         white-space: nowrap;
       }
       .rsvp-table td {
-        padding: .625rem 1rem; border-bottom: 1px solid rgba(232,223,200,0.6);
-        color: #1a1208; vertical-align: middle;
+        padding: 1rem .75rem; border-bottom: 1px solid rgba(229,210,168,0.3);
+        color: #1A1208; vertical-align: middle;
       }
       .rsvp-table tr:last-child td { border-bottom: none; }
-      .rsvp-table tr:hover td { background: rgba(232,223,200,0.12); }
+      .rsvp-table tr:hover td { background: rgba(229,210,168,0.08); }
 
       .rsvp-table .col-name  { min-width: 160px; max-width: 260px; white-space: normal; word-break: break-word; }
       .rsvp-table .col-badge { white-space: nowrap; }
@@ -198,7 +212,6 @@ function PageStyles() {
       .rsvp-table .col-phone { white-space: nowrap; min-width: 100px; }
       .rsvp-table .col-msg   { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .rsvp-table .col-pass  { white-space: nowrap; }
-      .rsvp-table .col-checkin { white-space: nowrap; font-size: .75rem; }
 
       @media (max-width: 767px) {
         .rsvp-table-wrap { display: none; }
@@ -214,14 +227,14 @@ function PageStyles() {
 
 // ─── Stat card ────────────────────────────────────────────────────────────────
 
-function StatCard({ icon, label, value, iconBg }: { icon: string; label: string; value: number; iconBg: string }) {
+function StatCard({ icon, label, value, sublabel, iconBg, iconColor, textColor }: { icon: React.ReactNode; label: string; value: number; sublabel: string; iconBg: string; iconColor: string; textColor: string }) {
   return (
-    <div className="db-stat-card cc-card" style={{ padding: '1rem 1.125rem', display: 'flex', alignItems: 'center', gap: '.875rem' }}>
+    <div className="db-stat-card cc-card" style={{ padding: '1.25rem 1rem', display: 'flex', alignItems: 'center', gap: '1rem', border: '1px solid #E5D2A8', borderRadius: '1rem', background: '#FFFFFF', boxShadow: '0 4px 12px rgba(26,18,8,0.02)' }}>
       <div style={{
-        width: 44, height: 44, borderRadius: '50%',
-        background: iconBg,
+        width: 48, height: 48, borderRadius: '50%',
+        background: iconBg, color: iconColor,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '1.125rem', flexShrink: 0,
+        fontSize: '1.25rem', flexShrink: 0,
       }}>
         {icon}
       </div>
@@ -462,7 +475,6 @@ export default async function InvitationDashboard({ params }: Props) {
     title: inv.title,
     eventDate: inv.event_date,
   });
-
   // ── Button style helpers ──────────────────────────────────────────────────────
   const btnBase: React.CSSProperties = {
     display: 'flex', justifyContent: 'center', alignItems: 'center',
@@ -478,7 +490,7 @@ export default async function InvitationDashboard({ params }: Props) {
   return (
     <main style={{
       minHeight:  '100dvh',
-      background: T.bg,
+      background: '#FFFFFF',
       padding:    '4rem 1.25rem 3rem',
       fontFamily: 'var(--font-inter, system-ui, sans-serif)',
       position:   'relative',
@@ -490,8 +502,8 @@ export default async function InvitationDashboard({ params }: Props) {
         position: 'absolute', top: 0, left: 0, right: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '.875rem clamp(1.25rem,5vw,3rem)',
-        borderBottom: `1px solid ${T.border}`,
-        background: 'rgba(250,247,242,0.9)', backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid #E5D2A8',
+        background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)',
         zIndex: 10,
       }}>
         <Link href="/cliente" style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.dark, textDecoration: 'none' }}>
@@ -504,49 +516,101 @@ export default async function InvitationDashboard({ params }: Props) {
 
       <div style={{ maxWidth: '860px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
 
+        {/* Monogram A&M in script gold with soft floral SVG watermark */}
+        <div style={{ position: 'absolute', right: 0, top: '-30px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.85, zIndex: 0 }} className="hidden md:flex select-none pointer-events-none">
+          <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '96px', lineHeight: 1 }}>A&M</span>
+          <svg width="180" height="180" viewBox="0 0 120 120" fill="none" stroke="#C9A84C" strokeWidth="0.5" strokeOpacity="0.15" style={{ position: 'absolute', transform: 'scale(1.4)', zIndex: -1 }}>
+            <path d="M60,10 C62,20 60,30 55,40 C52,48 45,55 35,60 C25,65 15,62 10,50 C5,38 12,25 25,20 C38,15 50,22 55,30 C58,35 55,45 45,50 C35,55 25,48 20,40" />
+            <path d="M60,10 C65,22 75,30 85,32 C95,35 105,30 110,20 C115,10 108,2 95,5 C82,8 70,18 65,30 C62,38 68,48 78,50 C88,52 98,42 100,32" />
+            <circle cx="60" cy="10" r="1.5" fill="#C9A84C" fillOpacity="0.3" />
+            <circle cx="20" cy="40" r="1.5" fill="#C9A84C" fillOpacity="0.3" />
+            <circle cx="100" cy="32" r="1.5" fill="#C9A84C" fillOpacity="0.3" />
+          </svg>
+        </div>
+
         {/* ── Header ── */}
-        <section id="mi-evento-header" style={{ marginBottom: '2rem' }}>
-          <p style={{ fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.22em', color: T.gold, textTransform: 'uppercase', margin: '0 0 .375rem' }}>
-            Centro de Control
+        <section id="mi-evento-header" style={{ marginBottom: '2.5rem', position: 'relative' }}>
+          <p style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.25em', color: '#B99752', textTransform: 'uppercase', margin: '0 0 .5rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            👑 CENTRO DE CONTROL
           </p>
-          <h1 style={{ fontSize: 'clamp(2rem, 8vw, 3rem)', fontWeight: 700, color: T.dark, margin: '0 0 .375rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.05 }}>
-            {eventTitle}
+          <h1 style={{ fontSize: 'clamp(2.25rem, 6vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.15 }}>
+            {renderStyledTitle(eventTitle)}
           </h1>
-          {eventDate !== '—' && (
-            <p style={{ margin: '0 0 1rem', fontSize: '.9375rem', color: T.light, fontWeight: 500 }}>
-              📅 {eventDate}
-            </p>
-          )}
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 0 1.25rem', fontSize: '0.9rem', color: T.light, fontWeight: 500 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#B99752' }}>
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>{eventDate}</span>
+          </div>
 
           {/* 4 pill actions */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.5rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.625rem', alignItems: 'center' }}>
             {publicUrl && (
               <a
                 href={publicUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="cc-pill db-btn"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                  padding: '0.5rem 1.25rem', borderRadius: '9999px',
+                  border: '1px solid #E5D2A8', background: '#FFFFFF',
+                  color: '#1A1208', fontSize: '0.85rem', fontWeight: 600,
+                  textDecoration: 'none', transition: 'all 0.2s',
+                  boxShadow: '0 2px 6px rgba(26,18,8,0.02)'
+                }}
               >
-                👁 Ver invitación
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                Ver invitación
               </a>
             )}
             {publicUrl && (
-              <a href="#compartir" className="cc-pill db-btn">
-                🔗 Compartir enlace
+              <a
+                href="#compartir"
+                className="cc-pill db-btn"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                  padding: '0.5rem 1.25rem', borderRadius: '9999px',
+                  border: '1px solid #B8DFC4', background: '#E7F5EC',
+                  color: '#1A7A45', fontSize: '0.85rem', fontWeight: 600,
+                  textDecoration: 'none', transition: 'all 0.2s',
+                  boxShadow: '0 2px 6px rgba(26,18,8,0.02)'
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                Compartir enlace
               </a>
             )}
             {stats.total > 0 && (
-              <a href="#mi-evento-metricas" className="cc-pill db-btn">
-                📊 Estadísticas
+              <a
+                href="#mi-evento-metricas"
+                className="cc-pill db-btn"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                  padding: '0.5rem 1.25rem', borderRadius: '9999px',
+                  border: '1px solid #E5D2A8', background: '#FFFFFF',
+                  color: '#1A1208', fontSize: '0.85rem', fontWeight: 600,
+                  textDecoration: 'none', transition: 'all 0.2s',
+                  boxShadow: '0 2px 6px rgba(26,18,8,0.02)'
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Estadísticas
               </a>
             )}
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: '.35rem',
-              padding: '.45rem .875rem', borderRadius: '2rem',
-              fontSize: '.8125rem', fontWeight: 700,
-              background: '#1a1208', color: T.gold,
-              border: '1.5px solid #1a1208',
-            }}>
+            <span
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                padding: '0.5rem 1.25rem', borderRadius: '9999px',
+                border: '1px solid #EAD7A3', background: '#FAF6EB',
+                color: '#B99752', fontSize: '0.85rem', fontWeight: 700,
+                boxShadow: '0 2px 6px rgba(26,18,8,0.02)'
+              }}
+            >
               👑 Plan {planLabel}
             </span>
           </div>
@@ -557,7 +621,7 @@ export default async function InvitationDashboard({ params }: Props) {
         ════════════════════════════════════════════════ */}
         {phase === 'dia' && (
           <>
-            <div className="cc-card" style={{ background: '#1a1208', border: '1px solid rgba(201,169,110,0.25)', padding: 'clamp(1.75rem,5vw,2.5rem)', marginBottom: '1.25rem', textAlign: 'center' }}>
+            <div className="cc-card" style={{ background: '#1A1208', border: '1px solid rgba(201,169,110,0.25)', padding: 'clamp(1.75rem,5vw,2.5rem)', marginBottom: '1.5rem', textAlign: 'center' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '.875rem' }}>🎉</div>
               <h2 style={{ margin: '0 0 .75rem', fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', fontWeight: 700, color: '#fffdf9', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.08 }}>
                 Hoy es tu gran día
@@ -629,48 +693,54 @@ export default async function InvitationDashboard({ params }: Props) {
         {phase === 'semana' && (
           <>
             {/* Countdown banner */}
-            <div className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-              <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#fbf5e3', border: '1px solid #e8d8ad', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0 }}>
+            <div className="cc-card" style={{ padding: '1.5rem 1.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: '#FAF6EB', border: '1px solid #EAD7A3', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.03)' }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#FFFFFF', border: '1px solid #EAD7A3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', flexShrink: 0, boxShadow: '0 2px 8px rgba(185,151,82,0.08)' }} className="text-[#C9A84C]">
                 ⏳
               </div>
               <div>
-                <p style={{ margin: '0 0 .2rem', fontSize: '.6875rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: T.gold }}>
+                <p style={{ margin: '0 0 .25rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: '#B99752' }}>
                   Ya casi llega el gran día
                 </p>
-                <p style={{ margin: '0 0 .2rem', fontSize: '1.0625rem', fontWeight: 700, color: T.dark }}>
+                <p style={{ margin: '0 0 .25rem', fontSize: '1.5rem', fontWeight: 800, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
                   {(daysUntilEvent ?? 0) === 1 ? 'Mañana es tu boda.' : `Faltan ${daysUntilEvent} días.`}
                 </p>
-                <p style={{ margin: 0, fontSize: '.875rem', color: T.light, lineHeight: 1.5 }}>
-                  Revisa las últimas confirmaciones y prepara los pases de entrada.
+                <p style={{ margin: 0, fontSize: '.8125rem', color: T.light, lineHeight: 1.55 }}>
+                  Todo está listo. Revisa las últimas confirmaciones y prepara los pases de entrada.
                 </p>
+              </div>
+              <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', color: '#EAD7A3' }} className="hidden sm:flex">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9Z" />
+                </svg>
               </div>
             </div>
 
             {/* Invitation horizontal card */}
-            <div className="cc-card" style={{ padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              {/* Thumbnail placeholder */}
-              <div style={{ width: 88, height: 88, borderRadius: '.75rem', background: 'linear-gradient(135deg, #C9A96E 0%, #8a6d3b 100%)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
-                💌
-              </div>
+            <div className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
+              {/* Image thumbnail from public assets */}
+              <img src="/images/invitaciones/invitation-paper-detail.webp" alt="Wedding invitation thumbnail" style={{ width: 120, height: 120, borderRadius: '0.75rem', objectFit: 'cover', flexShrink: 0, border: '1px solid #E5D2A8' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: '0 0 .2rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: T.gold }}>
-                  {categoryLabel}
-                </p>
-                <h2 style={{ margin: '0 0 .25rem', color: T.dark, fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+                <p style={{ margin: '0 0 .375rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: T.dark }}>
                   {eventTitle}
-                </h2>
-                <p style={{ margin: '0 0 1rem', fontSize: '.875rem', color: T.light }}>📅 {eventDate}</p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.625rem' }}>
-                  <a href="#mis-invitados" className="db-btn" style={{ ...btnPrimary, fontSize: '.875rem', minHeight: '40px', padding: '.6rem 1.125rem' }}>
-                    👥 Administrar invitados
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', margin: '0 0 1.25rem', fontSize: '0.875rem', color: T.light, fontWeight: 500 }}>
+                  <span>Fecha</span>
+                  <span>&bull;</span>
+                  <span>{eventDate}</span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem' }}>
+                  <a href="#mi-evento-pases" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Administrar invitados
                   </a>
                   {publicUrl && (
-                    <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ ...btnSecondary, fontSize: '.875rem', minHeight: '40px', padding: '.6rem 1.125rem' }}>
-                      👁 Ver como mis invitados
+                    <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                      Ver cómo mis invitados
                     </a>
                   )}
                   {daysUntilEvent !== null && daysUntilEvent <= 2 && (
-                    <a id="mi-evento-scanner" href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, fontSize: '.875rem', minHeight: '40px', padding: '.6rem 1.125rem' }}>
+                    <a id="mi-evento-scanner" href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#C9A84C', color: '#1A1208', fontSize: '0.875rem', fontWeight: 800, textDecoration: 'none', transition: 'all 0.2s' }}>
                       📷 Escanear invitados al entrar
                     </a>
                   )}
@@ -704,37 +774,29 @@ export default async function InvitationDashboard({ params }: Props) {
         {(phase === 'lista' || phase === 'confirmaciones') && (
           <>
             {/* Horizontal invitation card */}
-            <div className="cc-card" style={{ padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-              <div style={{ width: 88, height: 88, borderRadius: '.75rem', background: 'linear-gradient(135deg, #C9A96E 0%, #8a6d3b 100%)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
-                💌
-              </div>
+            <div className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
+              {/* Image thumbnail from public assets */}
+              <img src="/images/invitaciones/invitation-paper-detail.webp" alt="Wedding invitation thumbnail" style={{ width: 120, height: 120, borderRadius: '0.75rem', objectFit: 'cover', flexShrink: 0, border: '1px solid #E5D2A8' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: '0 0 .2rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', color: T.gold }}>
-                  {categoryLabel}
-                </p>
-                <h2 style={{ margin: '0 0 .25rem', color: T.dark, fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+                <p style={{ margin: '0 0 .375rem', fontSize: '.75rem', fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', color: T.dark }}>
                   {eventTitle}
-                </h2>
-                <p style={{ margin: '0 0 1rem', fontSize: '.875rem', color: T.light }}>📅 {eventDate}</p>
-                <div id="mi-evento-acciones" className="event-actions-grid" style={{ maxWidth: '520px' }}>
-                  <a href="#compartir" className="db-btn" style={btnPrimary}>
-                    📤 Compartir con confirmación
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', margin: '0 0 1.25rem', fontSize: '0.875rem', color: T.light, fontWeight: 500 }}>
+                  <span>Fecha</span>
+                  <span>&bull;</span>
+                  <span>{eventDate}</span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem' }}>
+                  <a href="#mi-evento-pases" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Administrar invitados
                   </a>
-                  <a href="#compartir" className="db-btn" style={btnPrimary}>
-                    🎫 Compartir con pases
-                  </a>
-                  <a href={editUrl} className="db-btn" style={btnSecondary}>
-                    ✨ Personalizar invitación
-                  </a>
-                  <a
-                    href={publicUrl ?? undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="db-btn"
-                    style={{ ...btnSecondary, opacity: publicUrl ? 1 : .45, pointerEvents: publicUrl ? 'auto' : 'none' }}
-                  >
-                    👁 Ver como mis invitados
-                  </a>
+                  {publicUrl && (
+                    <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                      Ver cómo mis invitados
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -759,13 +821,6 @@ export default async function InvitationDashboard({ params }: Props) {
                 </p>
               </div>
             )}
-
-            {/* Lista phase: publicUrl display */}
-            {phase === 'lista' && publicUrl && (
-              <div style={{ marginBottom: '1.5rem', padding: '.875rem 1.125rem', background: T.white, border: `1px solid ${T.border}`, borderRadius: '1rem', fontSize: '.8rem', color: T.light, wordBreak: 'break-all', lineHeight: 1.5 }}>
-                {publicUrl}
-              </div>
-            )}
           </>
         )}
 
@@ -784,10 +839,42 @@ export default async function InvitationDashboard({ params }: Props) {
         {/* ── Stats ── */}
         {stats.total > 0 && phase !== 'configurando' && (
           <div id="mi-evento-metricas" className="stat-grid" style={{ marginBottom: '2rem' }}>
-            <StatCard icon="👥" label="Confirmaron"   value={stats.total}       iconBg="#e3eeff" />
-            <StatCard icon="✓"  label="Asistirán"     value={stats.yesCount}    iconBg="#e7f5ec" />
-            <StatCard icon="✗"  label="No asistirán"  value={stats.noCount}     iconBg="#fbeaea" />
-            <StatCard icon="👥" label="Asistentes"    value={stats.totalPeople} iconBg="#fbf5e3" />
+            <StatCard
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
+              label="Confirmaron"
+              value={stats.total}
+              sublabel="respondieron a la invitación"
+              iconBg="#E7F5EC"
+              iconColor="#1A7A45"
+              textColor="#1A7A45"
+            />
+            <StatCard
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>}
+              label="Asistirán"
+              value={stats.yesCount}
+              sublabel="confirmaciones positivas"
+              iconBg="#E7F5EC"
+              iconColor="#1A7A45"
+              textColor="#1A7A45"
+            />
+            <StatCard
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>}
+              label="No asistirán"
+              value={stats.noCount}
+              sublabel="declinaron la invitación"
+              iconBg="#FBEAEA"
+              iconColor="#B43232"
+              textColor="#B43232"
+            />
+            <StatCard
+              icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
+              label="Asistentes"
+              value={stats.totalPeople}
+              sublabel="personas en total"
+              iconBg="#FAF6EB"
+              iconColor="#C9A84C"
+              textColor="#B99752"
+            />
           </div>
         )}
 
@@ -809,13 +896,13 @@ export default async function InvitationDashboard({ params }: Props) {
         {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
           <>
             {/* Section header */}
-            <div id="mi-evento-invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '.75rem' }}>
+            <div id="mi-evento-invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#e3eeff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 }}>
-                  👥
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#FAF6EB', border: '1px solid #EAD7A3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B99752', flexShrink: 0 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 </div>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: T.dark }}>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
                     Invitados confirmados
                   </h2>
                   <p style={{ margin: 0, fontSize: '.8rem', color: T.light }}>
@@ -823,8 +910,8 @@ export default async function InvitationDashboard({ params }: Props) {
                   </p>
                 </div>
               </div>
-              {/* QR button — right side, visible in semana/dia */}
-              {(phase === 'semana' || phase === 'dia') && publicUrl && (
+              {/* QR button — right side, always visible if publicUrl is present */}
+              {publicUrl && (
                 <div style={{ flexShrink: 0 }}>
                   <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
                 </div>
@@ -851,14 +938,13 @@ export default async function InvitationDashboard({ params }: Props) {
                   <table className="rsvp-table">
                     <thead>
                       <tr>
-                        <th className="col-name">Nombre</th>
-                        <th className="col-badge">Asistencia</th>
-                        <th className="col-num">Acomp.</th>
-                        <th className="col-num">Asistentes</th>
-                        <th className="col-phone">Teléfono</th>
-                        <th className="col-msg">Mensaje</th>
-                        <th className="col-pass">Pase</th>
-                        <th className="col-checkin">Entró</th>
+                        <th className="col-name">NOMBRE</th>
+                        <th className="col-badge">ASISTENCIA</th>
+                        <th className="col-num">ACOMP.</th>
+                        <th className="col-num">ASISTENTES</th>
+                        <th className="col-phone">TELÉFONO</th>
+                        <th className="col-msg">MENSAJE</th>
+                        <th className="col-pass">PASE</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -870,12 +956,12 @@ export default async function InvitationDashboard({ params }: Props) {
                           <tr key={r.id}>
                             <td className="col-name" style={{ fontWeight: 600, color: T.dark }}>{r.name}</td>
                             <td className="col-badge">
-                              <span style={{ padding: '.2rem .625rem', borderRadius: '2rem', fontSize: '.75rem', fontWeight: 700, color: attendanceColors[r.attendance] ?? T.light, background: attendanceBg[r.attendance] ?? '#fbf5e3', whiteSpace: 'nowrap' }}>
+                              <span style={{ padding: '.35rem .75rem', borderRadius: '2rem', fontSize: '.75rem', fontWeight: 700, color: attendanceColors[r.attendance] ?? T.light, background: attendanceBg[r.attendance] ?? '#fbf5e3', whiteSpace: 'nowrap' }}>
                                 {attendanceLabels[r.attendance] ?? r.attendance}
                               </span>
                             </td>
                             <td className="col-num">{vComp}</td>
-                            <td className="col-num" style={{ fontWeight: 600, color: isAttending(r) ? '#1a7a45' : T.light }}>
+                            <td className="col-num" style={{ fontWeight: 700, color: isAttending(r) ? '#1a7a45' : T.light }}>
                               {ppl > 0 ? ppl : '—'}
                             </td>
                             <td className="col-phone">{r.phone ?? '—'}</td>
@@ -884,15 +970,13 @@ export default async function InvitationDashboard({ params }: Props) {
                             </td>
                             <td className="col-pass">
                               {r.passToken ? (
-                                <a href={`${appUrl}/pass/${r.passToken}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '.25rem', padding: '.3rem .625rem', background: r.checkedInAt ? '#e7f5ec' : T.bg, color: r.checkedInAt ? '#1a7a45' : T.dark, border: `1px solid ${r.checkedInAt ? '#b8dfc4' : T.border}`, borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-                                  {r.checkedInAt ? '✓ Usado' : '🎫 Ver pase'}
+                                <a href={`${appUrl}/pass/${r.passToken}`} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', padding: '0.375rem 0.75rem', background: 'transparent', color: '#B99752', border: '1px solid #EAD7A3', borderRadius: '0.5rem', fontSize: '0.75rem', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }} className="hover:bg-[#FAF6EB]">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h2v2h-2v-2zm-4 0h2v2h-2v-2zm4 4h2v4h-6v-2h2v-2h2zm-4 2h2v2h-2v-2z"/></svg>
+                                  Ver pase
                                 </a>
                               ) : (
                                 <span style={{ fontSize: '.75rem', color: T.light, opacity: 0.5 }}>—</span>
                               )}
-                            </td>
-                            <td className="col-checkin" style={{ color: r.checkedInAt ? '#1a7a45' : T.light }}>
-                              {r.checkedInAt ? formatDateTime(r.checkedInAt) : '—'}
                             </td>
                           </tr>
                         );

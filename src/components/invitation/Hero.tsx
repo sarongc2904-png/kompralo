@@ -257,7 +257,7 @@ export default function Hero({
           paddingBottom: 'clamp(48px, 8vh, 88px)',
           // Buffer so justify-content:flex-end overflow doesn't push the eyebrow
           // above the section's overflow:hidden boundary in the editor device frame.
-          paddingTop: editablePreview ? '3rem' : undefined,
+          paddingTop: editablePreview ? '5rem' : '4rem',
           willChange: 'transform, opacity',
         }}
       >

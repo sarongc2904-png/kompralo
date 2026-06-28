@@ -18,30 +18,36 @@ interface GuestPass {
 }
 
 const T = {
-  dark:   '#1C1713',
-  mid:    '#1C1713',
+  dark:   '#1A1208',
+  mid:    '#1A1208',
   light:  '#7A6A5B',
-  gold:   '#C8A95B',
-  cream:  '#FFFBF4',
-  white:  '#FFFBF4',
+  gold:   '#C9A84C',
+  cream:  '#FAF6EB',
+  white:  '#ffffff',
   border: '#E5D2A8',
-  ivory:  '#FAF3E6',
+  ivory:  '#FAF6EB',
 } as const;
 
 const statusColors: Record<string, string> = {
-  pending:   '#7A6A5B',
-  confirmed: '#247A45',
+  pending:   '#B99752',
+  confirmed: '#1A7A45',
   declined:  '#B43232',
-  used:      '#6A6A6A',
+  used:      '#1A7A45',
 };
 const statusBg: Record<string, string> = {
-  pending:   '#FBF5E3',
+  pending:   '#FAF6EB',
   confirmed: '#E7F5EC',
   declined:  '#FBEAEA',
-  used:      '#F2F2F2',
+  used:      '#E7F5EC',
+};
+const statusBorder: Record<string, string> = {
+  pending:   '#EAD7A3',
+  confirmed: '#B8DFC4',
+  declined:  '#F0C4C4',
+  used:      '#B8DFC4',
 };
 const statusLabels: Record<string, string> = {
-  pending:   'Sin confirmar',
+  pending:   'Pendiente',
   confirmed: 'Confirmado',
   declined:  'Declinado',
   used:      'Usado',
@@ -50,7 +56,7 @@ const statusLabels: Record<string, string> = {
 type FilterKey = 'all' | 'pending' | 'confirmed' | 'no-phone';
 
 const filterLabels: Record<FilterKey, string> = {
-  all:      'Todos',
+  all:      'Todas',
   pending:  'Pendientes',
   confirmed: 'Confirmados',
   'no-phone': 'Sin WhatsApp',
@@ -294,12 +300,17 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
     <section style={{ marginTop: '2rem' }}>
 
       {/* ── Header ── */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '.75rem', marginBottom: '1.25rem' }}>
         <div>
-          <h2 style={{ margin: '0 0 .2rem', fontSize: '1.0625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-            Mis invitados
-          </h2>
-          <p style={{ margin: 0, fontSize: '.8rem', color: T.light }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#C9A84C' }}>
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+              Mis invitados
+            </h2>
+          </div>
+          <p style={{ margin: '.25rem 0 0', fontSize: '.8rem', color: T.light }}>
             Administra todas las personas invitadas desde un solo lugar.
           </p>
         </div>
@@ -307,10 +318,11 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
           <button
             onClick={openCreate}
             style={{
-              padding: '.5rem 1.125rem', background: T.dark, color: T.cream,
+              padding: '.625rem 1.25rem', background: '#1A1208', color: '#FFFFFF',
               border: 'none', borderRadius: '.75rem', fontSize: '.875rem', fontWeight: 700,
-              cursor: 'pointer', whiteSpace: 'nowrap',
+              cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s'
             }}
+            className="db-btn"
           >
             + Crear invitado
           </button>
@@ -319,11 +331,35 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
 
       {/* ── Summary stats (only when there are passes) ── */}
       {passes.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.625rem', marginBottom: '1.25rem' }}>
-          <StatCard label="Familias invitadas" value={totalFamilies} />
-          <StatCard label="Personas invitadas" value={totalPersonas} accent={T.gold} />
-          <StatCard label="Confirmados"         value={totalConfirmed} accent="#238636" />
-          <StatCard label="Pendientes"          value={totalPending}   accent="#8A6D3B" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '.75rem', marginBottom: '1.5rem' }} className="sm:grid-cols-4">
+          <StatCard
+            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>}
+            label="Familias invitadas"
+            value={totalFamilies}
+            iconBg="#E7F5EC"
+            iconColor="#1A7A45"
+          />
+          <StatCard
+            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+            label="Confirmados"
+            value={totalConfirmed}
+            iconBg="#E7F5EC"
+            iconColor="#1A7A45"
+          />
+          <StatCard
+            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
+            label="Personas invitadas"
+            value={totalPersonas}
+            iconBg="#FAF6EB"
+            iconColor="#C9A84C"
+          />
+          <StatCard
+            icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>}
+            label="Pendientes"
+            value={totalPending}
+            iconBg="#FBEAEA"
+            iconColor="#B43232"
+          />
         </div>
       )}
 
@@ -359,7 +395,7 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
           <button
             onClick={openCreate}
             style={{
-              padding: '.625rem 1.5rem', background: T.dark, color: T.cream,
+              padding: '.625rem 1.5rem', background: '#1A1208', color: '#FFFFFF',
               border: 'none', borderRadius: '.875rem', fontSize: '.875rem', fontWeight: 700,
               cursor: 'pointer',
             }}
@@ -372,40 +408,52 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
       {/* ── Search + filters ── */}
       {!loading && passes.length > 0 && (
         <>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '.625rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem', marginBottom: '1.25rem' }} className="sm:flex-row sm:items-center sm:justify-between">
             {/* Search */}
-            <input
-              type="text"
-              placeholder="Buscar por nombre o teléfono…"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%', padding: '.625rem .875rem',
-                background: T.white, border: `1px solid ${T.border}`,
-                borderRadius: '.75rem', fontSize: '.875rem', color: T.dark,
-                outline: 'none', boxSizing: 'border-box',
-              }}
-            />
+            <div style={{ position: 'relative', flex: 1 }}>
+              <input
+                type="text"
+                placeholder="Buscar por nombre o teléfono..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{
+                  width: '100%', padding: '.625rem .875rem .625rem 2.25rem',
+                  background: '#FFFFFF', border: '1px solid #E5D2A8',
+                  borderRadius: '0.5rem', fontSize: '.875rem', color: T.dark,
+                  outline: 'none', boxSizing: 'border-box', boxShadow: '0 2px 6px rgba(26,18,8,0.01)'
+                }}
+              />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: '#7A6A5B' }}>
+                <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
             {/* Filter chips */}
-            <div style={{ display: 'flex', gap: '.375rem', flexWrap: 'wrap' }}>
-              {(Object.keys(filterLabels) as FilterKey[]).map(key => (
-                <button
-                  key={key}
-                  onClick={() => setActiveFilter(key)}
-                  style={{
-                    padding: '.3rem .75rem', borderRadius: '2rem',
-                    fontSize: '.75rem', fontWeight: 700, cursor: 'pointer',
-                    border: `1px solid ${activeFilter === key ? T.dark : T.border}`,
-                    background: activeFilter === key ? T.dark : T.white,
-                    color: activeFilter === key ? T.cream : T.light,
-                    transition: 'all .15s',
-                  }}
-                >
-                  {filterLabels[key]}
-                  {key === 'pending'   && totalPending   > 0 && <span style={{ marginLeft: '.35rem', background: '#8A6D3B', color: '#fff', borderRadius: '1rem', padding: '0 .35rem', fontSize: '.65rem' }}>{totalPending}</span>}
-                  {key === 'confirmed' && totalConfirmed > 0 && <span style={{ marginLeft: '.35rem', background: '#247A45', color: '#fff', borderRadius: '1rem', padding: '0 .35rem', fontSize: '.65rem' }}>{totalConfirmed}</span>}
-                </button>
-              ))}
+            <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+              {(Object.keys(filterLabels) as FilterKey[]).map(key => {
+                const isActive = activeFilter === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setActiveFilter(key)}
+                    style={{
+                      padding: '.45rem 1rem', borderRadius: '2rem',
+                      fontSize: '.75rem', fontWeight: 700, cursor: 'pointer',
+                      border: `1px solid ${isActive ? '#1A1208' : '#E5D2A8'}`,
+                      background: isActive ? '#1A1208' : '#FFFFFF',
+                      color: isActive ? '#FFFFFF' : '#7A6A5B',
+                      transition: 'all .15s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem'
+                    }}
+                  >
+                    {filterLabels[key]}
+                    {key === 'confirmed' && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 14, height: 14, borderRadius: '50%', background: '#1A7A45', color: '#FFFFFF', fontSize: '8px' }}>✓</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -418,16 +466,16 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
 
           {/* ── Desktop table ── */}
           {filteredPasses.length > 0 && (
-            <div className="rsvp-table-wrap" style={{ background: T.white, border: `1px solid ${T.border}`, borderRadius: '1.25rem', overflowX: 'auto' }}>
+            <div className="rsvp-table-wrap cc-card" style={{ overflowX: 'auto', marginBottom: '1.5rem', border: '1px solid #E5D2A8' }}>
               <table className="rsvp-table">
                 <thead>
                   <tr>
-                    <th>Nombre</th>
-                    <th>WhatsApp</th>
-                    <th style={{ textAlign: 'center' }}>Personas</th>
-                    <th>Estado</th>
-                    <th>Creado</th>
-                    <th>Acciones</th>
+                    <th>NOMBRE</th>
+                    <th>WHATSAPP</th>
+                    <th style={{ textAlign: 'center' }}>PERSONAS</th>
+                    <th>ESTADO</th>
+                    <th>CREADO</th>
+                    <th>ACCIONES</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -435,18 +483,28 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                     <tr key={p.id}>
                       <td style={{ fontWeight: 600, color: T.dark }}>{p.guestName}</td>
                       <td>
-                        {p.phone
-                          ? <span style={{ fontSize: '.75rem', color: T.light }}>WhatsApp listo: {p.phone}</span>
-                          : <span style={{ fontSize: '.75rem', color: T.light }}>Sin número de WhatsApp</span>
-                        }
+                        {p.phone ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="#1A7A45" style={{ flexShrink: 0 }}>
+                              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.003 5.37 5.378 0 12.03 0a12.03 12.03 0 0 1 11.97 12.037c-.003 6.634-5.378 12.003-12.03 12.003-.193 0-.387-.002-.58-.008L0 24zm6.09-19.113c-.168 0-.34.02-.495.093-.243.11-.475.295-.615.54-.424.743-.655 2.128-.158 3.65.418 1.285 1.556 2.825 2.87 3.993 1.348 1.198 3.1 2.378 4.7 3.018.665.265 1.488.468 2.213.435.637-.03 1.265-.308 1.637-.843.34-.488.44-1.033.408-1.455-.03-.393-.16-.628-.42-.765-.325-.17-1.51-.745-1.745-.83-.235-.083-.408-.125-.58.125-.17.252-.66.83-.81 1-.15.172-.3.193-.565.067-.265-.13-1.12-.413-2.133-1.32-.787-.703-1.32-1.57-1.474-1.838-.155-.268-.017-.413.12-.55.122-.122.268-.323.402-.482.133-.16.18-.27.27-.45.09-.18.046-.338-.022-.475-.067-.138-.58-1.4-.795-1.92-.21-.505-.44-.438-.6-.445-.164-.007-.353-.01-.54-.01z"/>
+                            </svg>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                              <span style={{ fontSize: '0.65rem', color: '#7A6A5B', fontWeight: 600 }}>WhatsApp:</span>
+                              <span style={{ fontSize: '0.8rem', color: '#1A1208', fontWeight: 500 }}>{p.phone}</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: '#7A6A5B', opacity: 0.5 }}>—</span>
+                        )}
                       </td>
-                      <td style={{ textAlign: 'center' }}>{p.allowedGuests}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: T.dark }}>{p.allowedGuests}</td>
                       <td>
                         <span style={{
-                          padding: '.2rem .625rem', borderRadius: '2rem',
-                          fontSize: '.75rem', fontWeight: 700,
-                          color: statusColors[p.status] ?? T.mid,
-                          background: statusBg[p.status] ?? T.cream,
+                          padding: '0.35rem 0.75rem', borderRadius: '2rem',
+                          fontSize: '0.75rem', fontWeight: 700,
+                          color: statusColors[p.status] ?? '#7A6A5B',
+                          background: statusBg[p.status] ?? '#FAF6EB',
+                          border: `1px solid ${statusBorder[p.status] ?? '#E5D2A8'}`,
                           whiteSpace: 'nowrap',
                         }}>
                           {statusLabels[p.status] ?? p.status}
@@ -457,33 +515,43 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                         <div style={{ display: 'flex', gap: '.375rem', flexWrap: 'wrap' }}>
                           <button
                             onClick={() => { setQrPass(p); setQrCopied(false); }}
-                            style={tableBtn}
+                            style={{ ...tableBtn, background: '#FAF6EB', color: '#B99752', borderColor: '#EAD7A3' }}
+                            className="db-btn"
                           >
-                            🎫 QR
+                            QR <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '0.25rem' }}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect></svg>
                           </button>
                           <a
                             href={`${appUrl}/pass/${p.passToken}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ ...tableBtn, textDecoration: 'none' }}
+                            style={{ ...tableBtn, background: 'transparent', color: '#1A1208', borderColor: '#E5D2A8', textDecoration: 'none' }}
+                            className="db-btn"
                           >
-                            Ver pase
+                            Ver pase <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '0.25rem' }}><path d="M8 18h8M8 12h8M8 6h8"/></svg>
                           </a>
                           <a
                             href={buildWaUrl(buildWaMsg(p), p.phone)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ ...tableBtn, textDecoration: 'none', background: '#E8F9EE', color: '#247A45', borderColor: '#B8DFC4' }}
+                            style={{ ...tableBtn, background: '#E7F5EC', color: '#1A7A45', borderColor: '#B8DFC4', textDecoration: 'none' }}
+                            className="db-btn"
                           >
-                            Enviar invitación
+                            Enviar invitación <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '0.25rem' }}><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                           </a>
-                          <button onClick={() => openEdit(p)} style={tableBtn}>✏️</button>
+                          <button
+                            onClick={() => openEdit(p)}
+                            style={{ ...tableBtn, background: 'transparent', color: '#7A6A5B', borderColor: '#E5D2A8', padding: '0.375rem 0.5rem' }}
+                            className="db-btn"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                          </button>
                           <button
                             onClick={() => handleDelete(p.id)}
                             disabled={deleting === p.id}
-                            style={{ ...tableBtn, background: '#FBEAEA', borderColor: '#F0C4C4', color: '#B43232', opacity: deleting === p.id ? 0.5 : 1 }}
+                            style={{ ...tableBtn, background: '#FBEAEA', borderColor: '#F0C4C4', color: '#B43232', opacity: deleting === p.id ? 0.5 : 1, padding: '0.375rem 0.5rem' }}
+                            className="db-btn"
                           >
-                            {deleting === p.id ? '…' : '🗑'}
+                            {deleting === p.id ? '…' : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>}
                           </button>
                         </div>
                       </td>
@@ -494,24 +562,58 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
             </div>
           )}
 
+          {/* Visual Pagination bar */}
+          {filteredPasses.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.25rem', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem', fontSize: '0.8125rem', color: '#7A6A5B' }}>
+              <div>
+                Mostrando 1 a {filteredPasses.length} de {filteredPasses.length} invitados
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                <button disabled style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid #E5D2A8', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'not-allowed', color: '#7A6A5B', opacity: 0.5 }}>
+                  &lt;
+                </button>
+                <button style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: '#1A1208', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                  1
+                </button>
+                <button disabled style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid #E5D2A8', background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'not-allowed', color: '#7A6A5B', opacity: 0.5 }}>
+                  &gt;
+                </button>
+              </div>
+
+              <div style={{ position: 'relative' }}>
+                <select defaultValue="10" style={{ padding: '0.375rem 1.75rem 0.375rem 0.75rem', border: '1px solid #E5D2A8', borderRadius: '0.5rem', background: '#FFFFFF', color: '#1A1208', outline: 'none', cursor: 'pointer', appearance: 'none' }}>
+                  <option value="10">10 por página</option>
+                  <option value="20">20 por página</option>
+                  <option value="50">50 por página</option>
+                </select>
+                <div style={{ position: 'absolute', right: '0.625rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#7A6A5B', fontSize: '0.5rem' }}>
+                  ▼
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ── Mobile cards ── */}
           {filteredPasses.length > 0 && (
-            <div className="rsvp-cards-wrap">
+            <div className="rsvp-cards-wrap" style={{ marginBottom: '1.5rem' }}>
               {filteredPasses.map((p) => (
                 <div key={p.id} style={{
                   background: T.white, border: `1px solid ${T.border}`,
                   borderRadius: '1.125rem', padding: '1.125rem 1.25rem',
                   marginBottom: '.75rem',
                   borderLeft: `3px solid ${statusColors[p.status] ?? T.border}`,
+                  boxShadow: '0 2px 8px rgba(26,18,8,0.02)'
                 }}>
                   {/* Name + badge */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '.5rem', marginBottom: '.25rem' }}>
                     <p style={{ margin: 0, fontWeight: 700, color: T.dark, fontSize: '1rem' }}>{p.guestName}</p>
                     <span style={{
-                      padding: '.2rem .625rem', borderRadius: '2rem', flexShrink: 0,
+                      padding: '0.25rem 0.625rem', borderRadius: '2rem', flexShrink: 0,
                       fontSize: '.6875rem', fontWeight: 700, whiteSpace: 'nowrap',
                       color: statusColors[p.status] ?? T.mid,
                       background: statusBg[p.status] ?? T.cream,
+                      border: `1px solid ${statusBorder[p.status] ?? T.border}`
                     }}>
                       {statusLabels[p.status] ?? p.status}
                     </span>
@@ -529,13 +631,13 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                       href={`${appUrl}/pass/${p.passToken}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ ...mobileBtn(T.dark, T.cream), textDecoration: 'none' }}
+                      style={{ ...mobileBtn(T.dark, '#FFFFFF'), textDecoration: 'none' }}
                     >
                       Ver pase
                     </a>
                     <button
                       onClick={() => { setQrPass(p); setQrCopied(false); }}
-                      style={mobileBtn(T.cream, T.dark, T.border)}
+                      style={mobileBtn('#FAF6EB', '#B99752', '#EAD7A3')}
                     >
                       🎫 Ver QR
                     </button>
@@ -545,13 +647,13 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
                     href={buildWaUrl(buildWaMsg(p), p.phone)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ ...mobileBtn('#25D366', '#fff'), textDecoration: 'none', display: 'flex', marginBottom: '.5rem' }}
+                    style={{ ...mobileBtn('#E7F5EC', '#1A7A45', '#B8DFC4'), textDecoration: 'none', display: 'flex', marginBottom: '.5rem' }}
                   >
                     📲 Enviar invitación
                   </a>
                   {/* Secondary actions */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.375rem' }}>
-                    <button onClick={() => openEdit(p)} style={{ ...mobileBtn(T.cream, T.dark, T.border), fontSize: '.8rem' }}>
+                    <button onClick={() => openEdit(p)} style={{ ...mobileBtn('#FFFFFF', T.dark, '#E5D2A8'), fontSize: '.8rem' }}>
                       ✏️ Editar
                     </button>
                     <button
@@ -755,25 +857,42 @@ export default function GuestPassSection({ invitationId, appUrl, publicUrl }: Pr
 }
 
 // ── Stat card ──────────────────────────────────────────────────────────────────
-function StatCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
+function StatCard({ icon, label, value, iconBg, iconColor }: { icon: React.ReactNode; label: string; value: number; iconBg: string; iconColor: string }) {
   return (
     <div style={{
-      background: '#FFFAF3', border: `1px solid #EAD7A3`,
-      borderRadius: '1rem', padding: '.875rem 1rem',
-      borderTop: accent ? `3px solid ${accent}` : '3px solid #EAD7A3',
+      background: '#FFFFFF', border: '1px solid #E5D2A8',
+      borderRadius: '1rem', padding: '1rem',
+      display: 'flex', alignItems: 'center', gap: '0.75rem',
+      boxShadow: '0 2px 8px rgba(26,18,8,0.01)',
     }}>
-      <p style={{ margin: '0 0 .125rem', fontSize: '1.5rem', fontWeight: 800, color: accent ?? '#0D0A07', lineHeight: 1 }}>{value}</p>
-      <p style={{ margin: 0, fontSize: '.75rem', fontWeight: 600, color: '#6B4A35' }}>{label}</p>
+      <div style={{
+        width: 38, height: 38, borderRadius: '0.5rem',
+        background: iconBg, color: iconColor,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: '1.1rem', flexShrink: 0,
+      }}>
+        {icon}
+      </div>
+      <div>
+        <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#1A1208', lineHeight: 1 }}>{value}</p>
+        <p style={{ margin: '.125rem 0 0', fontSize: '.75rem', fontWeight: 600, color: '#7A6A5B', lineHeight: 1.1 }}>{label}</p>
+      </div>
     </div>
   );
 }
 
 // ── Style helpers ──────────────────────────────────────────────────────────────
 const tableBtn: React.CSSProperties = {
-  padding: '.3rem .625rem', background: '#F1E3C8', border: '1px solid #EAD7A3',
-  borderRadius: '.5rem', fontSize: '.75rem', fontWeight: 700,
-  cursor: 'pointer', color: '#0D0A07', whiteSpace: 'nowrap',
-  textDecoration: 'none', display: 'inline-flex', alignItems: 'center',
+  padding: '0.375rem 0.75rem',
+  borderRadius: '0.5rem',
+  fontSize: '.75rem',
+  fontWeight: 700,
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  display: 'inline-flex',
+  alignItems: 'center',
+  border: '1px solid transparent',
+  transition: 'all 0.15s ease',
 };
 
 function mobileBtn(bg: string, color: string, borderColor?: string): React.CSSProperties {
