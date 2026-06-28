@@ -4,8 +4,7 @@ import { redirect } from 'next/navigation';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import type { Order } from '@/domain/orders';
 import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/lib/supabase/server';
-import { DashboardManualTour } from '@/components/dashboard/DashboardManualTour';
-import { DashboardManualNavButton } from '@/components/dashboard/DashboardManualNavButton';
+import { MisEventosTour, MisEventosTourNavButton } from './MisEventosTour';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
@@ -60,14 +59,14 @@ export const revalidate = 0;
 export const metadata: Metadata = { title: 'Mis invitaciones — Kompralo' };
 
 const T = {
-  ivory:     '#FAF3E6',
-  cream:     '#FFFBF4',
-  dark:      '#1C1713',
-  mid:       '#1C1713',
+  ivory:     '#FAF6EB',
+  cream:     '#FFFFFF',
+  dark:      '#1A1208',
+  mid:       '#1A1208',
   light:     '#7A6A5B',
-  gold:      '#C8A95B',
+  gold:      '#C9A84C',
   champagne: '#E5D2A8',
-  white:     '#FFFBF4',
+  white:     '#FFFFFF',
   border:    '#E5D2A8',
 } as const;
 
@@ -153,7 +152,7 @@ function PageStyles() {
       }
       .cl-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(15,12,9,0.1);
+        box-shadow: 0 6px 20px rgba(15,12,9,0.08);
       }
       .cl-btn:active {
         transform: translateY(0);
@@ -163,169 +162,17 @@ function PageStyles() {
       }
       .cl-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(15,12,9,0.06);
+        box-shadow: 0 8px 24px rgba(26,18,8,0.04);
       }
-      .client-subtitle {
-        font-size: 0 !important;
+      .db-btn-gold {
+        background: linear-gradient(135deg, #C9A84C 0%, #A38235 100%) !important;
+        border: 1px solid #B99752 !important;
+        color: #FFFFFF !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
       }
-      .client-subtitle::after {
-        content: 'Administra tus invitaciones, confirma RSVP y comparte cada evento desde un solo lugar.';
-        font-size: .9rem;
-      }
-      .cl-card.client-event-card {
-        background: #FFFDF8 !important;
-        border-color: #E6D8BD !important;
-        border-radius: 1.75rem !important;
-        box-shadow: 0 14px 36px rgba(78,61,38,0.08) !important;
-      }
-      .client-primary-action {
-        background: #C4A962 !important;
-        color: #241B12 !important;
-        min-height: 52px !important;
-        border-radius: 1rem !important;
-        font-size: 0 !important;
-        box-shadow: 0 4px 14px rgba(196,169,98,0.22) !important;
-      }
-      .client-primary-action::after {
-        content: 'Abrir Mi Evento';
-        font-size: .95rem;
-      }
-      .client-secondary-actions {
-        display: grid !important;
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-      }
-      .client-secondary-action {
-        flex: none !important;
-        background: #F4EBDD !important;
-        color: #4D3A28 !important;
-        box-shadow: none !important;
-        font-size: 0 !important;
-      }
-      .client-public-action::after {
-        content: 'Ver invitación';
-        font-size: .875rem;
-      }
-      .client-edit-action::after {
-        content: 'Editar';
-        font-size: .875rem;
-      }
-      .client-share-action {
-        background: #DDEBDD !important;
-        color: #2F5F46 !important;
-      }
-      .client-share-action::after {
-        content: 'Compartir';
-        font-size: .875rem;
-      }
-      .client-public-action {
-        background: #FFFDF8 !important;
-        color: #5F4B35 !important;
-        border: 1px solid #E6D8BD !important;
-      }
-      .client-public-standalone {
-        display: none !important;
-      }
-      @media (max-width: 767px) {
-        .client-page {
-          background: #F7F1E7 !important;
-          background-image:
-            radial-gradient(circle at 20% 0%, rgba(196,169,98,0.16) 0%, transparent 38%),
-            linear-gradient(180deg, #FFFDF8 0%, #F7F1E7 100%) !important;
-          padding: 4.75rem 1rem 2rem !important;
-        }
-        .client-shell {
-          max-width: 100% !important;
-          margin-top: 0 !important;
-        }
-        .client-title-wrap {
-          text-align: left !important;
-          margin-bottom: 1.5rem !important;
-        }
-        .client-kicker {
-          color: #B99752 !important;
-        }
-        .client-title {
-          font-size: 2.125rem !important;
-          color: #2F2419 !important;
-        }
-        .client-subtitle {
-          color: #7A6A5B !important;
-          line-height: 1.6 !important;
-        }
-        .client-session-badge {
-          left: auto !important;
-          transform: none !important;
-          width: 100% !important;
-          justify-content: center !important;
-          background: #FFFDF8 !important;
-          border-color: #E6D8BD !important;
-        }
-        .cl-card.client-event-card {
-          background: #FFFDF8 !important;
-          border-color: #E6D8BD !important;
-          border-radius: 1.75rem !important;
-          padding: 1.25rem !important;
-          box-shadow: 0 14px 36px rgba(78,61,38,0.08) !important;
-        }
-        .client-event-header {
-          gap: .875rem !important;
-          margin-bottom: 1rem !important;
-        }
-        .client-event-title {
-          font-size: 1.35rem !important;
-          color: #2F2419 !important;
-        }
-        .client-event-meta {
-          color: #7A6A5B !important;
-        }
-        .client-rsvp-grid {
-          grid-template-columns: repeat(2, 1fr) !important;
-          background: #F6F0E4 !important;
-          border-color: #E8D9BB !important;
-        }
-        .client-primary-action {
-          background: #C4A962 !important;
-          color: #241B12 !important;
-          min-height: 52px !important;
-          border-radius: 1rem !important;
-          font-size: 0 !important;
-        }
-        .client-primary-action::after {
-          content: 'Abrir Mi Evento';
-          font-size: .95rem;
-        }
-        .client-secondary-actions {
-          display: grid !important;
-          grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        }
-        .client-secondary-action {
-          flex: none !important;
-          background: #F4EBDD !important;
-          color: #4D3A28 !important;
-          box-shadow: none !important;
-        }
-        .client-share-action {
-          background: #DDEBDD !important;
-          color: #2F5F46 !important;
-        }
-        .client-public-action {
-          background: #FFFDF8 !important;
-          color: #5F4B35 !important;
-          border: 1px solid #E6D8BD !important;
-          box-shadow: none !important;
-        }
-        .client-edit-action {
-          order: 3;
-        }
-        .client-share-action {
-          order: 2;
-        }
-        .client-public-action {
-          order: 1;
-        }
-        .client-public-standalone {
-          display: none !important;
-        }
+      .db-btn-gold:hover {
+        background: linear-gradient(135deg, #D9B85C 0%, #B39245 100%) !important;
+        box-shadow: 0 4px 14px rgba(185,151,82,0.3) !important;
       }
     `}</style>
   );
@@ -377,19 +224,26 @@ function EmailSearchForm({ currentEmail }: { currentEmail?: string }) {
   );
 }
 
-function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, invitationTitle, isAuthenticated }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; invitationStatus?: string | null; invitationTitle?: string | null; isAuthenticated: boolean }) {
+function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, invitationTitle, isAuthenticated, index }: { order: Order; rsvpStats?: { total: number; yes: number; no: number; people: number }; invitationSlug?: string | null; invitationStatus?: string | null; invitationTitle?: string | null; isAuthenticated: boolean; index?: number }) {
   const statusColor: Record<string, string> = {
     pending:  '#7A6A5B',
-    paid:     '#247A45',
+    paid:     '#1A7A45',
     failed:   '#B43232',
     refunded: '#6A1B9A',
   };
 
   const statusBg: Record<string, string> = {
-    pending:  '#FBF5E3',
+    pending:  '#FAF6EB',
     paid:     '#E7F5EC',
     failed:   '#FBEAEA',
     refunded: '#F3E5F5',
+  };
+
+  const statusBorder: Record<string, string> = {
+    pending:  '#EAD7A3',
+    paid:     '#B8DFC4',
+    failed:   '#F0C4C4',
+    refunded: '#E1BEE7',
   };
 
   const isPaid = order.status === 'paid';
@@ -405,197 +259,276 @@ function OrderCard({ order, rsvpStats, invitationSlug, invitationStatus, invitat
   return (
     <div
       className="cl-card client-event-card"
+      id={index === 0 ? 'mis-eventos-card' : undefined}
       style={{
-        background:   T.white,
-        border:       `1px solid ${isPaid ? 'rgba(35,134,54,0.18)' : T.border}`,
-        borderRadius: '1.25rem',
-        padding:      '1.75rem 1.5rem',
-        marginBottom: '1.25rem',
-        boxShadow:    isPaid ? '0 4px 16px rgba(35,134,54,0.04)' : '0 2px 8px rgba(15,12,9,0.03)',
+        background:   '#FFFFFF',
+        border:       '1px solid #E5D2A8',
+        borderRadius: '1.5rem',
+        padding:      '1.5rem',
+        marginBottom: '1.5rem',
+        boxShadow:    '0 4px 20px rgba(26,18,8,0.02)',
       }}
     >
-      {/* Header row */}
-      <div className="client-event-header" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', flexWrap:'wrap', marginBottom:'1rem' }}>
-        <div>
-          <p className="client-event-title" style={{ margin:'0 0 4px', fontSize:'1.125rem', fontWeight:700, color:T.dark, fontFamily:'var(--font-playfair, Georgia, serif)' }}>
-            {eventName}
-          </p>
-          <p style={{ margin:'0 0 4px', fontSize:'.75rem', color:'#B99752', fontWeight:800, textTransform:'uppercase', letterSpacing:'.08em' }}>
-            Plan {planLabels[order.planId] ?? order.planId}
-          </p>
-          <p className="client-event-meta" style={{ margin:0, fontSize:'.8125rem', color:T.mid }}>
-            {formatPrice(order.amountTotal, order.currency)} MXN · Adquirido el {formatDate(order.createdAt)}
-          </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} className="md:flex-row">
+        
+        {/* Left Column - Thumbnail */}
+        <div style={{ position: 'relative', width: '100%' }} className="md:w-44 h-44 flex-shrink-0">
+          <img
+            src="/images/invitaciones/invitation-paper-detail.webp"
+            alt="Detalle de invitación"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '1.125rem', border: '1px solid #E5D2A8' }}
+          />
+          <div style={{
+            position: 'absolute', bottom: '0.5rem', right: '0.5rem',
+            width: '1.75rem', height: '1.75rem', borderRadius: '50%',
+            background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)', cursor: 'pointer'
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7A6A5B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '.375rem', alignItems: 'flex-end' }}>
-          <span
-            style={{
-              padding:      '0.35rem 0.875rem',
-              borderRadius: '2rem',
-              fontSize:     '0.75rem',
-              fontWeight:   700,
-              color:        statusColor[order.status] ?? T.mid,
-              background:   statusBg[order.status] ?? T.cream,
-              letterSpacing:'.02em',
-            }}
-          >
-            {statusLabels[order.status] ?? order.status}
-          </span>
-          {isPaid && (
-            <span
-              style={{
-                padding:      '0.25rem 0.75rem',
-                borderRadius: '2rem',
-                fontSize:     '0.7rem',
-                fontWeight:   700,
-                letterSpacing:'.02em',
-                color:        invitationStatus === 'published' ? '#247A45' : '#7A6A5B',
-                background:   invitationStatus === 'published' ? '#E7F5EC' : '#FBF5E3',
-              }}
-            >
-              {invitationStatus === 'published' ? '🟢 Publicada' : '🟡 Borrador'}
-            </span>
-          )}
-        </div>
-      </div>
 
-      {/* Email confirmation */}
-      <p style={{ margin:'0 0 1.25rem', fontSize:'0.8125rem', color: order.confirmationEmailSentAt ? '#4F7D5A' : T.light, display:'flex', alignItems:'center', gap:'0.375rem', fontWeight:500 }}>
-        <span style={{ fontSize:'1rem', lineHeight:1 }}>{order.confirmationEmailSentAt ? '✓' : '○'}</span>
-        {order.confirmationEmailSentAt
-          ? `Correo de acceso enviado el ${formatDate(order.confirmationEmailSentAt)}`
-          : 'Preparando correo de confirmación'}
-      </p>
-
-      {/* RSVP mini-stats */}
-      {order.invitationId && isPaid && rsvpStats !== undefined && (
-        <div className="client-rsvp-grid" style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '.5rem',
-          marginBottom: '1.25rem',
-          padding: '.875rem', background: T.cream,
-          border: `1px solid ${T.border}`, borderRadius: '.875rem',
-        }}>
-          {[
-            { label: 'Respuestas', value: rsvpStats.total, color: T.dark },
-            { label: 'Sí asistirán', value: rsvpStats.yes, color: '#247A45' },
-            { label: 'No asistirán', value: rsvpStats.no, color: '#B43232' },
-            { label: 'Personas', value: rsvpStats.people, color: T.gold },
-          ].map(({ label, value, color }) => (
-            <div key={label} style={{ textAlign: 'center' }}>
-              <p style={{ margin: '0 0 .125rem', fontSize: '1.25rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</p>
-              <p style={{ margin: 0, fontSize: '.6875rem', color: T.light, lineHeight: 1.3 }}>{label}</p>
+        {/* Right Column - Details */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          
+          {/* Header Row inside card */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+            <div>
+              <h2 style={{ margin: '0 0 0.25rem', fontSize: '1.25rem', fontWeight: 700, color: '#1A1208', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.2 }}>
+                {eventName}
+              </h2>
+              <p style={{ margin: '0 0 0.35rem', fontSize: '0.75rem', color: '#C9A84C', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                PLAN {planLabels[order.planId] ?? order.planId} <svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="6 3 18 3 22 9 12 21 2 9 6 3"></polygon></svg>
+              </p>
+              <p style={{ margin: 0, fontSize: '.8125rem', color: '#7A6A5B' }}>
+                {formatPrice(order.amountTotal, order.currency)} MXN · Adquirido el {formatDate(order.createdAt)}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Actions */}
-      {order.invitationId && isPaid && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-          {isAuthenticated ? (
-            <>
-              {/* Full page reload — ensures session cookies are sent fresh on the first
-                  request to a protected Server Component (client-side RSC nav can skip
-                  cookies or serve a stale Router Cache redirect when auth state changed). */}
-              <a
-                href={`/cliente/invitaciones/${order.invitationId}`}
-                className="cl-btn client-primary-action"
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.375rem', alignItems: 'flex-end' }}>
+              <span
                 style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-                  padding: '0.75rem 1.5rem', background: T.dark, color: T.cream,
-                  borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                  textDecoration: 'none', minHeight: '46px', textAlign: 'center',
+                  padding:      '0.35rem 0.875rem',
+                  borderRadius: '2rem',
+                  fontSize:     '0.75rem',
+                  fontWeight:   700,
+                  color:        statusColor[order.status] ?? T.mid,
+                  background:   statusBg[order.status] ?? T.cream,
+                  border:       `1px solid ${statusBorder[order.status] ?? '#E5D2A8'}`,
+                  letterSpacing:'.02em',
+                  display:      'inline-flex',
+                  alignItems:   'center',
+                  gap:          '0.25rem'
                 }}
               >
-                📊 Ver respuestas RSVP
-              </a>
-              <div className="client-secondary-actions" style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
-                {publicUrl && (
-                  <a
-                    href={publicUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cl-btn client-secondary-action client-public-action"
-                    style={{
-                      flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                      padding: '0.625rem 1rem',
-                      background: '#F6F2EC',
-                      color: '#5F4B35',
-                      borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                      textDecoration: 'none', minHeight: '44px', textAlign: 'center',
-                      boxShadow: '0 4px 14px rgba(95,75,53,0.08)',
-                    }}
-                  >
-                    Ver invitaciÃ³n
-                  </a>
+                {order.status === 'paid' && (
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 )}
-                <a
-                  href={`/dashboard/invitations/${order.invitationId}/edit`}
-                  className="cl-btn client-secondary-action client-edit-action"
+                {statusLabels[order.status] ?? order.status}
+              </span>
+              {isPaid && (
+                <span
                   style={{
-                    flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-                    padding: '0.625rem 1rem', background: T.gold, color: T.dark,
-                    borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                    textDecoration: 'none', minHeight: '44px', textAlign: 'center',
-                    boxShadow: '0 4px 12px rgba(184,150,106,0.2)',
+                    padding:      '0.25rem 0.75rem',
+                    borderRadius: '2rem',
+                    fontSize:     '0.7rem',
+                    fontWeight:   700,
+                    letterSpacing:'.02em',
+                    color:        invitationStatus === 'published' ? '#1A7A45' : '#C9A84C',
+                    background:   invitationStatus === 'published' ? '#E7F5EC' : '#FAF6EB',
+                    border:       `1px solid ${invitationStatus === 'published' ? '#B8DFC4' : '#EAD7A3'}`,
+                    display:      'inline-flex',
+                    alignItems:   'center',
+                    gap:          '0.25rem'
                   }}
                 >
-                  ✏️ Editar invitación
-                </a>
-                {whatsappUrl && (
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cl-btn client-secondary-action client-share-action"
-                    style={{
-                      flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem',
-                      padding: '0.625rem 1rem', background: '#25D366', color: '#fff',
-                      borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                      textDecoration: 'none', minHeight: '44px', textAlign: 'center',
-                    }}
-                  >
-                    Compartir invitación
-                  </a>
-                )}
-              </div>
-              {publicUrl && (
-                <a
-                  href={publicUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cl-btn client-secondary-action client-public-action client-public-standalone"
-                  style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                    padding: '0.75rem 1rem',
-                    background: 'linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)',
-                    color: '#fff',
-                    borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                    textDecoration: 'none', minHeight: '44px', textAlign: 'center',
-                    boxShadow: '0 4px 14px rgba(124,58,237,0.35)',
-                    letterSpacing: '0.01em',
-                  }}
-                >
-                  👁️ Ver mi invitación →
-                </a>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: invitationStatus === 'published' ? '#1A7A45' : '#C9A84C' }}></span>
+                  {invitationStatus === 'published' ? 'Publicada' : 'Borrador'}
+                </span>
               )}
-            </>
-          ) : (
-            <Link
-              href={`/login?redirect=${encodeURIComponent(`/cliente/invitaciones/${order.invitationId}`)}`}
-              className="cl-btn"
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                padding: '0.75rem 1.5rem', background: T.dark, color: T.cream,
-                borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
-                textDecoration: 'none', minHeight: '46px', textAlign: 'center',
-              }}
-            >
-              Inicia sesión para administrar →
-            </Link>
+            </div>
+          </div>
+
+          {/* Email confirmation */}
+          <div style={{ margin: '0.25rem 0 0.75rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              width: '14px', height: '14px', borderRadius: '50%',
+              background: order.confirmationEmailSentAt ? '#E7F5EC' : '#FAF6EB',
+              border: `1px solid ${order.confirmationEmailSentAt ? '#B8DFC4' : '#EAD7A3'}`,
+              color: order.confirmationEmailSentAt ? '#1A7A45' : '#C9A84C',
+              fontSize: '8px', fontWeight: 'bold'
+            }}>
+              {order.confirmationEmailSentAt ? '✓' : '○'}
+            </span>
+            <span style={{ fontSize: '0.8125rem', color: order.confirmationEmailSentAt ? '#1A7A45' : '#7A6A5B', fontWeight: 500 }}>
+              {order.confirmationEmailSentAt
+                ? `Correo de acceso enviado el ${formatDate(order.confirmationEmailSentAt)}`
+                : 'Preparando correo de confirmación'}
+            </span>
+          </div>
+
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', margin: '0.5rem 0 0.75rem' }}>
+            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, #EAD7A3, transparent)' }} />
+            <svg width="20" height="10" viewBox="0 0 24 12" fill="none" style={{ color: '#C9A84C', margin: '0 0.5rem', opacity: 0.8 }}>
+              <path d="M12 2L9 6L12 10L15 6L12 2Z" fill="currentColor" />
+              <line x1="2" y1="6" x2="8" y2="6" stroke="currentColor" strokeWidth="1" />
+              <line x1="16" y1="6" x2="22" y2="6" stroke="currentColor" strokeWidth="1" />
+            </svg>
+            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, #EAD7A3, transparent)' }} />
+          </div>
+
+          {/* RSVP stats grid */}
+          {order.invitationId && isPaid && rsvpStats !== undefined && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+              {[
+                {
+                  label: 'Respuestas',
+                  value: rsvpStats.total,
+                  iconBg: '#E7F5EC',
+                  iconColor: '#1A7A45',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                },
+                {
+                  label: 'Sí asistirán',
+                  value: rsvpStats.yes,
+                  iconBg: '#E7F5EC',
+                  iconColor: '#1A7A45',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                },
+                {
+                  label: 'No asistirán',
+                  value: rsvpStats.no,
+                  iconBg: '#FBEAEA',
+                  iconColor: '#B43232',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                },
+                {
+                  label: 'Personas',
+                  value: rsvpStats.people,
+                  iconBg: '#FAF6EB',
+                  iconColor: '#C9A84C',
+                  icon: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                },
+              ].map(({ label, value, iconBg, iconColor, icon }) => (
+                <div key={label} style={{
+                  display: 'flex', alignItems: 'center', gap: '0.4rem',
+                  padding: '0.5rem 0.625rem', background: '#FFFFFF',
+                  border: '1px solid #E5D2A8', borderRadius: '0.75rem',
+                  boxShadow: '0 2px 8px rgba(26,18,8,0.01)'
+                }}>
+                  <div style={{
+                    width: 26, height: 26, borderRadius: '50%',
+                    background: iconBg, color: iconColor,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    {icon}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '1rem', fontWeight: 800, color: '#1A1208', lineHeight: 1 }}>{value}</span>
+                    <span style={{ fontSize: '0.625rem', color: '#7A6A5B', lineHeight: 1.1, marginTop: '0.125rem' }}>{label}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
+
+          {/* Action buttons */}
+          {order.invitationId && isPaid && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {isAuthenticated ? (
+                <>
+                  <a
+                    href={`/cliente/invitaciones/${order.invitationId}`}
+                    id={index === 0 ? 'mis-eventos-btn-abrir' : undefined}
+                    className="cl-btn db-btn-gold"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                      padding: '0.75rem 1.5rem', borderRadius: '0.75rem', fontSize: '0.9rem', fontWeight: 700,
+                      textDecoration: 'none', minHeight: '48px', textAlign: 'center',
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                    Abrir Mi Evento
+                  </a>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                    {publicUrl && (
+                      <a
+                        href={publicUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        id={index === 0 ? 'mis-eventos-btn-ver' : undefined}
+                        className="cl-btn"
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem',
+                          padding: '0.625rem 0.25rem', background: '#FFFFFF', color: '#1A1208',
+                          border: '1px solid #E5D2A8', borderRadius: '0.75rem', fontSize: '0.8125rem', fontWeight: 700,
+                          textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                        }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        Ver invitación
+                      </a>
+                    )}
+                    <a
+                      href={`/dashboard/invitations/${order.invitationId}/edit`}
+                      id={index === 0 ? 'mis-eventos-btn-editar' : undefined}
+                      className="cl-btn"
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem',
+                        padding: '0.625rem 0.25rem', background: '#FAF6EB', color: '#1A1208',
+                        border: '1px solid #E5D2A8', borderRadius: '0.75rem', fontSize: '0.8125rem', fontWeight: 700,
+                        textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                      Editar
+                    </a>
+                    {whatsappUrl && (
+                      <a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        id={index === 0 ? 'mis-eventos-btn-compartir' : undefined}
+                        className="cl-btn"
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem',
+                          padding: '0.625rem 0.25rem', background: '#E7F5EC', color: '#1A7A45',
+                          border: '1px solid #B8DFC4', borderRadius: '0.75rem', fontSize: '0.8125rem', fontWeight: 700,
+                          textDecoration: 'none', minHeight: '44px', textAlign: 'center',
+                        }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                        Compartir
+                      </a>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Link
+                  href={`/login?redirect=${encodeURIComponent(`/cliente/invitaciones/${order.invitationId}`)}`}
+                  className="cl-btn"
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '0.75rem 1.5rem', background: T.dark, color: '#FFFFFF',
+                    borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700,
+                    textDecoration: 'none', minHeight: '48px', textAlign: 'center',
+                  }}
+                >
+                  Inicia sesión para administrar →
+                </Link>
+              )}
+            </div>
+          )}
+
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -650,33 +583,54 @@ export default async function ClientePage({ searchParams }: Props) {
       className="client-page"
       style={{
         minHeight:     '100dvh',
-        background:    T.ivory,
+        background:    '#FAF6EB',
         backgroundImage: `radial-gradient(ellipse at 50% 0%, rgba(184,150,106,0.06) 0%, transparent 60%)`,
-        padding:       '4rem 1.25rem',
+        padding:       '5rem 1.25rem 3rem',
         fontFamily:    'var(--font-inter, system-ui, sans-serif)',
         position:      'relative',
+        overflow:      'hidden'
       }}
     >
       <div className="paper-noise" />
       <PageStyles />
 
+      {/* Elegant Floral Watermark - Top Right */}
+      <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.08 }} className="select-none hidden md:block">
+        <svg width="320" height="320" viewBox="0 0 120 120" fill="none" stroke="currentColor" style={{ color: '#C9A84C' }}>
+          <path d="M120,0 C100,10 90,30 95,50 C80,45 70,60 65,80 C50,85 40,100 0,120" strokeWidth="0.5" />
+          <path d="M95,30 C90,20 70,25 75,40 C65,35 55,45 60,55" strokeWidth="0.5" />
+          <circle cx="95" cy="30" r="4" fill="currentColor" opacity="0.3" />
+          <path d="M95,26 C93,28 91,30 95,34 C99,30 97,28 95,26 Z" fill="currentColor" opacity="0.1" />
+          <circle cx="75" cy="40" r="3" fill="currentColor" opacity="0.3" />
+          <circle cx="60" cy="55" r="3" fill="currentColor" opacity="0.3" />
+        </svg>
+      </div>
+
+      {/* Elegant Floral Watermark - Top Left */}
+      <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 0, pointerEvents: 'none', opacity: 0.05 }} className="select-none hidden md:block">
+        <svg width="220" height="220" viewBox="0 0 120 120" fill="none" stroke="currentColor" style={{ color: '#C9A84C', transform: 'scaleX(-1)' }}>
+          <path d="M120,0 C100,10 90,30 95,50 C80,45 70,60 65,80" strokeWidth="0.5" />
+          <circle cx="95" cy="30" r="4" fill="currentColor" opacity="0.3" />
+          <circle cx="75" cy="40" r="3" fill="currentColor" opacity="0.3" />
+        </svg>
+      </div>
+
+      {/* Monogram A&M in script gold */}
+      <div style={{ position: 'absolute', left: 'clamp(1rem, 5vw, 3rem)', top: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.35rem', zIndex: 12 }}>
+        <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '38px', lineHeight: 1 }}>A&M</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(15deg) translateY(-2px)', opacity: 0.7 }}><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+
       {/* Navigation bar header */}
       <nav style={{
         position:'absolute', top:0, left:0, right:0,
-        display:'flex', alignItems:'center', justifyContent:'space-between',
+        display:'flex', alignItems:'center', justifyContent:'flex-end',
         padding:'.875rem clamp(1.25rem,5vw,3rem)',
-        borderBottom:`1px solid ${T.border}`,
-        background:'rgba(250,247,242,0.85)', backdropFilter:'blur(10px)',
+        background:'transparent',
         zIndex:10,
       }}>
-        <Link href="/invitaciones" style={{
-          fontSize:'.75rem', fontWeight:800, letterSpacing:'.2em',
-          textTransform:'uppercase', color:T.dark, textDecoration:'none',
-        }}>
-          Kompralo
-        </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <DashboardManualNavButton />
+          <MisEventosTourNavButton />
           {isAuthenticated && (
             <SignOutButton style={{ fontSize:'.8125rem', color:T.light, fontWeight:500 }} className="pr2-nav-link">
               Cerrar sesión
@@ -686,16 +640,27 @@ export default async function ClientePage({ searchParams }: Props) {
       </nav>
 
       <div className="client-shell" style={{ maxWidth: '640px', margin: '2rem auto 0', position:'relative', zIndex:2 }}>
+        
         {/* Title */}
-        <div className="client-title-wrap" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+        <div className="client-title-wrap" style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <p className="client-kicker" style={{ fontSize:'.6875rem', fontWeight:700, letterSpacing:'.2em', color:T.gold, textTransform:'uppercase', margin:'0 0 .5rem' }}>
             Panel de Cliente
           </p>
-          <h1 className="client-title" style={{ fontSize: '1.875rem', fontWeight: 700, color: '#1A1410', margin: '0 0 0.5rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
+          
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0.25rem auto 0.75rem', maxWidth: '200px' }}>
+            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, #EAD7A3, transparent)' }} />
+            <svg width="16" height="8" viewBox="0 0 24 12" fill="none" style={{ color: '#C9A84C', margin: '0 0.4rem', opacity: 0.8 }}>
+              <path d="M12 2L9 6L12 10L15 6L12 2Z" fill="currentColor" />
+            </svg>
+            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, #EAD7A3, transparent)' }} />
+          </div>
+
+          <h1 className="client-title" style={{ fontSize: '2.25rem', fontWeight: 700, color: '#1A1208', margin: '0 0 0.5rem', fontFamily:'var(--font-playfair, Georgia, serif)' }}>
             Mis Eventos
           </h1>
-          <p className="client-subtitle" style={{ color: T.mid, fontSize: '0.9rem', margin: 0 }}>
-            Aquí aparecen tus invitaciones compradas y su estado.
+          <p className="client-subtitle" style={{ color: T.light, fontSize: '0.9rem', margin: 0, fontWeight: 500 }}>
+            Administra tus invitaciones, confirma RSVP y comparte cada evento desde un solo lugar.
           </p>
         </div>
 
@@ -703,9 +668,9 @@ export default async function ClientePage({ searchParams }: Props) {
         {isAuthenticated && (
           <div className="client-session-badge" style={{
             textAlign: 'center',
-            marginBottom: '2rem',
-            padding: '.5rem 1rem',
-            background: T.cream,
+            marginBottom: '1rem',
+            padding: '0.45rem 1rem',
+            background: '#FFFFFF',
             border: `1px solid ${T.border}`,
             borderRadius: '2rem',
             display: 'inline-flex',
@@ -716,13 +681,22 @@ export default async function ClientePage({ searchParams }: Props) {
             position: 'relative',
             left: '50%',
             transform: 'translateX(-50%)',
+            boxShadow: '0 2px 6px rgba(26,18,8,0.01)'
           }}>
-            <span style={{ fontSize: '.5rem', color: '#247A45' }}>●</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             Sesión activa: <strong>{trimmedEmail}</strong>
           </div>
         )}
 
-        {/* Email search — only for unauthenticated users (authenticated users auto-load their orders above) */}
+        {/* Count text with Calendar Icon */}
+        {orders.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.375rem', color: '#7A6A5B', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '2.25rem' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            {orders.length} {orders.length === 1 ? 'invitación encontrada' : 'invitaciones encontradas'} para <strong>{trimmedEmail}</strong>
+          </div>
+        )}
+
+        {/* Email search — only for unauthenticated users */}
         {!isAuthenticated && <EmailSearchForm currentEmail={emailParam} />}
 
         {/* Results */}
@@ -730,7 +704,7 @@ export default async function ClientePage({ searchParams }: Props) {
           <div style={{
             textAlign:'center', padding:'3rem 2rem',
             background: T.white, border:`1px solid ${T.border}`,
-            borderRadius:'1.25rem',
+            borderRadius:'1.5rem',
             boxShadow:'0 4px 20px rgba(15,12,9,0.03)',
           }}>
             <div style={{ fontSize:'2.5rem', marginBottom:'1rem', lineHeight: 1 }}>📬</div>
@@ -743,7 +717,7 @@ export default async function ClientePage({ searchParams }: Props) {
             </p>
             <Link href="/invitaciones/precios" className="cl-btn" style={{
               display:'inline-block', padding:'0.75rem 1.75rem',
-              background: T.dark, color:'#F5EDD8',
+              background: T.dark, color:'#FFFFFF',
               borderRadius:'0.625rem', fontSize:'0.875rem', fontWeight:700, textDecoration:'none',
             }}>
               Ver planes y precios →
@@ -753,14 +727,11 @@ export default async function ClientePage({ searchParams }: Props) {
 
         {orders.length > 0 && (
           <>
-            <p style={{ color: T.mid, fontSize: '0.8125rem', marginBottom: '1rem', fontWeight: 600, letterSpacing: '.02em' }}>
-              {orders.length} {orders.length === 1 ? 'invitación encontrada' : 'invitaciones encontradas'} para{' '}
-              <strong>{trimmedEmail}</strong>
-            </p>
-            {orders.map((order) => (
+            {orders.map((order, i) => (
               <OrderCard
                 key={order.id}
                 order={order}
+                index={i}
                 rsvpStats={order.invitationId ? rsvpStatsMap[order.invitationId] : undefined}
                 invitationSlug={order.invitationId ? invitationDataMap[order.invitationId]?.slug : null}
                 invitationStatus={order.invitationId ? invitationDataMap[order.invitationId]?.status : null}
@@ -769,19 +740,21 @@ export default async function ClientePage({ searchParams }: Props) {
               />
             ))}
 
-            {/* Buy another CTA — no free creation allowed */}
+            {/* Buy another CTA */}
             <div style={{
-              marginTop: '1.5rem', padding: '1.25rem 1.5rem',
-              background: T.cream, border: `1px solid ${T.border}`,
-              borderRadius: '1rem', textAlign: 'center',
+              marginTop: '2rem', padding: '1.5rem',
+              background: '#FFFFFF', border: '1px solid #E5D2A8',
+              borderRadius: '1.5rem', textAlign: 'center',
+              boxShadow: '0 4px 20px rgba(26,18,8,0.01)'
             }}>
-              <p style={{ margin: '0 0 .75rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.6 }}>
+              <p style={{ margin: '0 0 1rem', fontSize: '0.875rem', color: '#7A6A5B', lineHeight: 1.6, fontWeight: 500 }}>
                 ¿Necesitas otra invitación para un nuevo evento?
               </p>
               <Link href="/invitaciones/precios" className="cl-btn" style={{
-                display: 'inline-block', padding: '0.625rem 1.5rem',
-                background: T.dark, color: '#F5EDD8',
-                borderRadius: '0.625rem', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none',
+                display: 'inline-block', padding: '0.75rem 2rem',
+                background: '#1A1208', color: '#FFFFFF',
+                borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none',
+                boxShadow: '0 4px 12px rgba(26,18,8,0.15)', transition: 'all 0.15s'
               }}>
                 Comprar otra invitación →
               </Link>
@@ -790,8 +763,7 @@ export default async function ClientePage({ searchParams }: Props) {
         )}
       </div>
 
-      {/* Manual interactivo del cliente */}
-      <DashboardManualTour />
+      <MisEventosTour />
     </main>
   );
 }
