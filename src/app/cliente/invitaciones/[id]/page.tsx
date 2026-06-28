@@ -529,7 +529,7 @@ export default async function InvitationDashboard({ params }: Props) {
         </div>
 
         {/* ── Header ── */}
-        <section id="mi-evento-header" style={{ marginBottom: '2.5rem', position: 'relative' }}>
+        <section id="tour-header" style={{ marginBottom: '2.5rem', position: 'relative' }}>
           <p style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.25em', color: '#B99752', textTransform: 'uppercase', margin: '0 0 .5rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             👑 CENTRO DE CONTROL
           </p>
@@ -551,6 +551,7 @@ export default async function InvitationDashboard({ params }: Props) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.625rem', alignItems: 'center' }}>
             {publicUrl && (
               <a
+                id="tour-btn-ver"
                 href={publicUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -570,6 +571,7 @@ export default async function InvitationDashboard({ params }: Props) {
             )}
             {publicUrl && (
               <a
+                id="tour-btn-compartir"
                 href="#compartir"
                 className="cc-pill db-btn"
                 style={{
@@ -587,7 +589,8 @@ export default async function InvitationDashboard({ params }: Props) {
             )}
             {stats.total > 0 && (
               <a
-                href="#mi-evento-metricas"
+                id="tour-btn-stats"
+                href="#tour-stats-row"
                 className="cc-pill db-btn"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
@@ -603,6 +606,7 @@ export default async function InvitationDashboard({ params }: Props) {
               </a>
             )}
             <span
+              id="tour-btn-plan"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
                 padding: '0.5rem 1.25rem', borderRadius: '9999px',
@@ -693,7 +697,7 @@ export default async function InvitationDashboard({ params }: Props) {
         {phase === 'semana' && (
           <>
             {/* Countdown banner */}
-            <div className="cc-card" style={{ padding: '1.5rem 1.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: '#FAF6EB', border: '1px solid #EAD7A3', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.03)' }}>
+            <div id="tour-countdown" className="cc-card" style={{ padding: '1.5rem 1.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem', background: '#FAF6EB', border: '1px solid #EAD7A3', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.03)' }}>
               <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#FFFFFF', border: '1px solid #EAD7A3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', flexShrink: 0, boxShadow: '0 2px 8px rgba(185,151,82,0.08)' }} className="text-[#C9A84C]">
                 ⏳
               </div>
@@ -716,7 +720,7 @@ export default async function InvitationDashboard({ params }: Props) {
             </div>
 
             {/* Invitation horizontal card */}
-            <div className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
+            <div id="tour-card-invitacion" className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
               {/* Image thumbnail from public assets */}
               <img src="/images/invitaciones/invitation-paper-detail.webp" alt="Wedding invitation thumbnail" style={{ width: 120, height: 120, borderRadius: '0.75rem', objectFit: 'cover', flexShrink: 0, border: '1px solid #E5D2A8' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -729,12 +733,12 @@ export default async function InvitationDashboard({ params }: Props) {
                   <span>{eventDate}</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem' }}>
-                  <a href="#mi-evento-pases" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
+                  <a id="tour-btn-administrar" href="#tour-mis-invitados" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     Administrar invitados
                   </a>
                   {publicUrl && (
-                    <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
+                    <a id="tour-btn-ver-invitados" href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                       Ver cómo mis invitados
                     </a>
@@ -774,7 +778,7 @@ export default async function InvitationDashboard({ params }: Props) {
         {(phase === 'lista' || phase === 'confirmaciones') && (
           <>
             {/* Horizontal invitation card */}
-            <div className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
+            <div id="tour-card-invitacion" className="cc-card" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid #E5D2A8', borderRadius: '1.25rem', boxShadow: '0 4px 20px rgba(26,18,8,0.02)' }}>
               {/* Image thumbnail from public assets */}
               <img src="/images/invitaciones/invitation-paper-detail.webp" alt="Wedding invitation thumbnail" style={{ width: 120, height: 120, borderRadius: '0.75rem', objectFit: 'cover', flexShrink: 0, border: '1px solid #E5D2A8' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -787,12 +791,12 @@ export default async function InvitationDashboard({ params }: Props) {
                   <span>{eventDate}</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '.75rem' }}>
-                  <a href="#mi-evento-pases" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
+                  <a id="tour-btn-administrar" href="#tour-mis-invitados" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', background: '#1A1208', color: '#FFFFFF', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none', transition: 'all 0.2s', border: '1.5px solid #1A1208' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     Administrar invitados
                   </a>
                   {publicUrl && (
-                    <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
+                    <a id="tour-btn-ver-invitados" href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', borderRadius: '0.5rem', border: '1.5px solid #1A1208', background: '#FFFFFF', color: '#1A1208', fontSize: '0.875rem', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                       Ver cómo mis invitados
                     </a>
@@ -838,7 +842,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
         {/* ── Stats ── */}
         {stats.total > 0 && phase !== 'configurando' && (
-          <div id="mi-evento-metricas" className="stat-grid" style={{ marginBottom: '2rem' }}>
+          <div id="tour-stats-row" className="stat-grid" style={{ marginBottom: '2rem' }}>
             <StatCard
               icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>}
               label="Confirmaron"
@@ -896,7 +900,7 @@ export default async function InvitationDashboard({ params }: Props) {
         {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
           <>
             {/* Section header */}
-            <div id="mi-evento-invitados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '.75rem' }}>
+            <div id="tour-tabla-confirmados" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#FAF6EB', border: '1px solid #EAD7A3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#B99752', flexShrink: 0 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
@@ -912,7 +916,7 @@ export default async function InvitationDashboard({ params }: Props) {
               </div>
               {/* QR button — right side, always visible if publicUrl is present */}
               {publicUrl && (
-                <div style={{ flexShrink: 0 }}>
+                <div id="tour-btn-qr" style={{ flexShrink: 0 }}>
                   <QrCard publicUrl={publicUrl} eventSlug={eventSlug} />
                 </div>
               )}
@@ -1036,7 +1040,7 @@ export default async function InvitationDashboard({ params }: Props) {
 
         {/* ── Mis invitados (GuestPassSection) ── */}
         {(phase === 'confirmaciones' || phase === 'semana' || phase === 'dia') && (
-          <div id="mi-evento-pases">
+          <div id="tour-mis-invitados">
             <GuestPassSection invitationId={id} appUrl={appUrl} eventTitle={eventTitle} publicUrl={publicUrl} />
           </div>
         )}
