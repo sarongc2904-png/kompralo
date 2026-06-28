@@ -13,14 +13,14 @@ interface EditorV4LayersPanelProps {
 export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections = [] }: EditorV4LayersPanelProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto', background: '#1A1410' }}>
       {/* Header */}
       <div style={{
         padding: '14px 16px 10px',
         borderBottom: '1px solid rgba(200,167,93,0.15)',
         flexShrink: 0,
       }}>
-        <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#5C4A3E' }}>
+        <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(200,167,93,0.6)' }}>
           Secciones
         </span>
       </div>
@@ -76,8 +76,8 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
       </nav>
 
       {/* Footer hint */}
-      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(200,167,93,0.1)', flexShrink: 0 }}>
-        <p style={{ fontSize: 10, color: '#9B8878', lineHeight: 1.5 }}>
+      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(200,167,93,0.1)', flexShrink: 0, background: '#1A1410' }}>
+        <p style={{ fontSize: 10, color: 'rgba(200,167,93,0.4)', lineHeight: 1.5 }}>
           Haz clic en una sección para navegar
         </p>
       </div>
