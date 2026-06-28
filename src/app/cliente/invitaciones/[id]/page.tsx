@@ -49,12 +49,22 @@ const attendanceBg: Record<string, string> = {
 
 function renderStyledTitle(title: string) {
   if (title.includes('&')) {
-    const parts = title.split('&');
+    const [left, right] = title.split('&');
+    const leftTrimmed = left.trim();
+    const name2 = right.trim();
+    const preMatch = leftTrimmed.match(/^(.+?\bde\b\s+)(.+)$/i);
+    const prefix = preMatch ? preMatch[1].trim() : null;
+    const name1  = preMatch ? preMatch[2].trim() : leftTrimmed;
     return (
       <>
-        {parts[0]}
-        <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '3rem', fontWeight: 'normal', margin: '0 0.5rem', verticalAlign: 'middle', display: 'inline-block', lineHeight: 0.8 }}>&</span>
-        {parts[1]}
+        {prefix && (
+          <span style={{ fontFamily: 'inherit', fontWeight: 700, fontSize: '0.4em', color: '#9B8878', display: 'block', letterSpacing: '0.18em', textTransform: 'uppercase', lineHeight: 1.4, marginBottom: '0.2em' }}>
+            {prefix}
+          </span>
+        )}
+        <span style={{ fontFamily: 'var(--font-pinyon)', fontWeight: 'normal', color: T.dark }}>{name1}</span>
+        <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontWeight: 'normal', fontSize: '0.7em', margin: '0 0.15em', display: 'inline-block', verticalAlign: 'middle', lineHeight: 1 }}>&</span>
+        <span style={{ fontFamily: 'var(--font-pinyon)', fontWeight: 'normal', color: T.dark }}>{name2}</span>
       </>
     );
   }
@@ -519,24 +529,12 @@ export default async function InvitationDashboard({ params }: Props) {
 
       <div style={{ maxWidth: '860px', margin: '2rem auto 0', position: 'relative', zIndex: 2 }}>
 
-        {/* Monogram A&M in script gold with soft floral SVG watermark */}
-        <div style={{ position: 'absolute', right: 0, top: '-30px', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.85, zIndex: 0 }} className="hidden md:flex select-none pointer-events-none">
-          <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '96px', lineHeight: 1 }}>A&M</span>
-          <svg width="180" height="180" viewBox="0 0 120 120" fill="none" stroke="#C9A84C" strokeWidth="0.5" strokeOpacity="0.15" style={{ position: 'absolute', transform: 'scale(1.4)', zIndex: -1 }}>
-            <path d="M60,10 C62,20 60,30 55,40 C52,48 45,55 35,60 C25,65 15,62 10,50 C5,38 12,25 25,20 C38,15 50,22 55,30 C58,35 55,45 45,50 C35,55 25,48 20,40" />
-            <path d="M60,10 C65,22 75,30 85,32 C95,35 105,30 110,20 C115,10 108,2 95,5 C82,8 70,18 65,30 C62,38 68,48 78,50 C88,52 98,42 100,32" />
-            <circle cx="60" cy="10" r="1.5" fill="#C9A84C" fillOpacity="0.3" />
-            <circle cx="20" cy="40" r="1.5" fill="#C9A84C" fillOpacity="0.3" />
-            <circle cx="100" cy="32" r="1.5" fill="#C9A84C" fillOpacity="0.3" />
-          </svg>
-        </div>
-
         {/* ── Header ── */}
         <section id="tour-header" style={{ marginBottom: '2.5rem', position: 'relative' }}>
           <p style={{ fontSize: '.75rem', fontWeight: 800, letterSpacing: '.25em', color: '#B99752', textTransform: 'uppercase', margin: '0 0 .5rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             👑 CENTRO DE CONTROL
           </p>
-          <h1 style={{ fontSize: 'clamp(2.25rem, 6vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.15 }}>
+          <h1 style={{ fontSize: 'clamp(2.25rem, 6vw, 3.25rem)', fontWeight: 700, color: T.dark, margin: '0 0 .5rem', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1.4 }}>
             {renderStyledTitle(eventTitle)}
           </h1>
           
