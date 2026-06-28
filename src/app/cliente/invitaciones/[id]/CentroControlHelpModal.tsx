@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface NavItem { id: string; icon: string; label: string }
 
@@ -119,8 +120,11 @@ interface Props { onClose: () => void }
 
 export function CentroControlHelpModal({ onClose }: Props) {
   const [selected, setSelected] = useState<string>('resumen');
+  const [mounted,  setMounted]  = useState(false);
   const isMobile = useIsMobile();
   const help = HELP[selected];
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
@@ -128,10 +132,12 @@ export function CentroControlHelpModal({ onClose }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       style={{
-        position: 'fixed', inset: 0, zIndex: 2000,
+        position: 'fixed', inset: 0, zIndex: 9999,
         background: 'rgba(10,8,4,0.72)',
         display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
         overflowY: 'auto',
@@ -353,5 +359,5 @@ export function CentroControlHelpModal({ onClose }: Props) {
         </div>
       </div>
     </div>
-  );
+  , document.body);
 }
