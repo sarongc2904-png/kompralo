@@ -192,42 +192,68 @@ export default function InvitationRenderer({
   // ── Editor hover bridge ───────────────────────────────────────────────────
   // Fires EDITOR_V4_SECTION_HOVER / _END / _CLICK postMessages to the parent
   // editor shell so it can render a bounding-box overlay over the canvas iframe.
+  //
+  // Uses document-level delegation (mouseover) + closest('[data-section]') so
+  // the rect is ALWAYS taken from the root section wrapper, never from an inner
+  // child (e.g. EditableText). Per-element mouseenter with capture had a race
+  // where re-renders invalidated the static `sections` list.
   useEffect(() => {
     if (!editablePreview) return;
 
-    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-section]'));
-    const cleanups: Array<() => void> = [];
+    let activeSectionId: string | null = null;
 
-    for (const el of sections) {
-      const sectionId = el.dataset.section ?? '';
+    const sendHover = (el: HTMLElement) => {
+      const r = el.getBoundingClientRect();
+      window.parent?.postMessage(
+        { type: 'EDITOR_V4_SECTION_HOVER', sectionId: el.dataset.section ?? '', rect: { top: r.top, left: r.left, width: r.width, height: r.height } },
+        window.location.origin,
+      );
+    };
 
-      const onEnter = () => {
-        const r = el.getBoundingClientRect();
-        window.parent?.postMessage(
-          { type: 'EDITOR_V4_SECTION_HOVER', sectionId, rect: { top: r.top, left: r.left, width: r.width, height: r.height } },
-          window.location.origin,
-        );
-      };
-      const onLeave = () => {
-        window.parent?.postMessage({ type: 'EDITOR_V4_SECTION_HOVER_END' }, window.location.origin);
-      };
-      const onClick = (e: MouseEvent) => {
-        const t = e.target as HTMLElement | null;
-        if (t?.closest('[data-editable-field]')) return; // EditableText handles its own selection
-        window.parent?.postMessage({ type: 'EDITOR_V4_SECTION_CLICK', sectionId }, window.location.origin);
-      };
+    const sendEnd = () => {
+      window.parent?.postMessage({ type: 'EDITOR_V4_SECTION_HOVER_END' }, window.location.origin);
+    };
 
-      el.addEventListener('mouseenter', onEnter, true);
-      el.addEventListener('mouseleave', onLeave, true);
-      el.addEventListener('click', onClick, true);
-      cleanups.push(() => {
-        el.removeEventListener('mouseenter', onEnter, true);
-        el.removeEventListener('mouseleave', onLeave, true);
-        el.removeEventListener('click', onClick, true);
-      });
-    }
+    const onMouseOver = (e: MouseEvent) => {
+      const sectionEl = (e.target as HTMLElement | null)?.closest<HTMLElement>('[data-section]');
+      const newId = sectionEl?.dataset.section ?? null;
+      if (newId === activeSectionId) return;
+      activeSectionId = newId;
+      if (sectionEl && newId) {
+        sendHover(sectionEl);
+      } else {
+        sendEnd();
+      }
+    };
 
-    return () => cleanups.forEach((fn) => fn());
+    const onMouseOut = (e: MouseEvent) => {
+      // Only send END when leaving the document entirely (relatedTarget is null or outside)
+      if (!e.relatedTarget || !(e.relatedTarget as Node).isConnected) {
+        activeSectionId = null;
+        sendEnd();
+      }
+    };
+
+    const onClick = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t?.closest('[data-editable-field]')) return;
+      const sectionEl = t?.closest<HTMLElement>('[data-section]');
+      if (!sectionEl) return;
+      window.parent?.postMessage(
+        { type: 'EDITOR_V4_SECTION_CLICK', sectionId: sectionEl.dataset.section ?? '' },
+        window.location.origin,
+      );
+    };
+
+    document.addEventListener('mouseover', onMouseOver);
+    document.addEventListener('mouseout',  onMouseOut);
+    document.addEventListener('click',     onClick, true);
+
+    return () => {
+      document.removeEventListener('mouseover', onMouseOver);
+      document.removeEventListener('mouseout',  onMouseOut);
+      document.removeEventListener('click',     onClick, true);
+    };
   }, [editablePreview]);
 
   // ── Scroll-to-section + highlight (triggered by parent LayersPanel click) ──
