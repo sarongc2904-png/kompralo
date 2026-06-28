@@ -641,18 +641,25 @@ export default async function InvitationDashboard({ params }: Props) {
               <p style={{ margin: '0 auto 1.75rem', color: 'rgba(255,253,249,0.65)', fontSize: '.9375rem', lineHeight: 1.7, maxWidth: '440px' }}>
                 Todo está listo. Controla la entrada de tus invitados y sigue las confirmaciones en tiempo real.
               </p>
-              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '.75rem' }}>
-                <a href={`/cliente/invitaciones/${id}/scan`} className="db-btn" style={{ ...btnGold, padding: '.9rem 2rem', fontSize: '.9375rem', minHeight: '50px', fontWeight: 600 }}>
-                  Preparar entrada
-                </a>
-                {publicUrl && (
-                  <a href={publicUrl} target="_blank" rel="noopener noreferrer" className="db-btn"
-                    style={{ ...btnBase, background: 'transparent', border: '1.5px solid rgba(255,255,255,0.4)', color: '#fff', minHeight: '50px', fontSize: '.9375rem', fontWeight: 500 }}
+              {publicUrl && (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <a
+                    href={publicUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="db-btn"
+                    style={{
+                      background: '#C9A96E', color: '#1a1a1a',
+                      border: 'none', borderRadius: '8px',
+                      padding: '0.75rem 1.5rem', fontWeight: 600,
+                      fontSize: '0.95rem', cursor: 'pointer',
+                      textDecoration: 'none', display: 'inline-block',
+                    }}
                   >
                     Ver invitación
                   </a>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Control de acceso */}
