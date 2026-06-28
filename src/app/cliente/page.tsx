@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import type { Order } from '@/domain/orders';
 import { createServiceRoleSupabaseClient, createServerSupabaseClient } from '@/lib/supabase/server';
-import { MisEventosTour, MisEventosTourNavButton } from './MisEventosTour';
 import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface RsvpStats { total: number; yes: number; no: number; people: number }
@@ -630,7 +629,6 @@ export default async function ClientePage({ searchParams }: Props) {
         zIndex:10,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <MisEventosTourNavButton />
           {isAuthenticated && (
             <SignOutButton style={{ fontSize:'.8125rem', color:T.light, fontWeight:500 }} className="pr2-nav-link">
               Cerrar sesión
@@ -763,7 +761,6 @@ export default async function ClientePage({ searchParams }: Props) {
         )}
       </div>
 
-      <MisEventosTour />
     </main>
   );
 }
