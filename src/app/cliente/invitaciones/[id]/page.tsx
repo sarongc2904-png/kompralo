@@ -12,6 +12,7 @@ import ShareButtons from './ShareButtons';
 import RsvpModeSelector from './RsvpModeSelector';
 import { MiEventoTour } from './MiEventoTour';
 import { CentroControlHelpButton } from './CentroControlHelpButton';
+import { ChecklistCard } from './ChecklistCard';
 
 export const dynamic  = 'force-dynamic';
 export const revalidate = 0;
@@ -630,6 +631,20 @@ export default async function InvitationDashboard({ params }: Props) {
             </span>
           </div>
         </section>
+
+        {/* ── Checklist de inicio ── */}
+        {phase === 'configurando' && (
+          <ChecklistCard
+            slug={inv.slug}
+            publishedAt={inv.published_at}
+            rsvpMode={inv.rsvp_mode}
+            rsvpTotal={stats.total}
+            eventDate={inv.event_date}
+            editUrl={editUrl}
+            publicUrl={publicUrl}
+            planId={inv.plan_id}
+          />
+        )}
 
         {/* ════════════════════════════════════════════════
             ESTADO 5 — DÍA DEL EVENTO
