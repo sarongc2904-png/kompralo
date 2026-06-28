@@ -364,10 +364,9 @@ export default function InvitationRenderer({
         ...(themeV2.cssVariables as React.CSSProperties),
         ...invitationPaperVariables,
         backgroundImage: 'url(https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
+        backgroundSize: '100% auto',
+        backgroundPosition: 'top center',
+        backgroundRepeat: 'repeat-y',
       }}
     >
       {editablePreview && (
