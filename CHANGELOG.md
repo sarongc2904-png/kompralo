@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2026-06-28] — Sesión de trabajo
+
+### Fixes de viewport
+- CinematicIntro: "NUESTRA BODA" y botón ABRIR visibles a zoom 100% con svh units
+- Hero: "ESTAS INVITADO A CELEBRAR" visible, fix de flex-end overflow
+- Tour spotlight: scrollIntoView antes de calcular getBoundingClientRect
+
+### Editor
+- Eliminado editor legacy completamente — solo queda Editor V4
+- Botón "← Editor clásico" removido del navbar del Editor V4
+- Redirect automático de rutas legacy a /edit
+
+### Centro de Control
+- Rediseño visual con monograma, countdown banner y stats
+- Título en Pinyon Script dinámico (lee protagonistas reales)
+- Thumbnail de invitación movido al banner countdown
+- Card redundante "Boda de Arlette & Mayorga" eliminada
+- Modal de ayuda ? con 7 secciones, estilo idéntico al Editor V4
+- Modal responsivo en mobile con tabs horizontales
+- Tour MiEventoTour con hint post-tour apuntando al botón ?
+- Título "Administrador de Invitados" sobre el buscador
+
+### Mis Eventos (/cliente)
+- Botones "Manual" y FAB "Manual de uso" eliminados
+- Tour MisEventosTour creado (disponible para activar después)
+
+### Rediseño estético invitación pública
+- Estilo Cream & Botanical con fondos florales de Supabase
+- Fondo único fondo_1.webp en wrapper raíz (solo ivory-editorial)
+- Fondo condicionado al tema ivory-editorial, no afecta otros temas
+- Countdown: números limpios sin cajas, tipografía serif peso 300
+- Paleta global: crema #fdf6ec, dorado #c9a84c, texto #2c1810
+- Cards semitransparentes con backdrop-filter blur(4px)
+- Opacidad del fondo al 35% para look tenue y elegante
+
+### Performance
+- fondo_1, fondo_2, fondo_3 comprimidos a WebP: 96% más ligeros
+- Preload condicional de fondo_1.webp en server component
+- Fix scroll post-CinematicIntro (overflow cleanup en useEffect)
+- backgroundAttachment fixed → repeat-y para compatibilidad iOS Safari
+
+---
+
 ## [Unreleased]
 
 ### Changed
