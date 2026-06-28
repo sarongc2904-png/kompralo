@@ -453,7 +453,7 @@ function normalizeForHashtag(name: string): string {
 function generateSocial(brideName?: string, groomName?: string): SocialConfig {
   const b = brideName ? normalizeForHashtag(brideName) : '';
   const g = groomName ? normalizeForHashtag(groomName) : '';
-  const hashtag = b && g ? `#${b}Y${g}` : '';
+  const hashtag = b && g ? `${b}y${g}` : '';
   return { hashtag };
 }
 

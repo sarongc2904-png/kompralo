@@ -149,7 +149,7 @@ function buildHashtag(novioName: string, noviaName: string, date: string): strin
   const year = date.slice(0, 4);
   const n1 = noviaName.split(' ')[0].replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ]/g, '');
   const n2 = novioName.split(' ')[0].replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ]/g, '');
-  return `#${capitalize(n1)}Y${capitalize(n2)}${year}`;
+  return `${capitalize(n1)}y${capitalize(n2)}${year}`;
 }
 
 function buildItinerary(input: WizardMinimalInput): ItineraryItem[] {

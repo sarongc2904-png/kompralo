@@ -17,6 +17,12 @@ interface HashtagProps {
 }
 
 
+// Strip a leading '#' so values stored with or without it display the same way.
+function stripHash(tag: string | null | undefined): string {
+  if (!tag) return '';
+  return tag.startsWith('#') ? tag.slice(1) : tag;
+}
+
 // ─── Platform detection ───────────────────────────────────────────────────────
 
 type SocialPlatform = 'instagram' | 'tiktok' | 'facebook' | 'youtube';
@@ -51,7 +57,7 @@ const PLATFORM_META: Record<SocialPlatform, {
     copyLabel: 'Copiar hashtag',
     shareLabel: 'Compartir',
     step02: 'Súbela a Instagram',
-    step03: (s) => `Usa #${s.hashtag || 'nuestrohashtag'}`,
+    step03: (s) => `Usa #${stripHash(s.hashtag) || 'nuestrohashtag'}`,
   },
   tiktok: {
     ringGradient: 'linear-gradient(135deg, #010101 0%, #fe2c55 50%, #25f4ee 100%)',
@@ -59,7 +65,7 @@ const PLATFORM_META: Record<SocialPlatform, {
     copyLabel: 'Copiar hashtag',
     shareLabel: 'Compartir',
     step02: 'Súbela a TikTok',
-    step03: (s) => `Usa #${s.hashtag || 'nuestrohashtag'}`,
+    step03: (s) => `Usa #${stripHash(s.hashtag) || 'nuestrohashtag'}`,
   },
   facebook: {
     ringGradient: 'linear-gradient(135deg, #1877f2, #0d6efd)',
@@ -67,7 +73,7 @@ const PLATFORM_META: Record<SocialPlatform, {
     copyLabel: 'Ver en Facebook',
     shareLabel: 'Me gusta',
     step02: 'Compártela en Facebook',
-    step03: (s) => s.hashtag ? `Etiqueta #${s.hashtag}` : 'Etiqueta nuestra página',
+    step03: (s) => s.hashtag ? `Etiqueta #${stripHash(s.hashtag)}` : 'Etiqueta nuestra página',
   },
   youtube: {
     ringGradient: 'linear-gradient(135deg, #ff0000, #cc0000)',
@@ -75,7 +81,7 @@ const PLATFORM_META: Record<SocialPlatform, {
     copyLabel: 'Ver en YouTube',
     shareLabel: 'Compartir',
     step02: 'Compártelo en YouTube',
-    step03: (s) => s.hashtag ? `Usa #${s.hashtag}` : 'Suscríbete al canal',
+    step03: (s) => s.hashtag ? `Usa #${stripHash(s.hashtag)}` : 'Suscríbete al canal',
   },
 };
 
@@ -146,12 +152,12 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
 
   const comments = [
     { user: 'mama_sofia',   text: '¡El día más esperado! 😭💕' },
-    { user: 'best.friend_',  text: `¡Ya quiero que llegue! ${social.hashtag ? '#' + social.hashtag : ''}` },
+    { user: 'best.friend_',  text: `¡Ya quiero que llegue! ${social.hashtag ? '#' + stripHash(social.hashtag) : ''}` },
   ];
 
   const handleCopy = () => {
     const textToCopy = social.hashtag
-      ? `#${social.hashtag}`
+      ? `#${stripHash(social.hashtag)}`
       : social.facebookUrl || social.youtubeUrl || '';
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopied(true);
@@ -198,7 +204,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
       {/* Header */}
       <SectionHeader
         eyebrow={social.sectionEyebrow ?? 'Comparte el momento'}
-        title={social.hashtag ? `#${social.hashtag}` : '#NuestroHashtag'}
+        title={social.hashtag ? `#${stripHash(social.hashtag)}` : '#NuestroHashtag'}
         theme={theme}
         className="mb-10"
         editablePreview={editablePreview}
@@ -404,7 +410,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
                 {(social.hashtag || editablePreview) && (
                   <p style={{ fontSize: 13, color: 'var(--v2-color-accent, #C8A75D)', marginTop: 3, fontWeight: 600 }}>
                     #<EditableText
-                      value={social.hashtag ?? ''}
+                      value={stripHash(social.hashtag)}
                       fieldPath="social.hashtag"
                       isEditable={editablePreview}
                       placeholder="Hashtag"
