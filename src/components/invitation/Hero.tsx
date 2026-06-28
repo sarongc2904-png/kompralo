@@ -253,9 +253,9 @@ export default function Hero({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'flex-end',
-          paddingBottom: 'clamp(32px, 5vh, 64px)',
-          paddingTop: editablePreview ? '5rem' : '0',
+          justifyContent: 'center',
+          paddingTop: 'clamp(60px, 9svh, 120px)',
+          paddingBottom: 'clamp(20px, 3svh, 50px)',
           willChange: 'transform, opacity',
         }}
       >
