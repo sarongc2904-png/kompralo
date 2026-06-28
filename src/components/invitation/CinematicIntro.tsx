@@ -307,7 +307,7 @@ export default function CinematicIntro({
       */}
       <div
         className="relative min-h-full flex items-start justify-center"
-        style={{ paddingTop: 'max(80px, env(safe-area-inset-top, 0px) + 80px)', paddingBottom: 'clamp(24px, 6vh, 64px)' }}
+        style={{ paddingTop: 'max(140px, env(safe-area-inset-top, 0px) + 140px)', paddingBottom: 'clamp(24px, 6vh, 64px)' }}
       >
 
       {/* Content */}
