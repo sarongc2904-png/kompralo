@@ -9,13 +9,13 @@ interface NavItem {
 }
 
 const NAV: NavItem[] = [
-  { id: 'resumen',      icon: '📊', label: 'Resumen' },
-  { id: 'countdown',   icon: '⏳', label: 'Cuenta regresiva' },
+  { id: 'resumen',         icon: '📊', label: 'Resumen' },
+  { id: 'countdown',      icon: '⏳', label: 'Cuenta regresiva' },
   { id: 'confirmaciones', icon: '👥', label: 'Confirmaciones' },
-  { id: 'confirmados', icon: '✅', label: 'Invitados confirmados' },
-  { id: 'mis-invitados', icon: '❤️', label: 'Mis invitados' },
-  { id: 'pases',       icon: '🎫', label: 'Pases de entrada' },
-  { id: 'compartir',   icon: '📤', label: 'Compartir' },
+  { id: 'confirmados',    icon: '✅', label: 'Invitados confirmados' },
+  { id: 'mis-invitados',  icon: '❤️', label: 'Mis invitados' },
+  { id: 'pases',          icon: '🎫', label: 'Pases de entrada' },
+  { id: 'compartir',      icon: '📤', label: 'Compartir' },
 ];
 
 interface Block { header: string; items: string[] }
@@ -108,6 +108,116 @@ const HELP: Record<string, SectionHelp> = {
   },
 };
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
+const CSS = `
+.cchm-dialog {
+  background: #FAF7F2;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.32);
+}
+.cchm-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+.cchm-nav {
+  width: 152px;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(200,167,93,0.15);
+  overflow-y: auto;
+  background: #F5F0E8;
+}
+.cchm-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-left: 3px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.cchm-nav-btn[data-active="true"] {
+  border-left-color: #C9A96E;
+  background: #FFF8EE;
+}
+.cchm-nav-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: #5C4A3E;
+  line-height: 1.3;
+}
+.cchm-nav-btn[data-active="true"] .cchm-nav-label {
+  font-weight: 600;
+  color: #8B5E00;
+}
+.cchm-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px 24px;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .cchm-dialog {
+    width: 90vw;
+    max-height: 80vh;
+  }
+  .cchm-body {
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .cchm-nav {
+    width: 100%;
+    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    border-right: none;
+    border-bottom: 1px solid rgba(200,167,93,0.15);
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+  }
+  .cchm-nav-btn {
+    display: inline-flex;
+    width: auto;
+    padding: 10px 14px;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+  .cchm-nav-btn[data-active="true"] {
+    border-left-color: transparent;
+    border-bottom-color: #C9A96E;
+  }
+  .cchm-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 14px 18px;
+  }
+  .cchm-step-text {
+    font-size: 12px !important;
+  }
+  .cchm-block-text {
+    font-size: 11.5px !important;
+  }
+}
+`;
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 interface Props { onClose: () => void }
@@ -133,21 +243,13 @@ export function CentroControlHelpModal({ onClose }: Props) {
       }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
+
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Guía del Centro de Control"
-        style={{
-          background: '#FAF7F2',
-          borderRadius: 16,
-          width: '100%',
-          maxWidth: 580,
-          maxHeight: '85vh',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.32)',
-        }}
+        className="cchm-dialog"
       >
         {/* Header */}
         <div style={{
@@ -176,62 +278,34 @@ export function CentroControlHelpModal({ onClose }: Props) {
               background: 'rgba(200,167,93,0.1)',
               color: '#C5A880', fontSize: 18, cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              lineHeight: 1,
+              lineHeight: 1, flexShrink: 0,
             }}
           >
             ×
           </button>
         </div>
 
-        {/* Two-column body */}
-        <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
+        {/* Body: nav + content */}
+        <div className="cchm-body">
 
-          {/* Left nav */}
-          <div style={{
-            width: 152,
-            flexShrink: 0,
-            borderRight: '1px solid rgba(200,167,93,0.15)',
-            overflowY: 'auto',
-            background: '#F5F0E8',
-          }}>
-            {NAV.map((item) => {
-              const isActive = item.id === selected;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setSelected(item.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 7,
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: 'none',
-                    borderLeft: isActive ? '3px solid #C9A96E' : '3px solid transparent',
-                    background: isActive ? '#FFF8EE' : 'transparent',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'background 0.15s',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  <span style={{ fontSize: 13, flexShrink: 0 }}>{item.icon}</span>
-                  <span style={{
-                    fontSize: 12,
-                    fontWeight: isActive ? 600 : 400,
-                    color: isActive ? '#8B5E00' : '#5C4A3E',
-                    lineHeight: 1.3,
-                  }}>
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
+          {/* Nav (desktop: left column | mobile: top tab bar) */}
+          <div className="cchm-nav">
+            {NAV.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSelected(item.id)}
+                className="cchm-nav-btn"
+                data-active={String(item.id === selected)}
+              >
+                <span style={{ fontSize: 13, flexShrink: 0 }}>{item.icon}</span>
+                <span className="cchm-nav-label">{item.label}</span>
+              </button>
+            ))}
           </div>
 
-          {/* Right panel */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 24px', minWidth: 0 }}>
+          {/* Content panel */}
+          <div className="cchm-content">
 
             <p style={{ fontSize: 15, fontWeight: 600, color: '#1A1410', margin: '0 0 16px' }}>
               {help.title}
@@ -253,7 +327,7 @@ export function CentroControlHelpModal({ onClose }: Props) {
                       }}>
                         {i + 1}
                       </div>
-                      <p style={{ fontSize: 13, color: '#5C4A3E', lineHeight: 1.6, flex: 1, margin: 0 }}>
+                      <p className="cchm-step-text" style={{ fontSize: 13, color: '#5C4A3E', lineHeight: 1.6, flex: 1, margin: 0 }}>
                         {step}
                       </p>
                     </div>
@@ -291,7 +365,7 @@ export function CentroControlHelpModal({ onClose }: Props) {
                             }}>
                               {ii + 1}
                             </div>
-                            <p style={{ fontSize: 12.5, color: '#5C4A3E', lineHeight: 1.6, flex: 1, margin: 0 }}>
+                            <p className="cchm-block-text" style={{ fontSize: 12.5, color: '#5C4A3E', lineHeight: 1.6, flex: 1, margin: 0 }}>
                               {item}
                             </p>
                           </div>
