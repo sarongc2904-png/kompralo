@@ -100,6 +100,24 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function parseMonogram(title: string | null): { a: string; b: string } | null {
+  if (!title) return null;
+  const clean = title.replace(/^(boda de |boda |evento )/i, '').trim();
+  const amp = clean.match(/^(.+?)\s*&\s*(.+)$/);
+  if (amp) {
+    const a = amp[1].trim()[0]?.toUpperCase();
+    const b = amp[2].trim()[0]?.toUpperCase();
+    if (a && b) return { a, b };
+  }
+  const yMatch = clean.match(/^(.+?)\s+[yY]\s+(.+)$/);
+  if (yMatch) {
+    const a = yMatch[1].trim()[0]?.toUpperCase();
+    const b = yMatch[2].trim()[0]?.toUpperCase();
+    if (a && b) return { a, b };
+  }
+  return null;
+}
+
 async function getSession(): Promise<{ email: string; userId: string } | null> {
   try {
     const supabase = await createServerSupabaseClient();
@@ -577,6 +595,12 @@ export default async function ClientePage({ searchParams }: Props) {
     redirect(`/cliente/invitaciones/${orders[0].invitationId}`);
   }
 
+  const firstPaidOrder = orders.find(o => o.status === 'paid' && !!o.invitationId);
+  const firstTitle = firstPaidOrder?.invitationId
+    ? (invitationDataMap[firstPaidOrder.invitationId]?.title ?? null)
+    : null;
+  const monogram = parseMonogram(firstTitle);
+
   return (
     <main
       className="client-page"
@@ -587,7 +611,7 @@ export default async function ClientePage({ searchParams }: Props) {
         padding:       '5rem 1.25rem 3rem',
         fontFamily:    'var(--font-inter, system-ui, sans-serif)',
         position:      'relative',
-        overflow:      'hidden'
+        overflowX:     'hidden',
       }}
     >
       <div className="paper-noise" />
@@ -614,27 +638,41 @@ export default async function ClientePage({ searchParams }: Props) {
         </svg>
       </div>
 
-      {/* Monogram A&M in script gold */}
-      <div style={{ position: 'absolute', left: 'clamp(1rem, 5vw, 3rem)', top: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.35rem', zIndex: 12 }}>
-        <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '38px', lineHeight: 1 }}>A&M</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(15deg) translateY(-2px)', opacity: 0.7 }}><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      </div>
-
-      {/* Navigation bar header */}
+      {/* Navigation bar header — monograma dinámico izquierda, cerrar sesión derecha */}
       <nav style={{
-        position:'absolute', top:0, left:0, right:0,
-        display:'flex', alignItems:'center', justifyContent:'flex-end',
-        padding:'.875rem clamp(1.25rem,5vw,3rem)',
-        background:'transparent',
-        zIndex:10,
+        position: 'absolute', top: 0, left: 0, right: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '.875rem clamp(1.25rem,5vw,3rem)',
+        background: 'transparent',
+        zIndex: 10,
+        overflow: 'visible',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {isAuthenticated && (
-            <SignOutButton style={{ fontSize:'.8125rem', color:T.light, fontWeight:500 }} className="pr2-nav-link">
-              Cerrar sesión
-            </SignOutButton>
+        {/* Monograma script — vive en el nav para evitar clipping de overflow:hidden */}
+        <div style={{ overflow: 'visible', userSelect: 'none', pointerEvents: 'none', lineHeight: 1.3 }}>
+          {monogram ? (
+            <>
+              <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '36px', lineHeight: 1.3 }}>
+                {monogram.a}
+              </span>
+              <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '22px', lineHeight: 1.3, margin: '0 2px' }}>
+                {' y '}
+              </span>
+              <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '36px', lineHeight: 1.3 }}>
+                {monogram.b}
+              </span>
+            </>
+          ) : (
+            <span style={{ fontFamily: 'var(--font-pinyon)', color: '#C9A84C', fontSize: '32px', lineHeight: 1.3, opacity: 0.5 }}>
+              ♦
+            </span>
           )}
         </div>
+
+        {isAuthenticated && (
+          <SignOutButton style={{ fontSize: '.8125rem', color: T.light, fontWeight: 500 }} className="pr2-nav-link">
+            Cerrar sesión
+          </SignOutButton>
+        )}
       </nav>
 
       <div className="client-shell" style={{ maxWidth: '640px', margin: '2rem auto 0', position:'relative', zIndex:2 }}>
