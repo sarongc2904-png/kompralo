@@ -13,7 +13,6 @@ interface EditorV4ToolbarProps {
   invitationId: string;
   onRefresh: () => void;
   onHelp: () => void;
-  classicEditorUrl: string;
   isMobile?: boolean;
   saveStatus?: SaveStatus;
   zoom?: number;
@@ -28,7 +27,6 @@ export function EditorV4Toolbar({
   invitationId,
   onRefresh,
   onHelp,
-  classicEditorUrl,
   isMobile = false,
   saveStatus = 'idle',
   zoom = 1,
@@ -162,9 +160,6 @@ export function EditorV4Toolbar({
         <button id="editor-v4-share-btn" type="button" onClick={handleShare} style={{ ...btnBase, background: 'rgba(200,167,93,0.12)', color: '#C5A880' }}>
           Compartir
         </button>
-        <a href={classicEditorUrl} style={{ ...btnBase, background: 'rgba(255,255,255,0.06)', color: '#9B8878' }}>
-          ← Editor clásico
-        </a>
         <button
           id="editor-v4-help-btn"
           type="button"
@@ -205,7 +200,7 @@ export function EditorV4Toolbar({
       background: '#1A1410', flexShrink: 0, zIndex: 50,
     }}>
       {/* Back */}
-      <a href={classicEditorUrl} style={{ ...mBtn, background: 'rgba(255,255,255,0.06)', color: '#9B8878' }}>
+      <a href="/cliente" style={{ ...mBtn, background: 'rgba(255,255,255,0.06)', color: '#9B8878' }}>
         Salir
       </a>
 
