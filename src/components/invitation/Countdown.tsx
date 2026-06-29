@@ -89,12 +89,12 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
         className="flex flex-col items-center"
       >
         {/* Header label */}
-        <p style={{ fontSize: 10, letterSpacing: '4px', color: '#c9a84c', textTransform: 'uppercase', marginBottom: 12 }}>
+        <p style={{ fontSize: 10, letterSpacing: '4px', color: 'var(--v2-color-accent, #c9a84c)', textTransform: 'uppercase', marginBottom: 12 }}>
           {eventPassed ? 'Un Momento Especial' : 'Cuenta Regresiva'}
         </p>
 
         {/* Gold separator line */}
-        <div style={{ width: 40, height: 1, background: '#c9a84c', margin: '0 auto 40px' }} />
+        <div style={{ width: 40, height: 1, background: 'var(--v2-color-accent, #c9a84c)', margin: '0 auto 40px' }} />
 
         {!hasValidDate ? (
           /* ── NO VALID DATE STATE ──────────────────────────────────────── */
@@ -142,7 +142,7 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
                     fontSize: 'clamp(56px, 10vw, 96px)',
                     fontFamily: 'serif',
                     fontWeight: 300,
-                    color: '#2c1810',
+                    color: 'var(--v2-color-text-primary, #2c1810)',
                     lineHeight: 1,
                   }}>
                     {String(u.value).padStart(u.max, '0')}
@@ -150,7 +150,7 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
                   <p style={{
                     fontSize: '10px',
                     letterSpacing: '4px',
-                    color: '#8B6914',
+                    color: 'var(--v2-color-text-muted, #8B6914)',
                     textTransform: 'uppercase',
                     margin: '8px 0 0',
                   }}>
@@ -158,7 +158,7 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
                   </p>
                 </div>
                 {i < units.length - 1 && (
-                  <span style={{ color: '#c9a84c', fontSize: 32, lineHeight: 1, alignSelf: 'flex-start', paddingTop: 12 }}>·</span>
+                  <span style={{ color: 'var(--v2-color-accent, #c9a84c)', fontSize: 32, lineHeight: 1, alignSelf: 'flex-start', paddingTop: 12 }}>·</span>
                 )}
               </React.Fragment>
             ))}
@@ -166,7 +166,7 @@ export default function Countdown({ eventDate, eventTime, theme }: CountdownProp
         )}
 
         {/* Footer ornament */}
-        <div style={{ width: 40, height: 1, background: '#c9a84c', margin: '40px auto 0', opacity: 0.5 }} />
+        <div style={{ width: 40, height: 1, background: 'var(--v2-color-accent, #c9a84c)', margin: '40px auto 0', opacity: 0.5 }} />
       </motion.div>
     </section>
   );

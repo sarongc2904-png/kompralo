@@ -9,8 +9,8 @@ import { motion } from 'framer-motion';
 // Uses --v2 CSS custom properties with warm-ivory fallbacks.
 
 export const CARD_BASE: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.75)',
-  border: '1px solid rgba(201,168,76,0.3)',
+  background: 'var(--v2-glass-bg, rgba(255,255,255,0.75))',
+  border: '1px solid var(--v2-color-border, rgba(201,168,76,0.3))',
   borderRadius: '8px',
   boxShadow: '0 2px 12px rgba(116,84,38,0.08), 0 8px 24px rgba(120,88,40,0.06)',
   backdropFilter: 'blur(4px)',
