@@ -12,9 +12,14 @@
   "theme": {
     "name": "Pastel Rose Editorial",
     "description": "Boda romántica con tonos pastel. Suave, elegante y delicado.",
-    "categorySupport": ["wedding", "baptism", "baby-shower", "birthday"],
+    "categorySupport": [
+      "wedding",
+      "baptism",
+      "baby-shower",
+      "birthday"
+    ],
     "colors": {
-      "pageBackground": "#FFF7F8",
+      "pageBackground": "transparent",
       "surface": "rgba(255,255,255,0.95)",
       "surfaceAlt": "#F5E8EB",
       "surfaceElevated": "#FFFCFD",
@@ -92,19 +97,29 @@
       "gradientTo": "transparent"
     },
     "backgrounds": {
-      "main": "#FFF7F8",
-      "hero": "linear-gradient(180deg, rgba(255,247,248,0.08) 0%, transparent 35%, rgba(255,247,248,0.96) 100%)",
-      "sections": "rgba(183,110,121,0.04)",
-      "storyBook": "#FFF7F8",
+      "main": "transparent",
+      "hero": "transparent",
+      "sections": "transparent",
+      "storyBook": "transparent",
       "gallery": "transparent",
-      "final": "linear-gradient(160deg, #F5E8EB 0%, #FFF7F8 100%)"
+      "final": "transparent"
     },
     "assets": {
       "backgroundLayer1": "/layers/bg_layer1_floral.png",
       "backgroundLayer2": "/layers/bg_layer2_floral.png",
-      "backgroundLayer3": "/layers/bg_layer3_champagne.png"
+      "backgroundLayer3": "/layers/bg_layer3_champagne.png",
+      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_anillos_boda_9x16.webp",
+      "textureSize": "cover",
+      "textureRepeat": "no-repeat",
+      "textureOpacity": 1
     },
-    "dressCodeSwatches": ["#111111", "#1F2A44", "#6B1E2D", "#4F5D4A", "#C9A646"],
+    "dressCodeSwatches": [
+      "#111111",
+      "#1F2A44",
+      "#6B1E2D",
+      "#4F5D4A",
+      "#C9A646"
+    ],
     "cssVariables": {
       "--v2-color-page-bg": "#FFF7F8",
       "--v2-color-surface": "linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,248,250,0.90))",
@@ -137,10 +152,10 @@
       "--v2-divider-color": "rgba(183,110,121,0.40)",
       "--v2-ornament-color": "rgba(183,110,121,0.40)",
       "--v2-section-bg-alt": "rgba(245,232,235,0.45)",
-      "--v2-background-main": "#FFF7F8",
-      "--v2-background-story": "#FFF7F8",
-      "--v2-background-sections": "rgba(183,110,121,0.04)",
-      "--v2-background-final": "linear-gradient(160deg, #F5E8EB 0%, #FFF7F8 100%)",
+      "--v2-background-main": "transparent",
+      "--v2-background-story": "transparent",
+      "--v2-background-sections": "transparent",
+      "--v2-background-final": "transparent",
       "--v2-font-heading": "\"Cormorant Garamond\", \"Georgia\", serif",
       "--v2-font-body": "\"Inter\", system-ui, sans-serif",
       "--v2-bg-layer-1": "/layers/bg_layer1_floral.png",
