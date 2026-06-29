@@ -103,10 +103,13 @@
       "final": "#070606"
     },
     "assets": {
-      "backgroundLayer1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/azul.png",
+      "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": "",
-      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/azul.png"
+      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/azul.png",
+      "textureSize": "cover",
+      "textureRepeat": "no-repeat",
+      "textureOpacity": 1
     },
     "dressCodeSwatches": [
       "#070606",

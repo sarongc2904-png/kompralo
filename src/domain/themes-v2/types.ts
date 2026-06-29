@@ -144,6 +144,9 @@ export interface ThemeAssetsV2 {
   backgroundLayer2: string;
   backgroundLayer3: string;
   texture?: string;
+  textureSize?: string;
+  textureRepeat?: string;
+  textureOpacity?: number;
 }
 
 // ─── Root theme object ───────────────────────────────────────────────────────

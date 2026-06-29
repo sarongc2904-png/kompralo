@@ -373,10 +373,10 @@ export default function InvitationRenderer({
             position: 'fixed',
             inset: 0,
             backgroundImage: `url(${themeV2.assets.texture})`,
-            backgroundSize: '100% auto',
+            backgroundSize: themeV2.assets?.textureSize ?? '100% auto',
             backgroundPosition: 'top center',
-            backgroundRepeat: 'repeat-y',
-            opacity: 0.35,
+            backgroundRepeat: themeV2.assets?.textureRepeat ?? 'repeat-y',
+            opacity: themeV2.assets?.textureOpacity ?? 0.35,
             zIndex: 0,
             pointerEvents: 'none',
           }}
