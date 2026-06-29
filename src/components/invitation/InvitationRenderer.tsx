@@ -364,6 +364,9 @@ export default function InvitationRenderer({
       style={{
         ...(themeV2.cssVariables as React.CSSProperties),
         ...(themeV2.id === 'ivory-editorial' ? invitationPaperVariables : themeVariables),
+        ...(themeV2.assets?.texture && themeV2.assets?.textureStartAfterHero
+          ? { '--kompralo-invitation-paper-bg': `url(${themeV2.assets.texture})` } as React.CSSProperties
+          : {}),
       }}
     >
       {!!themeV2.assets?.texture && !themeV2.assets.textureStartAfterHero && (
