@@ -109,7 +109,7 @@
       "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/azul.png",
       "textureSize": "cover",
       "textureRepeat": "no-repeat",
-      "textureOpacity": 1
+      "textureOpacity": 0.7
     },
     "dressCodeSwatches": [
       "#070606",
