@@ -75,41 +75,9 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
         })}
       </nav>
 
-      {/* Global tools */}
-      <div style={{ padding: '8px 8px 4px', borderTop: '1px solid rgba(200,167,93,0.1)', flexShrink: 0, background: '#1a1208' }}>
-        <p style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.35)', margin: '0 8px 6px' }}>
-          Estilo global
-        </p>
-        <button
-          type="button"
-          onClick={() => onScrollTo?.('colors')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            width: '100%',
-            padding: '7px 16px',
-            background: activeSection === 'colors' ? 'rgba(201,169,110,0.12)' : 'transparent',
-            border: 'none',
-            borderLeft: activeSection === 'colors' ? '3px solid #C9A96E' : '3px solid transparent',
-            cursor: 'pointer',
-            textAlign: 'left',
-          }}
-        >
-          <span style={{ fontSize: 14, width: 20, textAlign: 'center', flexShrink: 0 }}>🎨</span>
-          <span style={{
-            fontSize: 12,
-            color: activeSection === 'colors' ? '#C9A96E' : 'rgba(255,255,255,0.55)',
-            fontWeight: activeSection === 'colors' ? 500 : 400,
-          }}>
-            Color de textos
-          </span>
-        </button>
-      </div>
-
       {/* Footer hint */}
-      <div style={{ padding: '8px 16px 12px', background: '#1a1208' }}>
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, margin: 0 }}>
+      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(200,167,93,0.1)', flexShrink: 0, background: '#1a1208' }}>
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
           Haz clic en una sección para navegar
         </p>
       </div>

@@ -1,1 +1,0 @@
-﻿const fs = require("fs"); const f = "src/app/dashboard/invitations/[id]/edit/actions.ts"; let c = fs.readFileSync(f, "utf8"); c = c.replace("'pastel-sage-editorial', 'pastel-sky-editorial',", "'pastel-sage-editorial', 'pastel-sky-editorial', 'oro-sombra',"); fs.writeFileSync(f, c, "utf8"); console.log("OK");

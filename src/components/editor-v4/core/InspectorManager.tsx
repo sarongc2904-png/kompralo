@@ -21,7 +21,6 @@ const TYPE_LABELS: Record<EditorObjectType, string> = {
   hotels:    'Hospedaje',
   hashtag:   'Hashtag / Social',
   message:   'Mensaje Final',
-  colors:    'Color de textos',
 };
 
 function humanLabel(element: EditorElement): string {

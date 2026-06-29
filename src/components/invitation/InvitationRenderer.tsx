@@ -114,10 +114,8 @@ export default function InvitationRenderer({
   const protagonists = invitation.protagonists;
   const galleryImages = invitation.gallery.images;
 
-  // User-controlled section visibility and global overrides.
-  const featureOverrides = invitation.featureOverrides as { hiddenSections?: string[]; globalTextColor?: string } | undefined;
-  const hiddenSections: string[] = featureOverrides?.hiddenSections ?? [];
-  const globalTextColor: string | undefined = featureOverrides?.globalTextColor;
+  // User-controlled section visibility — overrides plan-level feature flags.
+  const hiddenSections: string[] = (invitation.featureOverrides as { hiddenSections?: string[] } | undefined)?.hiddenSections ?? [];
   const SECTION_FEATURE_MAP: Partial<Record<string, InvitationFeatureKey>> = {
     parents:   'showParents',
     padrinos:  'showPadrinos',
@@ -366,11 +364,6 @@ export default function InvitationRenderer({
       style={{
         ...(themeV2.cssVariables as React.CSSProperties),
         ...(themeV2.id === 'ivory-editorial' ? invitationPaperVariables : themeVariables),
-        ...(globalTextColor ? {
-          '--v2-color-text-primary':   globalTextColor,
-          '--v2-color-text-secondary': globalTextColor,
-          '--v2-color-text-muted':     globalTextColor,
-        } as React.CSSProperties : {}),
       }}
     >
       {!!themeV2.assets?.texture && !themeV2.assets.textureStartAfterHero && (

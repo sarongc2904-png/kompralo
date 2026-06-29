@@ -1487,50 +1487,6 @@ export async function updateSectionVisibility(
 }
 
 // =============================================================================
-// updateGlobalTextColor
-// =============================================================================
-
-const GLOBAL_TEXT_HEX_RE = /^(#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}))?$/;
-
-export async function updateGlobalTextColor(input: {
-  id: string;
-  color: string;
-}): Promise<UpdateInvitationResult> {
-  const { id, color } = input;
-
-  if (!GLOBAL_TEXT_HEX_RE.test(color.trim())) {
-    return { success: false, error: 'Color inválido. Usa formato #RGB o #RRGGBB.' };
-  }
-
-  const inv = await invitationRepository.getById(id);
-  if (!inv) return { success: false, error: 'Invitación no encontrada.' };
-
-  const currentOverrides: FeatureOverrides = (inv.featureOverrides as FeatureOverrides) ?? {};
-  const newOverrides: FeatureOverrides = { ...currentOverrides };
-
-  if (color.trim()) {
-    newOverrides.globalTextColor = color.trim().toUpperCase();
-  } else {
-    delete newOverrides.globalTextColor;
-  }
-
-  try {
-    await invitationRepository.updateFeatureOverrides(id, newOverrides);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('[Editor] updateGlobalTextColor error:', message);
-    return { success: false, error: `Error al guardar color: ${message}` };
-  }
-
-  const slug = inv.slug ?? id;
-  revalidatePath(`/i/${slug}`);
-  revalidatePath(`/preview/${id}`);
-  revalidatePath(`/dashboard/invitations/${id}/edit`);
-
-  return { success: true, message: 'Color de texto actualizado.' };
-}
-
-// =============================================================================
 // updateThemeSelection
 // =============================================================================
 

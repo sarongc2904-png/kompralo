@@ -4,8 +4,7 @@ export type EditorObjectType =
   | 'text' | 'intro' | 'datetime' | 'hero'
   | 'countdown' | 'parents' | 'story' | 'gallery'
   | 'timeline' | 'itinerary' | 'location' | 'dresscode'
-  | 'gifts' | 'padrinos' | 'hotels' | 'hashtag' | 'message'
-  | 'colors';
+  | 'gifts' | 'padrinos' | 'hotels' | 'hashtag' | 'message';
 
 /** Canonical element shape — shared between postMessage events and inspector props */
 export interface EditorElement {
@@ -69,5 +68,4 @@ export interface InvitationSnapshot {
   giftRegistryJson?: string;
   hiddenSections?: string[];
   themeId?: string;
-  globalTextColor?: string;
 }

@@ -353,9 +353,8 @@ export default async function EditInvitationPage({ params, searchParams }: Props
           itineraryJson:    JSON.stringify(invitation.itinerary ?? []),
           timelineJson:     JSON.stringify(invitation.timeline ?? []),
           giftRegistryJson: JSON.stringify(invitation.giftRegistry?.items ?? []),
-          hiddenSections:   (invitation.featureOverrides as { hiddenSections?: string[]; globalTextColor?: string } | undefined)?.hiddenSections ?? [],
+          hiddenSections:   (invitation.featureOverrides as { hiddenSections?: string[] } | undefined)?.hiddenSections ?? [],
           themeId:          invitation.themeId ?? undefined,
-          globalTextColor:  (invitation.featureOverrides as { hiddenSections?: string[]; globalTextColor?: string } | undefined)?.globalTextColor ?? undefined,
         }}
       />
     );
