@@ -557,9 +557,6 @@ function buildLayerContent(
         ),
       };
 
-    case 'modern-pastel':
-      return { layer1: <></>, layer2: <></>, layer3: <></> };
-
     case 'pastel-rose-editorial':
     case 'pastel-sage-editorial':
     case 'pastel-sky-editorial':

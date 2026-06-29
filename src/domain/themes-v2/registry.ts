@@ -5,7 +5,7 @@ import { floralTheme }               from '@/domain/themes-v2/themes/floral';
 import { modernDarkTheme }           from '@/domain/themes-v2/themes/modern-dark';
 import { ivoryEditorialTheme }       from '@/domain/themes-v2/themes/ivory-editorial';
 import { luxuryChampagneTheme }      from '@/domain/themes-v2/themes/luxury-champagne';
-import { modernPastelTheme }         from '@/domain/themes-v2/themes/modern-pastel';
+
 import { gardenRomanceTheme }        from '@/domain/themes-v2/themes/garden-romance';
 import { bohoTerracottaTheme }       from '@/domain/themes-v2/themes/boho-terracotta';
 import { blackTieTheme }             from '@/domain/themes-v2/themes/black-tie';
@@ -24,14 +24,12 @@ const legacyRegistry: Record<ThemeIdV2, InvitationThemeV2> = {
   'modern-dark':           modernDarkTheme,
   'ivory-editorial':       ivoryEditorialTheme,
   'luxury-champagne':      luxuryChampagneTheme,
-  'modern-pastel':         modernPastelTheme,
   'garden-romance':        gardenRomanceTheme,
   'boho-terracotta':       bohoTerracottaTheme,
   'black-tie':             blackTieTheme,
   'pastel-rose-editorial': pastelRoseEditorialTheme,
   'pastel-sage-editorial': pastelSageEditorialTheme,
   'pastel-sky-editorial':  pastelSkyEditorialTheme,
-  'oro-sombra':            pastelSkyEditorialTheme,
 };
 
 export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = FEATURE_FLAGS.templatesAsJson

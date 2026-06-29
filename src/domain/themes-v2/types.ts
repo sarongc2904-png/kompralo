@@ -12,11 +12,9 @@ export type ThemeIdV2 =
   | 'pastel-sage-editorial'
   | 'pastel-sky-editorial'
   | 'luxury-champagne'
-  | 'modern-pastel'
   | 'garden-romance'
   | 'boho-terracotta'
-  | 'black-tie'
-  | 'oro-sombra';
+  | 'black-tie';
 
 // ─── Color palette ───────────────────────────────────────────────────────────
 

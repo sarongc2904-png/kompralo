@@ -117,7 +117,7 @@ export interface GeneratedDefaults {
 const STYLE_THEME: Record<WizardStyle, string> = {
   editorial:       'ivory-editorial',
   romantico:       'pastel-rose-editorial',
-  minimalista:     'modern-pastel',
+  minimalista:     'pastel-sky-editorial',
   floral:          'garden-romance',
   moderno:         'pastel-sky-editorial',
   jardin_secreto: 'ivory-editorial',

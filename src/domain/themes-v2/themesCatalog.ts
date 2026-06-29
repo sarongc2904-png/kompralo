@@ -36,15 +36,6 @@ const legacyCatalog: ThemeCatalogEntry[] = [
     isNewTheme: true,
   },
   {
-    id: 'modern-pastel',
-    label: 'Modern Pastel',
-    description: 'Limpio, minimalista y romántico con colores pastel suaves',
-    category: 'modern',
-    previewColor: '#FAF8F6',
-    accentColor: '#D9A7A7',
-    isNewTheme: true,
-  },
-  {
     id: 'garden-romance',
     label: 'Garden Romance',
     description: 'Floral y natural con verde sage, blush rosado y luz cálida',
@@ -97,16 +88,6 @@ const legacyCatalog: ThemeCatalogEntry[] = [
     category: 'modern',
     previewColor: '#F5FAFF',
     accentColor: '#6F8FBF',
-    isNewTheme: true,
-  },
-  
-  {
-    id: "oro-sombra",
-    label: "Oro Sombra",
-    description: "Lujo oscuro y dramatico: oro envejecido sobre negro para galas de noche",
-    category: "traditional",
-    previewColor: "#070606",
-    accentColor: "#D4AF37",
     isNewTheme: true,
   },
   // Legacy themes (kept for backwards compatibility, not featured in wedding selector)

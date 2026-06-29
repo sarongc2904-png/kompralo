@@ -237,11 +237,11 @@ function test_8_style_map_resolves_all(): void {
 
   // Spot check mappings
   assert(resolveWeddingThemeId('elegante') === 'ivory-editorial', 'elegante → ivory-editorial');
-  assert(resolveWeddingThemeId('minimalista') === 'modern-pastel', 'minimalista → modern-pastel');
+  assert(resolveWeddingThemeId('minimalista') === 'pastel-sky-editorial', 'minimalista → pastel-sky-editorial');
   assert(resolveWeddingThemeId('jardín') === 'garden-romance', 'jardín → garden-romance');
   assert(resolveWeddingThemeId('playa') === 'boho-terracotta', 'playa → boho-terracotta');
   assert(resolveWeddingThemeId('clásico') === 'luxury-champagne', 'clásico → luxury-champagne');
-  assert(resolveWeddingThemeId('moderno') === 'modern-pastel', 'moderno → modern-pastel');
+  assert(resolveWeddingThemeId('moderno') === 'pastel-sky-editorial', 'moderno → pastel-sky-editorial');
 
   // Unknown style falls back
   assert(resolveWeddingThemeId('unknown') === 'ivory-editorial', 'unknown style → ivory-editorial');

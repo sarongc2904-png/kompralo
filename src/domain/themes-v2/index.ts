@@ -41,7 +41,7 @@ export { floralTheme }          from '@/domain/themes-v2/themes/floral';
 export { modernDarkTheme }      from '@/domain/themes-v2/themes/modern-dark';
 export { ivoryEditorialTheme }  from '@/domain/themes-v2/themes/ivory-editorial';
 export { luxuryChampagneTheme } from '@/domain/themes-v2/themes/luxury-champagne';
-export { modernPastelTheme }    from '@/domain/themes-v2/themes/modern-pastel';
+
 export { gardenRomanceTheme }   from '@/domain/themes-v2/themes/garden-romance';
 export { bohoTerracottaTheme }     from '@/domain/themes-v2/themes/boho-terracotta';
 export { blackTieTheme }           from '@/domain/themes-v2/themes/black-tie';

@@ -40,13 +40,6 @@ export const WIZARD_THEME_OPTIONS = [
     accent: '#C9A84C',
     bg: '#FBF8F1',
   },
-  {
-    id: 'modern-pastel' as ThemeIdV2,
-    label: 'Minimalista moderno',
-    desc: 'Limpio y fresco',
-    accent: '#8B9BB4',
-    bg: '#F8F9FC',
-  },
 ] as const;
 
 /**
@@ -70,11 +63,11 @@ export type WeddingStyle = typeof WEDDING_STYLES[number];
  */
 export const WEDDING_STYLE_TO_THEME_MAP = {
   elegante: 'ivory-editorial',
-  minimalista: 'modern-pastel',
+  minimalista: 'pastel-sky-editorial',
   jardín: 'garden-romance',
   playa: 'boho-terracotta',
   clásico: 'luxury-champagne',
-  moderno: 'modern-pastel',
+  moderno: 'pastel-sky-editorial',
 } as const satisfies Record<WeddingStyle, ThemeIdV2>;
 
 /**
