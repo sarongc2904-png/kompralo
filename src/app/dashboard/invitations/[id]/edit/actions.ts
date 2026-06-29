@@ -1502,7 +1502,7 @@ const VALID_THEME_IDS = new Set([
   // V2 Wedding Premium (Phase 1)
   'ivory-editorial', 'luxury-champagne', 'modern-pastel', 'garden-romance', 'boho-terracotta', 'black-tie',
   // V2 Wedding Premium (Phase 2 - Pastel Editorial variants)
-  'pastel-rose-editorial', 'pastel-sage-editorial', 'pastel-sky-editorial',
+  'pastel-rose-editorial', 'pastel-sage-editorial', 'pastel-sky-editorial', 'oro-sombra',
   // V1 legacy — still accepted so existing invitations don't break
   'champagne', 'modern', 'azure',
 ]);
