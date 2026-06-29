@@ -1,7 +1,7 @@
 {
   "id": "oro-sombra",
   "catalog": {
-    "label": "Oro Sombra",
+    "label": "Azul Nocturno",
     "description": "Lujo oscuro y dramático: oro envejecido sobre negro para galas de noche.",
     "previewColor": "#070606",
     "accentColor": "#D4AF37",
@@ -10,7 +10,7 @@
     "featured": true
   },
   "theme": {
-    "name": "Oro Sombra",
+    "name": "Azul Nocturno",
     "description": "Lujo oscuro y dramático: oro envejecido sobre negro para galas de noche.",
     "categorySupport": [
       "wedding",
@@ -103,10 +103,10 @@
       "final": "#070606"
     },
     "assets": {
-      "backgroundLayer1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png",
+      "backgroundLayer1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/azul.png",
       "backgroundLayer2": "",
       "backgroundLayer3": "",
-      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png"
+      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/azul.png"
     },
     "dressCodeSwatches": [
       "#070606",
@@ -148,7 +148,7 @@
       "--v2-background-final": "#070606",
       "--v2-font-heading": "\"Cinzel Decorative\", serif",
       "--v2-font-body": "\"Cormorant Garamond\", \"Georgia\", serif",
-      "--v2-bg-layer-1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png",
+      "--v2-bg-layer-1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/azul.png",
       "--v2-bg-layer-2": "rgba(7,6,6,0.30)",
       "--v2-bg-layer-3": ""
     }
