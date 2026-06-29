@@ -411,13 +411,23 @@ html.lenis, html.lenis body {
   background-attachment: fixed;
 }
 
-/* bodas.jpg — tiles vertically at full width, no parallax (iOS Safari safe) */
-[data-theme-v2="pastel-rose-editorial"] {
+/* bodas.jpg como textura sutil via ::before con opacity controlada */
+[data-theme-v2="pastel-rose-editorial"]::before {
+  content: '';
+  position: fixed;
+  inset: 0;
   background-image: url('https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/bodas.jpg');
   background-size: 100% auto;
   background-repeat: repeat-y;
   background-attachment: scroll;
-  background-position: center top;
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
+[data-theme-v2="pastel-rose-editorial"] {
+  position: relative;
+  z-index: 1;
 }
 
 /* Warmer paper grain for the editorial feel */
