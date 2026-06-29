@@ -31,6 +31,7 @@ const legacyRegistry: Record<ThemeIdV2, InvitationThemeV2> = {
   'pastel-rose-editorial': pastelRoseEditorialTheme,
   'pastel-sage-editorial': pastelSageEditorialTheme,
   'pastel-sky-editorial':  pastelSkyEditorialTheme,
+  'oro-sombra':            pastelSkyEditorialTheme,
 };
 
 export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = FEATURE_FLAGS.templatesAsJson
