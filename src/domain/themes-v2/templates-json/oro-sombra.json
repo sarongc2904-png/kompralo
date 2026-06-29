@@ -18,7 +18,7 @@
     ],
     "colors": {
       "pageBackground": "transparent",
-      "surface": "rgba(10,22,40,0.7)",
+      "surface": "rgba(100,149,237,0.25)",
       "surfaceAlt": "#1E1616",
       "surfaceElevated": "#101010",
       "textPrimary": "#FFFFFF",
@@ -59,7 +59,7 @@
     "effects": {
       "glassBlur": "blur(24px)",
       "glassSaturation": "saturate(85%)",
-      "glassBackground": "rgba(20,16,16,0.90)",
+      "glassBackground": "rgba(100,149,237,0.25)",
       "paperTexture": false,
       "grain": true,
       "particles": false,
@@ -120,7 +120,7 @@
     ],
     "cssVariables": {
       "--v2-color-page-bg": "#070606",
-      "--v2-color-surface": "linear-gradient(152deg, rgba(20,16,16,0.97), rgba(28,22,22,0.93))",
+      "--v2-color-surface": "rgba(100,149,237,0.25)",
       "--v2-color-surface-alt": "#1E1616",
       "--v2-color-surface-elevated": "#101010",
       "--v2-color-text-primary": "#FFFFFF",
@@ -138,7 +138,7 @@
       "--v2-radius-xl": "8px",
       "--v2-shadow-card": "0 16px 48px rgba(0,0,0,0.65), inset 0 1px 0 rgba(212,175,55,0.15)",
       "--v2-shadow-elevated": "0 28px 72px rgba(0,0,0,0.72)",
-      "--v2-glass-bg": "rgba(20,16,16,0.90)",
+      "--v2-glass-bg": "rgba(100,149,237,0.25)",
       "--v2-btn-bg": "#1A3A6B",
       "--v2-btn-text": "#FFFFFF",
       "--v2-btn-border": "1.5px solid rgba(212,175,55,0.65)",
