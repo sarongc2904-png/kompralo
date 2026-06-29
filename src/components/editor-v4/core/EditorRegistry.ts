@@ -17,6 +17,7 @@ import { PadrinosInspector }  from '../objects/padrinos/PadrinosInspector';
 import { HotelsInspector }    from '../objects/hotels/HotelsInspector';
 import { HashtagInspector }   from '../objects/hashtag/HashtagInspector';
 import { MessageInspector }   from '../objects/message/MessageInspector';
+import { ColorsInspector }    from '../objects/colors/ColorsInspector';
 
 /**
  * Static map from elementType → Inspector component.
@@ -42,6 +43,7 @@ const REGISTRY: Record<EditorObjectType, React.ComponentType<InspectorProps>> = 
   hotels:    HotelsInspector,
   hashtag:   HashtagInspector,
   message:   MessageInspector,
+  colors:    ColorsInspector,
 };
 
 export function resolveInspector(
@@ -55,6 +57,7 @@ export function resolveInspector(
  * The shell merges snapshot data (meta) for hero; future inspectors can use meta too.
  */
 export const SECTION_AUTO_ELEMENT_TYPE: Partial<Record<string, EditorObjectType>> = {
+  colors:    'colors',
   intro:     'intro',
   hero:      'hero',
   countdown: 'countdown',

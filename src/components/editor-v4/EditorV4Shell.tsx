@@ -213,6 +213,12 @@ export function EditorV4Shell({
         };
       }
 
+      if (sectionId === 'colors' && invitationSnapshot) {
+        meta = {
+          globalTextColor: invitationSnapshot.globalTextColor ?? '',
+        };
+      }
+
       const section = INVITATION_SECTIONS.find((s) => s.id === sectionId);
       setSelectedElement({
         type: EDITOR_V4_ELEMENT_SELECTED,
@@ -222,8 +228,8 @@ export function EditorV4Shell({
         ...(meta ? { meta } : {}),
       });
 
-      // Scroll canvas to section regardless of whether it has an inspector
-      canvasRef.current?.scrollToSection(sectionId);
+      // Virtual sections (e.g. 'colors') have no canvas counterpart — skip scroll.
+      if (sectionId !== 'colors') canvasRef.current?.scrollToSection(sectionId);
       if (isMobile) setMobileSheetOpen(true);
     } else {
       if (canvasMode !== 'normal') setCanvasMode('normal');

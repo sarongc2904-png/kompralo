@@ -1,0 +1,1 @@
+﻿const fs = require("fs"); const f = "src/domain/themes-v2/templates-json/oro-sombra.json"; let c = fs.readFileSync(f, "utf8"); c = c.replace(/"label": "Oro Sombra"/g, "\"label\": \"Azul Nocturno\""); c = c.replace(/"name": "Oro Sombra"/g, "\"name\": \"Azul Nocturno\""); fs.writeFileSync(f, c, "utf8"); console.log("OK");

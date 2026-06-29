@@ -1,0 +1,1 @@
+﻿const fs = require("fs"); const f = "src/domain/themes-v2/templates-json/oro-sombra.json"; let c = fs.readFileSync(f, "utf8"); c = c.replace("\"backgroundLayer1\": \"\"", "\"backgroundLayer1\": \"https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png\""); fs.writeFileSync(f, c, "utf8"); console.log("OK");

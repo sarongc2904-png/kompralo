@@ -1,0 +1,1 @@
+﻿const fs = require("fs"); const f = "src/domain/themes-v2/templates-json/oro-sombra.json"; let c = fs.readFileSync(f, "utf8"); c = c.replace(/#B9A58C/g, "#C8C8C8"); c = c.replace(/#7A6E5A/g, "#A0A0A0"); fs.writeFileSync(f, c, "utf8"); console.log("OK");
