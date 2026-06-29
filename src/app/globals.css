@@ -411,11 +411,11 @@ html.lenis, html.lenis body {
   background-attachment: fixed;
 }
 
-/* bodas.jpg — continuous full-bleed photo, no parallax (iOS Safari safe) */
+/* bodas.jpg — tiles vertically at full width, no parallax (iOS Safari safe) */
 [data-theme-v2="pastel-rose-editorial"] {
   background-image: url('https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/bodas.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-repeat: repeat-y;
   background-attachment: scroll;
   background-position: center top;
 }
