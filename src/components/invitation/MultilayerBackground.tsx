@@ -670,8 +670,8 @@ export default function MultilayerBackground({ theme, children }: MultilayerBack
             backgroundImage: (themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial')
               ? 'none'
               : 'var(--kompralo-invitation-paper-bg)',
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100% auto',
+            backgroundRepeat: 'repeat-y',
             backgroundPosition: 'center top',
           }}
         />
