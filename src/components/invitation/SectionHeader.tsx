@@ -32,7 +32,7 @@ export default function SectionHeader({
       {showEyebrow && (
         <p
           className={`uppercase mb-4 ${theme.bodyFont}`}
-          style={{ fontSize: 10, letterSpacing: '4px', color: '#c9a84c' }}
+          style={{ fontSize: 10, letterSpacing: '4px', color: 'var(--v2-color-accent, #c9a84c)' }}
         >
           {canEditEyebrow ? (
             <EditableText
@@ -52,7 +52,7 @@ export default function SectionHeader({
           fontFamily: 'var(--v2-font-heading, serif)',
           fontSize: 'clamp(28px, 5vw, 42px)',
           fontWeight: 400,
-          color: '#2c1810',
+          color: 'var(--v2-color-text-primary, #2c1810)',
         }}
       >
         {canEditTitle ? (
@@ -76,7 +76,7 @@ export default function SectionHeader({
       )}
 
       {/* Gold separator */}
-      <div style={{ width: 40, height: 1, background: '#c9a84c', margin: '8px auto 0' }} />
+      <div style={{ width: 40, height: 1, background: 'var(--v2-color-accent, #c9a84c)', margin: '8px auto 0' }} />
     </div>
   );
 }
