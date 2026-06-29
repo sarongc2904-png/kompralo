@@ -95,12 +95,12 @@
       "gradientTo": "rgba(212,175,55,0.0)"
     },
     "backgrounds": {
-      "main": "#070606",
-      "hero": "#070606",
-      "sections": "#070606",
-      "storyBook": "#070606",
-      "gallery": "#070606",
-      "final": "#070606"
+      "main": "transparent",
+      "hero": "transparent",
+      "sections": "transparent",
+      "storyBook": "transparent",
+      "gallery": "transparent",
+      "final": "transparent"
     },
     "assets": {
       "backgroundLayer1": "",
@@ -139,11 +139,11 @@
       "--v2-shadow-card": "0 16px 48px rgba(0,0,0,0.65), inset 0 1px 0 rgba(212,175,55,0.15)",
       "--v2-shadow-elevated": "0 28px 72px rgba(0,0,0,0.72)",
       "--v2-glass-bg": "rgba(20,16,16,0.90)",
-      "--v2-btn-bg": "rgba(212,175,55,0.10)",
-      "--v2-btn-text": "#D4AF37",
+      "--v2-btn-bg": "#1A3A6B",
+      "--v2-btn-text": "#FFFFFF",
       "--v2-btn-border": "1.5px solid rgba(212,175,55,0.65)",
-      "--v2-btn-hover-bg": "rgba(212,175,55,0.20)",
-      "--v2-btn-hover-text": "#F3E6D0",
+      "--v2-btn-hover-bg": "#2A4A8B",
+      "--v2-btn-hover-text": "#FFFFFF",
       "--v2-divider-color": "rgba(212,175,55,0.48)",
       "--v2-background-main": "transparent",
       "--v2-background-story": "transparent",
