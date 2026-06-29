@@ -149,7 +149,7 @@
       "--v2-font-heading": "\"Cinzel Decorative\", serif",
       "--v2-font-body": "\"Cormorant Garamond\", \"Georgia\", serif",
       "--v2-bg-layer-1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png",
-      "--v2-bg-layer-2": "",
+      "--v2-bg-layer-2": "rgba(7,6,6,0.30)",
       "--v2-bg-layer-3": ""
     }
   }
