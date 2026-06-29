@@ -108,7 +108,8 @@
       "backgroundLayer1": "/layers/bg_layer1_floral.png",
       "backgroundLayer2": "/layers/bg_layer2_floral.png",
       "backgroundLayer3": "/layers/bg_layer3_champagne.png",
-      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/bodas.jpg"
+      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/bodas.jpg",
+      "textureStartAfterHero": true
     },
     "dressCodeSwatches": [
       "#111111",

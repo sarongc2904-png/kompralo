@@ -147,6 +147,7 @@ export interface ThemeAssetsV2 {
   textureSize?: string;
   textureRepeat?: string;
   textureOpacity?: number;
+  textureStartAfterHero?: boolean;
 }
 
 // ─── Root theme object ───────────────────────────────────────────────────────

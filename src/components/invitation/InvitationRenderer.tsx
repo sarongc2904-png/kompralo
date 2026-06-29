@@ -366,7 +366,7 @@ export default function InvitationRenderer({
         ...(themeV2.id === 'ivory-editorial' ? invitationPaperVariables : themeVariables),
       }}
     >
-      {!!themeV2.assets?.texture && (
+      {!!themeV2.assets?.texture && !themeV2.assets.textureStartAfterHero && (
         <div
           aria-hidden="true"
           style={{

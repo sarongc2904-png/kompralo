@@ -636,6 +636,23 @@ export default function MultilayerBackground({ theme, children }: MultilayerBack
   return (
     <div className="relative isolate overflow-hidden">
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
+      {/* Texture post-hero — only when theme requests it (not rendered in InvitationRenderer) */}
+      {!!themeV2.assets?.texture && themeV2.assets.textureStartAfterHero && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${themeV2.assets.texture})`,
+            backgroundSize: themeV2.assets.textureSize ?? '100% auto',
+            backgroundPosition: 'top center',
+            backgroundRepeat: themeV2.assets.textureRepeat ?? 'repeat-y',
+            opacity: themeV2.assets.textureOpacity ?? 0.35,
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
       {/* 0. Section-scoped Ambient Glow Background */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
         {/* Base gradient — transparent for ivory-editorial (fondo único on root wrapper) */}
