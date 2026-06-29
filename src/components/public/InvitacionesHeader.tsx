@@ -31,7 +31,7 @@ export function InvitacionesHeader() {
           {/* Desktop navigation */}
           <div className="cro-nav-links">
             <Link href="#como-funciona" className="cro-nav-link" data-event="click-header-como-funciona">Cómo funciona</Link>
-            <Link href="/sofia-y-alejandro" className="cro-nav-link" data-event="click-header-demo">Demo real</Link>
+            <Link href="/i/nuestrabodaarletteymayorga" className="cro-nav-link" data-event="click-header-demo">Demo real</Link>
             <Link href="#planes" className="cro-nav-link" data-cta="nav-planes" data-event="click-header-planes">Ver planes</Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
               <Link href="/dashboard" className="cro-nav-link" style={{ color: T.ink }} data-event="click-header-acceso-cliente">Acceso cliente</Link>
@@ -54,7 +54,7 @@ export function InvitacionesHeader() {
       {mobileMenuOpen && (
         <div className="cro-mobile-menu">
           <Link href="#como-funciona" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-como-funciona">Cómo funciona</Link>
-          <Link href="/sofia-y-alejandro" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-demo">Demo real</Link>
+          <Link href="/i/nuestrabodaarletteymayorga" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-demo">Demo real</Link>
           <Link href="#planes" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-planes">Ver planes</Link>
           <div style={{ borderTop: `1px solid ${T.border}`, marginTop: '1rem', paddingTop: '1rem' }}>
             <Link href="/dashboard" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-acceso-cliente">

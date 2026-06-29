@@ -124,7 +124,7 @@ export default function Hero3D() {
                 Crear mi invitación
               </Link>
               <Link 
-                href="/sofia-y-alejandro" 
+                href="/i/nuestrabodaarletteymayorga" 
                 target="_blank" 
                 className="cro-btn cro-btn-outline" 
                 style={{ background: 'rgba(255,255,255,0.02)' }} 
