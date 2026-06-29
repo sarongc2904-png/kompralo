@@ -99,6 +99,15 @@ const legacyCatalog: ThemeCatalogEntry[] = [
     accentColor: '#6F8FBF',
     isNewTheme: true,
   },
+  {
+    id: 'oro-sombra',
+    label: 'Oro Sombra',
+    description: 'Lujo oscuro y dramático: oro envejecido sobre negro para galas de noche',
+    category: 'traditional',
+    previewColor: '#070606',
+    accentColor: '#D4AF37',
+    isNewTheme: true,
+  },
   // Legacy themes (kept for backwards compatibility, not featured in wedding selector)
   {
     id: 'editorial',

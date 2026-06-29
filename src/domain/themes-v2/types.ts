@@ -15,7 +15,8 @@ export type ThemeIdV2 =
   | 'modern-pastel'
   | 'garden-romance'
   | 'boho-terracotta'
-  | 'black-tie';
+  | 'black-tie'
+  | 'oro-sombra';
 
 // ─── Color palette ───────────────────────────────────────────────────────────
 
