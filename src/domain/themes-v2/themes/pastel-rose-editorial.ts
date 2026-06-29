@@ -106,6 +106,11 @@ export const pastelRoseEditorialTheme: InvitationThemeV2 = {
     backgroundLayer1: '/layers/bg_layer1_floral.png',
     backgroundLayer2: '/layers/bg_layer2_floral.png',
     backgroundLayer3: '/layers/bg_layer3_champagne.png',
+    texture: 'https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/bodas.jpg',
+    textureSize: 'cover',
+    textureRepeat: 'no-repeat',
+    textureOpacity: 1,
+    textureStartAfterHero: true,
   },
 
   dressCodeSwatches: ['#111111', '#1F2A44', '#6B1E2D', '#4F5D4A', '#C9A646'],
