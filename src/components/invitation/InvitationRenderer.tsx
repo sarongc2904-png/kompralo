@@ -585,6 +585,8 @@ export default function InvitationRenderer({
             imageUrl={galleryImages[1] || galleryImages[0]}
             theme={effectiveTheme}
             editablePreview={editablePreview}
+            brideName={storyBrideName}
+            groomName={storyGroomName}
           />
         </S>
       </FeatureGate>

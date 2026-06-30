@@ -44,7 +44,7 @@ export function buildDefaultInvitationContent(): Omit<
     parents: fixture.parents,
     padrinos: fixture.padrinos,
     hotels: fixture.hotels,
-    social: fixture.social,
+    social: { ...fixture.social, hashtag: '', instagramHandle: undefined, tiktokHandle: undefined },
 
     rsvpWhatsAppNumber: fixture.rsvpWhatsAppNumber,
     rsvpMode: 'open',
@@ -80,7 +80,7 @@ export function buildDefaultInvitationContentForSupabase(invitationId: string) {
     parents: fixture.parents,
     padrinos: fixture.padrinos,
     hotels: fixture.hotels,
-    social: fixture.social,
+    social: { ...fixture.social, hashtag: '', instagramHandle: undefined, tiktokHandle: undefined },
     rsvp_whatsapp_number: fixture.rsvpWhatsAppNumber,
     updated_at: now,
   };

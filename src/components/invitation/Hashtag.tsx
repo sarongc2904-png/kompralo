@@ -14,6 +14,22 @@ interface HashtagProps {
   imageUrl?: string;
   theme: Theme;
   editablePreview?: boolean;
+  brideName?: string;
+  groomName?: string;
+}
+
+// Hashtag that was baked into the demo fixture — treat as "not set" for real invitations.
+const FIXTURE_HASHTAG = 'SofíaYAlejandro';
+
+function deriveEffectiveHashtag(social: SocialConfig, brideName?: string, groomName?: string): string {
+  const stored = stripHash(social.hashtag);
+  if (stored && stored !== FIXTURE_HASHTAG) return stored;
+  const n1 = (brideName ?? '').replace(/\s+/g, '');
+  const n2 = (groomName ?? '').replace(/\s+/g, '');
+  if (n1 && n2) return `${n1}Y${n2}`;
+  if (n1) return n1;
+  if (n2) return n2;
+  return '';
 }
 
 
@@ -130,9 +146,16 @@ function HeartBurst({ show }: { show: boolean }) {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function Hashtag({ social, imageUrl, theme, editablePreview = false }: HashtagProps) {
+export default function Hashtag({ social, imageUrl, theme, editablePreview = false, brideName, groomName }: HashtagProps) {
+  const effectiveHashtag = deriveEffectiveHashtag(social, brideName, groomName);
+  // Build a social object with the resolved hashtag so PLATFORM_META helpers
+  // and handleCopy use the real value without touching their signatures.
+  const socialDisplay: SocialConfig = effectiveHashtag !== stripHash(social.hashtag)
+    ? { ...social, hashtag: effectiveHashtag }
+    : social;
+
   const hasSocialContent =
-    social.hashtag ||
+    effectiveHashtag ||
     social.instagramHandle ||
     social.tiktokHandle ||
     social.facebookUrl ||
@@ -152,12 +175,12 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
 
   const comments = [
     { user: 'mama_sofia',   text: '¡El día más esperado! 😭💕' },
-    { user: 'best.friend_',  text: `¡Ya quiero que llegue! ${social.hashtag ? '#' + stripHash(social.hashtag) : ''}` },
+    { user: 'best.friend_',  text: `¡Ya quiero que llegue! ${effectiveHashtag ? '#' + effectiveHashtag : ''}` },
   ];
 
   const handleCopy = () => {
-    const textToCopy = social.hashtag
-      ? `#${stripHash(social.hashtag)}`
+    const textToCopy = effectiveHashtag
+      ? `#${effectiveHashtag}`
       : social.facebookUrl || social.youtubeUrl || '';
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopied(true);
@@ -204,7 +227,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
       {/* Header */}
       <SectionHeader
         eyebrow={social.sectionEyebrow ?? 'Comparte el momento'}
-        title={social.hashtag ? `#${stripHash(social.hashtag)}` : '#NuestroHashtag'}
+        title={effectiveHashtag ? `#${effectiveHashtag}` : '#NuestroHashtag'}
         theme={theme}
         className="mb-10"
         editablePreview={editablePreview}
@@ -407,10 +430,10 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
                     isEditable={editablePreview}
                   />
                 </p>
-                {(social.hashtag || editablePreview) && (
+                {(effectiveHashtag || editablePreview) && (
                   <p style={{ fontSize: 13, color: 'var(--v2-color-accent, #C8A75D)', marginTop: 3, fontWeight: 600 }}>
                     #<EditableText
-                      value={stripHash(social.hashtag)}
+                      value={stripHash(social.hashtag) || effectiveHashtag}
                       fieldPath="social.hashtag"
                       isEditable={editablePreview}
                       placeholder="Hashtag"
@@ -520,7 +543,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
         {[
           { step: '01', text: 'Toma tu foto favorita del día' },
           { step: '02', text: meta.step02 },
-          { step: '03', text: meta.step03(social) },
+          { step: '03', text: meta.step03(socialDisplay) },
         ].map((item) => (
           <div key={item.step} className="flex flex-col items-center gap-2 text-center max-w-[100px]">
             <span className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: `var(--v2-color-accent, #C8A75D)` }}>
