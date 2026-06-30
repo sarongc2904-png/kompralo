@@ -18,12 +18,11 @@ import {
   Hash,
   Sparkles,
 } from 'lucide-react';
-import { CheckoutButton } from '@/components/checkout/CheckoutButton';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
 import Hero3D from '@/components/public/Hero3D';
 import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
 import { availableProducts } from '@/domain/products';
-import type { Product } from '@/domain/products';
+import { PlanSelector } from '@/components/plans/PlanSelector';
 
 export const metadata: Metadata = {
   title: 'Invitaciones Digitales de Boda Premium | Kompralo',
@@ -117,20 +116,6 @@ function LandingStyles() {
       .cro-gallery-content h3 { margin: 0; font-size: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: ${T.ink}; }
       .cro-gallery-content p { margin: 0.5rem 0 0; color: ${T.cyan}; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
 
-      .cro-editions-wrapper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; align-items: stretch; }
-      .cro-edition { padding: 4rem 3rem; display: flex; flex-direction: column; position: relative; overflow: hidden; height: 100%; }
-      .cro-edition::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%); pointer-events: none; }
-      .cro-edition-pro { border-color: rgba(197, 168, 128, 0.5) !important; box-shadow: 0 10px 40px rgba(197, 168, 128, 0.1) !important; }
-      .cro-edition-pro::after { background: linear-gradient(135deg, rgba(197, 168, 128, 0.08) 0%, transparent 100%); }
-      .cro-edition-badge { position: absolute; top: 0; right: 2rem; background: ${T.cyan}; color: ${T.black}; padding: 0.5rem 1rem; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
-      .cro-edition h3 { margin: 0; font-size: 2rem; font-weight: 300; letter-spacing: -0.02em; color: ${T.ink}; }
-      .cro-edition-pro h3 { font-weight: 700; color: ${T.cyan}; }
-      .cro-edition-desc { margin: 1rem 0 2rem; color: ${T.muted}; font-size: 0.95rem; line-height: 1.6; min-height: 70px; }
-      .cro-edition-price { font-size: 4rem; font-weight: 800; line-height: 1; letter-spacing: -0.04em; margin-bottom: 2.5rem; display: flex; flex-direction: column; color: ${T.ink}; }
-      .cro-edition-price small { font-size: 0.8rem; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: ${T.muted}; margin-top: 0.75rem; }
-      .cro-edition-features { list-style: none; padding: 0; margin: 0 0 3rem; flex-grow: 1; display: flex; flex-direction: column; gap: 0.85rem; }
-      .cro-edition-features li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem; color: ${T.silver}; line-height: 1.4; }
-      .cro-edition span.inline-flex { width: 100%; display: flex; }
       .cro-checkout { width: 100%; min-height: 60px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.4s; border-radius: 4px; border: 1px solid ${T.border}; }
       .cro-checkout-std { background: transparent; border: 1px solid ${T.border}; color: ${T.ink}; }
       .cro-checkout-std:hover { background: ${T.ink}; color: ${T.black}; border-color: ${T.ink}; }
@@ -222,8 +207,7 @@ function LandingStyles() {
       @media (max-width: 1024px) {
         .cro-block-split { grid-template-columns: 1fr; min-height: auto; }
         .cro-block-media { height: 50vh; }
-        .cro-editions-wrapper { grid-template-columns: 1fr; max-width: 500px; margin-inline: auto; }
-        .cro-events-gallery { grid-template-columns: repeat(2, 1fr); }
+.cro-events-gallery { grid-template-columns: repeat(2, 1fr); }
         .cro-problem-grid { grid-template-columns: 1fr; max-width: 600px; margin-inline: auto; }
         .cro-compare-grid { grid-template-columns: 1fr; max-width: 600px; margin-inline: auto; }
         .cro-compare-col-bad { border-right: 0; border-bottom: 1px solid ${T.border}; }
@@ -643,92 +627,10 @@ function GuaranteeSection() {
 
 // ─── Editions (Pricing) ───────────────────────────────────────────────────────
 
-const PLAN_NAMES: Record<string, string> = {
-  basic:   'Plan Basic / Esencial',
-  premium: 'Plan Premium / Control Total',
-  deluxe:  'Plan Deluxe / Experiencia Deluxe',
-};
-
-const PLAN_DESCS: Record<string, string> = {
-  basic:   'Para parejas que quieren una invitación bonita y funcional.',
-  premium: 'Para parejas que quieren confirmaciones, experiencia completa y mejor organización.',
-  deluxe:  'Para parejas que quieren una invitación más completa, emocional y premium.',
-};
-
-function formatPrice(product: Product) {
-  const amount = product.price / 100;
-  return '$' + amount.toLocaleString('es-MX', { maximumFractionDigits: 0 });
-}
-
 function Editions() {
   return (
     <section id="planes" className="cro-section" style={{ background: T.black }}>
-      <div className="cro-shell">
-        <Reveal style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto' }}>
-          <p className="cro-eyebrow">Oferta especial</p>
-          <h2 className="cro-title-xl">Invitación Digital Premium para Boda</h2>
-          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
-            Una experiencia digital personalizada para compartir su historia, ubicación, itinerario, confirmación de asistencia y todos los detalles importantes de su boda.
-          </p>
-        </Reveal>
-
-        <div className="cro-editions-wrapper" style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}>
-          <Reveal style={{ width: '100%', maxWidth: '450px' }}>
-            <div className="cro-glass cro-edition cro-edition-pro w-full">
-              <span className="cro-edition-badge">Más popular</span>
-              <h3>Invitación Premium</h3>
-              <p className="cro-edition-desc">
-                Todos los módulos y secciones incluidos para una experiencia de boda insuperable.
-              </p>
-
-              <div className="cro-edition-price">
-                $899
-                <small>MXN · pago único</small>
-              </div>
-
-              <ul className="cro-edition-features">
-                {[
-                  'Diseño personalizado',
-                  'Cuenta regresiva',
-                  'Galería de fotos',
-                  'Ubicación con mapa',
-                  'Confirmación de asistencia',
-                  'Itinerario del evento',
-                  'Código de vestimenta',
-                  'Mesa de regalos',
-                  'Música opcional',
-                  'Link listo para compartir por WhatsApp'
-                ].map(f => (
-                  <li key={f}><Check size={16} color={T.cyan} /> {f}</li>
-                ))}
-              </ul>
-
-              <div className="mt-auto flex flex-col gap-2">
-                <a
-                  href="https://wa.me/521234567890?text=Hola!%20Me%20interesa%20la%20Invitaci%C3%B3n%20Digital%20Premium%20para%20Boda"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cro-checkout cro-checkout-pro text-center flex items-center justify-center font-bold tracking-wider"
-                  style={{ textDecoration: 'none' }}
-                >
-                  Solicitar mi invitación por WhatsApp
-                </a>
-                <span className="text-[11px] text-[#A8A29E] text-center mt-1.5 tracking-wider uppercase font-semibold">
-                  Pago único · Sin mensualidades
-                </span>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-
-        <Reveal delay={0.3}>
-          <div className="cro-reassurance">
-            <p style={{ margin: 0, color: T.muted, fontSize: '0.875rem', letterSpacing: '0.05em' }}>
-              Pago único, sin sorpresas · Edita cuántas veces quieras antes de tu evento · Sin instalar apps · Sin contratos
-            </p>
-          </div>
-        </Reveal>
-      </div>
+      <PlanSelector products={availableProducts} featuredId="premium" />
     </section>
   );
 }
