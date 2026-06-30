@@ -4,8 +4,66 @@ import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Play, Check } from 'lucide-react';
+import { Play, Check, Sparkles, Heart, Flower } from 'lucide-react';
 import { Reveal } from './Motion';
+
+interface ParticleProps {
+  src: string;
+  top: string;
+  left: string;
+  width: number;
+  height: number;
+  factorX: number;
+  factorY: number;
+  opacity: number;
+  blur: string;
+  smoothX: any;
+  smoothY: any;
+}
+
+function ParallaxParticle({ src, top, left, width, height, factorX, factorY, opacity, blur, smoothX, smoothY }: ParticleProps) {
+  const x = useTransform(smoothX, [0, 1], [-factorX, factorX]);
+  const y = useTransform(smoothY, [0, 1], [-factorY, factorY]);
+
+  return (
+    <motion.div
+      style={{
+        position: 'absolute',
+        top,
+        left,
+        x,
+        y,
+        opacity,
+        filter: `blur(${blur})`,
+        pointerEvents: 'none',
+        zIndex: 5,
+        mixBlendMode: 'screen',
+        width,
+        height,
+      }}
+    >
+      <Image src={src} alt="Parallax Particle" width={width} height={height} style={{ objectFit: 'contain' }} />
+    </motion.div>
+  );
+}
+
+const PARTICLES = [
+  // Rose Petals (pink)
+  { id: 1, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '15%', left: '8%', width: 70, height: 70, factorX: 45, factorY: 35, opacity: 0.6, blur: '0px' },
+  { id: 2, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '75%', left: '15%', width: 90, height: 90, factorX: 30, factorY: -45, opacity: 0.5, blur: '2px' },
+  { id: 3, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '48%', left: '90%', width: 60, height: 60, factorX: -35, factorY: 25, opacity: 0.6, blur: '0.5px' },
+
+  // Eucalyptus Leaves (green)
+  { id: 4, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '10%', left: '42%', width: 80, height: 80, factorX: -25, factorY: -35, opacity: 0.4, blur: '1.5px' },
+  { id: 5, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '80%', left: '48%', width: 90, height: 90, factorX: 50, factorY: 40, opacity: 0.5, blur: '1px' },
+  { id: 6, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '35%', left: '78%', width: 70, height: 70, factorX: -40, factorY: -30, opacity: 0.45, blur: '3px' },
+
+  // Golden Sparkles (shimmering lights)
+  { id: 7, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '25%', left: '22%', width: 50, height: 50, factorX: 60, factorY: 50, opacity: 0.7, blur: '0.5px' },
+  { id: 8, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '60%', left: '5%', width: 40, height: 40, factorX: -20, factorY: 30, opacity: 0.8, blur: '0px' },
+  { id: 9, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '70%', left: '85%', width: 55, height: 55, factorX: 30, factorY: -30, opacity: 0.7, blur: '1px' },
+  { id: 10, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '5%', left: '88%', width: 45, height: 45, factorX: -45, factorY: 45, opacity: 0.6, blur: '2px' },
+];
 
 export default function Hero3D() {
   const [isMounted, setIsMounted] = useState(false);
@@ -26,6 +84,10 @@ export default function Hero3D() {
   // Parallax offsets for background
   const bgX = useTransform(smoothX, [0, 1], ['-1%', '1%']);
   const bgY = useTransform(smoothY, [0, 1], ['-1%', '1%']);
+
+  // Parallax offsets for the phone mockup
+  const phoneX = useTransform(smoothX, [0, 1], [-20, 20]);
+  const phoneY = useTransform(smoothY, [0, 1], [-20, 20]);
 
   useEffect(() => {
     const mountTimer = window.setTimeout(() => setIsMounted(true), 0);
@@ -85,6 +147,24 @@ export default function Hero3D() {
         />
         <div className="cro-hero-overlay" style={{ background: 'radial-gradient(circle at center, rgba(0,0,0,0.1) 0%, #0C0A09 100%)' }}></div>
       </motion.div>
+
+      {/* 3D Parallax Floating Particles (Estilo Gboo.es) */}
+      {isMounted && PARTICLES.map((p) => (
+        <ParallaxParticle
+          key={p.id}
+          src={p.src}
+          top={p.top}
+          left={p.left}
+          width={p.width}
+          height={p.height}
+          factorX={p.factorX}
+          factorY={p.factorY}
+          opacity={p.opacity}
+          blur={p.blur}
+          smoothX={smoothX}
+          smoothY={smoothY}
+        />
+      ))}
 
       <div className="cro-shell z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-20 items-center">
@@ -146,6 +226,8 @@ export default function Hero3D() {
               style={{ 
                 rotateX, 
                 rotateY, 
+                x: phoneX,
+                y: phoneY,
                 transformStyle: 'preserve-3d',
                 aspectRatio: '905 / 1737',
                 filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 25px rgba(197, 168, 128, 0.15))'
