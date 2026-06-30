@@ -36,9 +36,9 @@ function fmtPrice(centavos: number): string {
 
 // ─── Reviews per plan ─────────────────────────────────────────────────────────
 const REVIEWS: Record<string, { name: string; city: string; text: string; event: string }> = {
-  basic:   { name: 'Karla M.',   city: 'Monterrey',   text: 'Súper fácil de usar, mis invitados adoraron el link. Vale cada peso.',           event: 'Boda · Feb 2025' },
+  basic:   { name: 'Karla M.',   city: 'Monterrey',   text: 'Súper fácil de usar, mis invitados encontraron todos los detalles de la boda.', event: 'Boda · Feb 2025' },
   premium: { name: 'Sofía R.',   city: 'CDMX',        text: 'La galería y la música hicieron llorar a mi mamá. Totalmente recomendado.',      event: 'Boda · Abr 2025' },
-  deluxe:  { name: 'Daniela G.', city: 'Guadalajara', text: 'La intro cinemática fue el wow de mi boda. Todos me preguntaron cómo la hice.', event: 'Boda · Mar 2025' },
+  deluxe:  { name: 'Daniela G.', city: 'Guadalajara', text: 'La intro cinemática hizo que la invitación se sintiera muy especial.', event: 'Boda · Mar 2025' },
 };
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
@@ -162,7 +162,7 @@ function PlanCard({
               <span style={{ fontFamily: 'var(--font-inter, system-ui, sans-serif)', fontWeight: 500, marginRight: '0.05em' }}>$</span>
               {(product.price / 100).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </span>
-            <span style={{ fontSize: '.875rem', color: featured ? '#C5B0A0' : T.light, marginLeft: '.375rem' }}>MXN / pago único</span>
+            <span style={{ fontSize: '.875rem', color: featured ? '#C5B0A0' : T.light, marginLeft: '.375rem' }}>MXN · Pago único</span>
           </div>
           <div style={{ flex: 1, marginBottom: '2.125rem' }}>
             <FeatureList features={product.features} dark={featured} />
@@ -180,7 +180,7 @@ function PlanCard({
               textAlign: 'center',
             }}
           >
-            {selected ? 'En carrito ✓' : 'Agregar al carrito'}
+            {selected ? 'En carrito ✓' : `Elegir ${product.name}`}
           </button>
         </div>
       </div>
@@ -346,9 +346,9 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
         <div style={{ background: T.greenBg, borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
           <span style={{ fontSize: 20 }}>🏆</span>
           <div>
-            <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: T.successText }}>Garantía de satisfacción 48 h</p>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: T.successText }}>Pago único y sin mensualidades</p>
             <p style={{ margin: '4px 0 0', fontSize: 12, color: T.successText, lineHeight: 1.4 }}>
-              Si tu invitación no está lista en 48 horas, te devolvemos el 100% de tu dinero. Sin preguntas.
+              Elige tu plan, paga una sola vez y personaliza tu invitación para compartirla por WhatsApp.
             </p>
           </div>
         </div>
@@ -370,10 +370,10 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
       {/* Trust items */}
       <div style={{ background: '#F5EFE0', padding: '1rem 1.5rem' }} className="ps-trust-grid">
         {[
-          'Acceso inmediato al panel después del pago',
+          'Acceso para personalizar después del pago',
           'Edita tu invitación cuantas veces necesites',
           'Funciona en cualquier celular sin instalar apps',
-          'Soporte por WhatsApp incluido',
+          'Fácil de compartir por WhatsApp',
         ].map((item) => (
           <span key={item} style={{ fontSize: '.8125rem', color: T.mid, display: 'flex', alignItems: 'center', gap: '.375rem' }}>
             <span style={{ color: T.green, fontWeight: 700 }}>✓</span> {item}
