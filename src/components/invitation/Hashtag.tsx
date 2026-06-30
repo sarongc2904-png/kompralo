@@ -18,18 +18,36 @@ interface HashtagProps {
   groomName?: string;
 }
 
-// Hashtag that was baked into the demo fixture — treat as "not set" for real invitations.
-const FIXTURE_HASHTAG = 'SofíaYAlejandro';
+// Demo fixture values — treat these as "not configured" for real invitations.
+const FIXTURE_HASHTAG  = 'SofíaYAlejandro';
+const FIXTURE_INSTAGRAM = 'sofiaYalejandro2026';
+const FIXTURE_TIKTOK    = 'sofiaYalejandro2026';
 
-function deriveEffectiveHashtag(social: SocialConfig, brideName?: string, groomName?: string): string {
-  const stored = stripHash(social.hashtag);
-  if (stored && stored !== FIXTURE_HASHTAG) return stored;
-  const n1 = (brideName ?? '').replace(/\s+/g, '');
-  const n2 = (groomName ?? '').replace(/\s+/g, '');
-  if (n1 && n2) return `${n1}Y${n2}`;
-  if (n1) return n1;
-  if (n2) return n2;
-  return '';
+/**
+ * Returns a cleaned SocialConfig where fixture demo values are replaced by
+ * meaningful defaults (hashtag auto-generated from names, handles cleared).
+ * A value set by the user (different from the fixture) is kept as-is.
+ */
+function sanitizeSocial(social: SocialConfig, brideName?: string, groomName?: string): SocialConfig {
+  const cleaned: SocialConfig = { ...social };
+
+  // Hashtag: auto-generate from names if stored value is empty or the fixture default
+  const storedHashtag = stripHash(social.hashtag);
+  if (!storedHashtag || storedHashtag === FIXTURE_HASHTAG) {
+    const n1 = (brideName ?? '').replace(/\s+/g, '');
+    const n2 = (groomName ?? '').replace(/\s+/g, '');
+    cleaned.hashtag = n1 && n2 ? `${n1}Y${n2}` : (n1 || n2 || '');
+  }
+
+  // Instagram handle: clear fixture demo value so getHandle falls back to generic
+  const storedInsta = social.instagramHandle?.replace('@', '') ?? '';
+  if (storedInsta === FIXTURE_INSTAGRAM) cleaned.instagramHandle = undefined;
+
+  // TikTok handle: same pattern
+  const storedTiktok = social.tiktokHandle?.replace('@', '') ?? '';
+  if (storedTiktok === FIXTURE_TIKTOK) cleaned.tiktokHandle = undefined;
+
+  return cleaned;
 }
 
 
@@ -147,16 +165,13 @@ function HeartBurst({ show }: { show: boolean }) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function Hashtag({ social, imageUrl, theme, editablePreview = false, brideName, groomName }: HashtagProps) {
-  const effectiveHashtag = deriveEffectiveHashtag(social, brideName, groomName);
-  // Build a social object with the resolved hashtag so PLATFORM_META helpers
-  // and handleCopy use the real value without touching their signatures.
-  const socialDisplay: SocialConfig = effectiveHashtag !== stripHash(social.hashtag)
-    ? { ...social, hashtag: effectiveHashtag }
-    : social;
+  // socialDisplay has fixture demo values replaced with real/derived values.
+  const socialDisplay = sanitizeSocial(social, brideName, groomName);
+  const effectiveHashtag = stripHash(socialDisplay.hashtag);
 
   const hasSocialContent =
     effectiveHashtag ||
-    social.instagramHandle ||
+    socialDisplay.instagramHandle ||
     social.tiktokHandle ||
     social.facebookUrl ||
     social.youtubeUrl;
@@ -170,7 +185,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
   const [showCaption, setShowCaption] = useState(false);
   const heartControls             = useAnimation();
 
-  const platform = getPrimarySocialPlatform(social);
+  const platform = getPrimarySocialPlatform(socialDisplay);
   const meta     = PLATFORM_META[platform];
 
   const comments = [
@@ -218,7 +233,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
   }, []);
 
   const photoUrl = imageUrl || 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=800';
-  const handle   = meta.getHandle(social);
+  const handle   = meta.getHandle(socialDisplay);
 
   if (!hasSocialContent && !editablePreview) return null;
 
