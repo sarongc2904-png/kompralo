@@ -1496,7 +1496,7 @@ export interface UpdateThemeSelectionInput {
   themeId: string;
 }
 
-const VALID_THEME_IDS = new Set(['ivory-editorial']);
+const VALID_THEME_IDS = new Set(['ivory-editorial', 'blanco-deluxe']);
 
 export async function updateThemeSelection(
   input: UpdateThemeSelectionInput,

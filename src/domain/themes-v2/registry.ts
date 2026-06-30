@@ -1,12 +1,14 @@
 import type { InvitationThemeV2, ThemeIdV2 } from '@/domain/themes-v2/types';
-import { ivoryEditorialTheme }       from '@/domain/themes-v2/themes/ivory-editorial';
-import { FEATURE_FLAGS }             from '@/lib/feature-flags';
-import { loadTemplatesFromJson }     from '@/domain/themes-v2/json-loader';
+import { ivoryEditorialTheme } from '@/domain/themes-v2/themes/ivory-editorial';
+import { blancoDeluxeTheme }   from '@/domain/themes-v2/themes/blanco-deluxe';
+import { FEATURE_FLAGS }       from '@/lib/feature-flags';
+import { loadTemplatesFromJson } from '@/domain/themes-v2/json-loader';
 
 export const defaultThemeIdV2: ThemeIdV2 = 'ivory-editorial';
 
 const legacyRegistry: Record<ThemeIdV2, InvitationThemeV2> = {
   'ivory-editorial': ivoryEditorialTheme,
+  'blanco-deluxe':   blancoDeluxeTheme,
 };
 
 export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = FEATURE_FLAGS.templatesAsJson

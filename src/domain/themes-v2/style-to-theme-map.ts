@@ -12,6 +12,13 @@ export const WIZARD_THEME_OPTIONS = [
     accent: '#B99752',
     bg: '#FAF7F2',
   },
+  {
+    id: 'blanco-deluxe' as ThemeIdV2,
+    label: 'Blanco Deluxe',
+    desc: 'Fondo fotográfico dorado',
+    accent: '#C8A75D',
+    bg: '#FBF7EF',
+  },
 ] as const;
 
 /**

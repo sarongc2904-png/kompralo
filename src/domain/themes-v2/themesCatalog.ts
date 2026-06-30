@@ -26,6 +26,15 @@ const legacyCatalog: ThemeCatalogEntry[] = [
     accentColor: '#C8A75D',
     isNewTheme: true,
   },
+  {
+    id: 'blanco-deluxe',
+    label: 'Blanco Deluxe',
+    description: 'Elegancia pura con fondo fotográfico suave y detalles dorados',
+    category: 'traditional',
+    previewColor: '#FBF7EF',
+    accentColor: '#C8A75D',
+    isNewTheme: true,
+  },
 ];
 
 export const weddingThemesCatalog: ThemeCatalogEntry[] = FEATURE_FLAGS.templatesAsJson

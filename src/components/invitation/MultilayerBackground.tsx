@@ -564,22 +564,22 @@ export default function MultilayerBackground({ theme, children }: MultilayerBack
       )}
       {/* 0. Section-scoped Ambient Glow Background */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-        {/* Base gradient — transparent for ivory-editorial (fondo único on root wrapper) */}
+        {/* Base gradient — transparent for themes with fondo único on root wrapper */}
         <div
           className="absolute inset-0 transition-colors duration-1000"
           style={{
-            background: themeV2.id === 'ivory-editorial'
+            background: (themeV2.id === 'ivory-editorial' || themeV2.id === 'blanco-deluxe')
               ? 'transparent'
               : `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})`,
           }}
         />
 
-        {/* Paper texture — disabled for ivory-editorial (fondo único handles it) */}
+        {/* Paper texture — disabled for themes that use globals.css fondo único */}
         <div
           className="absolute inset-0"
           aria-hidden="true"
           style={{
-            backgroundImage: themeV2.id === 'ivory-editorial'
+            backgroundImage: (themeV2.id === 'ivory-editorial' || themeV2.id === 'blanco-deluxe')
               ? 'none'
               : 'var(--kompralo-invitation-paper-bg)',
             backgroundSize: 'cover',
