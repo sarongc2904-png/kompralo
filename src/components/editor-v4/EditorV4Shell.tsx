@@ -310,6 +310,7 @@ export function EditorV4Shell({
         device={device}
         onZoomChange={handleZoomChange}
         onDeviceChange={handleDeviceChange}
+        planId={invitationSnapshot?.planId}
       />
 
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden', minHeight: 0 }}>
@@ -326,6 +327,7 @@ export function EditorV4Shell({
               onScrollTo={handleScrollTo}
               activeSection={activeSection}
               hiddenSections={invitationSnapshot?.hiddenSections}
+              planId={invitationSnapshot?.planId}
             />
           </div>
         )}

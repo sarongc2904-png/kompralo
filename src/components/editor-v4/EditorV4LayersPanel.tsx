@@ -2,15 +2,19 @@
 
 import { useState } from 'react';
 import { INVITATION_SECTIONS } from './editor-v4-events';
+import { canAccessEditorSection, resolvePlanForEditor } from '@/domain/plans/editorGating';
 
 interface EditorV4LayersPanelProps {
   /** Scroll the canvas iframe to a section by id */
   onScrollTo?: (sectionId: string) => void;
   activeSection?: string | null;
   hiddenSections?: string[];
+  planId?: string;
 }
 
-export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections = [] }: EditorV4LayersPanelProps) {
+export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections = [], planId }: EditorV4LayersPanelProps) {
+  const resolvedPlan = resolvePlanForEditor(planId);
+  const visibleSections = INVITATION_SECTIONS.filter((s) => canAccessEditorSection(resolvedPlan, s.id));
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto', background: '#1a1208' }}>
@@ -27,7 +31,7 @@ export function EditorV4LayersPanel({ onScrollTo, activeSection, hiddenSections 
 
       {/* Section list */}
       <nav style={{ flex: 1, padding: '8px 0' }}>
-        {INVITATION_SECTIONS.map((section) => {
+        {visibleSections.map((section) => {
           const isActive = activeSection === section.id;
           const isHidden = hiddenSections.includes(section.id);
           return (

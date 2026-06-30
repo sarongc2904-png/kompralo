@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { FEATURE_FLAGS } from '@/lib/feature-flags';
+import { canAccessTemplateSelector, resolvePlanForEditor } from '@/domain/plans/editorGating';
 
 export type SaveStatus = 'idle' | 'saved';
 export type EditorDevice = 'desktop' | 'tablet' | 'mobile';
@@ -21,6 +22,7 @@ interface EditorV4ToolbarProps {
   device?: EditorDevice;
   onZoomChange?: (z: number) => void;
   onDeviceChange?: (d: EditorDevice) => void;
+  planId?: string;
 }
 
 export function EditorV4Toolbar({
@@ -36,7 +38,10 @@ export function EditorV4Toolbar({
   device = 'desktop',
   onZoomChange,
   onDeviceChange,
+  planId,
 }: EditorV4ToolbarProps) {
+  const showTemplateBtn = FEATURE_FLAGS.templateSelectorV2 &&
+    canAccessTemplateSelector(resolvePlanForEditor(planId));
   const previewUrl = `/preview/${invitationId}`;
   const publicUrl  = typeof window !== 'undefined'
     ? `${window.location.origin}/i/${slug}`
@@ -160,7 +165,7 @@ export function EditorV4Toolbar({
 
         <span style={{ width: 1, height: 20, background: 'rgba(200,167,93,0.2)', flexShrink: 0 }} />
 
-        {FEATURE_FLAGS.templateSelectorV2 && (
+        {showTemplateBtn && (
           <button
             id="editor-v4-template-btn"
             type="button"
@@ -239,7 +244,7 @@ export function EditorV4Toolbar({
       </a>
 
       {/* Template selector — mobile */}
-      {FEATURE_FLAGS.templateSelectorV2 && (
+      {showTemplateBtn && (
         <button
           id="editor-v4-template-btn"
           type="button"
