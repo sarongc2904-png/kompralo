@@ -186,22 +186,22 @@ export default function Hero3D() {
           {/* Left Column: Text & Value Propositions */}
           <Reveal className="cro-hero-content">
             <span className="cro-eyebrow" style={{ textShadow: '0 2px 10px rgba(197,168,128,0.2)', letterSpacing: '0.1em', whiteSpace: 'normal', wordBreak: 'break-word' }}>
-              Invitaciones de Boda Digitales
+              Invitaciones digitales de boda
             </span>
             <h1 className="cro-title-mega" style={{ textShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-              La invitación digital que hará que sus invitados se enamoren de su boda desde el primer clic
+              Invitaciones digitales de boda listas para personalizar
             </h1>
             <p className="cro-copy mt-6" style={{ color: '#E7E5E4' }}>
-              Diseños elegantes, personalizados y fáciles de compartir por WhatsApp, con todos los detalles importantes de su gran día en un solo lugar.
+              Crea una invitación elegante para tu boda, edítala desde tu celular o computadora y compártela fácilmente por WhatsApp.
             </p>
             
             {/* Value bullets */}
             <div className="mt-8 flex flex-col gap-3.5">
               {[
-                'Diseños elegantes y personalizados',
-                'Fácil de compartir por WhatsApp',
-                'Sin instalar aplicaciones',
-                'Confirmación de asistencia al instante'
+                'Pago único',
+                'Sin mensualidades',
+                'Vista previa en tiempo real',
+                'Confirmación de asistencia'
               ].map((bullet) => (
                 <div key={bullet} className="flex items-center gap-3">
                   <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[rgba(197,168,128,0.1)] border border-[rgba(197,168,128,0.25)]">
@@ -215,22 +215,22 @@ export default function Hero3D() {
             {/* CTAs */}
             <div className="cro-hero-actions">
               <Link href="#planes" className="cro-btn cro-btn-cyan" data-cta="hero-primary" data-event="click-hero-primary">
-                Quiero mi invitación de boda
+                Ver planes
               </Link>
               <Link 
-                href="/i/nuestrabodaarletteymayorga" 
-                target="_blank" 
+                href="/i/nuestrabodaarletteymayorga"
+                target="_blank"
                 className="cro-btn cro-btn-outline" 
                 style={{ background: 'rgba(255,255,255,0.02)' }} 
                 data-cta="hero-demo" 
                 data-event="click-hero-demo"
               >
-                <Play size={14} fill="currentColor" className="mr-1 inline" /> Ver ejemplos
+                <Play size={14} fill="currentColor" className="mr-1 inline" /> Ver cómo funciona
               </Link>
             </div>
 
             <p style={{ fontSize: '0.75rem', color: '#A8A29E', marginTop: '1.5rem', letterSpacing: '0.12em' }}>
-              Sin instalar apps · Sin saber diseño · Lista para compartir
+              Desde $499 MXN · Confirmación de asistencia · Vista previa en tiempo real
             </p>
           </Reveal>
 
