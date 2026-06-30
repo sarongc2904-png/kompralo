@@ -42,7 +42,10 @@ export function TemplateCard({ entry, isCurrent = false, isSelected = false, onC
       {/* Color header — 280×180 area, flex-based */}
       <div
         style={{
-          background: entry.previewColor,
+          backgroundColor: entry.previewColor,
+          backgroundImage: entry.previewImageUrl ? `url(${entry.previewImageUrl})` : undefined,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           flex: '0 0 180px',
           position: 'relative',
           display: 'flex',

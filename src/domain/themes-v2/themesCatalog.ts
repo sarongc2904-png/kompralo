@@ -9,6 +9,7 @@ export interface ThemeCatalogEntry {
   category: 'wedding' | 'traditional' | 'modern' | 'playful';
   previewColor: string;
   accentColor: string;
+  previewImageUrl?: string;
   isNewTheme?: boolean;
 }
 
@@ -24,6 +25,7 @@ const legacyCatalog: ThemeCatalogEntry[] = [
     category: 'traditional',
     previewColor: '#FBF7EF',
     accentColor: '#C8A75D',
+    previewImageUrl: 'https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/floral-gold-bg.png',
     isNewTheme: true,
   },
   {
@@ -33,6 +35,7 @@ const legacyCatalog: ThemeCatalogEntry[] = [
     category: 'traditional',
     previewColor: '#FBF7EF',
     accentColor: '#C8A75D',
+    previewImageUrl: 'https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png',
     isNewTheme: true,
   },
 ];
