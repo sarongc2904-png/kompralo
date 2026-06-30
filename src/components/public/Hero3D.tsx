@@ -15,15 +15,19 @@ interface ParticleProps {
   height: number;
   factorX: number;
   factorY: number;
+  initialRotate: number;
+  factorRotate: number;
   opacity: number;
   blur: string;
+  zIndex: number;
   smoothX: any;
   smoothY: any;
 }
 
-function ParallaxParticle({ src, top, left, width, height, factorX, factorY, opacity, blur, smoothX, smoothY }: ParticleProps) {
+function ParallaxParticle({ src, top, left, width, height, factorX, factorY, initialRotate, factorRotate, opacity, blur, zIndex, smoothX, smoothY }: ParticleProps) {
   const x = useTransform(smoothX, [0, 1], [-factorX, factorX]);
   const y = useTransform(smoothY, [0, 1], [-factorY, factorY]);
+  const rotate = useTransform(smoothX, [0, 1], [initialRotate - factorRotate, initialRotate + factorRotate]);
 
   return (
     <motion.div
@@ -33,10 +37,11 @@ function ParallaxParticle({ src, top, left, width, height, factorX, factorY, opa
         left,
         x,
         y,
+        rotate,
         opacity,
         filter: `blur(${blur})`,
         pointerEvents: 'none',
-        zIndex: 5,
+        zIndex,
         mixBlendMode: 'screen',
         width,
         height,
@@ -48,21 +53,27 @@ function ParallaxParticle({ src, top, left, width, height, factorX, factorY, opa
 }
 
 const PARTICLES = [
-  // Rose Petals (pink)
-  { id: 1, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '15%', left: '8%', width: 70, height: 70, factorX: 45, factorY: 35, opacity: 0.6, blur: '0px' },
-  { id: 2, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '75%', left: '15%', width: 90, height: 90, factorX: 30, factorY: -45, opacity: 0.5, blur: '2px' },
-  { id: 3, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '48%', left: '90%', width: 60, height: 60, factorX: -35, factorY: 25, opacity: 0.6, blur: '0.5px' },
+  // --- Foreground Rose Petals (Large, Blurred, high speed/depth) ---
+  { id: 1, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '10%', left: '5%', width: 140, height: 140, factorX: 80, factorY: 60, initialRotate: 45, factorRotate: 20, opacity: 0.7, blur: '4px', zIndex: 20 },
+  { id: 2, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '80%', left: '80%', width: 160, height: 160, factorX: -70, factorY: -90, initialRotate: -30, factorRotate: -25, opacity: 0.65, blur: '5px', zIndex: 20 },
 
-  // Eucalyptus Leaves (green)
-  { id: 4, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '10%', left: '42%', width: 80, height: 80, factorX: -25, factorY: -35, opacity: 0.4, blur: '1.5px' },
-  { id: 5, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '80%', left: '48%', width: 90, height: 90, factorX: 50, factorY: 40, opacity: 0.5, blur: '1px' },
-  { id: 6, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '35%', left: '78%', width: 70, height: 70, factorX: -40, factorY: -30, opacity: 0.45, blur: '3px' },
+  // --- Midground Rose Petals (Medium, Sharp, normal speed) ---
+  { id: 3, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '25%', left: '75%', width: 85, height: 85, factorX: 40, factorY: 30, initialRotate: 120, factorRotate: 15, opacity: 0.8, blur: '0px', zIndex: 8 },
+  { id: 4, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '55%', left: '12%', width: 75, height: 75, factorX: -30, factorY: 45, initialRotate: -15, factorRotate: 10, opacity: 0.75, blur: '0.5px', zIndex: 8 },
+  { id: 5, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '78%', left: '35%', width: 95, height: 95, factorX: 35, factorY: -40, initialRotate: 60, factorRotate: -15, opacity: 0.8, blur: '0px', zIndex: 8 },
 
-  // Golden Sparkles (shimmering lights)
-  { id: 7, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '25%', left: '22%', width: 50, height: 50, factorX: 60, factorY: 50, opacity: 0.7, blur: '0.5px' },
-  { id: 8, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '60%', left: '5%', width: 40, height: 40, factorX: -20, factorY: 30, opacity: 0.8, blur: '0px' },
-  { id: 9, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '70%', left: '85%', width: 55, height: 55, factorX: 30, factorY: -30, opacity: 0.7, blur: '1px' },
-  { id: 10, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '5%', left: '88%', width: 45, height: 45, factorX: -45, factorY: 45, opacity: 0.6, blur: '2px' },
+  // --- Background Rose Petals (Small, Slightly Blurred, slow speed) ---
+  { id: 6, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '48%', left: '45%', width: 50, height: 50, factorX: 15, factorY: 15, initialRotate: -80, factorRotate: 5, opacity: 0.5, blur: '1.5px', zIndex: 3 },
+  { id: 7, src: '/images/invitaciones/landing/wedding_rose_petal.png', top: '5%', left: '92%', width: 55, height: 55, factorX: -20, factorY: 20, initialRotate: 150, factorRotate: 8, opacity: 0.55, blur: '2px', zIndex: 3 },
+
+  // --- Eucalyptus Leaves ---
+  { id: 8, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '12%', left: '48%', width: 80, height: 80, factorX: -30, factorY: -25, initialRotate: -45, factorRotate: 15, opacity: 0.5, blur: '1px', zIndex: 5 },
+  { id: 9, src: '/images/invitaciones/landing/wedding_eucalyptus_leaf.png', top: '70%', left: '90%', width: 90, height: 90, factorX: 45, factorY: 45, initialRotate: 75, factorRotate: -20, opacity: 0.55, blur: '0px', zIndex: 5 },
+
+  // --- Golden Sparkles ---
+  { id: 10, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '30%', left: '20%', width: 50, height: 50, factorX: 50, factorY: 40, initialRotate: 0, factorRotate: 0, opacity: 0.7, blur: '0.5px', zIndex: 6 },
+  { id: 11, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '65%', left: '6%', width: 40, height: 40, factorX: -15, factorY: 25, initialRotate: 0, factorRotate: 0, opacity: 0.8, blur: '0px', zIndex: 6 },
+  { id: 12, src: '/images/invitaciones/landing/wedding_golden_sparkle.png', top: '8%', left: '80%', width: 45, height: 45, factorX: -25, factorY: 30, initialRotate: 0, factorRotate: 0, opacity: 0.6, blur: '2.5px', zIndex: 6 },
 ];
 
 export default function Hero3D() {
@@ -108,7 +119,7 @@ export default function Hero3D() {
         <div className="cro-hero-bg">
           <Image
             className="cro-hero-img"
-            src="/images/invitaciones/hero-wedding-editorial.webp"
+            src="/images/invitaciones/landing/wedding_clean_dark_bg.png"
             alt="Kompralo Invitaciones Premium"
             fill
             priority
@@ -138,7 +149,7 @@ export default function Hero3D() {
         style={{ x: bgX, y: bgY, scale: 1.02 }}
       >
         <Image
-          src="/images/invitaciones/hero-wedding-editorial.webp"
+          src="/images/invitaciones/landing/wedding_clean_dark_bg.png"
           alt="Kompralo Hero"
           fill
           priority
@@ -159,8 +170,11 @@ export default function Hero3D() {
           height={p.height}
           factorX={p.factorX}
           factorY={p.factorY}
+          initialRotate={p.initialRotate}
+          factorRotate={p.factorRotate}
           opacity={p.opacity}
           blur={p.blur}
+          zIndex={p.zIndex}
           smoothX={smoothX}
           smoothY={smoothY}
         />
