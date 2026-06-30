@@ -438,6 +438,22 @@ html.lenis, html.lenis body {
 
 
 
+/* Pisar variables CSS para que los inline styles de ElegantInvitationCard queden transparentes */
+[data-theme-v2="ivory-editorial"] {
+  --v2-glass-bg: transparent;
+  --v2-card-ivory-bg: transparent;
+  --v2-color-surface: transparent;
+}
+
+/* Floral gold como fondo de cada tarjeta en ivory-editorial */
+[data-theme-v2="ivory-editorial"] [data-elegant-card] {
+  background-image: url('https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/floral-gold-bg.png') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-color: transparent !important;
+}
+
 /* Warmer paper grain for the editorial feel */
 [data-theme-v2="ivory-editorial"] .paper-noise {
   opacity: 0.06;
