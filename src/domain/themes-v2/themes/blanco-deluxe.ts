@@ -7,7 +7,7 @@ export const blancoDeluxeTheme: InvitationThemeV2 = {
   categorySupport: ['wedding', 'baptism', 'baby-shower', 'birthday'],
 
   colors: {
-    pageBackground:  '#FBF7EF',
+    pageBackground:  '#FFFFFF',
     surface:         'rgba(255,250,238,0.93)',
     surfaceAlt:      '#F5ECD9',
     surfaceElevated: '#FFFDF8',
@@ -93,12 +93,12 @@ export const blancoDeluxeTheme: InvitationThemeV2 = {
   },
 
   backgrounds: {
-    main:      '#FBF7EF',
-    hero:      'linear-gradient(180deg, rgba(251,247,239,0.08) 0%, transparent 35%, rgba(251,247,239,0.96) 100%)',
+    main:      '#FFFFFF',
+    hero:      'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 35%, rgba(255,255,255,0.96) 100%)',
     sections:  'rgba(200,167,93,0.05)',
-    storyBook: '#FBF7EF',
+    storyBook: '#FFFFFF',
     gallery:   'transparent',
-    final:     'linear-gradient(160deg, #F2E4C8 0%, #FBF7EF 100%)',
+    final:     'linear-gradient(160deg, #F2E4C8 0%, #FFFFFF 100%)',
   },
 
   assets: {
@@ -110,7 +110,7 @@ export const blancoDeluxeTheme: InvitationThemeV2 = {
   dressCodeSwatches: ['#111111', '#1F2A44', '#6B1E2D', '#4F5D4A', '#C9A646'],
 
   cssVariables: {
-    '--v2-color-page-bg':          '#FBF7EF',
+    '--v2-color-page-bg':          '#FFFFFF',
     '--v2-color-surface':          'linear-gradient(145deg, rgba(255,250,238,0.96), rgba(255,244,220,0.90))',
     '--v2-card-ivory-bg':          'linear-gradient(152deg, rgba(255,251,242,0.97) 0%, rgba(253,245,229,0.93) 45%, rgba(247,235,210,0.90) 100%)',
     '--v2-card-border':            'rgba(200,167,93,0.35)',
@@ -141,8 +141,8 @@ export const blancoDeluxeTheme: InvitationThemeV2 = {
     '--v2-divider-color':          'rgba(200,167,93,0.40)',
     '--v2-ornament-color':         'rgba(200,167,93,0.40)',
     '--v2-section-bg-alt':         'rgba(247, 240, 227, 0.45)',
-    '--v2-background-main':        '#FBF7EF',
-    '--v2-background-story':       '#FBF7EF',
+    '--v2-background-main':        '#FFFFFF',
+    '--v2-background-story':       '#FFFFFF',
     '--v2-background-sections':    'rgba(200,167,93,0.05)',
     '--v2-background-final':       'linear-gradient(160deg, #F5ECD9 0%, #FBF7EF 100%)',
     '--v2-font-heading':           '"Cormorant Garamond", "Georgia", serif',

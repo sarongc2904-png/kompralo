@@ -26,9 +26,9 @@ import { availableProducts } from '@/domain/products';
 import type { Product } from '@/domain/products';
 
 export const metadata: Metadata = {
-  title: 'Invitaciones Digitales Premium con RSVP Automático | Kompralo',
+  title: 'Invitaciones Digitales de Boda Premium | Kompralo',
   description:
-    'Crea tu invitación web premium en minutos. Confirmación de asistencia (RSVP) en tiempo real, mapas, mesa de regalos y música en un solo enlace elegante.',
+    'La invitación digital de boda que hará que sus invitados se enamoren de su boda desde el primer clic. Diseños elegantes, personalizados y fáciles de compartir por WhatsApp.',
 };
 
 const T = {
@@ -327,18 +327,11 @@ function ProblemSection() {
 }
 
 const SOLUTIONS = [
-  { icon: Sparkles, title: 'Invitación profesional', text: 'Diseño elegante y moderno adaptado a cualquier celular.' },
-  { icon: Link2, title: 'Link personalizado', text: 'Un enlace único y fácil de recordar para compartir por WhatsApp.' },
-  { icon: Users, title: 'Confirmación RSVP', text: 'Tus invitados confirman asistencia y acompañantes en segundos.' },
-  { icon: MapPin, title: 'Ubicación con mapa', text: 'Botones con acceso directo a Google Maps, Waze y Apple Maps.' },
-  { icon: QrCode, title: 'Pases QR', text: 'Controla el acceso a tu evento con pases digitales individuales.' },
-  { icon: Images, title: 'Galería', text: 'Espacio hermoso para subir las mejores fotos de su historia de amor.' },
-  { icon: Music, title: 'Música', text: 'Melodía de fondo seleccionada por ti para ambientar la experiencia.' },
-  { icon: CalendarClock, title: 'Itinerario', text: 'Cronograma con horarios detallados de la misa, recepción y fiesta.' },
-  { icon: Shirt, title: 'Código de vestimenta', text: 'Indicaciones claras de etiqueta y paleta de colores sugerida.' },
-  { icon: Gift, title: 'Mesa de regalos', text: 'Enlaces directos a tus mesas (Amazon, Liverpool, etc.) o datos bancarios.' },
-  { icon: Hotel, title: 'Hospedaje', text: 'Recomendaciones de hoteles y tarifas para tus invitados foráneos.' },
-  { icon: Hash, title: 'Redes / hashtag', text: 'Comparte el hashtag oficial de tu boda y reúne todas las fotos.' },
+  { icon: Link2, title: 'WhatsApp instantáneo', text: 'Compartan su invitación al instante por WhatsApp.' },
+  { icon: MapPin, title: 'Información completa', text: 'Incluyan ubicación, horario, mesa de regalos y código de vestimenta.' },
+  { icon: Users, title: 'Confirmación sencilla', text: 'Reciban confirmaciones de asistencia de forma sencilla.' },
+  { icon: ShieldCheck, title: 'Sin impresiones', text: 'Eviten gastos de impresión y entregas complicadas.' },
+  { icon: Sparkles, title: 'Experiencia premium', text: 'Sorprendan a sus invitados con una experiencia elegante y moderna.' },
 ];
 
 function SolutionSection() {
@@ -347,9 +340,9 @@ function SolutionSection() {
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
           <p className="cro-eyebrow">Todo en un solo lugar</p>
-          <h2 className="cro-title-xl">Todo lo que tus invitados necesitan, en un solo link</h2>
+          <h2 className="cro-title-xl">Todo lo que necesitan para anunciar su boda con estilo</h2>
           <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
-            Olvídate de mandar imágenes pesadas o PDF difíciles de abrir. Tu invitación digital reúne todas las funciones esenciales con un diseño de alta gama.
+            Olvídense de las invitaciones impresas tradicionales y las entregas complicadas. Una solución digital moderna y sofisticada para su gran día.
           </p>
         </Reveal>
         <Stagger className="cro-sol-grid" gap={0.04}>
@@ -371,19 +364,19 @@ function SolutionSection() {
 // ─── Comparison Section ───────────────────────────────────────────────────────
 
 const COMPARE_BAD = [
-  'Se pierde en WhatsApp: Los invitados la olvidan o eliminan el archivo por accidente.',
-  'No confirma asistencia: Tienes que registrar de forma manual a cada persona.',
-  'No se actualiza fácil: Cualquier cambio requiere corregir el diseño y volver a enviarlo.',
-  'No controla accesos: No hay control de cuántos acompañantes lleva cada persona.',
-  'No organiza invitados: Terminas con listas desordenadas en papel o Excel.',
+  'Se pierde o daña fácilmente: Los invitados olvidan o pierden la tarjeta física o el mensaje de texto.',
+  'Altos costos y entregas lentas: Gastos en imprenta y horas perdidas entregándolas a domicilio.',
+  'Confirmaciones manuales lentas: Tienes que llamar o mensajear a cada invitado uno por uno.',
+  'Sin mapas dinámicos: Dificultad para llegar al templo o salón sin links directos de GPS.',
+  'Datos inmutables: Si cambia un horario o detalle, debes reimprimir o avisar manualmente.',
 ];
 
 const COMPARE_GOOD = [
-  'Link fácil de compartir: Se abre al instante en cualquier navegador sin instalar nada.',
-  'RSVP en tiempo real: Tus invitados confirman y la lista se actualiza sola.',
-  'Puedes editar datos: Cambia horarios, ubicaciones o fotos cuando lo necesites.',
-  'Pases QR por invitado: Controla exactamente el cupo asignado a cada familia.',
-  'Todo en un solo lugar: Itinerario, mapas, regalos y confirmaciones en un solo link.',
+  'Siempre en su celular: Acceso al instante desde cualquier navegador sin descargar nada.',
+  'Ahorro de tiempo y dinero: Un solo link listo para enviar de forma ilimitada por WhatsApp.',
+  'RSVP automatizado: Tus invitados confirman su asistencia con un clic en segundos.',
+  'Ubicación interactiva: Acceso directo a Google Maps, Waze y Apple Maps.',
+  'Actualizaciones al instante: Modifica horarios, fotos o ubicaciones cuando lo necesites.',
 ];
 
 function ComparisonSection() {
@@ -392,12 +385,15 @@ function ComparisonSection() {
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
           <p className="cro-eyebrow">La diferencia inteligente</p>
-          <h2 className="cro-title-xl">No es un PDF bonito. Es una invitación inteligente.</h2>
+          <h2 className="cro-title-xl">Más práctica que una invitación impresa. Más especial que un simple mensaje.</h2>
+          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+            Con una invitación digital, sus invitados tienen toda la información siempre disponible desde su celular, sin perder direcciones, horarios ni detalles importantes.
+          </p>
         </Reveal>
         <Reveal delay={0.2}>
           <div className="cro-compare-grid">
             <div className="cro-compare-col cro-compare-col-bad">
-              <p className="cro-compare-header" style={{ color: T.muted }}>PDF o Imagen Estática</p>
+              <p className="cro-compare-header" style={{ color: T.muted }}>Invitación Impresa o Mensaje</p>
               {COMPARE_BAD.map((bad) => (
                 <div className="cro-compare-row" key={bad}>
                   <span style={{ color: '#EF4444', flexShrink: 0, marginTop: '0.15em', fontWeight: 'bold' }}>✕</span>
@@ -406,7 +402,7 @@ function ComparisonSection() {
               ))}
             </div>
             <div className="cro-compare-col cro-compare-col-good">
-              <p className="cro-compare-header" style={{ color: T.cyan }}>Invitación Inteligente Kompralo</p>
+              <p className="cro-compare-header" style={{ color: T.cyan }}>Invitación Digital Premium</p>
               {COMPARE_GOOD.map((good) => (
                 <div className="cro-compare-row" key={good}>
                   <Check size={16} color={T.cyan} style={{ flexShrink: 0, marginTop: '0.15em' }} />
@@ -418,10 +414,10 @@ function ComparisonSection() {
         </Reveal>
         <Reveal className="text-center mt-12" delay={0.3}>
           <Link href="#planes" className="cro-btn cro-btn-cyan text-xs">
-            Crear una invitación inteligente
+            Quiero mi invitación de boda
           </Link>
           <p className="text-xs text-[#A8A29E] mt-3 tracking-wide">
-            Pago único · Sin mensualidades · Comparte por WhatsApp
+            Fácil de compartir por WhatsApp · Diseños personalizados
           </p>
         </Reveal>
       </div>
@@ -434,18 +430,18 @@ function ComparisonSection() {
 const PROCESS_STEPS = [
   {
     num: '1',
-    title: 'Elige tu plan y realiza tu pago seguro',
-    text: 'Selecciona el nivel de personalización que deseas y completa tu compra en nuestra pasarela segura sin mensualidades.',
+    title: 'Elijan su estilo',
+    text: 'Elijan el estilo que más represente su boda.',
   },
   {
     num: '2',
-    title: 'Completa los datos de tu boda en el wizard',
-    text: 'Llena un formulario sencillo paso a paso con los nombres, fecha, ubicaciones, fotos y detalles de tu gran día.',
+    title: 'Envíen sus datos',
+    text: 'Envíennos sus datos, fotos y detalles del evento.',
   },
   {
     num: '3',
-    title: 'Personaliza, revisa la vista previa y comparte',
-    text: 'Ajusta detalles, activa la música, visualiza cómo la verán tus invitados y comparte el link por WhatsApp.',
+    title: 'Reciban y compartan',
+    text: 'Reciban su invitación digital lista para compartir con sus invitados.',
   },
 ];
 
@@ -454,8 +450,8 @@ function ProcessSection() {
     <section id="como-funciona" className="cro-section" style={{ background: T.black }}>
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
-          <p className="cro-eyebrow">Proceso fácil y rápido</p>
-          <h2 className="cro-title-xl">De idea a invitación lista para compartir</h2>
+          <p className="cro-eyebrow">Proceso sencillo</p>
+          <h2 className="cro-title-xl">Su invitación lista en 3 pasos</h2>
         </Reveal>
         <Stagger className="cro-process-grid" gap={0.12}>
           {PROCESS_STEPS.map(({ num, title, text }) => (
@@ -470,7 +466,7 @@ function ProcessSection() {
         </Stagger>
         <Reveal className="text-center mt-12" delay={0.3}>
           <p className="text-sm text-[#A8A29E] tracking-wide m-0">
-            * Puedes editar toda la información antes de compartir y actualizar datos después si algo cambia.
+            * Coordinación personalizada vía WhatsApp en todo momento.
           </p>
         </Reveal>
       </div>
@@ -481,38 +477,38 @@ function ProcessSection() {
 const TIMELINE_STEPS = [
   {
     num: '1',
-    title: 'Recibes acceso a tu panel',
-    text: 'Inmediatamente después del pago, te enviamos tus credenciales de acceso por correo para entrar a tu panel privado.',
+    title: 'Contacto inicial',
+    text: 'Escríbannos por WhatsApp para iniciar el proceso de su invitación.',
   },
   {
     num: '2',
-    title: 'Entras al editor de tu invitación',
-    text: 'Accedes a nuestro editor digital guiado paso a paso, sin instalar aplicaciones ni programas complicados.',
+    title: 'Definición de estilo',
+    text: 'Elijan la plantilla y colores que mejor reflejen la esencia de su boda.',
   },
   {
     num: '3',
-    title: 'Llenas los datos de tu evento',
-    text: 'Ingresas los nombres, fecha, ubicaciones, mesa de regalos, fotos y toda la información de tu boda.',
+    title: 'Envío de información',
+    text: 'Compártannos sus fotos, ubicaciones, horarios e itinerario.',
   },
   {
     num: '4',
-    title: 'Revisas la vista previa',
-    text: 'Ves exactamente cómo lucirá tu invitación en tiempo real y realizas los ajustes que creas necesarios.',
+    title: 'Creación y diseño',
+    text: 'Nuestro equipo personaliza cada detalle de su invitación digital.',
   },
   {
     num: '5',
-    title: 'Copias tu link personalizado',
-    text: 'Generas tu enlace web único (ej. kompralo.com/sofia-y-alejandro) listo para ser compartido.',
+    title: 'Revisión y ajustes',
+    text: 'Reciban una vista previa para revisar y solicitar cualquier cambio.',
   },
   {
     num: '6',
-    title: 'Lo compartes por WhatsApp',
-    text: 'Envías el link a todos tus invitados directamente desde tu WhatsApp con un mensaje personalizado.',
+    title: 'Entrega final',
+    text: 'Les entregamos su link único y personalizado listo para compartir.',
   },
   {
     num: '7',
-    title: 'Empiezas a recibir confirmaciones',
-    text: 'Tus invitados confirman su asistencia con un clic y verás todo organizado al instante en tu panel.',
+    title: 'Empiecen a compartir',
+    text: 'Compartan el link por WhatsApp y reciban confirmaciones al instante.',
   },
 ];
 
@@ -522,9 +518,9 @@ function WhatHappensSection() {
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
           <p className="cro-eyebrow">El paso a paso</p>
-          <h2 className="cro-title-xl">¿Qué pasa después de pagar?</h2>
+          <h2 className="cro-title-xl">¿Cómo es el proceso de creación?</h2>
           <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
-            No te quedas perdida después del pago. Nuestro flujo intuitivo te guía de la mano desde el primer segundo.
+            Los guiaremos paso a paso para que tengan su invitación perfecta de forma rápida y sin estrés.
           </p>
         </Reveal>
         
@@ -552,12 +548,12 @@ function WhatHappensSection() {
 // ─── Trust / Reassurance Section ──────────────────────────────────────────────
 
 const TRUST_POINTS = [
-  { icon: ShieldCheck, title: 'Pago 100% seguro', text: 'Tus transacciones están encriptadas y protegidas con la pasarela de pago más segura.' },
-  { icon: Smartphone, title: 'Acceso inmediato', text: 'Recibes tus datos de acceso al panel de forma instantánea tras completar tu compra.' },
-  { icon: CalendarClock, title: 'Ediciones ilimitadas', text: 'Puedes actualizar horarios, ubicaciones y detalles las veces que quieras sin costo.' },
-  { icon: Smartphone, title: 'Sin instalar aplicaciones', text: 'Tú diseñas desde la web y tus invitados acceden sin necesidad de descargar nada.' },
-  { icon: Users, title: 'Fácil para tus invitados', text: 'Tus invitados solo abren el link desde WhatsApp y confirman asistencia en un segundo.' },
-  { icon: Smartphone, title: 'Compatible con celular', text: 'La invitación y el panel de administración funcionan a la perfección en cualquier móvil.' },
+  { icon: Sparkles, title: 'Diseño exclusivo', text: 'Colores, música e imágenes seleccionadas para combinar perfectamente con la temática de su boda.' },
+  { icon: Smartphone, title: 'Sin instalar aplicaciones', text: 'Sus invitados entran al enlace al instante desde cualquier celular, sin descargas.' },
+  { icon: CalendarClock, title: 'Ediciones ilimitadas', text: 'Pueden ajustar y actualizar datos, horarios o fotos durante todo el proceso de creación.' },
+  { icon: Users, title: 'Confirmación RSVP instantánea', text: 'Sus invitados confirman asistencia en segundos y todo se organiza automáticamente.' },
+  { icon: Gift, title: 'Mesa de regalos y datos', text: 'Muestren sus mesas de regalos de tiendas o datos bancarios para lluvia de sobres de forma sutil.' },
+  { icon: MapPin, title: 'Ubicación con mapas GPS', text: 'Botones interactivos para abrir la ubicación en Google Maps, Waze y Apple Maps al instante.' },
 ];
 
 function TrustSection() {
@@ -566,7 +562,10 @@ function TrustSection() {
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
           <p className="cro-eyebrow">Tranquilidad absoluta</p>
-          <h2 className="cro-title-xl">Compra segura y acceso claro</h2>
+          <h2 className="cro-title-xl">Diseñada para que su boda se vea tan especial como la imaginaron</h2>
+          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+            Cada invitación se adapta a su estilo, colores, fotos e historia, para que el primer contacto con sus invitados refleje la esencia de su celebración.
+          </p>
         </Reveal>
         
         <div className="cro-trust-container">
@@ -586,15 +585,24 @@ function TrustSection() {
 // ─── Events Gallery ───────────────────────────────────────────────────────────
 
 const GALLERY = [
-  { title: 'Bodas',    cat: 'Ceremonia',   img: '/images/invitaciones/social-proof-event-1.webp' },
-  { title: 'XV Años',  cat: 'Gala',        img: '/images/invitaciones/xv-event-editorial.webp'   },
-  { title: 'Bautizos', cat: 'Celebración', img: '/images/invitaciones/baptism-soft-event.webp'   },
-  { title: 'Eventos',  cat: 'Privado',     img: '/images/invitaciones/birthday-premium.webp'     },
+  { title: 'Románticas',  cat: 'Estilo Clásico',  img: '/images/invitaciones/social-proof-event-1.webp' },
+  { title: 'Elegantes',   cat: 'Estilo Premium',  img: '/images/invitaciones/xv-event-editorial.webp'   },
+  { title: 'Modernas',    cat: 'Estilo Vanguardia', img: '/images/invitaciones/baptism-soft-event.webp'   },
+  { title: 'Minimalistas', cat: 'Estilo Limpio',    img: '/images/invitaciones/birthday-premium.webp'     },
 ];
 
 function EventsGallery() {
   return (
-    <section className="cro-section" style={{ padding: 0 }}>
+    <section className="cro-section" style={{ paddingBottom: 0 }}>
+      <div className="cro-shell mb-12">
+        <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
+          <p className="cro-eyebrow">Galería de diseños</p>
+          <h2 className="cro-title-xl">Diseños creados para bodas inolvidables</h2>
+          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+            Desde estilos románticos y clásicos hasta invitaciones modernas, minimalistas y elegantes.
+          </p>
+        </Reveal>
+      </div>
       <div className="cro-events-gallery">
         {GALLERY.map(({ title, cat, img }) => (
           <div className="cro-gallery-item" key={title}>
@@ -657,50 +665,61 @@ function Editions() {
     <section id="planes" className="cro-section" style={{ background: T.black }}>
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 800, margin: '0 auto' }}>
-          <p className="cro-eyebrow">Elige tu plan ideal</p>
-          <h2 className="cro-title-xl">Sin sorpresas. Pago único.</h2>
-          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>Un pago único para un evento inolvidable. Sin mensualidades.</p>
+          <p className="cro-eyebrow">Oferta especial</p>
+          <h2 className="cro-title-xl">Invitación Digital Premium para Boda</h2>
+          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+            Una experiencia digital personalizada para compartir su historia, ubicación, itinerario, confirmación de asistencia y todos los detalles importantes de su boda.
+          </p>
         </Reveal>
 
-        <Stagger className="cro-editions-wrapper" gap={0.2}>
-          {availableProducts.map(product => {
-            const isPro = product.id === 'premium';
-            const marketingName = PLAN_NAMES[product.id] ?? product.name;
-            const desc = PLAN_DESCS[product.id];
-            return (
-              <Item key={product.id} style={{ display: 'flex' }}>
-                <div className={`cro-glass cro-edition ${isPro ? 'cro-edition-pro' : ''}`}>
-                  {isPro && <span className="cro-edition-badge">Más popular</span>}
-                  <h3>{marketingName}</h3>
-                  <p className="cro-edition-desc">{desc}</p>
+        <div className="cro-editions-wrapper" style={{ display: 'flex', justifyContent: 'center', marginTop: '4rem' }}>
+          <Reveal style={{ width: '100%', maxWidth: '450px' }}>
+            <div className="cro-glass cro-edition cro-edition-pro w-full">
+              <span className="cro-edition-badge">Más popular</span>
+              <h3>Invitación Premium</h3>
+              <p className="cro-edition-desc">
+                Todos los módulos y secciones incluidos para una experiencia de boda insuperable.
+              </p>
 
-                  <div className="cro-edition-price">
-                    {formatPrice(product)}
-                    <small>MXN · pago único</small>
-                  </div>
+              <div className="cro-edition-price">
+                $899
+                <small>MXN · pago único</small>
+              </div>
 
-                  <ul className="cro-edition-features">
-                    {product.features.map(f => (
-                      <li key={f}><Check size={16} color={isPro ? T.cyan : T.muted} /> {f}</li>
-                    ))}
-                  </ul>
+              <ul className="cro-edition-features">
+                {[
+                  'Diseño personalizado',
+                  'Cuenta regresiva',
+                  'Galería de fotos',
+                  'Ubicación con mapa',
+                  'Confirmación de asistencia',
+                  'Itinerario del evento',
+                  'Código de vestimenta',
+                  'Mesa de regalos',
+                  'Música opcional',
+                  'Link listo para compartir por WhatsApp'
+                ].map(f => (
+                  <li key={f}><Check size={16} color={T.cyan} /> {f}</li>
+                ))}
+              </ul>
 
-                  <div className="mt-auto flex flex-col gap-2">
-                    <CheckoutButton
-                      productId={product.id}
-                      label="Elegir este plan"
-                      className={`cro-checkout ${isPro ? 'cro-checkout-pro' : 'cro-checkout-std'}`}
-                      data-event={`click-pricing-${product.id}`}
-                    />
-                    <span className="text-[11px] text-[#A8A29E] text-center mt-1.5 tracking-wider uppercase font-semibold">
-                      Pago único · Sin mensualidades
-                    </span>
-                  </div>
-                </div>
-              </Item>
-            );
-          })}
-        </Stagger>
+              <div className="mt-auto flex flex-col gap-2">
+                <a
+                  href="https://wa.me/521234567890?text=Hola!%20Me%20interesa%20la%20Invitaci%C3%B3n%20Digital%20Premium%20para%20Boda"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cro-checkout cro-checkout-pro text-center flex items-center justify-center font-bold tracking-wider"
+                  style={{ textDecoration: 'none' }}
+                >
+                  Solicitar mi invitación por WhatsApp
+                </a>
+                <span className="text-[11px] text-[#A8A29E] text-center mt-1.5 tracking-wider uppercase font-semibold">
+                  Pago único · Sin mensualidades
+                </span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
 
         <Reveal delay={0.3}>
           <div className="cro-reassurance">
@@ -717,16 +736,16 @@ function Editions() {
 // ─── Technical Specs ──────────────────────────────────────────────────────────
 
 const TECH_SPECS: [string, boolean, boolean, boolean][] = [
-  ['RSVP Inteligente',          true,  true,  true ],
-  ['Ubicación Satelital',       true,  true,  true ],
-  ['Cuenta Regresiva',          true,  true,  true ],
-  ['Interfaz Móvil',            true,  true,  true ],
-  ['Galería Inmersiva',         false, true,  true ],
-  ['Audio de Alta Fidelidad',   false, true,  true ],
-  ['Mesa de Regalos',           false, true,  true ],
-  ['Línea de Tiempo',           false, true,  true ],
-  ['Video Cinemático',          false, false, true ],
-  ['Libro de Visitas Digital',  false, false, true ],
+  ['RSVP Inteligente / Confirmación',  false, false, true ],
+  ['Ubicación con mapas GPS',          false, false, true ],
+  ['Cuenta regresiva',                 false, false, true ],
+  ['Galería de fotos de su historia',  false, false, true ],
+  ['Mesa de regalos organizada',       false, false, true ],
+  ['Itinerario y horarios',            false, false, true ],
+  ['Música de fondo opcional',         false, false, true ],
+  ['Código de vestimenta sugerido',    false, false, true ],
+  ['Link listo para WhatsApp',         true,  false, true ],
+  ['Cambios de datos sin costo',       true,  false, true ],
 ];
 
 function TechnicalSpecs() {
@@ -735,26 +754,26 @@ function TechnicalSpecs() {
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center' }}>
           <p className="cro-eyebrow">Comparativa</p>
-          <h2 className="cro-title-xl">Detalles de planes.</h2>
+          <h2 className="cro-title-xl">¿Qué opción les conviene más?</h2>
         </Reveal>
 
         <Reveal className="cro-table-wrapper" delay={0.2}>
           <table className="cro-table">
             <thead>
               <tr>
-                <th>Capacidad</th>
-                <th>Invitación Elegante</th>
-                <th className="col-pro">Organización Sin Caos</th>
-                <th>Experiencia Premium Total</th>
+                <th>Características</th>
+                <th>Mensaje Simple</th>
+                <th>Invitación Impresa</th>
+                <th className="col-pro">Invitación Premium</th>
               </tr>
             </thead>
             <tbody>
               {TECH_SPECS.map(([label, basic, pro, deluxe]) => (
                 <tr key={label}>
                   <td>{label}</td>
-                  <td>{basic  ? <span style={{ color: T.ink }}>✓</span>  : <span>—</span>}</td>
-                  <td className="col-pro">{pro ? <span>✓</span> : <span style={{ color: T.muted }}>—</span>}</td>
-                  <td>{deluxe ? <span style={{ color: T.ink }}>✓</span> : <span>—</span>}</td>
+                  <td>{basic  ? <span style={{ color: T.ink }}>✓</span>  : <span style={{ color: T.muted }}>—</span>}</td>
+                  <td>{pro ? <span style={{ color: T.ink }}>✓</span> : <span style={{ color: T.muted }}>—</span>}</td>
+                  <td className="col-pro">{deluxe ? <span>✓</span> : <span style={{ color: T.muted }}>—</span>}</td>
                 </tr>
               ))}
             </tbody>
@@ -769,32 +788,20 @@ function TechnicalSpecs() {
 
 const FAQ_ITEMS = [
   {
-    q: '¿Mis invitados necesitan instalar alguna app?',
-    a: 'No. Tus invitados solo necesitan hacer clic en el enlace desde WhatsApp o cualquier navegador web para abrir tu invitación. Funciona al instante en iPhone, Android y computadoras sin descargas.',
+    q: '¿Cuánto tarda en estar lista?',
+    a: 'El tiempo puede variar según el nivel de personalización, pero el proceso es rápido y guiado desde el primer contacto.',
   },
   {
-    q: '¿Puedo editar la información de la invitación después de pagar?',
-    a: 'Sí, totalmente. Puedes actualizar la fecha, el horario, las ubicaciones, fotos y detalles del evento en cualquier momento desde tu panel de administración. Los cambios se actualizan al instante sin cambiar tu link.',
+    q: '¿Se puede enviar por WhatsApp?',
+    a: 'Sí. La invitación se entrega como un link fácil de compartir por WhatsApp, redes sociales o mensaje.',
   },
   {
-    q: '¿Qué pasa exactamente después de realizar mi pago?',
-    a: 'Recibes un correo de inmediato con tus credenciales para acceder a tu panel. Desde ahí, un asistente (wizard) muy fácil de usar te guiará paso a paso para completar toda la información y fotos de tu evento.',
+    q: '¿Puedo incluir ubicación y confirmación de asistencia?',
+    a: 'Sí. Puede incluir mapa, horarios, mesa de regalos, código de vestimenta y confirmación de asistencia.',
   },
   {
-    q: '¿Cómo comparto la invitación por WhatsApp?',
-    a: 'Una vez que tu invitación esté lista, tu panel te dará un link personalizado. Solo cópialo y envíalo a tus invitados por WhatsApp, de forma individual o en grupos. También puedes generar un código QR si deseas imprimirlo.',
-  },
-  {
-    q: '¿Por qué es mejor que mandar un PDF o imagen?',
-    a: 'Un PDF o imagen es estático, pesado, no permite confirmar asistencia y si hay algún cambio, tienes que volver a enviarlo a todos. Kompralo ofrece confirmaciones RSVP en tiempo real, mapas interactivos GPS, música de fondo, pases QR controlados y actualizaciones instantáneas sin cambiar el link.',
-  },
-  {
-    q: '¿Tengo que pagar mensualidades?',
-    a: 'No. En Kompralo solo haces un pago único por evento. No hay suscripciones, cobros recurrentes ni sorpresas futuras. Tu invitación estará activa hasta el día de tu evento.',
-  },
-  {
-    q: '¿Puedo ver un ejemplo real de cómo queda antes de pagar?',
-    a: '¡Claro que sí! Puedes hacer clic en el botón "Ver ejemplo" en el Hero de la página o en la barra de navegación para abrir la demo real de Sofía y Alejandro en una nueva pestaña. Así verás exactamente la experiencia fluida que tendrán tus invitados.',
+    q: '¿Puedo hacer cambios?',
+    a: 'Sí. Se pueden realizar ajustes durante el proceso de personalización antes de la entrega final.',
   },
 ];
 
@@ -842,15 +849,23 @@ function CallToAction() {
       <div className="cro-shell">
         <Reveal className="cro-hero-content" style={{ alignItems: 'center', textAlign: 'center', margin: '0 auto', maxWidth: 800 }}>
           <h2 className="cro-title-mega" style={{ fontSize: 'clamp(1.8rem, 5vw, 4rem)', textShadow: '0 4px 15px rgba(0,0,0,0.6)' }}>
-            Tu invitación puede verse increíble sin complicarte
+            ¿Listos para anunciar su boda de forma elegante?
           </h2>
           <p className="cro-copy mt-6" style={{ maxWidth: 640, color: '#E7E5E4' }}>
-            Crea una invitación digital elegante, compártela por WhatsApp y empieza a recibir confirmaciones sin perseguir invitados.
+            Creemos una invitación digital personalizada para que sus invitados vivan la emoción desde el primer clic.
           </p>
           <div className="cro-hero-actions" style={{ justifyContent: 'center' }}>
-            <Link href="#planes" className="cro-btn cro-btn-cyan" data-cta="cta-final" data-event="click-cta-final">
-              Crear mi invitación
-            </Link>
+            <a
+              href="https://wa.me/521234567890?text=Hola!%20Me%20interesa%20la%20Invitaci%C3%B3n%20Digital%20Premium%20para%20Boda"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cro-btn cro-btn-cyan text-center flex items-center justify-center font-bold tracking-wider"
+              style={{ textDecoration: 'none' }}
+              data-cta="cta-final"
+              data-event="click-cta-final"
+            >
+              Quiero mi invitación de boda
+            </a>
           </div>
           <p className="text-xs text-[#A8A29E] mt-4 tracking-wider uppercase font-semibold">
             Pago único · Sin apps · Editable
