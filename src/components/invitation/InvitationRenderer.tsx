@@ -587,6 +587,7 @@ export default function InvitationRenderer({
             editablePreview={editablePreview}
             brideName={storyBrideName}
             groomName={storyGroomName}
+            venueName={invitation.location?.venueName}
           />
         </S>
       </FeatureGate>

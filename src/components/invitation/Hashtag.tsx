@@ -16,6 +16,7 @@ interface HashtagProps {
   editablePreview?: boolean;
   brideName?: string;
   groomName?: string;
+  venueName?: string;
 }
 
 // Demo fixture values — treat these as "not configured" for real invitations.
@@ -39,13 +40,21 @@ function sanitizeSocial(social: SocialConfig, brideName?: string, groomName?: st
     cleaned.hashtag = n1 && n2 ? `${n1}Y${n2}` : (n1 || n2 || '');
   }
 
-  // Instagram handle: clear fixture demo value so getHandle falls back to generic
+  // Instagram handle: replace fixture value with auto-generated handle from names
   const storedInsta = social.instagramHandle?.replace('@', '') ?? '';
-  if (storedInsta === FIXTURE_INSTAGRAM) cleaned.instagramHandle = undefined;
+  if (!storedInsta || storedInsta === FIXTURE_INSTAGRAM) {
+    const n1 = (brideName ?? '').replace(/\s+/g, '').toLowerCase();
+    const n2 = (groomName ?? '').replace(/\s+/g, '').toLowerCase();
+    cleaned.instagramHandle = n1 || n2 ? `${n1}Y${n2}` : undefined;
+  }
 
   // TikTok handle: same pattern
   const storedTiktok = social.tiktokHandle?.replace('@', '') ?? '';
-  if (storedTiktok === FIXTURE_TIKTOK) cleaned.tiktokHandle = undefined;
+  if (!storedTiktok || storedTiktok === FIXTURE_TIKTOK) {
+    const n1 = (brideName ?? '').replace(/\s+/g, '').toLowerCase();
+    const n2 = (groomName ?? '').replace(/\s+/g, '').toLowerCase();
+    cleaned.tiktokHandle = n1 || n2 ? `${n1}Y${n2}` : undefined;
+  }
 
   return cleaned;
 }
@@ -164,7 +173,7 @@ function HeartBurst({ show }: { show: boolean }) {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function Hashtag({ social, imageUrl, theme, editablePreview = false, brideName, groomName }: HashtagProps) {
+export default function Hashtag({ social, imageUrl, theme, editablePreview = false, brideName, groomName, venueName }: HashtagProps) {
   // socialDisplay has fixture demo values replaced with real/derived values.
   const socialDisplay = sanitizeSocial(social, brideName, groomName);
   const effectiveHashtag = stripHash(socialDisplay.hashtag);
@@ -188,9 +197,10 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
   const platform = getPrimarySocialPlatform(socialDisplay);
   const meta     = PLATFORM_META[platform];
 
+  const brideFirst = (brideName ?? '').split(' ')[0].toLowerCase() || 'novia';
   const comments = [
-    { user: 'mama_sofia',   text: '¡El día más esperado! 😭💕' },
-    { user: 'best.friend_',  text: `¡Ya quiero que llegue! ${effectiveHashtag ? '#' + effectiveHashtag : ''}` },
+    { user: `mama_de_${brideFirst}`,  text: '¡El día más esperado! 😭💕' },
+    { user: 'mejor_amiga_',           text: `¡Ya quiero que llegue! ${effectiveHashtag ? '#' + effectiveHashtag : ''}` },
   ];
 
   const handleCopy = () => {
@@ -289,7 +299,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
               color: platform === 'tiktok' ? 'rgba(255,255,255,0.5)' : 'var(--v2-color-text-muted, #8A7665)',
               lineHeight: 1.2,
             }}>
-              {platform === 'instagram' && 'Hacienda San José · Morelos'}
+              {platform === 'instagram' && (venueName || 'Tu evento especial')}
               {platform === 'tiktok'    && 'TikTok · Boda'}
               {platform === 'facebook'  && 'Facebook · Boda'}
               {platform === 'youtube'   && 'YouTube · Video de boda'}
@@ -448,7 +458,7 @@ export default function Hashtag({ social, imageUrl, theme, editablePreview = fal
                 {(effectiveHashtag || editablePreview) && (
                   <p style={{ fontSize: 13, color: 'var(--v2-color-accent, #C8A75D)', marginTop: 3, fontWeight: 600 }}>
                     #<EditableText
-                      value={stripHash(social.hashtag) || effectiveHashtag}
+                      value={effectiveHashtag}
                       fieldPath="social.hashtag"
                       isEditable={editablePreview}
                       placeholder="Hashtag"
