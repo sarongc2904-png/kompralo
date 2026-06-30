@@ -571,7 +571,7 @@ export default function MultilayerBackground({ theme, children }: MultilayerBack
         <div
           className="absolute inset-0 transition-colors duration-1000"
           style={{
-            background: themeV2.id === 'ivory-editorial'
+            background: (themeV2.id === 'ivory-editorial' || themeV2.id === 'blanco-deluxe')
               ? 'transparent'
               : `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})`,
           }}
@@ -582,7 +582,7 @@ export default function MultilayerBackground({ theme, children }: MultilayerBack
           className="absolute inset-0"
           aria-hidden="true"
           style={{
-            backgroundImage: themeV2.id === 'ivory-editorial'
+            backgroundImage: (themeV2.id === 'ivory-editorial' || themeV2.id === 'blanco-deluxe')
               ? 'none'
               : 'var(--kompralo-invitation-paper-bg)',
             backgroundSize: 'cover',

@@ -411,6 +411,15 @@ html.lenis, html.lenis body {
   background-attachment: fixed;
 }
 
+/* Marco floral transparente — fondo único, scroll (iOS Safari safe) */
+[data-theme-v2="blanco-deluxe"] {
+  background-image: url('https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-attachment: scroll;
+}
+
 
 
 /* Warmer paper grain for the editorial feel */
