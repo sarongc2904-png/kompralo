@@ -110,9 +110,14 @@ function FeatureList({ features, dark }: { features: string[]; dark?: boolean })
 
 // ─── PlanCard ─────────────────────────────────────────────────────────────────
 function PlanCard({
-  product, featured, selected, onSelect,
+  product, featured, selected, onSelect, onPayDirect, paying,
 }: {
-  product: Product; featured?: boolean; selected: boolean; onSelect: (id: PlanId) => void;
+  product: Product;
+  featured?: boolean;
+  selected: boolean;
+  onSelect: (id: PlanId) => void;
+  onPayDirect: (id: PlanId) => void;
+  paying: boolean;
 }) {
   const imageUrl =
     product.id === 'basic'   ? '/images/invitaciones/invitation-paper-detail.webp' :
@@ -167,21 +172,44 @@ function PlanCard({
           <div style={{ flex: 1, marginBottom: '2.125rem' }}>
             <FeatureList features={product.features} dark={featured} />
           </div>
-          <button
-            type="button"
-            onClick={() => onSelect(product.id as PlanId)}
-            className="ps-add-btn"
-            style={{
-              width: '100%', padding: '.75rem 1.5rem', borderRadius: '6px',
-              fontSize: '.875rem', fontWeight: 700, cursor: 'pointer',
-              border: selected ? `2px solid ${T.blue}` : 'none',
-              background: selected ? 'transparent' : featured ? T.gold : T.dark,
-              color: selected ? T.blue : featured ? T.dark : T.cream,
-              textAlign: 'center',
-            }}
-          >
-            {selected ? 'En carrito ✓' : `Elegir ${product.name}`}
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+            <button
+              type="button"
+              onClick={() => onPayDirect(product.id as PlanId)}
+              disabled={paying}
+              className="ps-add-btn"
+              style={{
+                width: '100%', padding: '.75rem 1.5rem', borderRadius: '6px',
+                fontSize: '.875rem', fontWeight: 700,
+                cursor: paying ? 'not-allowed' : 'pointer',
+                border: 'none',
+                background: featured ? T.gold : T.dark,
+                color: featured ? T.dark : T.cream,
+                textAlign: 'center',
+                opacity: paying ? 0.65 : 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.4rem',
+              }}
+            >
+              {paying
+                ? <><span style={{ display: 'inline-block', width: '1rem', height: '1rem', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />Procesando…</>
+                : '🔒 Pagar ahora'}
+            </button>
+            <button
+              type="button"
+              onClick={() => onSelect(product.id as PlanId)}
+              className="ps-add-btn"
+              style={{
+                width: '100%', padding: '.625rem 1.5rem', borderRadius: '6px',
+                fontSize: '.8125rem', fontWeight: 600, cursor: 'pointer',
+                border: selected ? `2px solid ${T.blue}` : `1.5px solid ${featured ? 'rgba(196,169,98,0.5)' : 'rgba(15,12,9,0.2)'}`,
+                background: selected ? 'rgba(37,99,235,0.08)' : 'transparent',
+                color: selected ? T.blue : featured ? T.champagne : T.light,
+                textAlign: 'center',
+              }}
+            >
+              {selected ? '✓ En carrito' : '+ Agregar al carrito'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -479,12 +507,46 @@ function CartDrawer({
 export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorProps) {
   const [selectedPlan,  setSelectedPlan]  = useState<PlanId | null>(null);
   const [isDrawerOpen,  setIsDrawerOpen]  = useState(false);
+  const [payingId,      setPayingId]      = useState<PlanId | null>(null);
+  const [directError,   setDirectError]   = useState<string | null>(null);
 
   const selectedProduct = selectedPlan ? (products.find((p) => p.id === selectedPlan) ?? null) : null;
 
   function handleSelect(id: PlanId) {
     setSelectedPlan(id);
     setIsDrawerOpen(true);
+  }
+
+  async function handlePayDirect(id: PlanId) {
+    if (payingId) return;
+    setPayingId(id);
+    setDirectError(null);
+    try {
+      const res  = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: id }),
+      });
+      const data = await res.json() as unknown;
+      if (!res.ok) {
+        throw new Error(
+          data && typeof data === 'object' && 'error' in data
+            ? String((data as Record<string, unknown>).error)
+            : `Error del servidor (${res.status})`
+        );
+      }
+      if (!data || typeof data !== 'object' || !('url' in data) || typeof (data as Record<string, unknown>).url !== 'string') {
+        throw new Error('Respuesta inválida del servidor.');
+      }
+      window.location.href = (data as { url: string }).url;
+    } catch (err) {
+      setDirectError(
+        err instanceof TypeError
+          ? 'Sin conexión. Verifica tu red.'
+          : err instanceof Error ? err.message : 'Error inesperado.'
+      );
+      setPayingId(null);
+    }
   }
 
   return (
@@ -498,9 +560,17 @@ export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorP
             featured={p.id === featuredId}
             selected={selectedPlan === p.id}
             onSelect={handleSelect}
+            onPayDirect={handlePayDirect}
+            paying={payingId === p.id}
           />
         ))}
       </div>
+
+      {directError && (
+        <p style={{ textAlign: 'center', marginTop: '.75rem', fontSize: '.8125rem', color: '#C62828' }} role="alert">
+          {directError}
+        </p>
+      )}
 
       <CartDrawer
         product={selectedProduct}

@@ -4,6 +4,7 @@ import { availableProducts } from '@/domain/products';
 import { Reveal } from '@/components/public/Motion';
 import { PlanSelector } from '@/components/plans/PlanSelector';
 import { ExitIntentModal } from '@/components/email/ExitIntentModal';
+import { MultiEventCart } from '@/components/cart/MultiEventCart';
 
 export const metadata: Metadata = {
   title: 'Planes de invitaciones digitales de boda — Kompralo',
@@ -86,6 +87,23 @@ export default function PreciosPage() {
         {/* Interactive plan grid + inline cart */}
         <PlanSelector products={availableProducts} featuredId="premium" />
         <ExitIntentModal />
+
+        {/* Multi-event cart */}
+        <Reveal delay={0.1} style={{ maxWidth: '1040px', margin: '3rem auto 0' }}>
+          <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: '2.5rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+              <p style={{ margin: '0 0 .5rem', fontSize: '.6875rem', fontWeight: 700, color: T.gold, textTransform: 'uppercase', letterSpacing: '.1em' }}>
+                ¿Tienes más de un evento?
+              </p>
+              <h2 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+                Arma tu pedido con múltiples invitaciones
+              </h2>
+            </div>
+            <div style={{ background: '#0D0A07', borderRadius: '1rem', overflow: 'hidden', padding: '2rem' }}>
+              <MultiEventCart />
+            </div>
+          </div>
+        </Reveal>
 
         {/* Trust indicators */}
         <Reveal delay={0.15} style={{ maxWidth:'1040px', margin:'2.5rem auto 0' }}>
