@@ -20,10 +20,10 @@ import { resolveTheme } from '@/domain/themes-v2/registry';
 function v1ToV2(v1: InvitationTheme): InvitationThemeV2 {
   // Try to find a native v2 theme by matching v1 id to a v2 id.
   const idMap: Record<string, ThemeIdV2> = {
-    champagne: 'editorial',
-    floral:    'floral',
-    modern:    'modern-dark',
-    azure:     'editorial', // no v2 azure yet — fall back to editorial
+    champagne: 'ivory-editorial',
+    floral:    'ivory-editorial',
+    modern:    'ivory-editorial',
+    azure:     'ivory-editorial',
   };
 
   const nativeV2 = resolveTheme(idMap[v1.id]);

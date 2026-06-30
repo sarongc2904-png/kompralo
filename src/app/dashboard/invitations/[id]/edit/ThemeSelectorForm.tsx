@@ -7,15 +7,8 @@ import { updateThemeSelection } from './actions';
 import { notifyPreviewRefresh } from './previewRefresh';
 
 // ─── Theme visibility ────────────────────────────────────────────────────────
-// Show 5 selectable themes: 4 editorial/pastel + luxury-champagne
 
-const VISIBLE_THEME_IDS = new Set([
-  'ivory-editorial',
-  'pastel-rose-editorial',
-  'pastel-sage-editorial',
-  'pastel-sky-editorial',
-  'luxury-champagne',
-]);
+const VISIBLE_THEME_IDS = new Set(['ivory-editorial']);
 
 function getVisibleThemes() {
   return availableThemesV2.filter((theme) => VISIBLE_THEME_IDS.has(theme.id));
@@ -27,20 +20,20 @@ function getVisibleThemes() {
 // All legacy themes now resolve to ivory-editorial.
 
 const V1_TO_V2_DISPLAY: Record<string, string> = {
-  champagne: 'ivory-editorial',    // Was 'editorial', now ivory-editorial
-  modern:    'ivory-editorial',    // Was 'modern-dark', now ivory-editorial
-  azure:     'ivory-editorial',    // Was 'editorial', now ivory-editorial
-  floral:    'ivory-editorial',    // Was 'floral', now ivory-editorial
-  editorial: 'ivory-editorial',    // Map all old themes to ivory-editorial
-  'modern-dark': 'ivory-editorial',
-  'luxury-gold': 'ivory-editorial',
-  'luxury-champagne': 'luxury-champagne',
-  'garden-romance': 'ivory-editorial',
-  'boho-terracotta': 'ivory-editorial',
-  'black-tie': 'ivory-editorial',
-  'pastel-rose-editorial': 'pastel-rose-editorial',
-  'pastel-sage-editorial': 'pastel-sage-editorial',
-  'pastel-sky-editorial': 'pastel-sky-editorial',
+  champagne:               'ivory-editorial',
+  modern:                  'ivory-editorial',
+  azure:                   'ivory-editorial',
+  floral:                  'ivory-editorial',
+  editorial:               'ivory-editorial',
+  'modern-dark':           'ivory-editorial',
+  'luxury-gold':           'ivory-editorial',
+  'luxury-champagne':      'ivory-editorial',
+  'garden-romance':        'ivory-editorial',
+  'boho-terracotta':       'ivory-editorial',
+  'black-tie':             'ivory-editorial',
+  'pastel-rose-editorial': 'ivory-editorial',
+  'pastel-sage-editorial': 'ivory-editorial',
+  'pastel-sky-editorial':  'ivory-editorial',
 };
 
 function resolveDisplayId(themeId: string): string {

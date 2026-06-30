@@ -2,19 +2,7 @@ import type { EventCategory } from '@/domain/invitations/types';
 
 // ─── Theme ID ────────────────────────────────────────────────────────────────
 
-export type ThemeIdV2 =
-  | 'luxury-gold'
-  | 'editorial'
-  | 'floral'
-  | 'modern-dark'
-  | 'ivory-editorial'
-  | 'pastel-rose-editorial'
-  | 'pastel-sage-editorial'
-  | 'pastel-sky-editorial'
-  | 'luxury-champagne'
-  | 'garden-romance'
-  | 'boho-terracotta'
-  | 'black-tie';
+export type ThemeIdV2 = 'ivory-editorial';
 
 // ─── Color palette ───────────────────────────────────────────────────────────
 
@@ -151,7 +139,7 @@ export interface ThemeAssetsV2 {
 // ─── Root theme object ───────────────────────────────────────────────────────
 
 export interface InvitationThemeV2 {
-  id: ThemeIdV2;
+  id: string;
   name: string;
   description: string;
   categorySupport: EventCategory[];

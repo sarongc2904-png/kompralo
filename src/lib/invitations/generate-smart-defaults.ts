@@ -115,14 +115,14 @@ export interface GeneratedDefaults {
 
 // Style → theme mapping
 const STYLE_THEME: Record<WizardStyle, string> = {
-  editorial:       'ivory-editorial',
-  romantico:       'pastel-rose-editorial',
-  minimalista:     'pastel-sky-editorial',
-  floral:          'garden-romance',
-  moderno:         'pastel-sky-editorial',
+  editorial:      'ivory-editorial',
+  romantico:      'ivory-editorial',
+  minimalista:    'ivory-editorial',
+  floral:         'ivory-editorial',
+  moderno:        'ivory-editorial',
   jardin_secreto: 'ivory-editorial',
-  cielo_nocturno: 'modern-dark',
-  arena_y_miel:   'luxury-gold',
+  cielo_nocturno: 'ivory-editorial',
+  arena_y_miel:   'ivory-editorial',
 };
 
 // Style → dress code colors

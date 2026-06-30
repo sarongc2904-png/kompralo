@@ -35,16 +35,4 @@ export { resolveThemeBackgroundAssets } from '@/domain/themes-v2/resolveThemeBac
 export type { ThemeBackgroundAssets } from '@/domain/themes-v2/resolveThemeBackgroundAssets';
 
 // Individual themes (for direct import when needed)
-export { luxuryGoldTheme }      from '@/domain/themes-v2/themes/luxury-gold';
-export { editorialTheme }       from '@/domain/themes-v2/themes/editorial';
-export { floralTheme }          from '@/domain/themes-v2/themes/floral';
-export { modernDarkTheme }      from '@/domain/themes-v2/themes/modern-dark';
-export { ivoryEditorialTheme }  from '@/domain/themes-v2/themes/ivory-editorial';
-export { luxuryChampagneTheme } from '@/domain/themes-v2/themes/luxury-champagne';
-
-export { gardenRomanceTheme }   from '@/domain/themes-v2/themes/garden-romance';
-export { bohoTerracottaTheme }     from '@/domain/themes-v2/themes/boho-terracotta';
-export { blackTieTheme }           from '@/domain/themes-v2/themes/black-tie';
-export { pastelRoseEditorialTheme }from '@/domain/themes-v2/themes/pastel-rose-editorial';
-export { pastelSageEditorialTheme }from '@/domain/themes-v2/themes/pastel-sage-editorial';
-export { pastelSkyEditorialTheme } from '@/domain/themes-v2/themes/pastel-sky-editorial';
+export { ivoryEditorialTheme } from '@/domain/themes-v2/themes/ivory-editorial';

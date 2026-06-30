@@ -1496,15 +1496,7 @@ export interface UpdateThemeSelectionInput {
   themeId: string;
 }
 
-const VALID_THEME_IDS = new Set([
-  // V2 Legacy
-  'luxury-gold', 'editorial', 'floral', 'modern-dark',
-  // V2 Wedding Premium
-  'ivory-editorial', 'luxury-champagne', 'garden-romance', 'boho-terracotta', 'black-tie',
-  'pastel-rose-editorial', 'pastel-sage-editorial', 'pastel-sky-editorial',
-  // V1 legacy — still accepted so existing invitations don't break
-  'champagne', 'modern', 'azure',
-]);
+const VALID_THEME_IDS = new Set(['ivory-editorial']);
 
 export async function updateThemeSelection(
   input: UpdateThemeSelectionInput,

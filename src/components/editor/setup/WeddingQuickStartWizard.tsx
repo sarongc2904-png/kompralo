@@ -29,7 +29,7 @@ interface WizardData {
   whatsappNumber: string;
 }
 
-const DEFAULT_THEME: ThemeIdV2 = 'pastel-rose-editorial';
+const DEFAULT_THEME: ThemeIdV2 = 'ivory-editorial';
 
 const PENDING_CHECKLIST = [
   'Subir fotos de portada y galería',

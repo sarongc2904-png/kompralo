@@ -469,101 +469,13 @@ function FloralOverlay({ className, style, position = 'top-left' }: { className?
 
 // ─── V2 LAYER CONTENT ─────────────────────────────────────────────────────────
 function buildLayerContent(
-  themeId: ThemeIdV2,
+  themeId: string,
   assets: ThemeBackgroundAssets
 ): { layer1: React.ReactNode; layer2: React.ReactNode; layer3: React.ReactNode } {
 
   switch (themeId) {
 
-    case 'luxury-gold':
-      return { layer1: <></>, layer2: <></>, layer3: <></> };
-
-    case 'modern-dark':
-      return { layer1: <></>, layer2: <></>, layer3: <></> };
-
-    case 'floral':
-      return {
-        layer1: (
-          <>
-            <div className="absolute inset-0 w-full" style={{ height: '300vh' }}>
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '2vh', left: '-5vw', width: '55vw', maxWidth: '640px', mixBlendMode: 'multiply', opacity: 0.55 }} />
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '140vh', right: '-8vw', width: '50vw', maxWidth: '580px', mixBlendMode: 'multiply', opacity: 0.40, transform: 'rotate(180deg) scaleX(-1)' }} />
-            </div>
-            <div className="absolute w-full" style={{ top: '300vh', height: '600vh' }}>
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '50vh', left: '-5vw', width: '48vw', maxWidth: '560px', mixBlendMode: 'multiply', opacity: 0.45, transform: 'scaleX(-1)' }} />
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '350vh', right: '-6vw', width: '52vw', maxWidth: '600px', mixBlendMode: 'multiply', opacity: 0.38, transform: 'rotate(90deg)' }} />
-            </div>
-          </>
-        ),
-        layer2: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '35vh', right: '2vw', width: '35vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.65 }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '310vh', left: '3vw', width: '30vw', maxWidth: '360px', mixBlendMode: 'multiply', opacity: 0.55, transform: 'scaleX(-1) rotate(-15deg)' }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '600vh', right: '5vw', width: '32vw', maxWidth: '380px', mixBlendMode: 'multiply', opacity: 0.50, transform: 'rotate(20deg)' }} />
-          </div>
-        ),
-        layer3: (
-          <div className="absolute inset-0 w-full" style={{ height: '900vh' }}>
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_10s_ease-in-out_infinite]"
-              style={{ top: '60vh', left: '10vw', width: '40vw', maxWidth: '460px', mixBlendMode: 'multiply', opacity: 0.40 }} />
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_8s_ease-in-out_infinite_2s]"
-              style={{ top: '450vh', right: '8vw', width: '38vw', maxWidth: '440px', mixBlendMode: 'multiply', opacity: 0.35, transform: 'scaleX(-1)' }} />
-          </div>
-        ),
-      };
-
-    case 'luxury-champagne':
-      return {
-        layer1: (
-          <>
-            <div className="absolute inset-0 w-full" style={{ height: '300vh' }}>
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '5vh', left: '-4vw', width: '50vw', maxWidth: '580px', mixBlendMode: 'multiply', opacity: 0.45 }} />
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '150vh', right: '-6vw', width: '46vw', maxWidth: '540px', mixBlendMode: 'multiply', opacity: 0.35, transform: 'rotate(180deg) scaleX(-1)' }} />
-            </div>
-            <div className="absolute w-full" style={{ top: '300vh', height: '700vh' }}>
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '80vh', left: '-4vw', width: '44vw', maxWidth: '520px', mixBlendMode: 'multiply', opacity: 0.38, transform: 'scaleX(-1)' }} />
-              <img src={assets.layer1} alt="" className="absolute pointer-events-none select-none"
-                style={{ top: '400vh', right: '-5vw', width: '48vw', maxWidth: '560px', mixBlendMode: 'multiply', opacity: 0.32, transform: 'rotate(90deg)' }} />
-            </div>
-          </>
-        ),
-        layer2: (
-          <div className="absolute inset-0 w-full" style={{ height: '1000vh' }}>
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '40vh', right: '1vw', width: '32vw', maxWidth: '380px', mixBlendMode: 'multiply', opacity: 0.55 }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '330vh', left: '2vw', width: '28vw', maxWidth: '340px', mixBlendMode: 'multiply', opacity: 0.45, transform: 'scaleX(-1)' }} />
-            <img src={assets.layer2} alt="" className="absolute pointer-events-none select-none"
-              style={{ top: '650vh', right: '4vw', width: '30vw', maxWidth: '360px', mixBlendMode: 'multiply', opacity: 0.42 }} />
-          </div>
-        ),
-        layer3: (
-          <div className="absolute inset-0 w-full" style={{ height: '1000vh' }}>
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_12s_ease-in-out_infinite]"
-              style={{ top: '80vh', left: '8vw', width: '36vw', maxWidth: '420px', mixBlendMode: 'multiply', opacity: 0.30 }} />
-            <img src={assets.layer3} alt="" className="absolute pointer-events-none select-none animate-[float_9s_ease-in-out_infinite_3s]"
-              style={{ top: '480vh', right: '6vw', width: '34vw', maxWidth: '400px', mixBlendMode: 'multiply', opacity: 0.25, transform: 'scaleX(-1)' }} />
-          </div>
-        ),
-      };
-
-    case 'pastel-rose-editorial':
-    case 'pastel-sage-editorial':
-    case 'pastel-sky-editorial':
-      return { layer1: <></>, layer2: <></>, layer3: <></> };
-
     case 'ivory-editorial':
-    case 'editorial':
     default:
       return {
         layer1: (
@@ -652,22 +564,22 @@ export default function MultilayerBackground({ theme, children }: MultilayerBack
       )}
       {/* 0. Section-scoped Ambient Glow Background */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-        {/* Base gradient — transparent for themes with fondo único on root wrapper */}
+        {/* Base gradient — transparent for ivory-editorial (fondo único on root wrapper) */}
         <div
           className="absolute inset-0 transition-colors duration-1000"
           style={{
-            background: (themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial' || themeV2.id === 'pastel-rose-editorial')
+            background: themeV2.id === 'ivory-editorial'
               ? 'transparent'
               : `var(--v2-background-main, ${theme.backgrounds.main || theme.bgSolid || 'transparent'})`,
           }}
         />
 
-        {/* Paper texture — disabled for themes that use globals.css fondo único */}
+        {/* Paper texture — disabled for ivory-editorial (fondo único handles it) */}
         <div
           className="absolute inset-0"
           aria-hidden="true"
           style={{
-            backgroundImage: (themeV2.id === 'ivory-editorial' || themeV2.id === 'editorial' || themeV2.id === 'pastel-rose-editorial')
+            backgroundImage: themeV2.id === 'ivory-editorial'
               ? 'none'
               : 'var(--kompralo-invitation-paper-bg)',
             backgroundSize: 'cover',

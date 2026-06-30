@@ -6,39 +6,11 @@ import type { ThemeIdV2 } from '@/domain/themes-v2/types';
  */
 export const WIZARD_THEME_OPTIONS = [
   {
-    id: 'pastel-rose-editorial' as ThemeIdV2,
-    label: 'Romántico floral',
-    desc: 'Flores y rosas pastel',
-    accent: '#D4829A',
-    bg: '#FDF5F7',
-  },
-  {
-    id: 'pastel-sage-editorial' as ThemeIdV2,
-    label: 'Natural elegante',
-    desc: 'Verde y eucalipto',
-    accent: '#7A9E7E',
-    bg: '#F5FAF6',
-  },
-  {
-    id: 'pastel-sky-editorial' as ThemeIdV2,
-    label: 'Cielo pastel',
-    desc: 'Azul celeste',
-    accent: '#6F8FBF',
-    bg: '#F5FAFF',
-  },
-  {
     id: 'ivory-editorial' as ThemeIdV2,
     label: 'Editorial clásico',
     desc: 'Dorado y marfil',
     accent: '#B99752',
     bg: '#FAF7F2',
-  },
-  {
-    id: 'luxury-champagne' as ThemeIdV2,
-    label: 'Champagne elegante',
-    desc: 'Champagne y oro',
-    accent: '#C9A84C',
-    bg: '#FBF8F1',
   },
 ] as const;
 
@@ -62,12 +34,12 @@ export type WeddingStyle = typeof WEDDING_STYLES[number];
  * All values are read-only at runtime.
  */
 export const WEDDING_STYLE_TO_THEME_MAP = {
-  elegante: 'ivory-editorial',
-  minimalista: 'pastel-sky-editorial',
-  jardín: 'garden-romance',
-  playa: 'boho-terracotta',
-  clásico: 'luxury-champagne',
-  moderno: 'pastel-sky-editorial',
+  elegante:   'ivory-editorial',
+  minimalista: 'ivory-editorial',
+  jardín:     'ivory-editorial',
+  playa:      'ivory-editorial',
+  clásico:    'ivory-editorial',
+  moderno:    'ivory-editorial',
 } as const satisfies Record<WeddingStyle, ThemeIdV2>;
 
 /**

@@ -7,32 +7,10 @@ import {
 } from '@/domain/themes-v2/template-schema';
 
 // Static imports — bundled at compile time, zero runtime fetch
-import ivoryEditorial      from './templates-json/ivory-editorial.json';
-import pastelRose          from './templates-json/pastel-rose-editorial.json';
-import pastelSage          from './templates-json/pastel-sage-editorial.json';
-import pastelSky           from './templates-json/pastel-sky-editorial.json';
-import luxuryChampagne     from './templates-json/luxury-champagne.json';
-import gardenRomance       from './templates-json/garden-romance.json';
-import bohoTerracotta      from './templates-json/boho-terracotta.json';
-import blackTie            from './templates-json/black-tie.json';
-import editorial           from './templates-json/editorial.json';
-import luxuryGold          from './templates-json/luxury-gold.json';
-import floral              from './templates-json/floral.json';
-import modernDark          from './templates-json/modern-dark.json';
+import ivoryEditorial from './templates-json/ivory-editorial.json';
 
 const TEMPLATES_JSON = [
   ivoryEditorial,
-  pastelRose,
-  pastelSage,
-  pastelSky,
-  luxuryChampagne,
-  gardenRomance,
-  bohoTerracotta,
-  blackTie,
-  editorial,
-  luxuryGold,
-  floral,
-  modernDark,
 ] as unknown[];
 
 // ─── Loader ──────────────────────────────────────────────────────────────────

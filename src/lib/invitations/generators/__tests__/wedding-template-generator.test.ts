@@ -236,12 +236,12 @@ function test_8_style_map_resolves_all(): void {
   assert(themes.every((t) => typeof t === 'string'), 'all styles should resolve to strings');
 
   // Spot check mappings
-  assert(resolveWeddingThemeId('elegante') === 'ivory-editorial', 'elegante → ivory-editorial');
-  assert(resolveWeddingThemeId('minimalista') === 'pastel-sky-editorial', 'minimalista → pastel-sky-editorial');
-  assert(resolveWeddingThemeId('jardín') === 'garden-romance', 'jardín → garden-romance');
-  assert(resolveWeddingThemeId('playa') === 'boho-terracotta', 'playa → boho-terracotta');
-  assert(resolveWeddingThemeId('clásico') === 'luxury-champagne', 'clásico → luxury-champagne');
-  assert(resolveWeddingThemeId('moderno') === 'pastel-sky-editorial', 'moderno → pastel-sky-editorial');
+  assert(resolveWeddingThemeId('elegante') === 'ivory-editorial',   'elegante → ivory-editorial');
+  assert(resolveWeddingThemeId('minimalista') === 'ivory-editorial', 'minimalista → ivory-editorial');
+  assert(resolveWeddingThemeId('jardín') === 'ivory-editorial',     'jardín → ivory-editorial');
+  assert(resolveWeddingThemeId('playa') === 'ivory-editorial',      'playa → ivory-editorial');
+  assert(resolveWeddingThemeId('clásico') === 'ivory-editorial',    'clásico → ivory-editorial');
+  assert(resolveWeddingThemeId('moderno') === 'ivory-editorial',    'moderno → ivory-editorial');
 
   // Unknown style falls back
   assert(resolveWeddingThemeId('unknown') === 'ivory-editorial', 'unknown style → ivory-editorial');
