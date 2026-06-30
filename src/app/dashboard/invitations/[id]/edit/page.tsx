@@ -96,7 +96,7 @@ function UpsellBlock({ plan }: { plan: 'basic' | 'premium' }) {
       </p>
       <p className="text-sm mb-3" style={{ color: '#746B62', lineHeight: 1.6 }}>{text}</p>
       <Link
-        href="/invitaciones#planes"
+        href="/invitaciones/precios"
         className="inline-flex items-center gap-1 text-xs font-semibold"
         style={{ color: '#B99752' }}
       >
