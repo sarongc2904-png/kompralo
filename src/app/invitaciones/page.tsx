@@ -149,12 +149,30 @@ function LandingStyles() {
       .cro-problem-card p { margin: 0; color: ${T.muted}; font-size: 1rem; line-height: 1.65; }
 
       /* ── Solution Section Cards ────────────────────────────────────────── */
-      .cro-sol-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3.5rem; }
-      .cro-sol-card { background: ${T.onyx}; padding: 2.2rem 1.8rem; border-radius: 4px; border: 1px solid ${T.border}; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+      .cro-sol-grid {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 3.5rem 0 1rem;
+        margin-top: 0;
+        cursor: grab;
+      }
+      .cro-sol-grid:active { cursor: grabbing; }
+      .cro-sol-grid::-webkit-scrollbar { display: none; }
+      .cro-sol-grid { -ms-overflow-style: none; scrollbar-width: none; }
+      .cro-sol-card {
+        flex: none;
+        width: 200px;
+        scroll-snap-align: start;
+        background: ${T.onyx}; padding: 1.75rem 1.5rem; border-radius: 4px; border: 1px solid ${T.border};
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
       .cro-sol-card:hover { border-color: ${T.cyan}; transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
-      .cro-sol-icon { color: ${T.cyan}; margin-bottom: 1.25rem; display: inline-block; }
-      .cro-sol-card h3 { margin: 0 0 0.5rem; font-size: 1.15rem; font-weight: 600; color: ${T.ink}; }
-      .cro-sol-card p { margin: 0; font-size: 0.9rem; color: ${T.muted}; line-height: 1.55; }
+      .cro-sol-icon { color: ${T.cyan}; margin-bottom: 1rem; display: inline-block; }
+      .cro-sol-card h3 { margin: 0 0 0.5rem; font-size: 1rem; font-weight: 600; color: ${T.ink}; line-height: 1.3; }
+      .cro-sol-card p { margin: 0; font-size: 0.825rem; color: ${T.muted}; line-height: 1.5; }
 
       /* ── Comparison Section ───────────────────────────────── */
       .cro-compare-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid ${T.border}; border-radius: 4px; overflow: hidden; margin-top: 3rem; }
@@ -338,17 +356,18 @@ function SolutionSection() {
             Incluye secciones para compartir la información que tus invitados necesitan. La disponibilidad de algunas secciones depende del plan que elijas.
           </p>
         </Reveal>
-        <Stagger className="cro-sol-grid" gap={0.04}>
+        <div className="cro-sol-grid">
           {SOLUTIONS.map(({ icon: Icon, title, text }) => (
-            <Item key={title}>
-              <div className="cro-sol-card">
-                <Icon size={28} className="cro-sol-icon" strokeWidth={1.5} />
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </div>
-            </Item>
+            <div key={title} className="cro-sol-card">
+              <Icon size={24} className="cro-sol-icon" strokeWidth={1.5} />
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
           ))}
-        </Stagger>
+        </div>
+        <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: T.muted, letterSpacing: '0.04em' }}>
+          ← Desliza para ver todas las secciones →
+        </p>
       </div>
     </section>
   );
