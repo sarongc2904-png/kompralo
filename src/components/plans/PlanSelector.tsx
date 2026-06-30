@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { Product } from '@/domain/products';
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
@@ -42,15 +43,6 @@ const REVIEWS: Record<string, { name: string; city: string; text: string; event:
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
 const CSS = `
-  @keyframes ps-fadeIn {
-    from { opacity: 0; transform: translateY(-8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .ps-cart-panel { animation: none !important; }
-  }
-  .ps-cart-panel { animation: ps-fadeIn 200ms ease both; }
-
   .ps-cards-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -72,6 +64,35 @@ const CSS = `
   .ps-add-btn { transition: opacity 0.15s, background 0.15s, color 0.15s; }
   .ps-add-btn:hover:not(:disabled) { opacity: 0.88; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Drawer */
+  .ps-drawer-backdrop {
+    position: fixed; inset: 0; z-index: 9998;
+    background: rgba(0,0,0,0.5);
+    transition: opacity 300ms ease;
+  }
+  .ps-drawer-panel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 9999;
+    width: min(440px, 100vw);
+    background: ${T.cream};
+    box-shadow: -8px 0 48px rgba(0,0,0,0.22);
+    transition: transform 300ms ease;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .ps-drawer-panel:focus { outline: none; }
+  .ps-drawer-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: .75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid ${T.border};
+    background: ${T.cream};
+    position: sticky; top: 0; z-index: 1;
+  }
+  .ps-trust-grid {
+    display: flex; flex-wrap: wrap; gap: .5rem 1.5rem;
+  }
 `;
 
 // ─── FeatureList ──────────────────────────────────────────────────────────────
@@ -167,12 +188,11 @@ function PlanCard({
   );
 }
 
-// ─── CartPanel ────────────────────────────────────────────────────────────────
-function CartPanel({ product, onClear }: { product: Product; onClear: () => void }) {
+// ─── CartDrawerContent ────────────────────────────────────────────────────────
+function CartDrawerContent({ product, onClear, onClose }: { product: Product; onClear: () => void; onClose: () => void }) {
   const [checkoutState, setCheckoutState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMsg,      setErrorMsg]      = useState<string | null>(null);
 
-  // 1B — Save for later
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [savedEmail,     setSavedEmail]     = useState('');
   const [saveLoading,    setSaveLoading]    = useState(false);
@@ -207,138 +227,136 @@ function CartPanel({ product, onClear }: { product: Product; onClear: () => void
   }
 
   return (
-    <div className="ps-cart-panel" style={{ maxWidth: '1040px', margin: '1.5rem auto 0', background: T.cream, border: `1px solid ${T.champagne}`, borderRadius: '12px', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 
       {/* Urgency bar */}
-      <div style={{ background: T.dark, color: T.champagne, padding: '.5rem 1.5rem', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+      <div style={{ background: T.dark, color: T.champagne, padding: '.5rem 1.25rem', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexShrink: 0 }}>
         <span>🔥 Más de 80 eventos creados este mes · Disponibilidad limitada</span>
-        <span style={{ whiteSpace: 'nowrap', opacity: 0.65 }}>Precios sin IVA adicional</span>
+        <span style={{ whiteSpace: 'nowrap', opacity: 0.65 }}>Sin IVA adicional</span>
       </div>
 
-      {/* Main body — two columns */}
-      <div style={{ padding: '1.5rem 1.75rem', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-start' }}>
+      {/* Order summary */}
+      <div style={{ padding: '1.25rem 1.5rem', borderBottom: `1px solid ${T.border}` }}>
+        <p style={{ margin: '0 0 .25rem', fontSize: '.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: T.light }}>
+          Resumen del pedido
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', margin: '.5rem 0 .875rem', gap: '1rem' }}>
+          <span style={{ fontSize: '1.125rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+            Plan {product.name}
+          </span>
+          <span style={{ fontSize: '1.375rem', fontWeight: 800, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)', whiteSpace: 'nowrap' }}>
+            {fmtPrice(product.price)} <span style={{ fontSize: '.75rem', fontWeight: 500, color: T.light }}>MXN</span>
+          </span>
+        </div>
+        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 .5rem', display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
+          {product.features.slice(0, 3).map((f) => (
+            <li key={f} style={{ fontSize: '.8125rem', color: T.mid, display: 'flex', gap: '.4rem' }}>
+              <span style={{ color: T.gold }}>✓</span> {f}
+            </li>
+          ))}
+          {product.features.length > 3 && (
+            <li style={{ fontSize: '.8125rem', color: T.light }}>+ {product.features.length - 3} más incluidos</li>
+          )}
+        </ul>
+        <button
+          type="button"
+          onClick={() => { onClear(); onClose(); }}
+          style={{ marginTop: '.375rem', background: 'none', border: 'none', padding: 0, fontSize: '.78rem', color: T.light, cursor: 'pointer', textDecoration: 'underline' }}
+        >
+          Cambiar plan
+        </button>
+      </div>
 
-        {/* Left — Order summary */}
-        <div style={{ flex: '1 1 260px' }}>
-          <p style={{ margin: '0 0 .25rem', fontSize: '.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: T.light }}>
-            Resumen del pedido
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', margin: '.5rem 0 .875rem', gap: '1rem' }}>
-            <span style={{ fontSize: '1.125rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-              Plan {product.name}
-            </span>
-            <span style={{ fontSize: '1.375rem', fontWeight: 800, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)', whiteSpace: 'nowrap' }}>
-              {fmtPrice(product.price)} <span style={{ fontSize: '.75rem', fontWeight: 500, color: T.light }}>MXN</span>
-            </span>
-          </div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 .5rem', display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
-            {product.features.slice(0, 3).map((f) => (
-              <li key={f} style={{ fontSize: '.8125rem', color: T.mid, display: 'flex', gap: '.4rem' }}>
-                <span style={{ color: T.gold }}>✓</span> {f}
-              </li>
+      {/* Pay CTA */}
+      <div style={{ padding: '1.25rem 1.5rem', borderBottom: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
+        <button
+          type="button"
+          onClick={handlePay}
+          disabled={checkoutState === 'loading'}
+          className="ps-add-btn"
+          style={{
+            padding: '.875rem 2rem', borderRadius: '8px', border: 'none',
+            background: checkoutState === 'loading' ? '#555' : T.dark,
+            color: T.cream, fontSize: '1rem', fontWeight: 700,
+            cursor: checkoutState === 'loading' ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
+            opacity: checkoutState === 'loading' ? 0.7 : 1,
+          }}
+          aria-busy={checkoutState === 'loading'}
+        >
+          {checkoutState === 'loading' ? (
+            <><span style={{ display: 'inline-block', width: '1rem', height: '1rem', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} aria-hidden="true" />Procesando…</>
+          ) : 'Pagar ahora →'}
+        </button>
+        {checkoutState === 'error' && errorMsg && (
+          <span style={{ fontSize: '.75rem', color: '#C62828', lineHeight: 1.4 }} role="alert">{errorMsg}</span>
+        )}
+
+        {/* Métodos de pago */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
+            {['Visa', 'Mastercard', 'AMEX', 'OXXO', 'SPEI'].map((m) => (
+              <span key={m} style={{ background: '#fff', border: '0.5px solid #D4C8B4', borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 500, color: T.light }}>
+                {m}
+              </span>
             ))}
-            {product.features.length > 3 && (
-              <li style={{ fontSize: '.8125rem', color: T.light }}>+ {product.features.length - 3} más incluidos</li>
-            )}
-          </ul>
-          <button type="button" onClick={onClear} style={{ marginTop: '.375rem', background: 'none', border: 'none', padding: 0, fontSize: '.78rem', color: T.light, cursor: 'pointer', textDecoration: 'underline' }}>
-            Cambiar plan
-          </button>
+          </div>
+          <p style={{ fontSize: 11, color: T.light, margin: 0 }}>🔒 Procesado por Stripe · Encriptación SSL 256-bit</p>
         </div>
 
-        {/* Right — Pay CTA column */}
-        <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', gap: '.75rem', minWidth: 220 }}>
-
-          {/* Pagar ahora */}
-          <button
-            type="button"
-            onClick={handlePay}
-            disabled={checkoutState === 'loading'}
-            className="ps-add-btn"
-            style={{
-              padding: '.875rem 2rem', borderRadius: '8px', border: 'none',
-              background: checkoutState === 'loading' ? '#555' : T.dark,
-              color: T.cream, fontSize: '1rem', fontWeight: 700,
-              cursor: checkoutState === 'loading' ? 'not-allowed' : 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
-              opacity: checkoutState === 'loading' ? 0.7 : 1, whiteSpace: 'nowrap',
-            }}
-            aria-busy={checkoutState === 'loading'}
-          >
-            {checkoutState === 'loading' ? (
-              <><span style={{ display: 'inline-block', width: '1rem', height: '1rem', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} aria-hidden="true" />Procesando…</>
-            ) : 'Pagar ahora →'}
-          </button>
-          {checkoutState === 'error' && errorMsg && (
-            <span style={{ fontSize: '.75rem', color: '#C62828', lineHeight: 1.4 }} role="alert">{errorMsg}</span>
-          )}
-
-          {/* 1A — Métodos de pago */}
-          <div style={{ marginTop: 4 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
-              {['Visa', 'Mastercard', 'AMEX', 'OXXO', 'SPEI'].map((m) => (
-                <span key={m} style={{ background: '#fff', border: '0.5px solid #D4C8B4', borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 500, color: T.light }}>
-                  {m}
-                </span>
-              ))}
-            </div>
-            <p style={{ fontSize: 11, color: T.light, margin: 0 }}>🔒 Procesado por Stripe · Encriptación SSL 256-bit</p>
-          </div>
-
-          {/* 1B — Guardar para después */}
-          <div>
-            {saveSuccess ? (
-              <p style={{ margin: 0, fontSize: '.8125rem', color: T.green, fontWeight: 500 }}>
-                ✓ Guardado — te enviamos los detalles a {savedEmail}
-              </p>
-            ) : showEmailInput ? (
-              <div style={{ display: 'flex', gap: 6 }}>
-                <input
-                  type="email"
-                  value={savedEmail}
-                  onChange={(e) => setSavedEmail(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-                  placeholder="tu@email.com"
-                  style={{ flex: 1, minWidth: 0, padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 13, background: '#fff', color: T.dark, outline: 'none' }}
-                  autoFocus
-                />
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={saveLoading || !savedEmail.trim()}
-                  className="ps-add-btn"
-                  style={{ padding: '6px 12px', borderRadius: 6, border: 'none', background: T.dark, color: T.cream, fontSize: 13, fontWeight: 600, cursor: saveLoading ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}
-                >
-                  {saveLoading ? '…' : 'Guardar'}
-                </button>
-              </div>
-            ) : (
+        {/* Guardar para después */}
+        <div>
+          {saveSuccess ? (
+            <p style={{ margin: 0, fontSize: '.8125rem', color: T.green, fontWeight: 500 }}>
+              ✓ Guardado — te enviamos los detalles a {savedEmail}
+            </p>
+          ) : showEmailInput ? (
+            <div style={{ display: 'flex', gap: 6 }}>
+              <input
+                type="email"
+                value={savedEmail}
+                onChange={(e) => setSavedEmail(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                placeholder="tu@email.com"
+                style={{ flex: 1, minWidth: 0, padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 13, background: '#fff', color: T.dark, outline: 'none' }}
+                autoFocus
+              />
               <button
                 type="button"
-                onClick={() => setShowEmailInput(true)}
-                style={{ background: 'none', border: `1px solid ${T.border}`, borderRadius: 6, padding: '6px 14px', fontSize: '.8125rem', fontWeight: 500, color: T.light, cursor: 'pointer', width: '100%' }}
+                onClick={handleSave}
+                disabled={saveLoading || !savedEmail.trim()}
+                className="ps-add-btn"
+                style={{ padding: '6px 12px', borderRadius: 6, border: 'none', background: T.dark, color: T.cream, fontSize: 13, fontWeight: 600, cursor: saveLoading ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap' }}
               >
-                ♡ Guardar para después
+                {saveLoading ? '…' : 'Guardar'}
               </button>
-            )}
-          </div>
-
-          {/* 1C — Garantía */}
-          <div style={{ background: T.greenBg, borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start', marginTop: 4 }}>
-            <span style={{ fontSize: 20 }}>🏆</span>
-            <div>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: T.successText }}>Garantía de satisfacción 48 h</p>
-              <p style={{ margin: '4px 0 0', fontSize: 12, color: T.successText, lineHeight: 1.4 }}>
-                Si tu invitación no está lista en 48 horas, te devolvemos el 100% de tu dinero. Sin preguntas.
-              </p>
             </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowEmailInput(true)}
+              style={{ background: 'none', border: `1px solid ${T.border}`, borderRadius: 6, padding: '6px 14px', fontSize: '.8125rem', fontWeight: 500, color: T.light, cursor: 'pointer', width: '100%' }}
+            >
+              ♡ Guardar para después
+            </button>
+          )}
+        </div>
+
+        {/* Garantía */}
+        <div style={{ background: T.greenBg, borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+          <span style={{ fontSize: 20 }}>🏆</span>
+          <div>
+            <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: T.successText }}>Garantía de satisfacción 48 h</p>
+            <p style={{ margin: '4px 0 0', fontSize: 12, color: T.successText, lineHeight: 1.4 }}>
+              Si tu invitación no está lista en 48 horas, te devolvemos el 100% de tu dinero. Sin preguntas.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* 1D — Testimonio */}
+      {/* Testimonio */}
       {review && (
-        <div style={{ borderTop: `1px solid ${T.border}`, margin: '0 1.75rem', padding: '1.25rem 0' }}>
+        <div style={{ padding: '1.25rem 1.5rem', borderBottom: `1px solid ${T.border}` }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6, flexWrap: 'wrap', gap: 4 }}>
             <span style={{ fontSize: '.875rem', fontWeight: 700, color: T.dark }}>{review.name} · {review.city}</span>
             <span style={{ fontSize: '.875rem', color: '#BA7517', letterSpacing: 1 }}>★★★★★</span>
@@ -349,8 +367,8 @@ function CartPanel({ product, onClear }: { product: Product; onClear: () => void
         </div>
       )}
 
-      {/* 1E — Trust items */}
-      <div style={{ background: '#F5EFE0', borderTop: `1px solid ${T.border}`, padding: '1rem 1.75rem', display: 'flex', flexWrap: 'wrap', gap: '.5rem 2rem' }}>
+      {/* Trust items */}
+      <div style={{ background: '#F5EFE0', padding: '1rem 1.5rem' }} className="ps-trust-grid">
         {[
           'Acceso inmediato al panel después del pago',
           'Edita tu invitación cuantas veces necesites',
@@ -366,18 +384,108 @@ function CartPanel({ product, onClear }: { product: Product; onClear: () => void
   );
 }
 
+// ─── CartDrawer ───────────────────────────────────────────────────────────────
+function CartDrawer({
+  product, isOpen, onClose, onClear,
+}: {
+  product: Product | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onClear: () => void;
+}) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  // Body scroll lock — compensate scrollbar width to prevent layout shift
+  useEffect(() => {
+    if (!isOpen) return;
+    const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = `${scrollbarW}px`;
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [isOpen]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <>
+      {/* Backdrop */}
+      <div
+        aria-hidden="true"
+        onClick={onClose}
+        className="ps-drawer-backdrop"
+        style={{ opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'auto' : 'none' }}
+      />
+
+      {/* Drawer panel */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Tu carrito"
+        tabIndex={-1}
+        className="ps-drawer-panel"
+        style={{ transform: isOpen ? 'translateX(0)' : 'translateX(100%)' }}
+      >
+        {/* Sticky header */}
+        <div className="ps-drawer-header">
+          <span style={{ flex: 1, fontSize: '1rem', fontWeight: 700, color: T.dark }}>
+            🛒 Tu carrito
+          </span>
+          {product && (
+            <span style={{ fontSize: '.8125rem', color: T.light }}>
+              Plan {product.name} · {fmtPrice(product.price)} MXN
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Cerrar carrito"
+            style={{
+              flexShrink: 0,
+              width: 32, height: 32, borderRadius: '50%',
+              border: `1px solid ${T.border}`,
+              background: 'rgba(196,169,98,0.1)',
+              color: T.light, fontSize: 20, lineHeight: 1,
+              cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Scrollable content */}
+        {product && (
+          <CartDrawerContent product={product} onClear={onClear} onClose={onClose} />
+        )}
+      </div>
+    </>,
+    document.body,
+  );
+}
+
 // ─── PlanSelector (main export) ───────────────────────────────────────────────
 export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorProps) {
-  const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(null);
-  const cartRef = useRef<HTMLDivElement>(null);
+  const [selectedPlan,  setSelectedPlan]  = useState<PlanId | null>(null);
+  const [isDrawerOpen,  setIsDrawerOpen]  = useState(false);
 
   const selectedProduct = selectedPlan ? (products.find((p) => p.id === selectedPlan) ?? null) : null;
 
-  useEffect(() => {
-    if (selectedPlan && cartRef.current) {
-      cartRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }, [selectedPlan]);
+  function handleSelect(id: PlanId) {
+    setSelectedPlan(id);
+    setIsDrawerOpen(true);
+  }
 
   return (
     <>
@@ -389,15 +497,17 @@ export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorP
             product={p}
             featured={p.id === featuredId}
             selected={selectedPlan === p.id}
-            onSelect={setSelectedPlan}
+            onSelect={handleSelect}
           />
         ))}
       </div>
-      <div ref={cartRef}>
-        {selectedProduct && (
-          <CartPanel product={selectedProduct} onClear={() => setSelectedPlan(null)} />
-        )}
-      </div>
+
+      <CartDrawer
+        product={selectedProduct}
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onClear={() => { setSelectedPlan(null); setIsDrawerOpen(false); }}
+      />
     </>
   );
 }
