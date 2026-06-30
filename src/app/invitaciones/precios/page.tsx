@@ -6,8 +6,8 @@ import { PlanSelector } from '@/components/plans/PlanSelector';
 import { ExitIntentModal } from '@/components/email/ExitIntentModal';
 
 export const metadata: Metadata = {
-  title: 'Planes para organizar tu evento — Kompralo',
-  description: 'Elige cuánto quieres organizar desde un solo enlace. Basic $499, Premium $899 y Deluxe $1,499 MXN. Pago único.',
+  title: 'Planes de invitaciones digitales de boda — Kompralo',
+  description: 'Elige el plan ideal para tu boda. Basic $499, Premium $899 y Deluxe $1,499 MXN. Pago único y sin mensualidades.',
 };
 
 const T = {
@@ -76,10 +76,10 @@ export default function PreciosPage() {
             margin:'0 0 1.125rem', lineHeight:1.1,
             fontFamily:'var(--font-playfair, Georgia, serif)',
           }}>
-            Organiza tu evento desde un solo enlace
+            Elige el plan ideal para tu boda
           </h1>
           <p style={{ color:T.mid, fontSize:'1rem', lineHeight:1.65, margin:0 }}>
-            Elige las herramientas que necesitas para compartir, confirmar y mantener informados a tus invitados.<br />Pago único, sin suscripción ni mensualidades.
+            Invitaciones digitales de boda listas para personalizar.<br />Pago único, sin mensualidades.
           </p>
         </Reveal>
 
@@ -97,7 +97,7 @@ export default function PreciosPage() {
               {[
                 { icon:'🔒', text:'Pago seguro con Stripe' },
                 { icon:'📧', text:'Después del pago recibirás acceso inmediato para editar tu invitación' },
-                { icon:'💬', text:'Comparte tu link por WhatsApp con tus invitados' },
+                { icon:'💬', text:'Comparte tu invitación por WhatsApp con tus invitados' },
               ].map(({ icon, text }) => (
                 <div key={text} style={{ display:'flex', alignItems:'center', gap:'.5rem', fontSize:'.8125rem', color:T.mid, fontWeight:500 }}>
                   <span>{icon}</span> <span>{text}</span>
@@ -109,7 +109,7 @@ export default function PreciosPage() {
 
         <Reveal delay={0.2}>
           <p style={{ textAlign:'center', marginTop:'1.375rem', fontSize:'.78rem', color:T.light, lineHeight:1.6 }}>
-            Pago único sin cargos adicionales · Sin instalar apps · Edita cuantas veces quieras
+            Pago único · Sin mensualidades · Fácil de compartir por WhatsApp
           </p>
         </Reveal>
 
