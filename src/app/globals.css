@@ -420,6 +420,22 @@ html.lenis, html.lenis body {
   background-attachment: scroll;
 }
 
+/* Pisar variables CSS para que los inline styles de ElegantInvitationCard queden transparentes */
+[data-theme-v2="blanco-deluxe"] {
+  --v2-glass-bg: transparent;
+  --v2-card-ivory-bg: transparent;
+  --v2-color-surface: transparent;
+}
+
+/* Marco floral como fondo de cada tarjeta — !important necesario para ganar al inline style */
+[data-theme-v2="blanco-deluxe"] [data-elegant-card] {
+  background-image: url('https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/marco_floral_transparente.png') !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-color: transparent !important;
+}
+
 
 
 /* Warmer paper grain for the editorial feel */
