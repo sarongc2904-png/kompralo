@@ -8,7 +8,7 @@ import { notifyPreviewRefresh } from './previewRefresh';
 
 // ─── Theme visibility ────────────────────────────────────────────────────────
 
-const VISIBLE_THEME_IDS = new Set(['ivory-editorial', 'blanco-deluxe']);
+const VISIBLE_THEME_IDS = new Set(['ivory-editorial', 'blanco-deluxe', 'rosa-antiguo']);
 
 function getVisibleThemes() {
   return availableThemesV2.filter((theme) => VISIBLE_THEME_IDS.has(theme.id));
@@ -35,6 +35,7 @@ const V1_TO_V2_DISPLAY: Record<string, string> = {
   'pastel-sage-editorial': 'ivory-editorial',
   'pastel-sky-editorial':  'ivory-editorial',
   'blanco-deluxe':         'blanco-deluxe',
+  'rosa-antiguo':          'rosa-antiguo',
 };
 
 function resolveDisplayId(themeId: string): string {
