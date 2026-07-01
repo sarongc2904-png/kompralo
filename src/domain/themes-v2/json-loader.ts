@@ -9,10 +9,12 @@ import {
 // Static imports — bundled at compile time, zero runtime fetch
 import ivoryEditorial from './templates-json/ivory-editorial.json';
 import blancoDeluxe   from './templates-json/blanco-deluxe.json';
+import rosaAntiguo    from './templates-json/rosa-antiguo.json';
 
 const TEMPLATES_JSON = [
   ivoryEditorial,
   blancoDeluxe,
+  rosaAntiguo,
 ] as unknown[];
 
 // ─── Loader ──────────────────────────────────────────────────────────────────
