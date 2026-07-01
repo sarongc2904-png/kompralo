@@ -20,7 +20,6 @@ export function AccessFromSessionButton({
   async function handleClick() {
     if (pending) return;
     if (!sessionId) {
-      console.error('[AccessFromSessionButton] missing sessionId; falling back to /login');
       window.location.href = '/login';
       return;
     }
@@ -42,13 +41,8 @@ export function AccessFromSessionButton({
         window.location.href = data.accessUrl;
         return;
       }
-      console.error('[AccessFromSessionButton] access endpoint failed; falling back to /login', {
-        status: response.status,
-        ok: response.ok,
-        data,
-      });
-    } catch (error) {
-      console.error('[AccessFromSessionButton] access request threw; falling back to /login', error);
+    } catch {
+      // Fall through to login fallback.
     }
 
     window.location.href = '/login';

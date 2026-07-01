@@ -6,7 +6,7 @@ import { AccessFromSessionButton } from './AccessFromSessionButton';
 
 export const metadata: Metadata = { title: 'Pago exitoso — Kompralo' };
 
-// ─── CSS ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ CSS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function PageStyles() {
   return (
     <style>{`
@@ -42,7 +42,7 @@ function PageStyles() {
   );
 }
 
-// ─── Order lookup ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Order lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface OrderSummary {
   planId:       string;
   amountTotal:  number;
@@ -67,7 +67,7 @@ function formatPrice(centavos:number, currency:string) {
 
 const planLabels: Record<string,string> = { basic:'Basic', premium:'Premium', deluxe:'Deluxe' };
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Props { searchParams: Promise<{ session_id?:string }>; }
 
 export default async function CheckoutSuccessPage({ searchParams }: Props) {
@@ -150,16 +150,21 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         boxShadow:'0 4px 24px rgba(15,12,9,0.05)',
       }}>
         <p style={{ margin:'0 0 1.25rem', fontSize:'.6875rem', fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', color:T.gold }}>
-          Tu acceso
+          ¿QUÉ SIGUE?
         </p>
 
         {[
-          { n:'1', icon:'📧', text: order?.customerEmail ? `Revisa el correo de KOMPRALO enviado a ${order.customerEmail}` : 'Revisa el correo de KOMPRALO en tu bandeja' },
-          { n:'2', icon:'🔗', text:'Haz clic en “Acceder a mi invitación”. Es un enlace seguro y no necesitas contraseña' },
-          { n:'3', icon:'✏️', text:'Personaliza tu invitación: fecha, fotos, textos y todo lo que necesites' },
-          { n:'4', icon:'💬', text:'Comparte el enlace de tu invitación con tus invitados por WhatsApp' },
+          { n:'1', icon:'\u{1F4DD}', text:'Personaliza tu invitación: nombres, fecha, lugar y todo lo que necesites' },
+          { n:'2', icon:'\u{1F4E4}', text:'Comparte el enlace con tus invitados por WhatsApp' },
+          {
+            n:'3',
+            icon:'\u{1F4E7}',
+            text: order?.customerEmail
+              ? `Revisa tu correo en ${order.customerEmail} y crea tu contraseña para acceder siempre que quieras`
+              : 'Revisa tu correo y crea tu contraseña para acceder siempre que quieras',
+          },
         ].map(({ n, icon, text }) => (
-          <div key={n} style={{ display:'flex', alignItems:'flex-start', gap:'.875rem', marginBottom: n !== '4' ? '1rem' : 0 }}>
+          <div key={n} style={{ display:'flex', alignItems:'flex-start', gap:'.875rem', marginBottom: n !== '3' ? '1rem' : 0 }}>
             <div style={{
               width:'1.75rem', height:'1.75rem', borderRadius:'50%', flexShrink:0,
               background:T.dark, display:'flex', alignItems:'center', justifyContent:'center',
@@ -176,22 +181,21 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       {/* CTAs */}
       <div className="cs2-anim cs2-d3" style={{ display:'flex', gap:'.75rem', flexWrap:'wrap', justifyContent:'center' }}>
         <AccessFromSessionButton sessionId={session_id} className="cs2-btn" style={{
-          display:'inline-block', padding:'.875rem 2rem',
+          display:'inline-block', padding:'.95rem 2.25rem',
           background:T.dark, color:'#F1E3C8',
           borderRadius:'.625rem', fontSize:'.875rem', fontWeight:700, textDecoration:'none',
         }}>
-          Acceso alternativo →
+          {'Personalizar mi invitación \u2192'}
         </AccessFromSessionButton>
-        <Link href="/cliente" className="cs2-btn" style={{
+        <Link href="/login" className="cs2-btn" style={{
           display:'inline-block', padding:'.875rem 2rem',
-          background:T.white, color:T.dark,
+          background:'transparent', color:T.dark,
           borderRadius:'.625rem', fontSize:'.875rem', fontWeight:600,
           textDecoration:'none', border:`1px solid ${T.border}`,
         }}>
-          Ver mis invitaciones
+          {'Ya tengo contraseña \u2192 Iniciar sesión'}
         </Link>
       </div>
-
       <div className="cs2-anim cs2-d4" style={{ marginTop:'.5rem' }}>
         <p style={{ fontSize:'.78rem', color:T.light, margin:0 }}>
           Te enviamos un solo correo de acceso. Si no aparece, revisa spam o escríbenos a soporte.
