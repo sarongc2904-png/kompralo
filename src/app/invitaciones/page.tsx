@@ -20,6 +20,7 @@ import {
   Heart,
 } from 'lucide-react';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
+import { SolutionCarousel } from '@/components/public/SolutionCarousel';
 import Hero3D from '@/components/public/Hero3D';
 import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
 import { availableProducts } from '@/domain/products';
@@ -155,9 +156,10 @@ function LandingStyles() {
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        padding: 3.5rem 0 1rem;
+        padding-bottom: 0.5rem;
         margin-top: 0;
         cursor: grab;
+        user-select: none;
       }
       .cro-sol-grid:active { cursor: grabbing; }
       .cro-sol-grid::-webkit-scrollbar { display: none; }
@@ -329,22 +331,6 @@ function ProblemSection() {
   );
 }
 
-const SOLUTIONS = [
-  { icon: Sparkles, title: 'Portada con los nombres de los novios', text: 'Presenta tu boda desde el primer momento con una portada elegante.' },
-  { icon: CalendarClock, title: 'Cuenta regresiva', text: 'Muestra cuánto falta para el gran día.' },
-  { icon: Heart, title: 'Historia de la pareja', text: 'Comparte un relato breve y especial sobre ustedes.' },
-  { icon: Images, title: 'Galería de fotos', text: 'Agrega recuerdos importantes en una sección visual.' },
-  { icon: MapPin, title: 'Ubicación del evento', text: 'Incluye el lugar de la ceremonia o recepción.' },
-  { icon: Shirt, title: 'Código de vestimenta', text: 'Ayuda a tus invitados a elegir cómo asistir.' },
-  { icon: Users, title: 'Familias y padrinos', text: 'Muestra a las personas importantes de la celebración.' },
-  { icon: Gift, title: 'Mesa de regalos', text: 'Comparte la información de regalos de forma clara.' },
-  { icon: Hash, title: 'Hashtag', text: 'Reúne las fotos y mensajes de tus invitados.' },
-  { icon: Music, title: 'Mensaje final', text: 'Cierra la invitación con una nota especial.' },
-  { icon: QrCode, title: 'Itinerario y línea de tiempo', text: 'Ordena los momentos principales de tu boda.' },
-  { icon: Hotel, title: 'Hospedaje', text: 'Comparte opciones útiles para invitados que viajan.' },
-  { icon: Link2, title: 'Intro cinemática', text: 'Da una entrada más emotiva a la invitación.' },
-];
-
 function SolutionSection() {
   return (
     <section className="cro-section" style={{ background: T.black }}>
@@ -356,18 +342,9 @@ function SolutionSection() {
             Incluye secciones para compartir la información que tus invitados necesitan. La disponibilidad de algunas secciones depende del plan que elijas.
           </p>
         </Reveal>
-        <div className="cro-sol-grid">
-          {SOLUTIONS.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="cro-sol-card">
-              <Icon size={24} className="cro-sol-icon" strokeWidth={1.5} />
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </div>
-          ))}
+        <div style={{ marginTop: '3.5rem' }}>
+          <SolutionCarousel />
         </div>
-        <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: T.muted, letterSpacing: '0.04em' }}>
-          ← Desliza para ver todas las secciones →
-        </p>
       </div>
     </section>
   );
