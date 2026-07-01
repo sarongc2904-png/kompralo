@@ -6,12 +6,12 @@ import { loadTemplatesFromJson } from '@/domain/themes-v2/json-loader';
 
 export const defaultThemeIdV2: ThemeIdV2 = 'ivory-editorial';
 
-const legacyRegistry: Record<ThemeIdV2, InvitationThemeV2> = {
+const legacyRegistry: Partial<Record<ThemeIdV2, InvitationThemeV2>> = {
   'ivory-editorial': ivoryEditorialTheme,
   'blanco-deluxe':   blancoDeluxeTheme,
 };
 
-export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = FEATURE_FLAGS.templatesAsJson
+export const themeRegistryV2: Partial<Record<ThemeIdV2, InvitationThemeV2>> = FEATURE_FLAGS.templatesAsJson
   ? loadTemplatesFromJson().registry
   : legacyRegistry;
 
@@ -20,8 +20,11 @@ export const themeRegistryV2: Record<ThemeIdV2, InvitationThemeV2> = FEATURE_FLA
  * Accepts any string so callers don't need to cast — unknown ids silently fall back.
  */
 export function resolveTheme(themeId?: string | null): InvitationThemeV2 {
-  if (!themeId) return themeRegistryV2[defaultThemeIdV2];
-  return themeRegistryV2[themeId as ThemeIdV2] ?? themeRegistryV2[defaultThemeIdV2];
+  const fallback = themeRegistryV2[defaultThemeIdV2] ?? ivoryEditorialTheme;
+  if (!themeId) return fallback;
+  return themeRegistryV2[themeId as ThemeIdV2] ?? fallback;
 }
 
-export const availableThemesV2: InvitationThemeV2[] = Object.values(themeRegistryV2);
+export const availableThemesV2: InvitationThemeV2[] = Object.values(themeRegistryV2).filter(
+  (theme): theme is InvitationThemeV2 => !!theme
+);
