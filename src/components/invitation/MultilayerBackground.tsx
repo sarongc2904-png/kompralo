@@ -478,6 +478,9 @@ function buildLayerContent(
     case 'blanco-deluxe':
       return { layer1: <></>, layer2: <></>, layer3: <></> };
 
+    case 'rosa-antiguo':
+      return { layer1: <></>, layer2: <></>, layer3: <></> };
+
     case 'ivory-editorial':
     default:
       return {
