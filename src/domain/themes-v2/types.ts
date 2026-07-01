@@ -2,7 +2,7 @@ import type { EventCategory } from '@/domain/invitations/types';
 
 // ─── Theme ID ────────────────────────────────────────────────────────────────
 
-export type ThemeIdV2 = 'ivory-editorial' | 'blanco-deluxe';
+export type ThemeIdV2 = 'ivory-editorial' | 'blanco-deluxe' | 'rosa-antiguo';
 
 // ─── Color palette ───────────────────────────────────────────────────────────
 
