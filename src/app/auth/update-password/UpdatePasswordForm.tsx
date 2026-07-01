@@ -1,8 +1,9 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 import { updatePassword } from '@/app/login/actions';
 import type { UpdatePasswordResult } from '@/app/login/actions';
 
@@ -26,6 +27,14 @@ const styles = `
   }
   .up-input:focus { border-color: #B8966A; box-shadow: 0 0 0 3px rgba(184,150,106,0.12); }
   .up-input::placeholder { color: #C5B0A0; }
+  .up-password-wrap { position: relative; }
+  .up-password-wrap .up-input { padding-right: 3rem; }
+  .up-password-toggle {
+    position: absolute; right: .85rem; top: 50%; transform: translateY(-50%);
+    border: 0; background: transparent; color: #6B4A35; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: .25rem;
+  }
   .up-btn {
     width: 100%; padding: .875rem; border: none; border-radius: .625rem;
     font-size: .9375rem; font-weight: 700; cursor: pointer; font-family: inherit;
@@ -37,6 +46,8 @@ const styles = `
 
 export default function UpdatePasswordForm() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm]   = useState(false);
   const [state, formAction, pending] = useActionState<UpdatePasswordResult | null, FormData>(
     updatePassword, null,
   );
@@ -97,16 +108,53 @@ export default function UpdatePasswordForm() {
           <label htmlFor="up-password" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
             Nueva contraseña
           </label>
-          <input id="up-password" name="password" type="password" required autoFocus
-            minLength={8} placeholder="Mínimo 8 caracteres" className="up-input" />
+          <div className="up-password-wrap">
+            <input
+              id="up-password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              required
+              autoFocus
+              minLength={8}
+              placeholder="Mínimo 8 caracteres"
+              className="up-input"
+            />
+            <button
+              type="button"
+              className="up-password-toggle"
+              onClick={() => setShowPassword((value) => !value)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-pressed={showPassword}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         <div>
           <label htmlFor="up-confirm" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
             Confirmar contraseña
           </label>
-          <input id="up-confirm" name="confirm" type="password" required
-            minLength={8} placeholder="Repite tu contraseña" className="up-input" />
+          <div className="up-password-wrap">
+            <input
+              id="up-confirm"
+              name="confirm"
+              type={showConfirm ? 'text' : 'password'}
+              required
+              minLength={8}
+              placeholder="Repite tu contraseña"
+              className="up-input"
+            />
+            <button
+              type="button"
+              className="up-password-toggle"
+              onClick={() => setShowConfirm((value) => !value)}
+              aria-label={showConfirm ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-pressed={showConfirm}
+            >
+              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         {state?.error && state.error !== 'NO_SESSION' && (

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { AccessFromSessionButton } from './AccessFromSessionButton';
 
 export const metadata: Metadata = { title: 'Pago exitoso — Kompralo' };
 
@@ -174,13 +175,13 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
 
       {/* CTAs */}
       <div className="cs2-anim cs2-d3" style={{ display:'flex', gap:'.75rem', flexWrap:'wrap', justifyContent:'center' }}>
-        <Link href="/login" className="cs2-btn" style={{
+        <AccessFromSessionButton sessionId={session_id} className="cs2-btn" style={{
           display:'inline-block', padding:'.875rem 2rem',
           background:T.dark, color:'#F1E3C8',
           borderRadius:'.625rem', fontSize:'.875rem', fontWeight:700, textDecoration:'none',
         }}>
           Acceso alternativo →
-        </Link>
+        </AccessFromSessionButton>
         <Link href="/cliente" className="cs2-btn" style={{
           display:'inline-block', padding:'.875rem 2rem',
           background:T.white, color:T.dark,

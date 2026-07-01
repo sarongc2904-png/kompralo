@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
@@ -45,6 +46,14 @@ const inputCss = `
   }
   .sp-input:focus { border-color: #B8966A; box-shadow: 0 0 0 3px rgba(184,150,106,0.12); }
   .sp-input::placeholder { color: #C5B0A0; }
+  .sp-password-wrap { position: relative; }
+  .sp-password-wrap .sp-input { padding-right: 3rem; }
+  .sp-password-toggle {
+    position: absolute; right: .85rem; top: 50%; transform: translateY(-50%);
+    border: 0; background: transparent; color: #6B4A35; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: .25rem;
+  }
   .sp-btn {
     width: 100%; padding: .875rem; border: none; border-radius: .625rem;
     font-size: .9375rem; font-weight: 700; cursor: pointer; font-family: inherit;
@@ -109,6 +118,8 @@ function Expired() {
 function PasswordForm({ supabase }: { supabase: SupabaseClient }) {
   const [password, setPassword]     = useState('');
   const [confirm, setConfirm]       = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm]   = useState(false);
   const [pending, setPending]       = useState(false);
   const [error, setError]           = useState('');
   const [success, setSuccess]       = useState(false);
@@ -171,33 +182,55 @@ function PasswordForm({ supabase }: { supabase: SupabaseClient }) {
           <label htmlFor="sp-pw" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
             Nueva contraseña
           </label>
-          <input
-            id="sp-pw"
-            type="password"
-            required
-            autoFocus
-            minLength={8}
-            placeholder="Mínimo 8 caracteres"
-            className="sp-input"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
+          <div className="sp-password-wrap">
+            <input
+              id="sp-pw"
+              type={showPassword ? 'text' : 'password'}
+              required
+              autoFocus
+              minLength={8}
+              placeholder="Mínimo 8 caracteres"
+              className="sp-input"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="sp-password-toggle"
+              onClick={() => setShowPassword((value) => !value)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-pressed={showPassword}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         <div>
           <label htmlFor="sp-confirm" style={{ display: 'block', fontSize: '.8125rem', fontWeight: 600, color: T.dark, marginBottom: '.5rem' }}>
             Confirmar contraseña
           </label>
-          <input
-            id="sp-confirm"
-            type="password"
-            required
-            minLength={8}
-            placeholder="Repite tu contraseña"
-            className="sp-input"
-            value={confirm}
-            onChange={e => setConfirm(e.target.value)}
-          />
+          <div className="sp-password-wrap">
+            <input
+              id="sp-confirm"
+              type={showConfirm ? 'text' : 'password'}
+              required
+              minLength={8}
+              placeholder="Repite tu contraseña"
+              className="sp-input"
+              value={confirm}
+              onChange={e => setConfirm(e.target.value)}
+            />
+            <button
+              type="button"
+              className="sp-password-toggle"
+              onClick={() => setShowConfirm((value) => !value)}
+              aria-label={showConfirm ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-pressed={showConfirm}
+            >
+              {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         {error && (

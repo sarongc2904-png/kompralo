@@ -11,7 +11,6 @@ export const ASSISTANT_AI_ENABLED =
 export const VIRTUAL_ASSISTANT_ALLOWED_ROUTES = [
   '/invitaciones',
   '/invitaciones/precios',
-  '/checkout/success',
 ];
 
 function isPrivateAppRoute(pathname: string): boolean {

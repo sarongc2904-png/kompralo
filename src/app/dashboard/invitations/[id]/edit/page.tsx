@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { invitationRepository } from '@/domain/invitations';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { isAdminUser } from '@/lib/admin';
+import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
 import { normalizePlanId } from '@/domain/plans/types';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { EditorV4Shell } from '@/components/editor-v4/EditorV4Shell';
@@ -140,82 +141,49 @@ export default async function EditInvitationPage({ params, searchParams }: Props
     let sessionUser = null;
     try {
       const supabase = await createServerSupabaseClient();
-      const { data, error: getUserError } = await supabase.auth.getUser();
+      const { data } = await supabase.auth.getUser();
       sessionUser = data.user;
-      console.log('[session-debug]', JSON.stringify({
-        route:      `/dashboard/invitations/${id}/edit`,
-        methodUsed: 'getUser',
-        hasSession: !!sessionUser,
-        hasUser:    !!data.user,
-        userId:     data.user?.id ?? null,
-        userEmail:  data.user?.email ?? null,
-        error:      getUserError?.message ?? null,
-      }));
-    } catch (e) {
-      console.error('[editPage] createServerSupabaseClient threw:', e);
-      console.log('[session-debug]', JSON.stringify({
-        route:      `/dashboard/invitations/${id}/edit`,
-        methodUsed: 'getUser',
-        hasSession: false,
-        hasUser:    false,
-        userId:     null,
-        userEmail:  null,
-        error:      String(e),
-      }));
+    } catch {
+      sessionUser = null;
     }
 
     const ownerEmail  = invitation.customerEmail ?? null;
     const ownerUserId = invitation.ownerUserId ?? null;
-
-    // TEMP diagnostic logs â€” remove after auth bug is resolved.
-    const hasUser = !!sessionUser;
     const redirectTarget = `/login?redirect=${encodeURIComponent(`/dashboard/invitations/${id}/edit`)}`;
-    console.log('[editPage] route=/dashboard/invitations/%s/edit', id);
-    console.log('[editPage] hasUser=%s userId=%s userEmail=%s',
-      hasUser, sessionUser?.id ?? 'null', sessionUser?.email ?? 'null');
-    console.log('[editPage] invitationOwnerUserId=%s invitationCustomerEmail=%s',
-      ownerUserId ?? 'null', ownerEmail ?? 'null');
 
     if (!sessionUser) {
-      console.log('[editPage] redirectTarget=%s reason=no-session', redirectTarget);
-      redirect(redirectTarget);
-    }
+      const hasScopedAccess = await verifyInvitationAccess(id);
+      if (!hasScopedAccess) {
+        redirect(redirectTarget);
+      }
+    } else {
+      // Grant access if: user_id match OR customer_email match OR admin.
+      const isOwnerByUserId = !!(ownerUserId && sessionUser.id && ownerUserId === sessionUser.id);
+      const isOwnerByEmail  = !!(ownerEmail && sessionUser.email &&
+        ownerEmail.toLowerCase() === sessionUser.email.toLowerCase());
 
-    // Grant access if: user_id match OR customer_email match.
-    const isOwnerByUserId = !!(ownerUserId && sessionUser.id && ownerUserId === sessionUser.id);
-    const isOwnerByEmail  = !!(ownerEmail && sessionUser.email &&
-      ownerEmail.toLowerCase() === sessionUser.email.toLowerCase());
-
-    console.log('[editPage] isOwnerByUserId=%s isOwnerByEmail=%s', isOwnerByUserId, isOwnerByEmail);
-
-    if (!isOwnerByUserId && !isOwnerByEmail) {
-      const isAdmin = await isAdminUser(sessionUser.id, sessionUser.email);
-      const authorized = isAdmin;
-      console.log('[editPage] isAdmin=%s authorized=%s', isAdmin, authorized);
-      if (!authorized) {
-        console.log('[editPage] authorized=false reason=not-owner-not-admin');
-        return (
-          <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
-            <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#C62828', marginBottom: '0.5rem' }}>
-              Acceso no autorizado
-            </p>
-            <p style={{ color: '#6B5B4E', fontSize: '0.9rem', marginBottom: '2rem' }}>
-              Esta invitaciÃ³n no pertenece a tu cuenta.
-            </p>
-            <Link
-              href="/cliente"
-              style={{ color: '#C5A880', fontSize: '0.875rem', textDecoration: 'none' }}
-            >
-              â† Ver mis invitaciones
-            </Link>
-          </div>
-        );
+      if (!isOwnerByUserId && !isOwnerByEmail) {
+        const isAdmin = await isAdminUser(sessionUser.id, sessionUser.email);
+        if (!isAdmin) {
+          return (
+            <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
+              <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#C62828', marginBottom: '0.5rem' }}>
+                Acceso no autorizado
+              </p>
+              <p style={{ color: '#6B5B4E', fontSize: '0.9rem', marginBottom: '2rem' }}>
+                Esta invitación no pertenece a tu cuenta.
+              </p>
+              <Link
+                href="/cliente"
+                style={{ color: '#C5A880', fontSize: '0.875rem', textDecoration: 'none' }}
+              >
+                ← Ver mis invitaciones
+              </Link>
+            </div>
+          );
+        }
       }
     }
-
-    // Reaching here means access is granted (owner or admin passed above).
-    const grantReason = isOwnerByUserId ? 'user_id-match' : isOwnerByEmail ? 'email-match' : 'admin';
-    console.log('[editPage] authorized=true reason=%s', grantReason);
   }
 
   const plan = normalizePlanId(invitation.planId);
@@ -227,29 +195,14 @@ export default async function EditInvitationPage({ params, searchParams }: Props
   // Quick Setup Wizard gate â€” show for new wedding invitations that haven't
   // completed the 3-step quick setup yet. Admins bypass it.
   // Uses service role to avoid RLS issues reading the new column.
-  console.log('[wizard-gate] category=%s fromAdmin=%s id=%s', invitation.category, fromAdmin, id);
   if (!fromAdmin) {
-    const { data: invRow, error: wizardQueryErr } = await createServiceRoleSupabaseClient()
-      .from('invitations')
-      .select('wizard_step_completed')
-      .eq('id', id)
-      .single();
-    const raw = (invRow as { wizard_step_completed?: number } | null)?.wizard_step_completed;
-    const { data: contentRow, error: contentWizardErr } = await createServiceRoleSupabaseClient()
+    const { data: contentRow } = await createServiceRoleSupabaseClient()
       .from('invitation_content')
       .select('hero')
       .eq('invitation_id', id)
       .maybeSingle();
     const hero = (contentRow as { hero?: { wizardExpressCompleted?: boolean } } | null)?.hero;
     const wizardExpressCompleted = hero?.wizardExpressCompleted === true;
-    console.log(
-      '[wizard-gate] invRow=%j raw=%s wizardExpressCompleted=%s err=%s contentErr=%s',
-      invRow,
-      raw,
-      wizardExpressCompleted,
-      wizardQueryErr?.message ?? null,
-      contentWizardErr?.message ?? null,
-    );
     if (!wizardExpressCompleted) {
       const brideName = invitation.protagonists.find((p) => p.role === 'novia' || p.role === 'bride')?.name ?? '';
       const groomName = invitation.protagonists.find((p) => p.role === 'novio' || p.role === 'groom')?.name ?? '';
