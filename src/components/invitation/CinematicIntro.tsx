@@ -309,7 +309,7 @@ export default function CinematicIntro({
 
   if (isDismissed) return null;
 
-  const curtainBg = themeV2?.id === 'rosa-antiguo' ? 'bg-transparent' : theme.bodyBg;
+  const curtainBg = themeV2?.id === 'rosa-antiguo' ? 'bg-gradient-to-b from-white to-[#FAF3EE]' : theme.bodyBg;
 
   return (
     <div
