@@ -49,6 +49,9 @@ export async function POST(request: NextRequest) {
   // Validate each item and build canonical line items using server-side prices
   const lineItems = [];
   const cartSummary: string[] = [];
+  // v2 format consumed by the webhook to create one order+invitation per item:
+  // "eventType:plan|eventType:plan" (eventType is the catalog id, not the label).
+  const cartV2: string[] = [];
 
   for (const item of items) {
     if (!item.plan || !(item.plan in PLAN_PRICES)) {
@@ -57,6 +60,9 @@ export async function POST(request: NextRequest) {
     if (!item.eventLabel || typeof item.eventLabel !== 'string') {
       return errorResponse('Tipo de evento inválido.', 422);
     }
+    const eventType = typeof item.eventType === 'string' && /^[a-z-]{1,24}$/.test(item.eventType)
+      ? item.eventType
+      : 'boda';
 
     const price = PLAN_PRICES[item.plan];
     const name  = `${item.eventIcon ?? ''} ${item.eventLabel} — ${PLAN_NAMES[item.plan]}`.trim();
@@ -71,6 +77,7 @@ export async function POST(request: NextRequest) {
     });
 
     cartSummary.push(`${item.eventLabel}:${item.plan}`);
+    cartV2.push(`${eventType}:${item.plan}`);
   }
 
   // Read authenticated session for ownership metadata
@@ -90,9 +97,10 @@ export async function POST(request: NextRequest) {
       mode:       'payment',
       line_items: lineItems,
       metadata: {
-        cart_type:    'multi',
-        cart_items:   cartSummary.join('|').slice(0, 500), // Stripe metadata max 500 chars per value
-        item_count:   String(items.length),
+        cart_type:      'multi',
+        cart_items:     cartSummary.join('|').slice(0, 500), // Stripe metadata max 500 chars per value
+        cart_items_v2:  cartV2.join('|').slice(0, 500),      // webhook parses this (max 20 items ≈ 300 chars)
+        item_count:     String(items.length),
         ...(ownerUserId ? { ownerUserId } : {}),
         ...(ownerEmail  ? { ownerEmail  } : {}),
       },
