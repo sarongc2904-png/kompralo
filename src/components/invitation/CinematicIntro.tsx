@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Theme } from '@/domain/themes/types';
+import type { InvitationThemeV2 } from '@/domain/themes-v2/types';
 import type { InvitationProtagonist } from '@/domain/invitations/types';
 import { gsap } from 'gsap';
 import confetti from 'canvas-confetti';
@@ -13,6 +14,7 @@ interface CinematicIntroProps {
   subtitle: string;
   eventDate: string;
   theme: Theme;
+  themeV2?: InvitationThemeV2;
   onEnter: () => void;
   introTitle?: string;
   introSubtitle?: string;
@@ -226,6 +228,7 @@ export default function CinematicIntro({
   subtitle,
   eventDate,
   theme,
+  themeV2,
   onEnter,
   introTitle,
   introSubtitle,
@@ -306,6 +309,8 @@ export default function CinematicIntro({
 
   if (isDismissed) return null;
 
+  const curtainBg = themeV2?.id === 'rosa-antiguo' ? 'bg-transparent' : theme.bodyBg;
+
   return (
     <div
       ref={containerRef}
@@ -314,8 +319,8 @@ export default function CinematicIntro({
       className="fixed inset-0 z-[9999] overflow-y-auto cursor-pointer"
     >
       {/* Curtains — fixed to the viewport, behind scrollable content */}
-      <div ref={leftCurtainRef}  className={`fixed inset-y-0 left-0 w-1/2 ${theme.bodyBg} border-r ${theme.cardBorder}`} />
-      <div ref={rightCurtainRef} className={`fixed inset-y-0 right-0 w-1/2 ${theme.bodyBg}`} />
+      <div ref={leftCurtainRef}  className={`fixed inset-y-0 left-0 w-1/2 ${curtainBg} border-r ${theme.cardBorder}`} />
+      <div ref={rightCurtainRef} className={`fixed inset-y-0 right-0 w-1/2 ${curtainBg}`} />
 
       {/*
         Centering wrapper: min-h-full so it fills the viewport when content is short

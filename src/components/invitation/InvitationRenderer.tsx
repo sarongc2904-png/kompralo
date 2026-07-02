@@ -182,6 +182,7 @@ export default function InvitationRenderer({
           subtitle={invitation.subtitle}
           eventDate={invitation.eventDate ?? ''}
           theme={effectiveTheme}
+          themeV2={themeV2}
           onEnter={() => {}}
           introTitle={invitation.hero?.introTitle}
           introSubtitle={invitation.hero?.introSubtitle}
@@ -416,6 +417,7 @@ export default function InvitationRenderer({
             subtitle={invitation.subtitle}
             eventDate={invitation.eventDate}
             theme={effectiveTheme}
+            themeV2={themeV2}
             onEnter={handleEnterInvitation}
             introTitle={invitation.hero?.introTitle}
             introSubtitle={invitation.hero?.introSubtitle}
