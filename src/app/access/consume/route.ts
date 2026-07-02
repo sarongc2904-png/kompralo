@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { hashInvitationAccessToken } from '@/lib/access/createInvitationAccessToken';
 import {
-  createInvitationAccessCookieValue,
+  mergeInvitationAccessCookieValue,
   INVITATION_ACCESS_COOKIE,
 } from '@/lib/access/verifyInvitationAccess';
 
@@ -83,17 +83,21 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Audit-only timestamp — a transient DB error must not bounce a valid
+    // token holder to /login.
     const { error: updateError } = await supabase
       .from('invitation_access_tokens')
       .update({ last_used_at: new Date().toISOString() })
       .eq('token_hash', tokenHash);
-    if (updateError) throw new Error('Could not update invitation access audit timestamp.');
+    if (updateError) {
+      console.warn('[access/consume] last_used_at update failed (non-fatal):', updateError.message);
+    }
 
-    const cookieValue = createInvitationAccessCookieValue({
+    const { value: cookieValue, maxAgeSeconds: maxAge } = mergeInvitationAccessCookieValue({
+      existingCookieValue: request.cookies.get(INVITATION_ACCESS_COOKIE)?.value,
       invitationId: token.invitation_id,
       expiresAt,
     });
-    const maxAge = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
     const response = NextResponse.redirect(
       new URL(`/dashboard/invitations/${token.invitation_id}/edit`, request.url),
     );

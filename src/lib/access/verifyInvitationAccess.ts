@@ -41,7 +41,9 @@ export function createInvitationAccessCookieValue(params: {
   return `${encodedPayload}.${signPayload(encodedPayload)}`;
 }
 
-function parseAccessCookie(value: string): AccessCookiePayload | null {
+// Signature + shape check WITHOUT the expiry check — the merge below needs to
+// identify an invitation's previous entry even after it expired, to replace it.
+function decodeVerifiedEntry(value: string): AccessCookiePayload | null {
   const [encodedPayload, suppliedSignature, extra] = value.split('.');
   if (!encodedPayload || !suppliedSignature || extra) return null;
 
@@ -61,8 +63,7 @@ function parseAccessCookie(value: string): AccessCookiePayload | null {
       typeof payload.invitationId !== 'string' ||
       payload.invitationId.length === 0 ||
       payload.invitationId.length > 128 ||
-      typeof payload.exp !== 'number' ||
-      payload.exp <= Math.floor(Date.now() / 1000)
+      typeof payload.exp !== 'number'
     ) {
       return null;
     }
@@ -73,12 +74,67 @@ function parseAccessCookie(value: string): AccessCookiePayload | null {
   }
 }
 
+function parseAccessCookie(value: string): AccessCookiePayload | null {
+  const payload = decodeVerifiedEntry(value);
+  if (!payload || payload.exp <= Math.floor(Date.now() / 1000)) return null;
+  return payload;
+}
+
+// The cookie holds a JSON array of signed entries (one per invitation) so a
+// multi-cart customer keeps access to all N invitations at once. Legacy
+// cookies hold a single bare `payload.signature` entry.
+function readCookieEntries(raw: string): string[] {
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter((entry): entry is string => typeof entry === 'string')
+      : [];
+  } catch {
+    return raw ? [raw] : []; // backward compat con cookie string plano
+  }
+}
+
+/**
+ * Appends a fresh entry for `invitationId` to the existing cookie value.
+ * Entries for other invitations are never pruned — each validates its own
+ * exp at read time. Only a previous entry for this same invitation is
+ * replaced, so re-consuming a link refreshes instead of duplicating.
+ */
+export function mergeInvitationAccessCookieValue(params: {
+  existingCookieValue: string | undefined;
+  invitationId: string;
+  expiresAt: Date;
+}): { value: string; maxAgeSeconds: number } {
+  const newEntry = createInvitationAccessCookieValue({
+    invitationId: params.invitationId,
+    expiresAt: params.expiresAt,
+  });
+
+  const kept = params.existingCookieValue
+    ? readCookieEntries(params.existingCookieValue).filter(
+        (entry) => decodeVerifiedEntry(entry)?.invitationId !== params.invitationId,
+      )
+    : [];
+  const entries = [...kept, newEntry];
+
+  // Cookie lifetime = furthest expiry among entries, so adding a short-lived
+  // entry never shortens the life of the others.
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const maxExp = entries.reduce(
+    (max, entry) => Math.max(max, decodeVerifiedEntry(entry)?.exp ?? 0),
+    Math.floor(params.expiresAt.getTime() / 1000),
+  );
+
+  return { value: JSON.stringify(entries), maxAgeSeconds: Math.max(0, maxExp - nowSeconds) };
+}
+
 export async function verifyInvitationAccess(invitationId: string): Promise<boolean> {
   try {
     const cookieValue = (await cookies()).get(INVITATION_ACCESS_COOKIE)?.value;
     if (!cookieValue) return false;
-    const payload = parseAccessCookie(cookieValue);
-    return payload?.invitationId === invitationId;
+    return readCookieEntries(cookieValue).some(
+      (entry) => parseAccessCookie(entry)?.invitationId === invitationId,
+    );
   } catch {
     return false;
   }
