@@ -183,6 +183,7 @@ function NamesDisplay({ protagonists, onHeartClick }: { protagonists: Invitation
   const nameStyle: React.CSSProperties = {
     fontSize: 'clamp(32px, 6.5svh, 68px)',
     lineHeight: 1.2,
+    fontFamily: 'var(--v2-font-special, var(--v2-font-heading, inherit))',
   };
 
   if (protagonists.length >= 2) {

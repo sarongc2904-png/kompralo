@@ -136,7 +136,10 @@ export default function Padrinos({ padrinos, theme, editablePreview = false, sec
               isEditable={editablePreview}
             />
           </p>
-          <h3 className={`text-3xl md:text-4xl font-light tracking-wide ${theme.headingFont} ${theme.bodyText}`}>
+          <h3
+            className={`text-3xl md:text-4xl font-light tracking-wide ${theme.headingFont} ${theme.bodyText}`}
+            style={{ fontFamily: 'var(--v2-font-special, var(--v2-font-heading, inherit))' }}
+          >
             <EditableText
               value={sectionTitle ?? 'Nuestros Padrinos'}
               fieldPath="hero.padrinosSectionTitle"

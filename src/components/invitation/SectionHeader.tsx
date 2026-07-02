@@ -49,7 +49,7 @@ export default function SectionHeader({
       <h3
         className={`font-normal leading-snug tracking-wide ${theme.headingFont} ${theme.bodyText}`}
         style={{
-          fontFamily: 'var(--v2-font-heading, serif)',
+          fontFamily: 'var(--v2-font-special, var(--v2-font-heading, serif))',
           fontSize: 'clamp(28px, 5vw, 42px)',
           fontWeight: 400,
           color: 'var(--v2-color-text-primary, #2c1810)',

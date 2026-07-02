@@ -66,6 +66,17 @@ export default function RootLayout({
       lang="es"
       className={`${playfair.variable} ${inter.variable} ${pinyon.variable} ${cinzel.variable} ${lora.variable} ${cormorant.variable} antialiased`}
     >
+      <head>
+        <style>{`
+          @font-face {
+            font-family: 'Realistic Nature';
+            src: url('/fonts/realistic-nature.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+          }
+        `}</style>
+      </head>
 
       <body className="min-h-screen relative font-sans">
         <SmoothScroll>

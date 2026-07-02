@@ -155,6 +155,7 @@
       "--v2-background-sections": "#FAF3EE",
       "--v2-background-final": "#FAF3EE",
       "--v2-font-heading": "\"Playfair Display\", \"Georgia\", serif",
+      "--v2-font-special": "Realistic Nature",
       "--v2-font-body": "\"Inter\", system-ui, sans-serif",
       "--v2-bg-layer-1": "",
       "--v2-bg-layer-2": "",

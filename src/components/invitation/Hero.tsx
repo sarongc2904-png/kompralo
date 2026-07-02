@@ -299,7 +299,7 @@ export default function Hero({
             className="font-calligraphy block glow-pulse hero-title-text"
             style={{
               fontSize: 'clamp(3.5rem, 10vw, 6.5rem)',
-              fontFamily: 'var(--v2-font-heading, inherit)',
+              fontFamily: 'var(--v2-font-special, var(--v2-font-heading, inherit))',
               textShadow: '0 8px 28px rgba(0,0,0,0.45)',
               overflow: 'visible',
               color: '#F8E7C6',
@@ -333,7 +333,7 @@ export default function Hero({
             className="font-calligraphy block glow-pulse hero-title-text"
             style={{
               fontSize: 'clamp(3.5rem, 10vw, 6.5rem)',
-              fontFamily: 'var(--v2-font-heading, inherit)',
+              fontFamily: 'var(--v2-font-special, var(--v2-font-heading, inherit))',
               textShadow: '0 8px 28px rgba(0,0,0,0.45)',
               overflow: 'visible',
               color: '#F8E7C6',

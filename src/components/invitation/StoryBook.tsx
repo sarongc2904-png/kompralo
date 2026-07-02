@@ -6,6 +6,7 @@ import { Theme } from '@/domain/themes/types';
 import { InvitationProtagonist, StorySlide } from '@/domain/invitations/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { EditableText } from '@/components/visual-editor/EditableText';
+import { useThemeV2 } from '@/domain/themes-v2';
 
 interface StoryBookProps {
   slides: StorySlide[];
@@ -336,12 +337,16 @@ function DesktopBookSpread({
   theme: Theme;
   editablePreview: boolean;
 }) {
+  const themeV2 = useThemeV2();
   const accent = `var(--v2-color-accent, ${theme.colors.accent})`;
   const textPrimary = `var(--v2-color-text-primary, ${theme.colors.textPrimary})`;
   const textSecondary = `var(--v2-color-text-secondary, ${theme.colors.textSecondary})`;
   const storyBg =
     theme.backgrounds.storyBook ||
     'linear-gradient(135deg, #fdf9f0 0%, #f5efdd 50%, #ede7d2 100%)';
+  const storyPageBackground = themeV2.id === 'rosa-antiguo'
+    ? '#FFFFFF'
+    : `var(--v2-background-story, ${storyBg})`;
 
   const imagePage = (
     <div
@@ -378,7 +383,7 @@ function DesktopBookSpread({
       style={{
         position: 'relative',
         overflow: 'hidden',
-        background: `var(--v2-background-story, ${storyBg})`,
+        background: storyPageBackground,
         padding: '44px 36px',
         display: 'flex',
         flexDirection: 'column',
@@ -555,12 +560,16 @@ function MobileStoryCard({
   theme: Theme;
   editablePreview: boolean;
 }) {
+  const themeV2 = useThemeV2();
   const accent = `var(--v2-color-accent, ${theme.colors.accent})`;
   const textPrimary = `var(--v2-color-text-primary, ${theme.colors.textPrimary})`;
   const textSecondary = `var(--v2-color-text-secondary, ${theme.colors.textSecondary})`;
   const storyBg =
     theme.backgrounds.storyBook ||
     'linear-gradient(135deg, #fdf9f0 0%, #ede7d2 100%)';
+  const storyPageBackground = themeV2.id === 'rosa-antiguo'
+    ? '#FFFFFF'
+    : `var(--v2-background-story, ${storyBg})`;
 
   return (
     <div style={{ overflow: 'hidden' }}>
@@ -580,7 +589,7 @@ function MobileStoryCard({
       <div
         style={{
           position: 'relative',
-          background: `var(--v2-background-story, ${storyBg})`,
+          background: storyPageBackground,
           padding: '28px 24px 36px',
           overflow: 'hidden',
         }}
@@ -1038,6 +1047,7 @@ export default function StoryBook({
               </p>
               <h3
                 className={`text-3xl font-light tracking-wide ${theme.headingFont} ${theme.bodyText}`}
+                style={{ fontFamily: 'var(--v2-font-special, var(--v2-font-heading, inherit))' }}
               >
                 <EditableText
                   value={sectionTitle ?? 'Capítulos de Amor'}
