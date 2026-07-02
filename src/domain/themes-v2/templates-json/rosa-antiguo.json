@@ -105,11 +105,14 @@
       "final": "#FAF3EE"
     },
     "assets": {
-      "backgroundLayer1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/rosa-antiguo-floral.webp",
+      "backgroundLayer1": "",
       "backgroundLayer2": "",
       "backgroundLayer3": "",
+      "texture": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/rosa-antiguo-floral.webp",
+      "textureStartAfterHero": false,
       "textureRepeat": "repeat-y",
-      "textureOpacity": 0.85
+      "textureOpacity": 0.85,
+      "textureSize": "100% auto"
     },
     "dressCodeSwatches": [
       "#FAF3EE",
