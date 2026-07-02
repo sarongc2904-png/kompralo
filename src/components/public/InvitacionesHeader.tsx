@@ -35,7 +35,6 @@ export function InvitacionesHeader() {
             <Link href="#planes" className="cro-nav-link" data-cta="nav-planes" data-event="click-header-planes">Ver planes</Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
               <Link href="/dashboard" className="cro-nav-link" style={{ color: T.ink }} data-event="click-header-acceso-cliente">Acceso cliente</Link>
-              <Link href="/admin" className="cro-nav-link" style={{ fontSize: '0.65rem', opacity: 0.6 }} data-event="click-header-admin">Admin</Link>
             </div>
           </div>
 
@@ -59,9 +58,6 @@ export function InvitacionesHeader() {
           <div style={{ borderTop: `1px solid ${T.border}`, marginTop: '1rem', paddingTop: '1rem' }}>
             <Link href="/dashboard" className="cro-mobile-menu-link" onClick={handleNavClick} data-event="click-mobile-header-acceso-cliente">
               Acceso cliente
-            </Link>
-            <Link href="/admin" className="cro-mobile-menu-link" style={{ opacity: 0.7 }} onClick={handleNavClick} data-event="click-mobile-header-admin">
-              Admin
             </Link>
           </div>
         </div>
