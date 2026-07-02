@@ -53,6 +53,26 @@ function InnerBorder() {
   );
 }
 
+function CardTextureOverlay() {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: 'var(--v2-card-texture-url, none)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'repeat',
+        opacity: 'var(--v2-card-texture-opacity, 0)',
+        mixBlendMode: 'multiply',
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    />
+  );
+}
+
 // Linen paper texture overlay — very subtle grain
 function LinenTexture() {
   return (
@@ -116,8 +136,11 @@ export default function ElegantInvitationCard({
       className={className}
       style={{ ...CARD_BASE, ...style }}
     >
+      <CardTextureOverlay />
       {showInnerBorder && <InnerBorder />}
-      {children}
+      <div className="relative z-10">
+        {children}
+      </div>
     </motion.div>
   );
 }

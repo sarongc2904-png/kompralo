@@ -126,6 +126,8 @@
       "--v2-color-surface": "rgba(255,255,255,0.88)",
       "--v2-color-surface-alt": "#FFFFFF",
       "--v2-color-surface-elevated": "#FFFFFF",
+      "--v2-card-texture-url": "url(\"https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/rosa-antiguo-floral.webp\")",
+      "--v2-card-texture-opacity": "0.4",
       "--v2-color-text-primary": "#4A3B35",
       "--v2-color-text-secondary": "rgba(74,59,53,0.78)",
       "--v2-color-text-muted": "rgba(74,59,53,0.58)",
