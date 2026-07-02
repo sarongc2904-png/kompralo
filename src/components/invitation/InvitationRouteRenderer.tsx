@@ -5,6 +5,8 @@ import InvitationRenderer, { type InvitationRenderMode } from '@/components/invi
 import type { InvitationContent } from '@/domain/invitations/types';
 import type { InvitationFeatures, InvitationPlan } from '@/domain/plans/types';
 import type { Theme } from '@/domain/themes/types';
+import { getThemeCatalogEntry } from '@/domain/themes-v2/themesCatalog';
+import type { ThemeIdV2 } from '@/domain/themes-v2/types';
 
 interface InvitationRouteRendererProps {
   invitation: InvitationContent;
@@ -44,6 +46,7 @@ export default function InvitationRouteRenderer({
   const cleanUrl = cleanParams.size > 0 ? `${pathname}?${cleanParams.toString()}` : pathname;
 
   const isPreview = !!themePreviewId;
+  const themeCatalogEntry = themePreviewId ? getThemeCatalogEntry(themePreviewId as ThemeIdV2) : null;
 
   return (
     <>
@@ -94,7 +97,9 @@ export default function InvitationRouteRenderer({
             }}
           />
           <span style={{ fontWeight: 500 }}>Vista previa:</span>
-          <strong style={{ color: '#1F1A16', fontWeight: 700 }}>Ivory Editorial Romance</strong>
+          <strong style={{ color: '#1F1A16', fontWeight: 700 }}>
+            {themeCatalogEntry?.label ?? 'Tema desconocido'}
+          </strong>
           <span style={{ color: 'rgba(92,74,62,0.4)' }}>·</span>
           <a
             href={cleanUrl}
