@@ -1,8 +1,7 @@
 'use server';
 
-import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
-import { canWriteInvitation } from '@/lib/auth/invitation-ownership';
-import { verifyInvitationAccess } from '@/lib/access/verifyInvitationAccess';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { requireInvitationWriteAccess, WRITE_ACCESS_DENIED_MESSAGE } from '@/lib/access/requireInvitationWriteAccess';
 
 export interface SkipWizardExpressResult {
   success: boolean;
@@ -35,23 +34,12 @@ export async function skipWizardExpress(invitationId: string): Promise<SkipWizar
     return { success: false, error: 'Invitación no encontrada.' };
   }
 
-  let authorized = false;
-  try {
-    const authClient = await createServerSupabaseClient();
-    const { data: { user } } = await authClient.auth.getUser();
-    if (user?.id) {
-      authorized = await canWriteInvitation(invitation, { id: user.id, email: user.email });
-    }
-  } catch {
-    // No session — fall through to cookie check.
-  }
-
-  if (!authorized) {
-    authorized = await verifyInvitationAccess(invitationId);
-  }
-
-  if (!authorized) {
-    return { success: false, error: 'No autorizado.' };
+  const access = await requireInvitationWriteAccess(invitationId, {
+    user_id: (invitation as { user_id?: string | null }).user_id ?? null,
+    customer_email: (invitation as { customer_email?: string | null }).customer_email ?? null,
+  });
+  if (!access.authorized) {
+    return { success: false, error: WRITE_ACCESS_DENIED_MESSAGE };
   }
 
   const { data: contentRow, error: readErr } = await db

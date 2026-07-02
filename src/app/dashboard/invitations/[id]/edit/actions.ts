@@ -3,8 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import type { IInvitationRepository } from '@/domain/invitations';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
-import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
-import { isAdminUser } from '@/lib/admin';
+import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { requireInvitationWriteAccess, WRITE_ACCESS_DENIED_MESSAGE } from '@/lib/access/requireInvitationWriteAccess';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
 import { getFeaturesForPlan } from '@/domain/plans/registry';
@@ -196,28 +196,16 @@ async function getAuthorizedInvitationRepository(invitationId: string): Promise<
     throw new Error('Invitación no encontrada.');
   }
 
-  let sessionEmail: string | null = null;
-  let sessionUserId: string | null = null;
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    sessionEmail = user?.email?.toLowerCase() ?? null;
-    sessionUserId = user?.id ?? null;
-  } catch {
-    sessionEmail = null;
-  }
-  if (!sessionUserId) {
-    throw new Error('Sesión requerida para guardar cambios.');
-  }
+  // Dual gate — Auth owner/admin OR the scoped access cookie. This is the
+  // choke point for every editor action (incl. the wizard submit); an
+  // auth-only check here locks out cookie-only customers who paid.
+  const access = await requireInvitationWriteAccess(invitationId, {
+    user_id: invitation.ownerUserId ?? null,
+    customer_email: invitation.customerEmail ?? null,
+  });
 
-  const ownerEmail = invitation.customerEmail?.toLowerCase() ?? null;
-  const ownerUserId = invitation.ownerUserId ?? null;
-  const isOwnerByUserId = ownerUserId !== null && ownerUserId === sessionUserId;
-  const isOwnerByEmail = ownerEmail !== null && sessionEmail !== null && ownerEmail === sessionEmail;
-  const adminCheck = await isAdminUser(sessionUserId, sessionEmail);
-
-  if (!isOwnerByUserId && !isOwnerByEmail && !adminCheck) {
-    throw new Error('No tienes permiso para editar esta invitación.');
+  if (!access.authorized) {
+    throw new Error(WRITE_ACCESS_DENIED_MESSAGE);
   }
 
   return repository;
