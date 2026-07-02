@@ -462,6 +462,12 @@ export default function LoginPage() {
         </Suspense>
 
         <div style={{ marginTop: '1.75rem', paddingTop: '1.375rem', borderTop: `1px solid ${T.border}`, textAlign: 'center' }}>
+          <p style={{ fontSize: '.78rem', color: T.light, margin: '0 0 .5rem' }}>
+            ¿Compraste y perdiste tu acceso?{' '}
+            <Link href="/recuperar-acceso" style={{ color: T.gold, fontWeight: 700, textDecoration: 'none' }}>
+              Recupéralo aquí →
+            </Link>
+          </p>
           <p style={{ fontSize: '.78rem', color: T.light, margin: 0 }}>
             ¿Aún no tienes una invitación?{' '}
             <Link href="/invitaciones/precios" style={{ color: T.gold, fontWeight: 700, textDecoration: 'none' }}>

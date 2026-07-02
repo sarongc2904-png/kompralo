@@ -200,6 +200,12 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         <p style={{ fontSize:'.78rem', color:T.light, margin:0 }}>
           Te enviamos un solo correo de acceso. Si no aparece, revisa spam o escríbenos a soporte.
         </p>
+        <p style={{ fontSize:'.78rem', color:T.light, margin:'.35rem 0 0' }}>
+          ¿Perdiste tu acceso?{' '}
+          <Link href="/recuperar-acceso" style={{ color:T.gold, fontWeight:700, textDecoration:'none' }}>
+            Recupéralo aquí →
+          </Link>
+        </p>
       </div>
     </main>
   );
