@@ -209,6 +209,15 @@ function PlanCard({
             >
               {selected ? '✓ En carrito' : '+ Agregar al carrito'}
             </button>
+            <p style={{
+              margin: '.35rem 0 0',
+              fontSize: '.68rem',
+              lineHeight: 1.45,
+              color: featured ? '#C5B0A0' : T.light,
+              textAlign: 'center',
+            }}>
+              ✓ Cambios ilimitados&nbsp;&nbsp;✓ Pago único, sin mensualidades&nbsp;&nbsp;✓ Soporte por WhatsApp
+            </p>
           </div>
         </div>
       </div>
