@@ -7,7 +7,6 @@ import {
   Gift,
   Images,
   MapPin,
-  ShieldCheck,
   Smartphone,
   Users,
   Link2,
@@ -177,17 +176,8 @@ function LandingStyles() {
       .cro-sol-card p { margin: 0; font-size: 0.825rem; color: ${T.muted}; line-height: 1.5; }
 
       /* ── Comparison Section ───────────────────────────────── */
-      .cro-compare-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid ${T.border}; border-radius: 4px; overflow: hidden; margin-top: 3rem; }
-      .cro-compare-col { padding: 3rem 2.5rem; }
-      .cro-compare-col-bad { border-right: 1px solid ${T.border}; background: rgba(255,255,255,0.01); }
-      .cro-compare-col-good { background: rgba(197, 168, 128, 0.05); }
-      .cro-compare-header { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin: 0 0 2rem; padding-bottom: 1rem; border-bottom: 1px solid ${T.border}; }
-      .cro-compare-row { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.95rem; line-height: 1.5; }
-      .cro-compare-row:last-child { border-bottom: 0; }
 
       /* ── Guarantee Section ────────────────────────────────── */
-      .cro-guarantee { text-align: center; max-width: 720px; margin: 0 auto; padding: 2rem; }
-      .cro-guarantee-badge { display: inline-flex; align-items: center; gap: 0.625rem; background: rgba(197, 168, 128, 0.08); border: 1px solid rgba(197, 168, 128, 0.25); border-radius: 4px; padding: 0.625rem 1.25rem; margin-bottom: 2rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: ${T.cyan}; }
 
       /* ── FAQ ──────────────────────────────────────────────── */
       .cro-faq-item { border-bottom: 1px solid ${T.border}; }
@@ -230,8 +220,6 @@ function LandingStyles() {
         .cro-block-media { height: 50vh; }
 .cro-events-gallery { grid-template-columns: repeat(2, 1fr); }
         .cro-problem-grid { grid-template-columns: 1fr; max-width: 600px; margin-inline: auto; }
-        .cro-compare-grid { grid-template-columns: 1fr; max-width: 600px; margin-inline: auto; }
-        .cro-compare-col-bad { border-right: 0; border-bottom: 1px solid ${T.border}; }
         .cro-process-grid { grid-template-columns: 1fr; max-width: 500px; margin-inline: auto; }
         .cro-trust-container { grid-template-columns: 1fr; max-width: 500px; margin-inline: auto; }
       }
@@ -346,66 +334,6 @@ function SolutionSection() {
 }
 
 // ─── Comparison Section ───────────────────────────────────────────────────────
-
-const COMPARE_BAD = [
-  'Con una imagen o PDF, tus invitados pueden perder información o seguir preguntando detalles.',
-  'Con una invitación impresa, no puedes hacer cambios fácilmente después.',
-  'La información importante puede quedar dispersa entre mensajes.',
-];
-
-const COMPARE_GOOD = [
-  'Pago único y sin mensualidades.',
-  'Fácil de editar y compartir.',
-  'Diseñada para verse elegante en celular.',
-  'Pensada para organizar mejor la información de tu boda.',
-  'Confirmación de asistencia para tus invitados.',
-];
-
-function ComparisonSection() {
-  return (
-    <section className="cro-section" style={{ background: T.onyx }}>
-      <div className="cro-shell">
-        <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
-          <p className="cro-eyebrow">Comparación</p>
-          <h2 className="cro-title-xl">¿Por qué elegir KOMPRALO?</h2>
-          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
-            Con KOMPRALO, tienes una invitación digital que puedes personalizar, compartir por WhatsApp y usar para recibir confirmaciones de asistencia.
-          </p>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <div className="cro-compare-grid">
-            <div className="cro-compare-col cro-compare-col-bad">
-              <p className="cro-compare-header" style={{ color: T.muted }}>Imagen, PDF o invitación impresa</p>
-              {COMPARE_BAD.map((bad) => (
-                <div className="cro-compare-row" key={bad}>
-                  <span style={{ color: '#EF4444', flexShrink: 0, marginTop: '0.15em', fontWeight: 'bold' }}>✕</span>
-                  <span style={{ color: T.muted }}>{bad}</span>
-                </div>
-              ))}
-            </div>
-            <div className="cro-compare-col cro-compare-col-good">
-              <p className="cro-compare-header" style={{ color: T.cyan }}>KOMPRALO</p>
-              {COMPARE_GOOD.map((good) => (
-                <div className="cro-compare-row" key={good}>
-                  <Check size={16} color={T.cyan} style={{ flexShrink: 0, marginTop: '0.15em' }} />
-                  <span style={{ color: T.silver }}>{good}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
-        <Reveal className="text-center mt-12" delay={0.3}>
-          <Link href="#planes" className="cro-btn cro-btn-cyan text-xs">
-            Ver planes
-          </Link>
-          <p className="text-xs text-[#A8A29E] mt-3 tracking-wide">
-            Pago único · Sin mensualidades · Fácil de compartir
-          </p>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
 
 // ─── Process Section (Cómo funciona) ──────────────────────────────────────────
 
@@ -602,27 +530,6 @@ function EventsGallery() {
 
 // ─── Guarantee Section ────────────────────────────────────────────────────────
 
-function GuaranteeSection() {
-  return (
-    <section className="cro-section" style={{ background: T.onyx }}>
-      <div className="cro-shell">
-        <Reveal className="cro-guarantee">
-          <div className="cro-guarantee-badge">
-            <ShieldCheck size={18} />
-            Pago único. Sin mensualidades.
-          </div>
-          <h2 className="cro-title-xl" style={{ marginBottom: '1.5rem' }}>
-            Una invitación digital bonita, práctica y lista para personalizar
-          </h2>
-          <p className="cro-copy" style={{ maxWidth: 640, margin: '0 auto' }}>
-            KOMPRALO está pensado para parejas que quieren una invitación elegante sin complicarse. Elige tu plan, agrega tus datos y compártela por WhatsApp con tus invitados.
-          </p>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
 // ─── Editions (Pricing) ───────────────────────────────────────────────────────
 
 function Editions() {
@@ -807,10 +714,8 @@ export default function InvitacionesPage() {
       <Hero3D />
       <ProblemSection />
       <SolutionSection />
-      <ComparisonSection />
       <ProcessSection />
       <EventsGallery />
-      <GuaranteeSection />
       <WhatHappensSection />
       <Editions />
       <TrustSection />
