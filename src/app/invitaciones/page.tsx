@@ -313,16 +313,11 @@ function ProblemSection() {
           <Reveal>
             <span className="cro-eyebrow">La realidad de organizar tu boda</span>
             <h2 className="cro-title-xl">
-              Mandar solo una imagen por WhatsApp puede causar muchas preguntas
+              Deja de responder "¿dónde es?" 50 veces
             </h2>
             <p className="cro-copy mt-6">
-              Una imagen puede perderse entre mensajes y dejar dudas sobre horarios, ubicación, vestimenta o confirmación de asistencia.
+              Una imagen por WhatsApp genera las mismas preguntas una y otra vez: ¿cómo llego?, ¿puedo llevar niños?, ¿cuál es el código de vestimenta?, ¿dónde está la mesa de regalos? Tu invitación KOMPRALO responde todo por ti. Tú solo ves llegar las confirmaciones.
             </p>
-            <div className="mt-8 p-6 rounded-lg border border-[rgba(197,168,128,0.2)] bg-[rgba(197,168,128,0.03)]">
-              <p className="text-[#F5F5F4] text-base md:text-lg font-medium leading-relaxed m-0">
-                Con <strong>KOMPRALO</strong>, tus invitados pueden ver los detalles importantes de tu boda en una invitación digital clara, bonita y fácil de compartir.
-              </p>
-            </div>
           </Reveal>
 
         </div>
