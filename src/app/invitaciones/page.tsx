@@ -386,39 +386,32 @@ function ProcessSection() {
 
 const TIMELINE_STEPS = [
   {
-    num: '1',
-    title: 'Pago único',
-    text: 'Elige el plan que va mejor con tu boda y paga una sola vez.',
+    title: 'Todo en un solo link',
+    text: 'Toda la información importante vive en una invitación digital que puedes compartir con un solo enlace.',
   },
   {
-    num: '2',
-    title: 'Sin mensualidades',
-    text: 'No necesitas pagar cada mes para tener tu invitación digital.',
+    title: 'Confirmaciones sin perseguir a nadie',
+    text: 'Tus invitados confirman desde la invitación y tú ves las respuestas sin perseguir a nadie por chat.',
   },
   {
-    num: '3',
-    title: 'Vista previa en tiempo real',
-    text: 'Revisa cómo va quedando tu invitación mientras agregas tus datos.',
+    title: 'Mapa directo a tu evento',
+    text: 'Incluye ubicación y acceso directo a mapas para que nadie tenga que preguntarte cómo llegar.',
   },
   {
-    num: '4',
-    title: 'Confirmación de asistencia',
-    text: 'Tus invitados pueden confirmar si asistirán a tu boda.',
+    title: 'Mesa de regalos integrada',
+    text: 'Comparte tu mesa de regalos o lluvia de sobres de forma clara dentro de la invitación.',
   },
   {
-    num: '5',
-    title: 'Fácil de compartir por WhatsApp',
-    text: 'Envía tu invitación a tus invitados de forma sencilla.',
+    title: 'Se ve perfecta en cualquier celular',
+    text: 'Se abre desde WhatsApp en cualquier celular, sin descargar apps.',
   },
   {
-    num: '6',
-    title: 'No necesitas instalar una app',
-    text: 'Puedes personalizarla desde tu celular o computadora.',
+    title: 'Lista en minutos, no en semanas',
+    text: 'El asistente te guía para dejarla lista rápido y editar después lo que necesites.',
   },
   {
-    num: '7',
-    title: 'Diseños elegantes para boda',
-    text: 'La invitación está pensada para verse bonita y ordenada.',
+    title: 'Pago único, tuya para siempre',
+    text: 'Pagas una sola vez y conservas tu invitación activa sin mensualidades.',
   },
 ];
 
@@ -435,10 +428,9 @@ function WhatHappensSection() {
         </Reveal>
         
         <div className="cro-timeline">
-          {TIMELINE_STEPS.map(({ num, title, text }) => (
-            <Reveal key={num} className="cro-timeline-item">
+          {TIMELINE_STEPS.map(({ title, text }) => (
+            <Reveal key={title} className="cro-timeline-item">
               <span className="cro-timeline-dot" />
-              <span className="cro-timeline-num">Paso {num}</span>
               <h3 className="cro-timeline-title">{title}</h3>
               <p className="cro-timeline-text">{text}</p>
             </Reveal>
