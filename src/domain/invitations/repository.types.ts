@@ -34,6 +34,10 @@ export interface CreateFromPaidOrderInput {
   stripeSessionId: string;
   /** Auth user who initiated the purchase. Persisted as invitations.user_id. */
   ownerUserId?:    string | null;
+  /** Invitation category. Defaults to 'wedding' (legacy behaviour). */
+  category?:       'wedding' | 'baptism' | 'baby-shower' | 'birthday';
+  /** Invitation title. Defaults to 'Mi invitación digital'. */
+  title?:          string;
 }
 
 export interface CreateFromPaidOrderResult {

@@ -25,6 +25,7 @@ import { createInvitationAccessToken } from '@/lib/access/createInvitationAccess
 import { getResendClient, getFromEmail } from '@/lib/resend/resend';
 import { buildUnsubscribeUrl } from '@/lib/email/unsubscribe-token';
 import WelcomePostPayment, { subject as welcomeSubject } from '@/lib/email/templates/welcome-post-payment';
+import { handleMultiCartSession } from '@/lib/checkout/multi-cart';
 
 function ok()  { return NextResponse.json({ received: true }, { status: 200 }); }
 function fail() { return NextResponse.json({ received: false }, { status: 400 }); }
@@ -50,6 +51,23 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('[webhook/stripe] checkout.session.completed received — session=%s', session.id);
+
+        // ── Multi-cart sessions: one order + invitation + token per item ────
+        // Handled by a dedicated idempotent path; the legacy single flow
+        // below stays untouched for cart_type !== 'multi'.
+        if (session.metadata?.cart_type === 'multi') {
+          const result = await handleMultiCartSession(session, {
+            supabase,
+            orderRepo,
+            invitationRepo,
+            appUrl: process.env.NEXT_PUBLIC_APP_URL?.trim() ?? null,
+            sendEmail: undefined, // wired in the email/success commit
+          });
+          if (!result.ok) {
+            console.error('[webhook/stripe] multi-cart aborted — session=%s reason=%s', session.id, result.reason);
+          }
+          break;
+        }
 
         const rawPlanId = session.metadata?.plan_id ?? session.metadata?.planId;
         const planResolution = resolvePurchasedPlanId(rawPlanId, session.amount_total);

@@ -27,6 +27,8 @@ export interface Order {
   confirmationEmailSentAt: string | null;
   /** Last Resend error message if delivery failed. null = no error. */
   confirmationEmailError: string | null;
+  /** Position within a multi-cart checkout (0 for single purchases). */
+  cartItemIndex: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -44,4 +46,6 @@ export interface CreateOrderInput {
   customerName?:         string | null;
   /** Auth user who initiated the purchase. Set from Stripe metadata.owner_user_id. */
   ownerUserId?:          string | null;
+  /** Position within a multi-cart checkout. Defaults to 0. */
+  cartItemIndex?:        number;
 }

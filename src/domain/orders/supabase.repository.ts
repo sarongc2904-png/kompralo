@@ -54,6 +54,7 @@ function mapRow(row: OrderRow): Order {
     ownerUserId:             row.owner_user_id  ?? null,
     confirmationEmailSentAt: row.confirmation_email_sent_at ?? null,
     confirmationEmailError:  row.confirmation_email_error  ?? null,
+    cartItemIndex:           row.cart_item_index ?? 0,
     createdAt:               row.created_at,
     updatedAt:               row.updated_at,
   };
@@ -90,6 +91,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
         customer_email:           input.customerEmail ?? null,
         customer_name:            input.customerName  ?? null,
         owner_user_id:            input.ownerUserId   ?? null,
+        cart_item_index:          input.cartItemIndex ?? 0,
       })
       .select()
       .single();
@@ -101,14 +103,41 @@ export class SupabaseOrderRepository implements IOrderRepository {
   }
 
   async getBySessionId(stripeSessionId: string): Promise<Order | null> {
+    // Multi-cart sessions have N rows; return the first item so legacy
+    // single-order callers keep working (use listBySessionId for all rows).
     const { data, error } = await this.supabase
       .from('orders')
       .select('*')
       .eq('stripe_session_id', stripeSessionId)
-      .single();
+      .order('cart_item_index', { ascending: true })
+      .limit(1)
+      .maybeSingle();
 
     if (error || !data) return null;
     return mapRow(data);
+  }
+
+  async listBySessionId(stripeSessionId: string): Promise<Order[]> {
+    const { data, error } = await this.supabase
+      .from('orders')
+      .select('*')
+      .eq('stripe_session_id', stripeSessionId)
+      .order('cart_item_index', { ascending: true });
+
+    if (error || !data) return [];
+    return data.map(mapRow);
+  }
+
+  async attachInvitationToOrderById(orderId: string, invitationId: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('orders')
+      .update({ invitation_id: invitationId, updated_at: new Date().toISOString() })
+      .eq('id', orderId)
+      .is('invitation_id', null);
+
+    if (error) {
+      throw new Error(`[Supabase] attachInvitationToOrderById failed: ${error.message}`);
+    }
   }
 
   async updateStatus(

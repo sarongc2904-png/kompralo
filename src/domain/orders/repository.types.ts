@@ -3,6 +3,10 @@ import type { Order, CreateOrderInput, OrderStatus } from './types';
 export interface IOrderRepository {
   create(input: CreateOrderInput): Promise<Order>;
   getBySessionId(stripeSessionId: string): Promise<Order | null>;
+  /** All orders for a Stripe session, ordered by cart_item_index (multi-cart = N rows). */
+  listBySessionId(stripeSessionId: string): Promise<Order[]>;
+  /** Links an invitation to a specific order row (multi-cart safe; no-op if already set). */
+  attachInvitationToOrderById(orderId: string, invitationId: string): Promise<void>;
   updateStatus(stripeSessionId: string, status: OrderStatus, paymentIntentId?: string): Promise<void>;
   listByInvitationId(invitationId: string): Promise<Order[]>;
   markConfirmationEmailSent(stripeSessionId: string): Promise<void>;
