@@ -1,2 +1,2 @@
-export { sendOrderConfirmationEmail } from './sendOrderConfirmationEmail';
-export type { SendOrderConfirmationEmailParams } from './sendOrderConfirmationEmail';
+export { sendOrderConfirmationEmail, sendMultiOrderConfirmationEmail } from './sendOrderConfirmationEmail';
+export type { SendOrderConfirmationEmailParams, SendMultiOrderConfirmationEmailParams } from './sendOrderConfirmationEmail';

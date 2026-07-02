@@ -12,7 +12,8 @@ import { stripe } from '@/lib/stripe/stripe';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
-import { sendOrderConfirmationEmail } from '@/lib/resend';
+import { sendOrderConfirmationEmail, sendMultiOrderConfirmationEmail } from '@/lib/resend';
+import { handleMultiCartSession } from '@/lib/checkout/multi-cart';
 import { createInvitationAccessToken } from '@/lib/access/createInvitationAccessToken';
 import { resolvePurchasedPlanId } from '@/domain/plans/types';
 
@@ -51,6 +52,34 @@ export async function POST(request: NextRequest) {
 
   if (session.payment_status !== 'paid') {
     return err(`Session payment_status is "${session.payment_status}", not "paid".`, 422);
+  }
+
+  // Multi-cart sessions: delegate to the idempotent multi handler, which
+  // recreates only what is missing and sends the N-invitation email.
+  if (session.metadata?.cart_type === 'multi') {
+    const multiAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() ?? null;
+    const result = await handleMultiCartSession(session, {
+      supabase,
+      orderRepo,
+      invitationRepo: invRepo,
+      appUrl: multiAppUrl,
+      sendEmail: async (args) => {
+        await sendMultiOrderConfirmationEmail({
+          ...args,
+          inviteUrl: null, // admin recovery: token links only; invite handled via send-access-email
+          loginUrl: multiAppUrl ? new URL('/login', multiAppUrl).toString() : '/login',
+        });
+      },
+    });
+    if (!result.ok) return err(`Multi-cart recovery aborted: ${result.reason}`, 500);
+    return NextResponse.json({
+      success: true,
+      multi: true,
+      items: result.items,
+      createdOrders: result.createdOrders,
+      createdInvitations: result.createdInvitations,
+      emailSent: result.emailSent,
+    });
   }
 
   const customerEmail = session.customer_details?.email ?? null;

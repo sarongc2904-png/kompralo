@@ -48,6 +48,8 @@ interface OrderSummary {
   amountTotal:  number;
   currency:     string;
   customerEmail:string | null;
+  /** One entry per purchased invitation (multi-cart = N entries). */
+  items:        { planId: string; amount: number }[];
 }
 
 async function tryGetOrder(sessionId:string|undefined): Promise<OrderSummary|null> {
@@ -55,9 +57,16 @@ async function tryGetOrder(sessionId:string|undefined): Promise<OrderSummary|nul
   try {
     const supabase  = createServiceRoleSupabaseClient();
     const orderRepo = new SupabaseOrderRepository(supabase);
-    const order     = await orderRepo.getBySessionId(sessionId);
-    if (!order) return null;
-    return { planId:order.planId, amountTotal:order.amountTotal, currency:order.currency, customerEmail:order.customerEmail };
+    const orders    = await orderRepo.listBySessionId(sessionId);
+    if (orders.length === 0) return null;
+    const first = orders[0];
+    return {
+      planId:        first.planId,
+      amountTotal:   orders.reduce((sum, o) => sum + o.amountTotal, 0),
+      currency:      first.currency,
+      customerEmail: first.customerEmail,
+      items:         orders.map((o) => ({ planId: o.planId, amount: o.amountTotal })),
+    };
   } catch { return null; }
 }
 
@@ -130,7 +139,25 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
         }}>
           ¡Pago recibido!
         </h1>
-        {order ? (
+        {order && order.items.length > 1 ? (
+          <div style={{ maxWidth:'28rem', margin:'0 auto' }}>
+            <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65, margin:'0 0 .75rem' }}>
+              <strong style={{ color:T.dark }}>{order.items.length} invitaciones</strong> activadas por{' '}
+              <strong style={{ color:T.dark }}>{formatPrice(order.amountTotal, order.currency)}</strong> MXN:
+            </p>
+            <ul style={{ listStyle:'none', padding:0, margin:0, textAlign:'left', display:'inline-block' }}>
+              {order.items.map((item, i) => (
+                <li key={i} style={{ color:T.mid, fontSize:'.875rem', lineHeight:1.9 }}>
+                  ✓ Invitación {i + 1} — Plan <strong style={{ color:T.dark }}>{planLabels[item.planId] ?? item.planId}</strong>{' '}
+                  ({formatPrice(item.amount, order.currency)})
+                </li>
+              ))}
+            </ul>
+            <p style={{ color:T.mid, fontSize:'.8125rem', lineHeight:1.6, margin:'.75rem 0 0' }}>
+              Tu correo incluye un enlace de edición para cada una.
+            </p>
+          </div>
+        ) : order ? (
           <p style={{ color:T.mid, fontSize:'.9375rem', lineHeight:1.65, maxWidth:'28rem', margin:'0 auto' }}>
             Plan <strong style={{ color:T.dark }}>{planLabels[order.planId] ?? order.planId}</strong> activado exitosamente por{' '}
             <strong style={{ color:T.dark }}>{formatPrice(order.amountTotal, order.currency)}</strong> MXN. Tu invitación digital se está preparando.

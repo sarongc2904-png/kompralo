@@ -47,65 +47,80 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServiceRoleSupabaseClient();
     const orderRepo = new SupabaseOrderRepository(supabase);
-    const order = await orderRepo.getBySessionId(sessionId);
+    // Multi-cart sessions have N orders; single purchases have exactly one.
+    const orders = await orderRepo.listBySessionId(sessionId);
 
-    if (!order) {
+    if (orders.length === 0) {
       return jsonError('order_not_found', 404);
     }
-    if (order.status !== 'paid') {
-      return jsonError('order_not_paid', 409);
-    }
-    if (!order.invitationId) {
-      return jsonError('invitation_not_ready', 409);
-    }
-    if (!order.customerEmail) {
+
+    const stripeEmail = normalizeEmail(session.customer_details?.email ?? session.customer_email);
+    if (!stripeEmail) {
       return jsonError('missing_order_email', 403);
     }
 
-    const orderEmail = normalizeEmail(order.customerEmail);
-    const stripeEmail = normalizeEmail(session.customer_details?.email ?? session.customer_email);
-    if (!orderEmail || !stripeEmail || stripeEmail !== orderEmail) {
+    // Validate each order; collect the ones eligible for a fresh token.
+    const eligible: { orderId: string; invitationId: string; customerEmail: string }[] = [];
+    for (const order of orders) {
+      if (order.status !== 'paid' || !order.invitationId || !order.customerEmail) continue;
+
+      const orderEmail = normalizeEmail(order.customerEmail);
+      if (!orderEmail || stripeEmail !== orderEmail) continue;
+
+      const { data: invitation } = await supabase
+        .from('invitations')
+        .select('id, customer_email, status')
+        .eq('id', order.invitationId)
+        .maybeSingle();
+      if (!invitation) continue;
+      if ((invitation as { status?: string }).status === 'deleted') continue;
+
+      const invitationEmail = normalizeEmail((invitation as { customer_email?: string | null }).customer_email);
+      if (!invitationEmail || invitationEmail !== orderEmail) continue;
+
+      eligible.push({ orderId: order.id, invitationId: order.invitationId, customerEmail: order.customerEmail });
+    }
+
+    if (eligible.length === 0) {
+      // Preserve the legacy error semantics for the single-order case.
+      const first = orders[0];
+      if (first.status !== 'paid') return jsonError('order_not_paid', 409);
+      if (!first.invitationId)     return jsonError('invitation_not_ready', 409);
       return jsonError('email_mismatch', 403);
     }
 
-    const { data: invitation, error: invitationError } = await supabase
-      .from('invitations')
-      .select('id, customer_email')
-      .eq('id', order.invitationId)
-      .maybeSingle();
-
-    if (invitationError || !invitation) {
-      return jsonError('invitation_not_found', 404);
-    }
-
-    const invitationEmail = normalizeEmail((invitation as { customer_email?: string | null }).customer_email);
-    if (!invitationEmail || invitationEmail !== orderEmail) {
-      return jsonError('invitation_email_mismatch', 403);
-    }
-
+    // Rate limit scales with cart size: each request mints one token per order.
     const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString();
     const { count, error: rateLimitError } = await supabase
       .from('invitation_access_tokens')
       .select('id', { count: 'exact', head: true })
-      .eq('order_id', order.id)
+      .in('order_id', eligible.map((e) => e.orderId))
       .eq('purpose', 'post_payment_access')
       .gte('created_at', since);
 
     if (rateLimitError) {
       return jsonError('rate_limit_check_failed', 500);
     }
-    if ((count ?? 0) >= RATE_LIMIT_MAX_TOKENS) {
+    if ((count ?? 0) >= RATE_LIMIT_MAX_TOKENS * eligible.length) {
       return jsonError('too_many_requests', 429);
     }
 
-    const { rawToken } = await createInvitationAccessToken({
-      invitationId: order.invitationId,
-      orderId: order.id,
-      customerEmail: order.customerEmail,
-    });
+    const accessUrls: string[] = [];
+    for (const item of eligible) {
+      const { rawToken } = await createInvitationAccessToken({
+        invitationId: item.invitationId,
+        orderId: item.orderId,
+        customerEmail: item.customerEmail,
+      });
+      accessUrls.push(`/access/consume?token=${encodeURIComponent(rawToken)}`);
+    }
 
-    const accessUrl = `/access/consume?token=${encodeURIComponent(rawToken)}`;
-    return NextResponse.json({ success: true, accessUrl }, { status: 200 });
+    // accessUrl stays the first invitation for backward compatibility with
+    // AccessFromSessionButton; accessUrls carries the full list.
+    return NextResponse.json(
+      { success: true, accessUrl: accessUrls[0], accessUrls, invitationCount: eligible.length },
+      { status: 200 },
+    );
   } catch {
     return jsonError('access_from_session_failed', 500);
   }

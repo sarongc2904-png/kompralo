@@ -20,7 +20,7 @@ import type { ProductId } from '@/domain/products';
 import { parsePlanId, resolvePurchasedPlanId } from '@/domain/plans/types';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
-import { sendOrderConfirmationEmail } from '@/lib/resend';
+import { sendOrderConfirmationEmail, sendMultiOrderConfirmationEmail } from '@/lib/resend';
 import { createInvitationAccessToken } from '@/lib/access/createInvitationAccessToken';
 import { getResendClient, getFromEmail } from '@/lib/resend/resend';
 import { buildUnsubscribeUrl } from '@/lib/email/unsubscribe-token';
@@ -56,12 +56,44 @@ export async function POST(request: NextRequest) {
         // Handled by a dedicated idempotent path; the legacy single flow
         // below stays untouched for cart_type !== 'multi'.
         if (session.metadata?.cart_type === 'multi') {
+          const multiAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() ?? null;
           const result = await handleMultiCartSession(session, {
             supabase,
             orderRepo,
             invitationRepo,
-            appUrl: process.env.NEXT_PUBLIC_APP_URL?.trim() ?? null,
-            sendEmail: undefined, // wired in the email/success commit
+            appUrl: multiAppUrl,
+            sendEmail: async (args) => {
+              // One account for all invitations — same invite-link pattern as
+              // the single flow (hashed_token through /auth/confirm).
+              let inviteUrl: string | null = null;
+              if (multiAppUrl) {
+                try {
+                  const setPasswordUrl = new URL('/auth/set-password', multiAppUrl);
+                  const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+                    type: 'invite',
+                    email: args.to,
+                    options: { redirectTo: setPasswordUrl.toString() },
+                  });
+                  const hashedToken = linkData?.properties?.hashed_token ?? null;
+                  if (!linkError && hashedToken) {
+                    const confirmUrl = new URL('/auth/confirm', multiAppUrl);
+                    confirmUrl.searchParams.set('token_hash', hashedToken);
+                    confirmUrl.searchParams.set('type', 'invite');
+                    confirmUrl.searchParams.set('next', '/auth/set-password');
+                    confirmUrl.searchParams.set('email', args.to);
+                    inviteUrl = confirmUrl.toString();
+                  }
+                } catch (inviteErr) {
+                  console.warn('[webhook/stripe] multi-cart generateLink failed (non-fatal):', inviteErr);
+                }
+              }
+
+              await sendMultiOrderConfirmationEmail({
+                ...args,
+                inviteUrl,
+                loginUrl: multiAppUrl ? new URL('/login', multiAppUrl).toString() : '/login',
+              });
+            },
           });
           if (!result.ok) {
             console.error('[webhook/stripe] multi-cart aborted — session=%s reason=%s', session.id, result.reason);

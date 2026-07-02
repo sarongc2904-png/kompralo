@@ -1,5 +1,6 @@
 import { getResendClient, getFromEmail } from './resend';
-import { buildOrderConfirmationEmail, buildPasswordSetupEmail } from './emailTemplates';
+import { buildOrderConfirmationEmail, buildPasswordSetupEmail, buildMultiOrderConfirmationEmail } from './emailTemplates';
+import type { MultiOrderConfirmationParams } from './emailTemplates';
 import type { PlanId } from '@/domain/plans/types';
 
 export interface SendOrderConfirmationEmailParams {
@@ -51,6 +52,24 @@ export async function sendOrderConfirmationEmail(
 
   const { error } = await resend.emails.send({ from, to: [params.to], subject, html, text });
 
+  if (error) {
+    throw new Error(`Resend delivery failed: ${error.message}`);
+  }
+}
+
+// ─── Multi-cart confirmation ──────────────────────────────────────────────────
+
+export type SendMultiOrderConfirmationEmailParams = MultiOrderConfirmationParams & { to: string };
+
+export async function sendMultiOrderConfirmationEmail(
+  params: SendMultiOrderConfirmationEmailParams,
+): Promise<void> {
+  const resend = getResendClient();
+  const from   = getFromEmail();
+  const { to, ...templateParams } = params;
+  const { subject, html, text } = buildMultiOrderConfirmationEmail(templateParams);
+
+  const { error } = await resend.emails.send({ from, to: [to], subject, html, text });
   if (error) {
     throw new Error(`Resend delivery failed: ${error.message}`);
   }
