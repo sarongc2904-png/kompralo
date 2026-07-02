@@ -586,24 +586,36 @@ function TechnicalSpecs() {
 
 const FAQ_ITEMS = [
   {
-    q: '¿Es fácil de usar?',
-    a: 'Sí. KOMPRALO está diseñado para que puedas personalizar tu invitación sin conocimientos técnicos.',
+    q: '¿Qué pasa después de pagar?',
+    a: 'Recibes acceso inmediato a tu invitación y un correo con tu link de acceso. Entras al editor, personalizas tus datos con el asistente de 3 pasos y publicas cuando estés lista.',
   },
   {
-    q: '¿Mis invitados necesitan instalar algo?',
-    a: 'No. Tus invitados pueden abrir la invitación desde su celular.',
+    q: '¿Puedo hacer cambios después de publicar?',
+    a: 'Sí, cambios ilimitados sin costo extra. Cambió el horario, el salón o quieres otra foto: editas y tu link se actualiza al instante para todos tus invitados.',
   },
   {
-    q: '¿Puedo compartirla por WhatsApp?',
-    a: 'Sí. La invitación está pensada para compartirse fácilmente por WhatsApp.',
+    q: '¿Cuánto tardo en tenerla lista?',
+    a: 'El asistente te guía en 3 pasos y la mayoría de las parejas la tiene lista el mismo día. Puedes publicarla de inmediato o guardarla como borrador.',
   },
   {
-    q: '¿Es pago único?',
-    a: 'Sí. Pagas una vez según el plan que elijas. No cobramos mensualidades.',
+    q: '¿Mis invitados necesitan descargar algo?',
+    a: 'No. Reciben un link por WhatsApp y la invitación se abre en su navegador, en cualquier celular, tablet o computadora.',
   },
   {
-    q: '¿Qué plan me conviene?',
-    a: 'Basic es ideal para una invitación sencilla y elegante. Premium es ideal si quieres agregar más secciones visuales y familiares. Deluxe es ideal si quieres una invitación más completa para una boda formal.',
+    q: '¿Cómo confirman asistencia mis invitados?',
+    a: 'Directo desde la invitación, con un par de toques. Tú ves las confirmaciones en tu panel, sin Excel y sin perseguir a nadie por chat.',
+  },
+  {
+    q: '¿Qué formas de pago aceptan?',
+    a: 'Tarjeta de crédito o débito a través de Stripe, con pago 100% seguro. Es un pago único: sin suscripciones ni mensualidades.',
+  },
+  {
+    q: '¿Por cuánto tiempo está activa mi invitación?',
+    a: 'Tu invitación queda activa desde que la publicas y hasta 12 meses después de tu boda, sin costo adicional — tiempo de sobra para que tus invitados la revivan y compartan recuerdos.',
+  },
+  {
+    q: '¿Y si necesito ayuda?',
+    a: 'Escríbenos por WhatsApp y te acompañamos en el proceso. Estamos para que tu invitación quede perfecta.',
   },
 ];
 
