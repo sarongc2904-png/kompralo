@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Play, Check, Sparkles, Heart, Flower } from 'lucide-react';
+import { Check, Sparkles, Heart, Flower } from 'lucide-react';
 import { Reveal } from './Motion';
 
 interface ParticleProps {
@@ -189,10 +189,10 @@ export default function Hero3D() {
               Invitaciones digitales de boda
             </span>
             <h1 className="cro-title-mega" style={{ textShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-              Invitaciones digitales de boda listas para personalizar
+              Tu boda merece más que una imagen en WhatsApp
             </h1>
             <p className="cro-copy mt-6" style={{ color: '#E7E5E4' }}>
-              Crea una invitación elegante para tu boda, edítala desde tu celular o computadora y compártela fácilmente por WhatsApp.
+              Crea tu invitación digital interactiva con mapa, confirmación de asistencia y mesa de regalos. La personalizas tú misma en minutos y la compartes con un solo link. Pago único, sin mensualidades.
             </p>
             
             {/* Value bullets */}
@@ -214,18 +214,17 @@ export default function Hero3D() {
 
             {/* CTAs */}
             <div className="cro-hero-actions">
-              <Link href="#planes" className="cro-btn cro-btn-cyan" data-cta="hero-primary" data-event="click-hero-primary">
-                Ver planes
+              <Link href="/i/nuestrabodaarletteymayorga" className="cro-btn cro-btn-cyan" data-cta="hero-primary" data-event="click-hero-primary">
+                Ver una invitación real →
               </Link>
               <Link 
-                href="/i/nuestrabodaarletteymayorga"
-                target="_blank"
+                href="#planes"
                 className="cro-btn cro-btn-outline" 
                 style={{ background: 'rgba(255,255,255,0.02)' }} 
-                data-cta="hero-demo" 
-                data-event="click-hero-demo"
+                data-cta="hero-pricing" 
+                data-event="click-hero-pricing"
               >
-                <Play size={14} fill="currentColor" className="mr-1 inline" /> Ver cómo funciona
+                Ver planes y precios
               </Link>
             </div>
 
