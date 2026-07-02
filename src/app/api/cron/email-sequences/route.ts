@@ -148,7 +148,7 @@ export async function GET(req: NextRequest) {
   // ── SEQUENCE C — Invitation not published: 72h after purchase, step<2 ──
   const { data: unpublished, error: seqCErr } = await supabase
     .from('orders')
-    .select('customer_email, customer_name, invitation_id, email_sequence_step, created_at')
+    .select('customer_email, customer_name, invitation_id, email_sequence_step, last_sequence_email_at, created_at')
     .eq('status', 'paid')
     .lt('email_sequence_step', 2)
     .lt('created_at', new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString())
@@ -163,6 +163,12 @@ export async function GET(req: NextRequest) {
 
   for (const order of unpublished ?? []) {
     if (!order.invitation_id) continue;
+    // Spacing guard: never send C within 48h of the previous sequence email
+    // (prevents B and C hitting the same customer in a single cron run).
+    if (order.last_sequence_email_at &&
+        Date.now() - new Date(order.last_sequence_email_at).getTime() < 48 * 60 * 60 * 1000) {
+      continue;
+    }
     const { data: inv } = await supabase
       .from('invitations')
       .select('published_at')
