@@ -35,6 +35,9 @@ export async function sendOrderConfirmationEmail(
       currency:     params.currency,
       inviteUrl:    params.inviteUrl,
       loginUrl:     params.loginUrl ?? params.accessUrl,
+      // Always include the 7-day token link: the invite link is single-use and
+      // short-lived, so without this the token dies orphaned in the DB.
+      accessUrl:    params.accessUrl,
     }));
   } else {
     ({ subject, html, text } = buildOrderConfirmationEmail({

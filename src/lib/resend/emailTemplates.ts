@@ -33,6 +33,8 @@ export interface PasswordSetupEmailParams {
   currency?:      string | null;
   inviteUrl:      string;
   loginUrl:       string;
+  /** Direct 7-day access-token link — works without a password even if the invite link expires. */
+  accessUrl?:     string | null;
 }
 
 export function buildPasswordSetupEmail(params: PasswordSetupEmailParams): {
@@ -40,7 +42,7 @@ export function buildPasswordSetupEmail(params: PasswordSetupEmailParams): {
   html: string;
   text: string;
 } {
-  const { customerName, planId, amountTotal, currency, inviteUrl, loginUrl } = params;
+  const { customerName, planId, amountTotal, currency, inviteUrl, loginUrl, accessUrl } = params;
   const planName  = planLabels[planId] ?? planId;
   const greeting  = customerName ? `Hola ${customerName},` : 'Hola,';
   const priceStr  = amountTotal && currency ? formatPrice(amountTotal, currency) : null;
@@ -98,6 +100,27 @@ export function buildPasswordSetupEmail(params: PasswordSetupEmailParams): {
                 Paso 2 — Después de crear tu contraseña, entra a tu panel en:
                 <a href="${loginUrl}" style="color:#C5A880;font-weight:700;">${loginUrl}</a>
               </p>
+              ${accessUrl ? `
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0;">
+                <tr><td style="border-top:1px solid #E8E2DA;padding-top:20px;">
+                  <p style="margin:0 0 8px;font-size:13px;color:#4B3A2C;font-weight:600;">
+                    ¿Prefieres empezar a editar ahora mismo?
+                  </p>
+                  <p style="margin:0 0 14px;font-size:13px;color:#9B8878;line-height:1.6;">
+                    Este acceso directo funciona sin contraseña y es válido por 7 días.
+                  </p>
+                  <table cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td align="center" style="border:1px solid #C5A880;border-radius:8px;">
+                        <a href="${accessUrl}"
+                           style="display:inline-block;padding:12px 28px;font-size:13px;font-weight:700;color:#8A6D3B;text-decoration:none;letter-spacing:0.02em;">
+                          Entrar directo a editar (sin contraseña)
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td></tr>
+              </table>` : ''}
               <p style="margin:16px 0 0;font-size:13px;color:#9B8878;line-height:1.6;">
                 ¿Tienes alguna duda? Responde este correo y te ayudamos.
               </p>
@@ -130,6 +153,14 @@ export function buildPasswordSetupEmail(params: PasswordSetupEmailParams): {
     '',
     `Paso 2 — Accede a tu panel en: ${loginUrl}`,
     '',
+    ...(accessUrl
+      ? [
+          '¿Prefieres empezar a editar ahora mismo?',
+          'Este acceso directo funciona sin contraseña y es válido por 7 días:',
+          accessUrl,
+          '',
+        ]
+      : []),
     '¿Tienes alguna duda? Responde este correo.',
     '',
     'KOMPRALO — Invitaciones Digitales',
