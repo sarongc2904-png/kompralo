@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { startWeddingQuickStart } from '@/app/dashboard/invitations/[id]/edit/actions';
+import { skipWizardExpress } from '@/app/actions/skip-wizard-express';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -66,8 +67,28 @@ export function WizardExpress({
 
   const [card, setCard] = useState<1 | 2 | 3>(1);
   const [submitting, setSubmitting] = useState(false);
+  const [skipping, setSkipping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+
+  // Skip: mark wizardExpressCompleted server-side BEFORE navigating, otherwise
+  // the editor gate re-renders this wizard and the button loops forever.
+  const handleSkip = async () => {
+    if (skipping) return;
+    setSkipping(true);
+    setError(null);
+    try {
+      const result = await skipWizardExpress(invitationId);
+      if (result.success) {
+        window.location.href = resolvedEditorUrl;
+        return;
+      }
+      setError(result.error ?? 'No se pudo omitir el wizard. Intenta de nuevo.');
+    } catch {
+      setError('Error de red al omitir el wizard. Intenta de nuevo.');
+    }
+    setSkipping(false);
+  };
 
   const [state, setState] = useState<WizardState>({
     brideName:    prefilled?.brideName   ?? '',
@@ -182,7 +203,8 @@ export function WizardExpress({
               setCard(2);
             }}
             error={error}
-            onSkip={() => { window.location.href = resolvedEditorUrl; }}
+            onSkip={handleSkip}
+            skipping={skipping}
           />
         )}
 
@@ -281,12 +303,14 @@ function Card1({
   onNext,
   error,
   onSkip,
+  skipping,
 }: {
   state: WizardState;
   set: <K extends keyof WizardState>(k: K, v: WizardState[K]) => void;
   onNext: () => void;
   error: string | null;
   onSkip: () => void;
+  skipping: boolean;
 }) {
   const formattedDate = state.weddingDate
     ? new Date(state.weddingDate + 'T12:00:00').toLocaleDateString('es-MX', {
@@ -352,8 +376,12 @@ function Card1({
 
         {/* Buttons sticky on mobile above keyboard */}
         <div className="wiz-footer-btns">
-          <button onClick={onSkip} style={ghostButtonStyle}>
-            Omitir wizard
+          <button
+            onClick={onSkip}
+            disabled={skipping}
+            style={{ ...ghostButtonStyle, opacity: skipping ? 0.6 : 1, cursor: skipping ? 'wait' : 'pointer' }}
+          >
+            {skipping ? 'Abriendo editor…' : 'Omitir wizard'}
           </button>
           <button onClick={onNext} style={primaryButtonStyle}>
             Siguiente →
