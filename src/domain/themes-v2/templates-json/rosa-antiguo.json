@@ -105,9 +105,11 @@
       "final": "#FAF3EE"
     },
     "assets": {
-      "backgroundLayer1": "",
+      "backgroundLayer1": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/rosa-antiguo-floral.webp",
       "backgroundLayer2": "",
-      "backgroundLayer3": ""
+      "backgroundLayer3": "",
+      "textureRepeat": "repeat-y",
+      "textureOpacity": 0.85
     },
     "dressCodeSwatches": [
       "#FAF3EE",
