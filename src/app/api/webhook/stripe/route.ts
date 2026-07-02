@@ -229,7 +229,21 @@ export async function POST(request: NextRequest) {
             if (linkError) {
               console.warn('[webhook/stripe] generateLink failed (non-fatal, session=%s):', session.id, linkError.message);
             } else {
-              inviteUrl = linkData?.properties?.action_link ?? null;
+              // Build the link through our own /auth/confirm (server-side
+              // verifyOtp + user_id linking) instead of the Supabase-hosted
+              // action_link, whose failure mode strands the user on an
+              // expired-hash page with no recovery path.
+              const hashedToken = linkData?.properties?.hashed_token ?? null;
+              if (hashedToken) {
+                const confirmUrl = new URL('/auth/confirm', appUrl);
+                confirmUrl.searchParams.set('token_hash', hashedToken);
+                confirmUrl.searchParams.set('type', 'invite');
+                confirmUrl.searchParams.set('next', '/auth/set-password');
+                confirmUrl.searchParams.set('email', emailRecipient);
+                inviteUrl = confirmUrl.toString();
+              } else {
+                inviteUrl = linkData?.properties?.action_link ?? null;
+              }
               console.log('[webhook/stripe] invite link generated for %s', emailRecipient);
             }
           } catch (inviteErr) {

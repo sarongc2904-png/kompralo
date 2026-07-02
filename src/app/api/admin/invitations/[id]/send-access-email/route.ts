@@ -63,16 +63,42 @@ export async function POST(_req: NextRequest, { params }: RouteContext) {
     const accessUrl = new URL('/access/consume', appUrlObj);
     accessUrl.searchParams.set('token', rawToken);
 
-    // Attempt to generate a Supabase invite link (non-fatal)
+    // Attempt to generate a password-setup link (non-fatal).
+    // 'invite' fails once the auth user exists, so fall back to 'recovery'.
+    // Route through our /auth/confirm (server-side verifyOtp + user_id link).
     let inviteUrl: string | null = null;
     try {
       const setPasswordUrl = new URL('/auth/set-password', appUrlObj);
-      const { data: linkData } = await svc.auth.admin.generateLink({
+
+      let linkData = null;
+      let linkType: 'invite' | 'recovery' = 'invite';
+      const inviteAttempt = await svc.auth.admin.generateLink({
         type: 'invite',
         email: emailTo,
         options: { redirectTo: setPasswordUrl.toString() },
       });
-      inviteUrl = linkData?.properties?.action_link ?? null;
+      if (inviteAttempt.error || !inviteAttempt.data?.properties) {
+        linkType = 'recovery';
+        const recoveryAttempt = await svc.auth.admin.generateLink({
+          type: 'recovery',
+          email: emailTo,
+        });
+        linkData = recoveryAttempt.data;
+      } else {
+        linkData = inviteAttempt.data;
+      }
+
+      const hashedToken = linkData?.properties?.hashed_token ?? null;
+      if (hashedToken) {
+        const confirmUrl = new URL('/auth/confirm', appUrlObj);
+        confirmUrl.searchParams.set('token_hash', hashedToken);
+        confirmUrl.searchParams.set('type', linkType);
+        confirmUrl.searchParams.set('next', '/auth/set-password');
+        confirmUrl.searchParams.set('email', emailTo);
+        inviteUrl = confirmUrl.toString();
+      } else {
+        inviteUrl = linkData?.properties?.action_link ?? null;
+      }
     } catch { /* non-fatal */ }
 
     await sendOrderConfirmationEmail({

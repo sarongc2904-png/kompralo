@@ -95,7 +95,7 @@ function Expired() {
         Puedes solicitar uno nuevo a continuación.
       </p>
       <Link
-        href="/login?mode=forgot"
+        href="/auth/link-expirado"
         style={{
           display: 'inline-block', padding: '.75rem 1.75rem',
           background: T.dark, color: '#F5EDD8',
