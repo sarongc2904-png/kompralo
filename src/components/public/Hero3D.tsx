@@ -62,7 +62,6 @@ export default function Hero3D() {
         </FadeIn>
 
         <FadeIn className="relative min-h-[420px] md:min-h-[560px]" style={{ transitionDelay: '120ms' }}>
-          <div className="absolute inset-0 rounded-[2rem] bg-site-blanco/50 shadow-[0_28px_90px_rgba(74,59,53,0.18)]" />
           <div className="relative mx-auto aspect-[905/1737] w-[min(78vw,330px)] md:w-[min(38vw,390px)]">
             <Image
               src="/images/invitaciones/landing/wedding-premium-phone-mockup.png"

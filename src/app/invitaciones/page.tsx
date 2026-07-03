@@ -206,14 +206,14 @@ function LandingStyles() {
       .cro-process-card h3 { margin: 0 0 1rem; font-size: 1.25rem; font-weight: 600; letter-spacing: 0.05em; color: ${T.ink}; }
       .cro-process-card p { margin: 0; color: ${T.muted}; font-size: 0.95rem; line-height: 1.6; font-weight: 300; }
 
-      /* ── Timeline Section ─────────────────────────────────── */
-      .cro-timeline { position: relative; border-left: 1px solid rgba(197, 168, 128, 0.25); margin: 4rem auto 0; padding-left: 2.5rem; max-width: 680px; }
+      /* ── Timeline Section (paleta Editorial Elegante — sección con fondo claro) ── */
+      .cro-timeline { position: relative; border-left: 1px solid rgba(74, 59, 53, 0.18); margin: 4rem auto 0; padding-left: 2.5rem; max-width: 680px; }
       .cro-timeline-item { position: relative; margin-bottom: 2.5rem; }
       .cro-timeline-item:last-child { margin-bottom: 0; }
-      .cro-timeline-dot { position: absolute; left: calc(-2.5rem - 6px); top: 0.25rem; width: 13px; height: 13px; border-radius: 50%; background: ${T.cyan}; border: 3px solid ${T.black}; }
-      .cro-timeline-num { font-size: 0.75rem; font-weight: 700; color: ${T.cyan}; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.15em; display: block; }
-      .cro-timeline-title { font-size: 1.2rem; font-weight: 600; margin: 0 0 0.5rem; color: ${T.ink}; }
-      .cro-timeline-text { font-size: 0.95rem; color: ${T.muted}; margin: 0; line-height: 1.55; }
+      .cro-timeline-dot { position: absolute; left: calc(-2.5rem - 6px); top: 0.25rem; width: 13px; height: 13px; border-radius: 50%; background: var(--site-color-rosa-antiguo); border: 3px solid var(--site-color-blanco); }
+      .cro-timeline-num { font-size: 0.75rem; font-weight: 700; color: var(--site-color-rosa-antiguo); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.15em; display: block; }
+      .cro-timeline-title { font-size: 1.2rem; font-weight: 600; margin: 0 0 0.5rem; color: var(--site-color-marron); }
+      .cro-timeline-text { font-size: 0.95rem; color: rgba(74, 59, 53, 0.78); margin: 0; line-height: 1.55; }
 
       /* ── CSS Phone Mockup ────────────────────────────────── */
       .cro-phone-container { width: 100%; display: flex; justify-content: center; align-items: center; position: relative; }
@@ -423,9 +423,9 @@ function WhatHappensSection() {
     <section className="bg-site-blanco py-16 md:py-24">
       <div className="mx-auto w-[min(1200px,calc(100%-40px))]">
         <FadeIn className="mx-auto max-w-3xl text-center">
-          <p className="cro-eyebrow">Diferenciador</p>
-          <h2 className="cro-title-xl">Una invitación digital bonita, práctica y sin pagos mensuales</h2>
-          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+          <p className="site-eyebrow">Diferenciador</p>
+          <h2 className="site-h2">Una invitación digital bonita, práctica y sin pagos mensuales</h2>
+          <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/80">
             KOMPRALO está pensado para parejas que quieren una invitación elegante sin complicarse. Puedes elegir tu plan, personalizar tu invitación y compartirla por WhatsApp con tus invitados.
           </p>
         </FadeIn>
@@ -441,7 +441,7 @@ function WhatHappensSection() {
         </div>
 
         <Reveal className="text-center mt-12" delay={0.2}>
-          <p className="text-base md:text-lg font-medium text-[#C5A880] m-0">
+          <p className="text-base md:text-lg font-medium text-site-rosa-antiguo m-0">
             Pago único. Sin mensualidades.
           </p>
         </Reveal>
@@ -535,7 +535,7 @@ function EventsGallery() {
 
 function Editions() {
   return (
-    <section id="planes" className="cro-section" style={{ background: T.black }}>
+    <section id="planes" className="cro-section" style={{ background: 'var(--site-color-crema)', borderBottom: '1px solid var(--site-color-border-subtle)' }}>
       <PlanSelector products={availableProducts} featuredId="premium" />
     </section>
   );
