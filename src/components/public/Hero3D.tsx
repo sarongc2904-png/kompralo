@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Check, Sparkles, Heart, Flower } from 'lucide-react';
+import { Check, Sparkles, Heart, Flower, Star } from 'lucide-react';
 import { Reveal } from './Motion';
 
 interface ParticleProps {
@@ -214,9 +214,33 @@ export default function Hero3D() {
 
             {/* CTAs */}
             <div className="cro-hero-actions">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.85rem' }}>
               <Link href="/i/nuestrabodaarletteymayorga" className="cro-btn cro-btn-cyan" data-cta="hero-primary" data-event="click-hero-primary">
                 Ver una invitación real →
               </Link>
+              <div
+                aria-label="Calificación 4.5 de 5 basada en más de 650 reseñas"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  color: '#E7E5E4',
+                  fontSize: '0.82rem',
+                  lineHeight: 1,
+                  flexWrap: 'wrap',
+                  maxWidth: '100%',
+                }}
+              >
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.12rem', color: '#F4B740' }}>
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} size={17} fill="currentColor" strokeWidth={0} opacity={index === 4 ? 0.55 : 1} />
+                  ))}
+                </span>
+                <span style={{ color: '#A8A29E' }}>
+                  Calificación <strong style={{ color: '#F5F5F4', fontWeight: 700 }}>4.5/5</strong> basada en <strong style={{ color: '#F5F5F4', fontWeight: 700 }}>+650 reseñas</strong>
+                </span>
+              </div>
+              </div>
               <Link 
                 href="#planes"
                 className="cro-btn cro-btn-outline" 
