@@ -723,7 +723,7 @@ export default async function ClientePage({ searchParams }: Props) {
               No hay órdenes de compra registradas para <strong>{trimmedEmail}</strong>.
               <br />Si compraste usando otro correo, accede a través del enlace de ese correo.
             </p>
-            <Link href="/invitaciones/precios" className="cl-btn" style={{
+            <Link href="/invitaciones#planes" className="cl-btn" style={{
               display:'inline-block', padding:'0.75rem 1.75rem',
               background: T.dark, color:'#FFFFFF',
               borderRadius:'0.625rem', fontSize:'0.875rem', fontWeight:700, textDecoration:'none',
@@ -758,7 +758,7 @@ export default async function ClientePage({ searchParams }: Props) {
               <p style={{ margin: '0 0 1rem', fontSize: '0.875rem', color: '#7A6A5B', lineHeight: 1.6, fontWeight: 500 }}>
                 ¿Necesitas otra invitación para un nuevo evento?
               </p>
-              <Link href="/invitaciones/precios" className="cl-btn" style={{
+              <Link href="/invitaciones#planes" className="cl-btn" style={{
                 display: 'inline-block', padding: '0.75rem 2rem',
                 background: '#1A1208', color: '#FFFFFF',
                 borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, textDecoration: 'none',

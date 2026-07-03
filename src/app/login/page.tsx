@@ -470,7 +470,7 @@ export default function LoginPage() {
           </p>
           <p style={{ fontSize: '.78rem', color: T.light, margin: 0 }}>
             ¿Aún no tienes una invitación?{' '}
-            <Link href="/invitaciones/precios" style={{ color: T.gold, fontWeight: 700, textDecoration: 'none' }}>
+            <Link href="/invitaciones#planes" style={{ color: T.gold, fontWeight: 700, textDecoration: 'none' }}>
               Ver planes y precios →
             </Link>
           </p>
