@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   description: 'Elige el plan ideal para tu boda. Basic $499, Premium $899 y Deluxe $1,499 MXN. Pago único y sin mensualidades.',
 };
 
+// Oculta la sección multi-cart hasta nuevo aviso: con AVAILABLE_EVENT_TYPES
+// limitado a boda, las cards + drawer ya cubren pedidos múltiples.
+const SHOW_MULTI_CART = process.env.NEXT_PUBLIC_SHOW_MULTI_CART === 'true';
+
 const T = {
   crema:  'var(--site-color-crema)',
   blanco: 'var(--site-color-blanco)',
@@ -58,6 +62,7 @@ export default function PreciosPage() {
         <ExitIntentModal />
 
         {/* Multi-event cart */}
+        {SHOW_MULTI_CART && (
         <Reveal delay={0.1} style={{ maxWidth: '1040px', margin: '3rem auto 0' }}>
           <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: '2.5rem' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
@@ -71,6 +76,7 @@ export default function PreciosPage() {
             </div>
           </div>
         </Reveal>
+        )}
 
         {/* Trust indicators */}
         <Reveal delay={0.15} style={{ maxWidth:'1040px', margin:'2.5rem auto 0' }}>
@@ -81,12 +87,23 @@ export default function PreciosPage() {
             <div className="pr2-trust-row">
               {[
                 { icon:'🔒', text:'Pago seguro con Stripe' },
+                { icon:'🏆', text:'Garantía 48 horas — devolución completa sin preguntas' },
                 { icon:'📧', text:'Después del pago recibirás acceso inmediato para editar tu invitación' },
                 { icon:'💬', text:'Comparte tu invitación por WhatsApp con tus invitados' },
               ].map(({ icon, text }) => (
                 <div key={text} style={{ display:'flex', alignItems:'center', gap:'.5rem', fontSize:'.8125rem', color:T.marron, fontWeight:500 }}>
                   <span>{icon}</span> <span>{text}</span>
                 </div>
+              ))}
+            </div>
+            <div className="pr2-trust-row" style={{ marginTop:'.875rem', gap:'.5rem' }}>
+              {['Visa', 'Mastercard', 'AMEX', 'OXXO', 'SPEI'].map((m) => (
+                <span key={m} style={{
+                  background:T.blanco, border:`1px solid ${T.border}`, borderRadius:'4px',
+                  padding:'2px 10px', fontSize:'.6875rem', fontWeight:500, color:T.marron, letterSpacing:'.02em',
+                }}>
+                  {m}
+                </span>
               ))}
             </div>
           </div>

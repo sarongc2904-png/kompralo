@@ -1,5 +1,7 @@
+// Oculto por default hasta nuevo aviso; la var anterior
+// (NEXT_PUBLIC_VIRTUAL_ASSISTANT_ENABLED) queda sin efecto.
 export const VIRTUAL_ASSISTANT_ENABLED =
-  process.env.NEXT_PUBLIC_VIRTUAL_ASSISTANT_ENABLED === 'true';
+  process.env.NEXT_PUBLIC_SHOW_VIRTUAL_ASSISTANT === 'true';
 
 export const VIRTUAL_ASSISTANT_MESSAGES_KEY = 'kompralo_virtual_assistant_messages';
 
