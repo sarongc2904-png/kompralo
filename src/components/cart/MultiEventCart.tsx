@@ -134,17 +134,17 @@ const CSS = `
     display: flex; align-items: center; gap: 6px;
     padding: 8px 14px; border-radius: 999px; cursor: pointer;
     font-size: 13px; font-weight: 600;
-    border: 1.5px solid transparent;
+    border: 1.5px solid rgba(74,59,53,0.3);
     transition: all 0.15s;
-    background: rgba(255,255,255,0.06);
-    color: #d6d3d1;
+    background: transparent;
+    color: var(--site-color-marron);
     white-space: nowrap;
   }
-  .mec-pill:hover { border-color: rgba(245,197,24,0.4); }
+  .mec-pill:hover { border-color: var(--site-color-rosa-antiguo); }
   .mec-pill-active {
-    background: #0D0A07;
-    border-color: #F5C518;
-    color: #F5C518;
+    background: var(--site-color-rosa-antiguo);
+    border-color: var(--site-color-rosa-antiguo);
+    color: var(--site-color-crema);
   }
   .mec-plan-grid {
     display: grid;
@@ -157,19 +157,19 @@ const CSS = `
   .mec-plan-card {
     border-radius: 10px; padding: 16px 14px;
     cursor: pointer; transition: all 0.15s;
-    border: 1.5px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(74,59,53,0.12);
+    background: var(--site-color-blanco);
     position: relative;
   }
-  .mec-plan-card:hover { border-color: rgba(245,197,24,0.35); }
+  .mec-plan-card:hover { border-color: rgba(156,107,112,0.5); }
   .mec-plan-active {
-    border-color: #2563EB !important;
-    background: rgba(37,99,235,0.08) !important;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    border-color: var(--site-color-rosa-antiguo) !important;
+    background: rgba(156,107,112,0.06) !important;
+    box-shadow: 0 0 0 3px rgba(156,107,112,0.15);
   }
   .mec-add-btn {
-    width: 100%; padding: 14px; border-radius: 10px; border: none;
-    background: #F5C518; color: #0D0A07;
+    width: 100%; padding: 14px; border-radius: 999px; border: 1px solid var(--site-color-marron);
+    background: var(--site-color-marron); color: var(--site-color-crema);
     font-size: 16px; font-weight: 700; cursor: pointer;
     transition: opacity 0.15s, transform 0.1s;
   }
@@ -177,12 +177,12 @@ const CSS = `
   .mec-add-btn:active { transform: translateY(0); }
   .mec-add-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
   .mec-cart-panel {
-    background: #161412; border: 1px solid rgba(255,255,255,0.1);
+    background: var(--site-color-blanco); border: 1px solid var(--site-color-border-subtle);
     border-radius: 14px; overflow: hidden;
   }
   .mec-pay-btn {
-    width: 100%; padding: 14px; border-radius: 10px; border: none;
-    background: #F5C518; color: #0D0A07;
+    width: 100%; padding: 14px; border-radius: 999px; border: 1px solid var(--site-color-marron);
+    background: var(--site-color-marron); color: var(--site-color-crema);
     font-size: 15px; font-weight: 700; cursor: pointer;
     transition: opacity 0.15s;
     display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -190,13 +190,13 @@ const CSS = `
   .mec-pay-btn:hover:not(:disabled) { opacity: 0.9; }
   .mec-pay-btn:disabled { opacity: 0.45; cursor: not-allowed; }
   .mec-save-btn {
-    width: 100%; padding: 11px; border-radius: 10px;
-    border: 1.5px solid rgba(255,255,255,0.18);
-    background: transparent; color: #d6d3d1;
+    width: 100%; padding: 11px; border-radius: 999px;
+    border: 1.5px solid rgba(74,59,53,0.25);
+    background: transparent; color: var(--site-color-marron);
     font-size: 14px; font-weight: 600; cursor: pointer;
     transition: border-color 0.15s;
   }
-  .mec-save-btn:hover { border-color: rgba(255,255,255,0.4); }
+  .mec-save-btn:hover { border-color: var(--site-color-rosa-antiguo); }
   @keyframes mec-spin { to { transform: rotate(360deg); } }
   .mec-spinner {
     display: inline-block; width: 16px; height: 16px;
@@ -317,7 +317,7 @@ export function MultiEventCart() {
 
           {/* Event type selector */}
           <div>
-            <p style={{ margin: '0 0 12px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af' }}>
+            <p style={{ margin: '0 0 12px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#7A6A63' }}>
               Tipo de evento
             </p>
             <div className="mec-event-pills">
@@ -336,7 +336,7 @@ export function MultiEventCart() {
 
           {/* Plan selector */}
           <div>
-            <p style={{ margin: '0 0 12px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#9ca3af' }}>
+            <p style={{ margin: '0 0 12px', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#7A6A63' }}>
               Plan
             </p>
             <div className="mec-plan-grid">
@@ -347,16 +347,16 @@ export function MultiEventCart() {
                   className={`mec-plan-card${selectedPlan === id ? ' mec-plan-active' : ''}`}
                 >
                   {id === 'premium' && (
-                    <div style={{ position: 'absolute', top: -1, left: '50%', transform: 'translateX(-50%)', background: '#F5C518', color: '#0D0A07', fontSize: 9, fontWeight: 800, padding: '2px 10px', borderRadius: '0 0 6px 6px', whiteSpace: 'nowrap', letterSpacing: '0.05em' }}>
+                    <div style={{ position: 'absolute', top: -1, left: '50%', transform: 'translateX(-50%)', background: 'var(--site-color-rosa-antiguo)', color: 'var(--site-color-crema)', fontSize: 9, fontWeight: 800, padding: '2px 10px', borderRadius: '0 0 6px 6px', whiteSpace: 'nowrap', letterSpacing: '0.05em' }}>
                       MÁS POPULAR
                     </div>
                   )}
-                  <p style={{ margin: '8px 0 4px', fontSize: 15, fontWeight: 700, color: selectedPlan === id ? '#fff' : '#d6d3d1' }}>{pl.label}</p>
-                  <p style={{ margin: 0, fontSize: 11, color: '#9ca3af', lineHeight: 1.3 }}>{pl.desc}</p>
-                  <p style={{ margin: '10px 0 0', fontSize: 22, fontWeight: 800, color: selectedPlan === id ? '#F5C518' : '#d6d3d1', fontFamily: 'var(--font-playfair, Georgia, serif)', lineHeight: 1 }}>
+                  <p style={{ margin: '8px 0 4px', fontSize: 15, fontWeight: 700, color: 'var(--site-color-marron)' }}>{pl.label}</p>
+                  <p style={{ margin: 0, fontSize: 11, color: '#7A6A63', lineHeight: 1.3 }}>{pl.desc}</p>
+                  <p style={{ margin: '10px 0 0', fontSize: 22, fontWeight: 600, color: selectedPlan === id ? 'var(--site-color-rosa-antiguo)' : 'var(--site-color-marron)', fontFamily: 'var(--site-font-serif)', lineHeight: 1 }}>
                     {fmtPrice(pl.price)}
                   </p>
-                  <p style={{ margin: '2px 0 0', fontSize: 10, color: '#9ca3af' }}>MXN pago único</p>
+                  <p style={{ margin: '2px 0 0', fontSize: 10, color: '#7A6A63' }}>MXN pago único</p>
                 </div>
               ))}
             </div>
@@ -368,7 +368,7 @@ export function MultiEventCart() {
           </button>
 
           {flash && (
-            <p style={{ margin: 0, textAlign: 'center', fontSize: 13, color: '#F5C518', fontWeight: 600 }}>
+            <p style={{ margin: 0, textAlign: 'center', fontSize: 13, color: 'var(--site-color-rosa-antiguo)', fontWeight: 600 }}>
               ✓ Agregado al carrito
             </p>
           )}
@@ -379,10 +379,10 @@ export function MultiEventCart() {
           <div className="mec-cart-panel">
 
             {/* Cart header */}
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#f5f5f4' }}>Tu carrito</span>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(74,59,53,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--site-color-marron)' }}>Tu carrito</span>
               {items.length > 0 && (
-                <span style={{ background: '#F5C518', color: '#0D0A07', fontSize: 11, fontWeight: 800, borderRadius: '999px', padding: '2px 8px' }}>
+                <span style={{ background: 'var(--site-color-rosa-antiguo)', color: 'var(--site-color-crema)', fontSize: 11, fontWeight: 800, borderRadius: '999px', padding: '2px 8px' }}>
                   {items.length} {items.length === 1 ? 'item' : 'items'}
                 </span>
               )}
@@ -397,16 +397,16 @@ export function MultiEventCart() {
                 </div>
               ) : (
                 items.map(item => (
-                  <div key={item.id} className="mec-item" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div key={item.id} className="mec-item" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderBottom: '1px solid rgba(74,59,53,0.06)' }}>
                     <span style={{ fontSize: 28, lineHeight: 1, flexShrink: 0 }}>{item.eventIcon}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: '#f5f5f4', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--site-color-marron)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {item.eventLabel}
                       </p>
-                      <p style={{ margin: '1px 0 0', fontSize: 11, color: '#9ca3af' }}>Plan {item.planLabel}</p>
+                      <p style={{ margin: '1px 0 0', fontSize: 11, color: '#7A6A63' }}>Plan {item.planLabel}</p>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#F5C518' }}>{fmtPrice(item.price)}</p>
+                      <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: 'var(--site-color-rosa-antiguo)' }}>{fmtPrice(item.price)}</p>
                     </div>
                     <button
                       type="button"
@@ -423,13 +423,13 @@ export function MultiEventCart() {
 
             {/* Cart footer (only when items exist) */}
             {items.length > 0 && (
-              <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(74,59,53,0.1)', display: 'flex', flexDirection: 'column', gap: 12 }}>
 
                 {/* Total */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <span style={{ fontSize: 13, color: '#9ca3af' }}>Total</span>
-                  <span style={{ fontSize: 22, fontWeight: 800, color: '#fff', fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-                    {fmtPrice(total)} <span style={{ fontSize: 12, fontWeight: 400, color: '#9ca3af' }}>MXN</span>
+                  <span style={{ fontSize: 13, color: '#7A6A63' }}>Total</span>
+                  <span style={{ fontSize: 22, fontWeight: 600, color: 'var(--site-color-marron)', fontFamily: 'var(--site-font-serif)' }}>
+                    {fmtPrice(total)} <span style={{ fontSize: 12, fontWeight: 400, color: '#7A6A63' }}>MXN</span>
                   </span>
                 </div>
 
@@ -438,12 +438,12 @@ export function MultiEventCart() {
                   {payState === 'loading' ? <><span className="mec-spinner" />Procesando…</> : '🔒 Pagar todo ahora'}
                 </button>
                 {payState === 'error' && payError && (
-                  <p style={{ margin: 0, fontSize: 12, color: '#f87171', textAlign: 'center' }} role="alert">{payError}</p>
+                  <p style={{ margin: 0, fontSize: 12, color: '#C62828', textAlign: 'center' }} role="alert">{payError}</p>
                 )}
 
                 {/* Save for later */}
                 {saveState === 'done' ? (
-                  <p style={{ margin: 0, fontSize: 12, color: '#4ade80', textAlign: 'center', fontWeight: 600 }}>
+                  <p style={{ margin: 0, fontSize: 12, color: '#15803D', textAlign: 'center', fontWeight: 600 }}>
                     ✓ Guardado — te avisamos si hay una oferta
                   </p>
                 ) : showSave ? (
@@ -454,14 +454,14 @@ export function MultiEventCart() {
                       onChange={e => setSaveEmail(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && handleSave()}
                       placeholder="tu@email.com"
-                      style={{ flex: 1, minWidth: 0, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.18)', background: 'rgba(255,255,255,0.06)', color: '#f5f5f4', fontSize: 13, outline: 'none' }}
+                      style={{ flex: 1, minWidth: 0, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(74,59,53,0.2)', background: '#fff', color: 'var(--site-color-marron)', fontSize: 13, outline: 'none' }}
                       autoFocus
                     />
                     <button
                       type="button"
                       onClick={handleSave}
                       disabled={saveState === 'loading' || !saveEmail.trim()}
-                      style={{ padding: '8px 12px', borderRadius: 8, border: 'none', background: '#F5C518', color: '#0D0A07', fontSize: 13, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}
+                      style={{ padding: '8px 12px', borderRadius: 8, border: 'none', background: 'var(--site-color-marron)', color: 'var(--site-color-crema)', fontSize: 13, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}
                     >
                       {saveState === 'loading' ? '…' : 'Guardar'}
                     </button>
@@ -475,8 +475,8 @@ export function MultiEventCart() {
             )}
 
             {/* Payment methods */}
-            <div style={{ padding: '14px 20px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-              <p style={{ margin: '0 0 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b7280' }}>
+            <div style={{ padding: '14px 20px', borderTop: '1px solid rgba(74,59,53,0.1)' }}>
+              <p style={{ margin: '0 0 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#7A6A63' }}>
                 Métodos de pago
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
@@ -489,32 +489,32 @@ export function MultiEventCart() {
             </div>
 
             {/* SSL badge */}
-            <div style={{ margin: '0 12px 8px', background: 'rgba(21,128,61,0.12)', border: '1px solid rgba(21,128,61,0.25)', borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <div style={{ margin: '0 12px 8px', background: '#F0FDF4', border: '1px solid rgba(21,128,61,0.25)', borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <ShieldCheck />
               <div>
-                <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#4ade80' }}>Pago 100% seguro</p>
-                <p style={{ margin: '2px 0 0', fontSize: 11, color: '#86efac' }}>Cifrado SSL 256-bit · Stripe</p>
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#166534' }}>Pago 100% seguro</p>
+                <p style={{ margin: '2px 0 0', fontSize: 11, color: '#15803D' }}>Cifrado SSL 256-bit · Stripe</p>
               </div>
             </div>
 
             {/* Guarantee badge */}
-            <div style={{ margin: '0 12px 14px', background: 'rgba(146,64,14,0.12)', border: '1px solid rgba(146,64,14,0.25)', borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <div style={{ margin: '0 12px 14px', background: '#FFFBEB', border: '1px solid rgba(146,64,14,0.25)', borderRadius: 8, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
               <Clock48 />
               <div>
-                <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#fbbf24' }}>Garantía 48 horas</p>
-                <p style={{ margin: '2px 0 0', fontSize: 11, color: '#fcd34d' }}>Devolución completa sin preguntas</p>
+                <p style={{ margin: 0, fontSize: 12, fontWeight: 600, color: '#92400E' }}>Garantía 48 horas</p>
+                <p style={{ margin: '2px 0 0', fontSize: 11, color: '#B45309' }}>Devolución completa sin preguntas</p>
               </div>
             </div>
 
             {/* Trust items */}
-            <div style={{ padding: '12px 20px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: 7 }}>
+            <div style={{ padding: '12px 20px 16px', borderTop: '1px solid rgba(74,59,53,0.06)', display: 'flex', flexDirection: 'column', gap: 7 }}>
               {[
                 ['⚡', 'Acceso inmediato al editor'],
                 ['✏️', 'Ediciones ilimitadas incluidas'],
                 ['📱', 'Funciona sin instalar apps'],
                 ['💬', 'Soporte por WhatsApp incluido'],
               ].map(([icon, text]) => (
-                <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#9ca3af' }}>
+                <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#7A6A63' }}>
                   <span style={{ fontSize: 14 }}>{icon}</span> {text}
                 </div>
               ))}

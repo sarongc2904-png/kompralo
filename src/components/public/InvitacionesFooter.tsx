@@ -7,8 +7,8 @@ const supportWhatsAppHref = supportWhatsAppNumber
   : null;
 
 const footerNavigationLinks = [
-  { href: '#como-funciona', label: 'Cómo funciona' },
-  { href: '#planes', label: 'Planes' },
+  { href: '/invitaciones#como-funciona', label: 'Cómo funciona' },
+  { href: '/invitaciones#planes', label: 'Planes' },
 ] as const;
 
 const footerAccountLinks = [

@@ -3,19 +3,22 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Product } from '@/domain/products';
+import { SiteButton } from '@/components/public/Button';
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
+// Claves legadas remapeadas a la paleta Editorial Elegante:
+// gold/champagne/blue actúan como acento rosa antiguo; dark/mid como marrón.
 const T = {
-  ivory:     '#E8D7B8',
-  cream:     '#F1E3C8',
-  dark:      '#0D0A07',
-  mid:       '#1A1612',
-  light:     '#6B4A35',
-  gold:      '#C4A962',
-  champagne: '#EAD7A3',
-  white:     '#F1E3C8',
-  border:    '#EAD7A3',
-  blue:      '#2563EB',
+  ivory:     'var(--site-color-crema)',
+  cream:     'var(--site-color-crema)',
+  dark:      'var(--site-color-marron)',
+  mid:       'var(--site-color-marron)',
+  light:     '#7A6A63',
+  gold:      'var(--site-color-rosa-antiguo)',
+  champagne: 'var(--site-color-rosa-antiguo)',
+  white:     'var(--site-color-blanco)',
+  border:    'var(--site-color-border-subtle)',
+  blue:      'var(--site-color-rosa-antiguo)',
   green:     '#15803D',
   greenBg:   '#F0FDF4',
   successText: '#166534',
@@ -96,11 +99,11 @@ const CSS = `
 `;
 
 // ─── FeatureList ──────────────────────────────────────────────────────────────
-function FeatureList({ features, dark }: { features: string[]; dark?: boolean }) {
+function FeatureList({ features }: { features: string[] }) {
   return (
     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
       {features.map((f) => (
-        <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '.5rem', fontSize: '.875rem', color: dark ? '#C5B0A0' : T.mid, lineHeight: 1.4 }}>
+        <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '.5rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.4 }}>
           <span style={{ color: T.gold, flexShrink: 0, marginTop: '.15rem' }}>✓</span> {f}
         </li>
       ))}
@@ -128,92 +131,82 @@ function PlanCard({
     <div className={featured ? 'ps-featured-scale' : undefined} style={{ height: '100%' }}>
       <div style={{
         position: 'relative', display: 'flex', flexDirection: 'column', height: '100%',
-        background: featured ? T.dark : T.white,
-        border: `${selected ? '2px' : featured ? '2px' : '1px'} solid ${selected ? T.blue : featured ? T.gold : T.border}`,
-        borderRadius: '8px', padding: 0, overflow: 'hidden',
+        background: featured ? '#F7F3F4' : T.white,
+        border: `${selected ? '2px' : featured ? '2px' : '1px'} solid ${(selected || featured) ? 'var(--site-color-rosa-antiguo)' : T.border}`,
+        borderRadius: '1rem', padding: 0, overflow: 'hidden',
         boxShadow: selected
-          ? '0 0 0 3px rgba(37,99,235,0.25), 0 14px 56px rgba(37,99,235,0.12)'
+          ? '0 0 0 3px rgba(156,107,112,0.2), 0 14px 56px rgba(156,107,112,0.12)'
           : featured
-            ? '0 14px 56px rgba(184,150,106,0.22), 0 2px 0 rgba(184,150,106,0.25) inset'
-            : '0 2px 12px rgba(15,12,9,0.04)',
+            ? '0 8px 30px rgba(74,59,53,0.1)'
+            : '0 2px 12px rgba(74,59,53,0.05)',
         transition: 'border-color 0.18s, box-shadow 0.18s',
       }}>
         {/* Image */}
-        <div style={{ height: 160, position: 'relative', marginBottom: '1.25rem', background: '#000' }}>
+        <div style={{ height: 160, position: 'relative', marginBottom: '1.25rem', background: T.cream }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: featured ? 0.75 : 0.9 }} />
-          <div style={{ position: 'absolute', inset: 0, background: featured ? 'linear-gradient(to bottom, transparent, #0D0A07)' : 'linear-gradient(to bottom, transparent, #F1E3C8)' }} />
+          <img src={imageUrl} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }} />
+          <div style={{ position: 'absolute', inset: 0, background: featured ? 'linear-gradient(to bottom, transparent, #F7F3F4)' : 'linear-gradient(to bottom, transparent, #FFFFFF)' }} />
           {featured && (
-            <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', background: T.gold, color: T.dark, fontSize: '.6875rem', fontWeight: 800, padding: '.35rem 1.125rem', borderRadius: '0 0 .625rem .625rem', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', zIndex: 10 }}>
+            <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', background: 'var(--site-color-rosa-antiguo)', color: 'var(--site-color-crema)', fontSize: '.6875rem', fontWeight: 800, padding: '.35rem 1.125rem', borderRadius: '0 0 .625rem .625rem', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(74,59,53,0.18)', zIndex: 10 }}>
               MÁS VENDIDO
             </div>
           )}
           {selected && (
-            <div style={{ position: 'absolute', top: 10, right: 10, background: T.blue, color: '#fff', fontSize: '.6875rem', fontWeight: 700, padding: '.25rem .625rem', borderRadius: '999px', zIndex: 10 }}>
+            <div style={{ position: 'absolute', top: 10, right: 10, background: T.blue, color: 'var(--site-color-crema)', fontSize: '.6875rem', fontWeight: 700, padding: '.25rem .625rem', borderRadius: '999px', zIndex: 10 }}>
               En carrito ✓
             </div>
           )}
         </div>
 
         <div style={{ padding: '0 1.75rem 2.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <h2 style={{ margin: '0 0 .375rem', fontSize: '1.625rem', fontWeight: 700, color: featured ? '#F1E3C8' : T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
+          <h2 style={{ margin: '0 0 .375rem', fontSize: '1.625rem', fontWeight: 600, color: T.dark, fontFamily: 'var(--site-font-serif)' }}>
             {product.name}
           </h2>
-          <p style={{ margin: '0 0 1.5rem', fontSize: '.875rem', color: featured ? '#C5B0A0' : T.mid, lineHeight: 1.55, minHeight: '2.5em' }}>
+          <p style={{ margin: '0 0 1.5rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.55, minHeight: '2.5em' }}>
             {product.description}
           </p>
           <div style={{ marginBottom: '1.625rem' }}>
-            <span style={{ fontSize: '2.75rem', fontWeight: 800, color: featured ? '#F1E3C8' : T.dark, lineHeight: 1, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-              <span style={{ fontFamily: 'var(--font-inter, system-ui, sans-serif)', fontWeight: 500, marginRight: '0.05em' }}>$</span>
+            <span style={{ fontSize: '2.75rem', fontWeight: 600, color: T.dark, lineHeight: 1, fontFamily: 'var(--site-font-serif)' }}>
+              <span style={{ fontFamily: 'var(--site-font-sans)', fontWeight: 500, marginRight: '0.05em' }}>$</span>
               {(product.price / 100).toLocaleString('es-MX', { maximumFractionDigits: 0 })}
             </span>
-            <span style={{ fontSize: '.875rem', color: featured ? '#C5B0A0' : T.light, marginLeft: '.375rem' }}>MXN · Pago único</span>
+            <span style={{ fontSize: '.875rem', color: T.light, marginLeft: '.375rem' }}>MXN · Pago único</span>
           </div>
           <div style={{ flex: 1, marginBottom: '2.125rem' }}>
-            <FeatureList features={product.features} dark={featured} />
+            <FeatureList features={product.features} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-            <button
+            <SiteButton
               type="button"
+              variant="primary"
               onClick={() => onPayDirect(product.id as PlanId)}
               disabled={paying}
-              className="ps-add-btn"
               style={{
-                width: '100%', padding: '.75rem 1.5rem', borderRadius: '6px',
-                fontSize: '.875rem', fontWeight: 700,
+                width: '100%',
                 cursor: paying ? 'not-allowed' : 'pointer',
-                border: 'none',
-                background: featured ? T.gold : T.dark,
-                color: featured ? T.dark : T.cream,
-                textAlign: 'center',
                 opacity: paying ? 0.65 : 1,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.4rem',
               }}
             >
               {paying
                 ? <><span style={{ display: 'inline-block', width: '1rem', height: '1rem', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />Procesando…</>
                 : '🔒 Pagar ahora'}
-            </button>
-            <button
+            </SiteButton>
+            <SiteButton
               type="button"
+              variant="secondary"
               onClick={() => onSelect(product.id as PlanId)}
-              className="ps-add-btn"
               style={{
-                width: '100%', padding: '.625rem 1.5rem', borderRadius: '6px',
-                fontSize: '.8125rem', fontWeight: 600, cursor: 'pointer',
-                border: selected ? `2px solid ${T.blue}` : `1.5px solid ${featured ? 'rgba(196,169,98,0.5)' : 'rgba(15,12,9,0.2)'}`,
-                background: selected ? 'rgba(37,99,235,0.08)' : 'transparent',
-                color: selected ? T.blue : featured ? T.champagne : T.light,
-                textAlign: 'center',
+                width: '100%',
+                background: selected ? 'rgba(156,107,112,0.08)' : undefined,
               }}
             >
               {selected ? '✓ En carrito' : '+ Agregar al carrito'}
-            </button>
+            </SiteButton>
             <p style={{
               margin: '.35rem 0 0',
               fontSize: '.68rem',
               lineHeight: 1.45,
-              color: featured ? '#C5B0A0' : T.light,
+              color: T.light,
               textAlign: 'center',
             }}>
               ✓ Cambios ilimitados&nbsp;&nbsp;✓ Pago único, sin mensualidades&nbsp;&nbsp;✓ Soporte por WhatsApp
@@ -267,7 +260,7 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 
       {/* Urgency bar */}
-      <div style={{ background: T.dark, color: T.champagne, padding: '.5rem 1.25rem', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexShrink: 0 }}>
+      <div style={{ background: T.dark, color: T.cream, padding: '.5rem 1.25rem', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexShrink: 0 }}>
         <span>🔥 Más de 80 eventos creados este mes · Disponibilidad limitada</span>
         <span style={{ whiteSpace: 'nowrap', opacity: 0.65 }}>Sin IVA adicional</span>
       </div>
@@ -313,7 +306,7 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
           className="ps-add-btn"
           style={{
             padding: '.875rem 2rem', borderRadius: '8px', border: 'none',
-            background: checkoutState === 'loading' ? '#555' : T.dark,
+            background: checkoutState === 'loading' ? '#6B5A52' : T.dark,
             color: T.cream, fontSize: '1rem', fontWeight: 700,
             cursor: checkoutState === 'loading' ? 'not-allowed' : 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
@@ -333,7 +326,7 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
             {['Visa', 'Mastercard', 'AMEX', 'OXXO', 'SPEI'].map((m) => (
-              <span key={m} style={{ background: '#fff', border: '0.5px solid #D4C8B4', borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 500, color: T.light }}>
+              <span key={m} style={{ background: '#fff', border: '0.5px solid rgba(74,59,53,0.18)', borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 500, color: T.light }}>
                 {m}
               </span>
             ))}
@@ -405,7 +398,7 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
       )}
 
       {/* Trust items */}
-      <div style={{ background: '#F5EFE0', padding: '1rem 1.5rem' }} className="ps-trust-grid">
+      <div style={{ background: T.cream, padding: '1rem 1.5rem' }} className="ps-trust-grid">
         {[
           'Acceso para personalizar después del pago',
           'Edita tu invitación cuantas veces necesites',
@@ -492,7 +485,7 @@ function CartDrawer({
               flexShrink: 0,
               width: 32, height: 32, borderRadius: '50%',
               border: `1px solid ${T.border}`,
-              background: 'rgba(196,169,98,0.1)',
+              background: 'rgba(156,107,112,0.1)',
               color: T.light, fontSize: 20, lineHeight: 1,
               cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',

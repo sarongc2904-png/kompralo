@@ -6,15 +6,17 @@ import { Menu, X } from 'lucide-react';
 import { SiteButton } from '@/components/public/Button';
 
 const navLinks = [
-  { href: '#como-funciona', label: 'Cómo funciona', event: 'click-header-como-funciona', cta: undefined },
+  { href: '/invitaciones#como-funciona', label: 'Cómo funciona', event: 'click-header-como-funciona', cta: undefined },
   { href: '/i/nuestrabodaarletteymayorga', label: 'Demo real', event: 'click-header-demo', cta: undefined },
-  { href: '#planes', label: 'Ver planes', event: 'click-header-planes', cta: 'nav-planes' },
+  { href: '/invitaciones#planes', label: 'Ver planes', event: 'click-header-planes', cta: 'nav-planes' },
+  { href: '/login', label: 'Iniciar sesión', event: 'click-header-login', cta: undefined },
 ] as const;
 
 const mobileNavLinks = [
-  { href: '#como-funciona', label: 'Cómo funciona', event: 'click-mobile-header-como-funciona' },
+  { href: '/invitaciones#como-funciona', label: 'Cómo funciona', event: 'click-mobile-header-como-funciona' },
   { href: '/i/nuestrabodaarletteymayorga', label: 'Demo real', event: 'click-mobile-header-demo' },
-  { href: '#planes', label: 'Ver planes', event: 'click-mobile-header-planes' },
+  { href: '/invitaciones#planes', label: 'Ver planes', event: 'click-mobile-header-planes' },
+  { href: '/login', label: 'Iniciar sesión', event: 'click-mobile-header-login' },
 ] as const;
 
 export function InvitacionesHeader() {
