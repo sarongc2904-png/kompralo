@@ -22,6 +22,7 @@ import { Item, Reveal, Stagger } from '@/components/public/Motion';
 import { SolutionCarousel } from '@/components/public/SolutionCarousel';
 import Hero3D from '@/components/public/Hero3D';
 import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
+import { TestimonialsSection } from '@/components/public/TestimonialsSection';
 import { availableProducts } from '@/domain/products';
 import { PlanSelector } from '@/components/plans/PlanSelector';
 
@@ -720,6 +721,7 @@ export default function InvitacionesPage() {
       <SolutionSection />
       <ProcessSection />
       <EventsGallery />
+      <TestimonialsSection />
       <WhatHappensSection />
       <Editions />
       <TrustSection />
