@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Product } from '@/domain/products';
 import { SiteButton } from '@/components/public/Button';
+import { useKompraloCart, type CartItem } from '@/components/cart/useKompraloCart';
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 // Claves legadas remapeadas a la paleta Editorial Elegante:
@@ -219,7 +220,13 @@ function PlanCard({
 }
 
 // ─── CartDrawerContent ────────────────────────────────────────────────────────
-function CartDrawerContent({ product, onClear, onClose }: { product: Product; onClear: () => void; onClose: () => void }) {
+function CartDrawerContent({ items, total, onRemove, onClear, onClose }: {
+  items: CartItem[];
+  total: number;
+  onRemove: (id: string) => void;
+  onClear: () => void;
+  onClose: () => void;
+}) {
   const [checkoutState, setCheckoutState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [errorMsg,      setErrorMsg]      = useState<string | null>(null);
 
@@ -228,16 +235,20 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
   const [saveLoading,    setSaveLoading]    = useState(false);
   const [saveSuccess,    setSaveSuccess]    = useState(false);
 
-  const review = REVIEWS[product.id];
+  const lastItem = items[items.length - 1];
+  const review = lastItem ? REVIEWS[lastItem.plan] : undefined;
 
   async function handlePay() {
+    if (!items.length) return;
     setCheckoutState('loading');
     setErrorMsg(null);
     try {
-      const res  = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productId: product.id }) });
+      const res  = await fetch('/api/checkout/multi', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
       const data = await res.json() as unknown;
       if (!res.ok) throw new Error(data && typeof data === 'object' && 'error' in data ? String((data as Record<string, unknown>).error) : `Error del servidor (${res.status})`);
       if (!data || typeof data !== 'object' || !('url' in data) || typeof (data as Record<string, unknown>).url !== 'string') throw new Error('Respuesta inválida del servidor. Intenta de nuevo.');
+      // Vaciar carrito antes de redirigir (mismo comportamiento que MultiEventCart)
+      onClear();
       window.location.href = (data as { url: string }).url;
     } catch (err) {
       setErrorMsg(err instanceof TypeError ? 'Sin conexión. Verifica tu red e intenta de nuevo.' : err instanceof Error ? err.message : 'Error inesperado.');
@@ -249,7 +260,7 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
     if (!savedEmail.trim()) return;
     setSaveLoading(true);
     try {
-      await fetch('/api/leads/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: savedEmail.trim(), plan: product.id, source: 'save_for_later' }) });
+      await fetch('/api/leads/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: savedEmail.trim(), plan: lastItem?.plan ?? 'premium', source: 'save_for_later' }) });
       setSaveSuccess(true);
     } finally {
       setSaveLoading(false);
@@ -268,32 +279,44 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
       {/* Order summary */}
       <div style={{ padding: '1.25rem 1.5rem', borderBottom: `1px solid ${T.border}` }}>
         <p style={{ margin: '0 0 .25rem', fontSize: '.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', color: T.light }}>
-          Resumen del pedido
+          Resumen del pedido ({items.length} {items.length === 1 ? 'invitación' : 'invitaciones'})
         </p>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', margin: '.5rem 0 .875rem', gap: '1rem' }}>
-          <span style={{ fontSize: '1.125rem', fontWeight: 700, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)' }}>
-            Plan {product.name}
-          </span>
-          <span style={{ fontSize: '1.375rem', fontWeight: 800, color: T.dark, fontFamily: 'var(--font-playfair, Georgia, serif)', whiteSpace: 'nowrap' }}>
-            {fmtPrice(product.price)} <span style={{ fontSize: '.75rem', fontWeight: 500, color: T.light }}>MXN</span>
-          </span>
-        </div>
-        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 .5rem', display: 'flex', flexDirection: 'column', gap: '.3rem' }}>
-          {product.features.slice(0, 3).map((f) => (
-            <li key={f} style={{ fontSize: '.8125rem', color: T.mid, display: 'flex', gap: '.4rem' }}>
-              <span style={{ color: T.gold }}>✓</span> {f}
+        <ul style={{ listStyle: 'none', padding: 0, margin: '.5rem 0 .75rem', display: 'flex', flexDirection: 'column' }}>
+          {items.map((item) => (
+            <li key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '.625rem', padding: '.5rem 0', borderBottom: '1px solid rgba(74,59,53,0.06)' }}>
+              <span style={{ fontSize: '1.375rem', lineHeight: 1, flexShrink: 0 }}>{item.eventIcon}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ margin: 0, fontSize: '.875rem', fontWeight: 600, color: T.dark, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {item.eventLabel}
+                </p>
+                <p style={{ margin: '1px 0 0', fontSize: '.75rem', color: T.light }}>Plan {item.planLabel}</p>
+              </div>
+              <span style={{ fontSize: '.875rem', fontWeight: 700, color: T.dark, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                {fmtPrice(item.price)}
+              </span>
+              <button
+                type="button"
+                onClick={() => onRemove(item.id)}
+                aria-label={`Eliminar ${item.eventLabel} — Plan ${item.planLabel}`}
+                style={{ background: 'none', border: 'none', color: T.light, cursor: 'pointer', padding: 4, fontSize: '1rem', lineHeight: 1, flexShrink: 0 }}
+              >
+                ×
+              </button>
             </li>
           ))}
-          {product.features.length > 3 && (
-            <li style={{ fontSize: '.8125rem', color: T.light }}>+ {product.features.length - 3} más incluidos</li>
-          )}
         </ul>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '1rem' }}>
+          <span style={{ fontSize: '.8125rem', color: T.light }}>Total</span>
+          <span style={{ fontSize: '1.375rem', fontWeight: 600, color: T.dark, fontFamily: 'var(--site-font-serif)', whiteSpace: 'nowrap' }}>
+            {fmtPrice(total)} <span style={{ fontSize: '.75rem', fontWeight: 500, color: T.light }}>MXN</span>
+          </span>
+        </div>
         <button
           type="button"
           onClick={() => { onClear(); onClose(); }}
           style={{ marginTop: '.375rem', background: 'none', border: 'none', padding: 0, fontSize: '.78rem', color: T.light, cursor: 'pointer', textDecoration: 'underline' }}
         >
-          Cambiar plan
+          Vaciar carrito
         </button>
       </div>
 
@@ -416,13 +439,12 @@ function CartDrawerContent({ product, onClear, onClose }: { product: Product; on
 
 // ─── CartDrawer ───────────────────────────────────────────────────────────────
 function CartDrawer({
-  product, isOpen, onClose, onClear,
+  isOpen, onClose,
 }: {
-  product: Product | null;
   isOpen: boolean;
   onClose: () => void;
-  onClear: () => void;
 }) {
+  const { items, total, removeItem, clear } = useKompraloCart();
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -472,9 +494,9 @@ function CartDrawer({
           <span style={{ flex: 1, fontSize: '1rem', fontWeight: 700, color: T.dark }}>
             🛒 Tu carrito
           </span>
-          {product && (
+          {items.length > 0 && (
             <span style={{ fontSize: '.8125rem', color: T.light }}>
-              Plan {product.name} · {fmtPrice(product.price)} MXN
+              {items.length} {items.length === 1 ? 'item' : 'items'} · {fmtPrice(total)} MXN
             </span>
           )}
           <button
@@ -496,8 +518,12 @@ function CartDrawer({
         </div>
 
         {/* Scrollable content */}
-        {product && (
-          <CartDrawerContent product={product} onClear={onClear} onClose={onClose} />
+        {items.length > 0 ? (
+          <CartDrawerContent items={items} total={total} onRemove={removeItem} onClear={clear} onClose={onClose} />
+        ) : (
+          <div style={{ padding: '2.5rem 1.5rem', textAlign: 'center', color: T.light, fontSize: '.875rem' }}>
+            Tu carrito está vacío. Agrega un plan para continuar.
+          </div>
         )}
       </div>
     </>,
@@ -507,15 +533,18 @@ function CartDrawer({
 
 // ─── PlanSelector (main export) ───────────────────────────────────────────────
 export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorProps) {
-  const [selectedPlan,  setSelectedPlan]  = useState<PlanId | null>(null);
+  const { items, addItem } = useKompraloCart();
   const [isDrawerOpen,  setIsDrawerOpen]  = useState(false);
   const [payingId,      setPayingId]      = useState<PlanId | null>(null);
   const [directError,   setDirectError]   = useState<string | null>(null);
 
-  const selectedProduct = selectedPlan ? (products.find((p) => p.id === selectedPlan) ?? null) : null;
+  // Un plan se marca "En carrito" si el carrito compartido tiene un item con
+  // ese plan (agregado desde estas cards o desde el multi-carrito).
+  const plansInCart = new Set(items.map((i) => i.plan));
 
   function handleSelect(id: PlanId) {
-    setSelectedPlan(id);
+    // Las cards de planes son de boda; evitar duplicar si ya está ese plan
+    if (!plansInCart.has(id)) addItem('boda', id);
     setIsDrawerOpen(true);
   }
 
@@ -560,7 +589,7 @@ export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorP
             key={p.id}
             product={p}
             featured={p.id === featuredId}
-            selected={selectedPlan === p.id}
+            selected={plansInCart.has(p.id as PlanId)}
             onSelect={handleSelect}
             onPayDirect={handlePayDirect}
             paying={payingId === p.id}
@@ -575,10 +604,8 @@ export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorP
       )}
 
       <CartDrawer
-        product={selectedProduct}
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onClear={() => { setSelectedPlan(null); setIsDrawerOpen(false); }}
       />
     </>
   );

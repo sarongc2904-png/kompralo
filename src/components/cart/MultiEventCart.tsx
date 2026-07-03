@@ -1,46 +1,19 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
+import {
+  useKompraloCart,
+  CART_EVENT_TYPES as EVENT_TYPES,
+  CART_PLANS as PLANS,
+  type CartPlanId as PlanId,
+} from './useKompraloCart';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-export interface CartItem {
-  id: string;
-  eventType: string;
-  eventLabel: string;
-  eventIcon: string;
-  plan: 'basic' | 'premium' | 'deluxe';
-  planLabel: string;
-  price: number;
-}
-
-// ─── Catalog ─────────────────────────────────────────────────────────────────
-const EVENT_TYPES = [
-  { id: 'boda',        label: 'Boda',        icon: '💍' },
-  { id: 'xv',         label: 'XV Años',      icon: '👑' },
-  { id: 'baby',       label: 'Baby Shower',  icon: '🍼' },
-  { id: 'bautizo',    label: 'Bautizo',      icon: '🕊️' },
-  { id: 'cumple',     label: 'Cumpleaños',   icon: '🎂' },
-  { id: 'graduacion', label: 'Graduación',   icon: '🎓' },
-  { id: 'aniversario',label: 'Aniversario',  icon: '💫' },
-] as const;
-
-const PLANS = {
-  basic:   { price: 49900,  label: 'Basic',   desc: 'Esencial' },
-  premium: { price: 89900,  label: 'Premium', desc: 'Control Total' },
-  deluxe:  { price: 149900, label: 'Deluxe',  desc: 'Experiencia Completa' },
-} as const;
-
-type PlanId = keyof typeof PLANS;
-
-const CART_KEY = 'kompralo_cart';
+// Re-export para consumidores existentes (p.ej. /api/checkout/multi importa el tipo desde aquí)
+export type { CartItem } from './useKompraloCart';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function fmtPrice(centavos: number) {
   return `$${(centavos / 100).toLocaleString('es-MX', { maximumFractionDigits: 0 })}`;
-}
-
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
 // ─── Payment method badges ────────────────────────────────────────────────────
@@ -212,15 +185,7 @@ const CSS = `
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function MultiEventCart() {
-  const [items, setItems]           = useState<CartItem[]>(() => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const raw = localStorage.getItem(CART_KEY);
-      return raw ? JSON.parse(raw) as CartItem[] : [];
-    } catch {
-      return [];
-    }
-  });
+  const { items, total, addItem, removeItem, clear } = useKompraloCart();
   const [selectedEvent, setEvent]   = useState<string>(EVENT_TYPES[0].id);
   const [selectedPlan, setPlan]     = useState<PlanId>('premium');
   const [payState, setPayState]     = useState<'idle' | 'loading' | 'error'>('idle');
@@ -230,35 +195,11 @@ export function MultiEventCart() {
   const [saveState, setSaveState]   = useState<'idle' | 'loading' | 'done'>('idle');
   const [flash, setFlash]           = useState(false);
 
-  // Sync to localStorage on change
-  const persist = useCallback((next: CartItem[]) => {
-    setItems(next);
-    try { localStorage.setItem(CART_KEY, JSON.stringify(next)); } catch { /* ignore */ }
-  }, []);
-
   function addToCart() {
-    const evDef = EVENT_TYPES.find(e => e.id === selectedEvent)!;
-    const plDef = PLANS[selectedPlan];
-    const item: CartItem = {
-      id:         uid(),
-      eventType:  evDef.id,
-      eventLabel: evDef.label,
-      eventIcon:  evDef.icon,
-      plan:       selectedPlan,
-      planLabel:  plDef.label,
-      price:      plDef.price,
-    };
-    const next = [...items, item];
-    persist(next);
+    addItem(selectedEvent, selectedPlan);
     setFlash(true);
     setTimeout(() => setFlash(false), 600);
   }
-
-  function removeItem(id: string) {
-    persist(items.filter(i => i.id !== id));
-  }
-
-  const total = items.reduce((s, i) => s + i.price, 0);
 
   async function handlePay() {
     if (!items.length) return;
@@ -281,7 +222,7 @@ export function MultiEventCart() {
         throw new Error('Respuesta inválida del servidor.');
       }
       // Clear cart and redirect
-      persist([]);
+      clear();
       window.location.href = (data as { url: string }).url;
     } catch (err) {
       setPayError(err instanceof TypeError ? 'Sin conexión. Verifica tu red.' : err instanceof Error ? err.message : 'Error inesperado.');
