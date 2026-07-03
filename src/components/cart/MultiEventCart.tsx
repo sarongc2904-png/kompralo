@@ -5,6 +5,7 @@ import {
   useKompraloCart,
   CART_EVENT_TYPES as EVENT_TYPES,
   CART_PLANS as PLANS,
+  AVAILABLE_EVENT_TYPES,
   type CartPlanId as PlanId,
 } from './useKompraloCart';
 
@@ -122,11 +123,22 @@ const CSS = `
     color: var(--site-color-marron);
     white-space: nowrap;
   }
-  .mec-pill:hover { border-color: var(--site-color-rosa-antiguo); }
+  .mec-pill:hover:not(:disabled) { border-color: var(--site-color-rosa-antiguo); }
   .mec-pill-active {
     background: var(--site-color-rosa-antiguo);
     border-color: var(--site-color-rosa-antiguo);
     color: var(--site-color-crema);
+  }
+  .mec-pill:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    border-style: dashed;
+  }
+  .mec-pill-soon {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; line-height: 1;
+    background: rgba(74,59,53,0.08); color: #7A6A63;
+    border-radius: 999px; padding: 3px 7px;
   }
   .mec-plan-grid {
     display: grid;
@@ -205,6 +217,8 @@ export function MultiEventCart() {
   const [flash, setFlash]           = useState(false);
 
   function addToCart() {
+    // Defensa adicional: nunca agregar tipos de evento no disponibles
+    if (!AVAILABLE_EVENT_TYPES.includes(selectedEvent)) return;
     addItem(selectedEvent, selectedPlan);
     setFlash(true);
     setTimeout(() => setFlash(false), 600);
@@ -271,16 +285,21 @@ export function MultiEventCart() {
               Tipo de evento
             </p>
             <div className="mec-event-pills">
-              {EVENT_TYPES.map(ev => (
-                <button
-                  key={ev.id}
-                  type="button"
-                  onClick={() => setEvent(ev.id)}
-                  className={`mec-pill${selectedEvent === ev.id ? ' mec-pill-active' : ''}`}
-                >
-                  {ev.icon} {ev.label}
-                </button>
-              ))}
+              {EVENT_TYPES.map(ev => {
+                const available = AVAILABLE_EVENT_TYPES.includes(ev.id);
+                return (
+                  <button
+                    key={ev.id}
+                    type="button"
+                    disabled={!available}
+                    onClick={() => available && setEvent(ev.id)}
+                    className={`mec-pill${selectedEvent === ev.id ? ' mec-pill-active' : ''}`}
+                  >
+                    {ev.icon} {ev.label}
+                    {!available && <span className="mec-pill-soon">Próximamente</span>}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

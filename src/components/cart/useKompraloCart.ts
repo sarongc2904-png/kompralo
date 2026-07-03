@@ -27,6 +27,10 @@ export const CART_EVENT_TYPES = [
   { id: 'aniversario',label: 'Aniversario',  icon: '💫' },
 ] as const;
 
+// Tipos de evento con plantillas publicadas y vendibles. El resto del catálogo
+// se muestra como "Próximamente" en la UI y se filtra de carritos guardados.
+export const AVAILABLE_EVENT_TYPES: readonly string[] = ['boda'];
+
 export const CART_PLANS = {
   basic:   { price: 49900,  label: 'Basic',   desc: 'Esencial' },
   premium: { price: 89900,  label: 'Premium', desc: 'Control Total' },
@@ -40,7 +44,10 @@ function readCart(): CartItem[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(CART_KEY);
-    return raw ? JSON.parse(raw) as CartItem[] : [];
+    const items = raw ? JSON.parse(raw) as CartItem[] : [];
+    // Carritos guardados pueden traer tipos de evento que ya no están a la
+    // venta (sin plantillas publicadas) — se descartan al leer.
+    return items.filter(i => AVAILABLE_EVENT_TYPES.includes(i.eventType));
   } catch {
     return [];
   }
