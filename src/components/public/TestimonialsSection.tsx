@@ -15,8 +15,8 @@ export function TestimonialsSection() {
         </Reveal>
 
         <Stagger className="cro-grid-3" gap={0.12} style={{ marginTop: '4rem' }}>
-          {items.map((item) => (
-            <Item key={`${item.couple}-${item.detail}`} style={{ display: 'flex' }}>
+          {items.map((item, index) => (
+            <Item key={`testimonial-${index}`} style={{ display: 'flex' }}>
               <article className="cro-value-card" style={{ textAlign: 'left', alignItems: 'flex-start', padding: 0 }}>
                 {item.image ? (
                   <div
