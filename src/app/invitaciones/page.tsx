@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   CalendarClock,
   Check,
@@ -22,6 +21,7 @@ import { Item, Reveal, Stagger } from '@/components/public/Motion';
 import { SolutionCarousel } from '@/components/public/SolutionCarousel';
 import Hero3D from '@/components/public/Hero3D';
 import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
+import { InvitacionesFooter } from '@/components/public/InvitacionesFooter';
 import { TestimonialsSection } from '@/components/public/TestimonialsSection';
 import { availableProducts } from '@/domain/products';
 import { PlanSelector } from '@/components/plans/PlanSelector';
@@ -689,26 +689,6 @@ function CallToAction() {
   );
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
-
-function Footer() {
-  return (
-    <footer className="cro-footer">
-      <div className="cro-shell">
-        <Link href="/" className="cro-footer-logo">KOMPRALO</Link>
-        <div className="cro-footer-links">
-          <Link href="#como-funciona">Cómo funciona</Link>
-          <Link href="#planes">Planes</Link>
-          <Link href="/login">Acceder</Link>
-        </div>
-        <p style={{ color: T.muted, fontSize: '0.75rem', letterSpacing: '0.1em' }}>
-          © {new Date().getFullYear()} KOMPRALO. TODOS LOS DERECHOS RESERVADOS.
-        </p>
-      </div>
-    </footer>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function InvitacionesPage() {
@@ -728,7 +708,7 @@ export default function InvitacionesPage() {
       <TechnicalSpecs />
       <FAQ />
       <CallToAction />
-      <Footer />
+      <InvitacionesFooter />
     </main>
   );
 }
