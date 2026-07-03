@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { TESTIMONIALS } from '@/data/testimonials';
 import { MOCK_TESTIMONIALS } from '@/data/testimonials.mock';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
@@ -16,13 +17,34 @@ export function TestimonialsSection() {
         <Stagger className="cro-grid-3" gap={0.12} style={{ marginTop: '4rem' }}>
           {items.map((item) => (
             <Item key={`${item.couple}-${item.detail}`} style={{ display: 'flex' }}>
-              <article className="cro-value-card" style={{ textAlign: 'left', alignItems: 'flex-start' }}>
-                <p className="cro-copy" style={{ margin: 0, fontSize: '1rem' }}>
-                  "{item.quote}"
-                </p>
-                <div style={{ marginTop: '2rem' }}>
-                  <h3 style={{ marginBottom: '0.35rem' }}>{item.couple}</h3>
-                  <p style={{ margin: 0 }}>{item.detail}</p>
+              <article className="cro-value-card" style={{ textAlign: 'left', alignItems: 'flex-start', padding: 0 }}>
+                {item.image ? (
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      aspectRatio: '4 / 3',
+                      overflow: 'hidden',
+                      borderBottom: '1px solid rgba(197, 168, 128, 0.18)',
+                    }}
+                  >
+                    <Image
+                      src={item.image}
+                      alt={item.imageAlt ?? ''}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                ) : null}
+                <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <p className="cro-copy" style={{ margin: 0, fontSize: '1rem' }}>
+                    "{item.quote}"
+                  </p>
+                  <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
+                    <h3 style={{ marginBottom: '0.35rem' }}>{item.couple}</h3>
+                    <p style={{ margin: 0 }}>{item.detail}</p>
+                  </div>
                 </div>
               </article>
             </Item>
