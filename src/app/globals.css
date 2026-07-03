@@ -1,6 +1,16 @@
 @import "tailwindcss";
 
 @theme {
+  --color-site-crema: #FAF3EE;
+  --color-site-blanco: #FFFFFF;
+  --color-site-marron: #4A3B35;
+  --color-site-rosa-antiguo: #9C6B70;
+  --color-site-rosa-antiguo-dark: #8C6065;
+  --color-site-border-subtle: rgba(74, 59, 53, 0.1);
+
+  --font-site-serif: var(--font-playfair), Georgia, serif;
+  --font-site-sans: var(--font-inter), sans-serif;
+
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-sans: var(--font-inter), sans-serif;
   --font-calligraphy: var(--font-pinyon), cursive;
@@ -13,6 +23,129 @@
   --animate-glow-slow-1: glowSlow1 25s ease-in-out infinite alternate;
   --animate-glow-slow-2: glowSlow2 30s ease-in-out infinite alternate;
   --animate-glow-slow-3: glowSlow3 22s ease-in-out infinite alternate;
+}
+
+:root {
+  --site-color-crema: #FAF3EE;
+  --site-color-blanco: #FFFFFF;
+  --site-color-marron: #4A3B35;
+  --site-color-rosa-antiguo: #9C6B70;
+  --site-color-rosa-antiguo-dark: #8C6065;
+  --site-color-border-subtle: rgba(74, 59, 53, 0.1);
+  --site-font-serif: var(--font-playfair), Georgia, serif;
+  --site-font-sans: var(--font-inter), sans-serif;
+  --site-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer components {
+  .site-h1 {
+    margin: 0;
+    color: var(--site-color-marron);
+    font-family: var(--site-font-serif);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.03;
+  }
+
+  .site-h2 {
+    margin: 0;
+    color: var(--site-color-marron);
+    font-family: var(--site-font-serif);
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.08;
+  }
+
+  .site-eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--site-color-rosa-antiguo);
+    font-family: var(--site-font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .site-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    border-radius: 9999px;
+    padding: 0.95rem 1.6rem;
+    font-family: var(--site-font-sans);
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    transition:
+      background-color 220ms var(--site-ease),
+      border-color 220ms var(--site-ease),
+      color 220ms var(--site-ease),
+      transform 220ms var(--site-ease);
+  }
+
+  .site-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .site-btn:focus-visible {
+    outline: 2px solid var(--site-color-rosa-antiguo);
+    outline-offset: 3px;
+  }
+
+  .site-btn-primary {
+    border: 1px solid var(--site-color-marron);
+    background: var(--site-color-marron);
+    color: var(--site-color-crema);
+  }
+
+  .site-btn-primary:hover {
+    border-color: #3F322D;
+    background: #3F322D;
+    color: var(--site-color-crema);
+  }
+
+  .site-btn-secondary {
+    border: 1px solid var(--site-color-rosa-antiguo);
+    background: transparent;
+    color: var(--site-color-rosa-antiguo);
+  }
+
+  .site-btn-secondary:hover {
+    background: rgba(156, 107, 112, 0.08);
+    color: var(--site-color-rosa-antiguo-dark);
+  }
+}
+
+@layer utilities {
+  .site-fade-in {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 650ms var(--site-ease),
+      transform 650ms var(--site-ease);
+  }
+
+  .site-fade-in.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-btn,
+    .site-fade-in {
+      transition: none;
+    }
+
+    .site-btn:hover,
+    .site-fade-in {
+      transform: none;
+    }
+  }
 }
 
 @keyframes float {

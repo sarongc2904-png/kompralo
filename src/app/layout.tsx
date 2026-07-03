@@ -65,6 +65,7 @@ export default function RootLayout({
     <html
       lang="es"
       className={`${playfair.variable} ${inter.variable} ${pinyon.variable} ${cinzel.variable} ${lora.variable} ${cormorant.variable} antialiased`}
+      data-site-design="editorial-elegante"
     >
       <head>
         <style>{`
