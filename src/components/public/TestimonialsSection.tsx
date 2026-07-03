@@ -41,10 +41,6 @@ export function TestimonialsSection() {
                   <p className="cro-copy" style={{ margin: 0, fontSize: '1rem' }}>
                     "{item.quote}"
                   </p>
-                  <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
-                    <h3 style={{ marginBottom: '0.35rem' }}>{item.couple}</h3>
-                    <p style={{ margin: 0 }}>{item.detail}</p>
-                  </div>
                 </div>
               </article>
             </Item>
