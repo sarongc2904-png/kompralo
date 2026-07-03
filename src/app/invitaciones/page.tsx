@@ -141,11 +141,13 @@ function LandingStyles() {
       .cro-footer-links a { color: ${T.muted}; text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
       .cro-footer-links a:hover { color: ${T.cyan}; }
 
-      /* ── Problem Section (WhatsApp bubble simulation) ────────────────────── */
+      /* ── Problem Section (WhatsApp bubble simulation — estilo WhatsApp real) ── */
       .cro-chat-container { display: flex; flex-direction: column; gap: 1rem; max-width: 500px; margin: 3rem auto 0; }
-      .cro-chat-bubble { position: relative; padding: 0.85rem 1.15rem; border-radius: 16px; border-top-left-radius: 4px; background: #272522; border: 1px solid rgba(197, 168, 128, 0.1); color: ${T.silver}; font-size: 0.95rem; align-self: flex-start; max-width: 85%; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-      .cro-chat-bubble::before { content: ''; position: absolute; left: -8px; top: 0; width: 8px; height: 12px; background: #272522; clip-path: polygon(100% 0, 0 0, 100% 100%); }
-      .cro-chat-sender { font-size: 0.75rem; color: ${T.cyan}; font-weight: 600; margin-bottom: 0.25rem; display: block; }
+      .cro-chat-bubble { position: relative; padding: 0.5rem 0.75rem 0.4rem; border-radius: 8px; border-top-left-radius: 0; background: #FFFFFF; color: #111B21; font-size: 0.925rem; line-height: 1.35; align-self: flex-start; max-width: 85%; box-shadow: 0 1px 0.5px rgba(11,20,26,0.13); }
+      .cro-chat-bubble::before { content: ''; position: absolute; left: -8px; top: 0; width: 8px; height: 13px; background: #FFFFFF; clip-path: polygon(100% 0, 0 0, 100% 100%); }
+      .cro-chat-sender { font-size: 0.78rem; font-weight: 700; margin-bottom: 2px; display: block; }
+      .cro-chat-time { display: block; text-align: right; font-size: 0.6875rem; color: #667781; margin-top: 3px; line-height: 1; }
+      .cro-chat-date-chip { align-self: center; background: #FFFFFF; color: #54656F; font-size: 0.6875rem; font-weight: 600; padding: 4px 12px; border-radius: 8px; box-shadow: 0 1px 0.5px rgba(11,20,26,0.13); text-transform: uppercase; letter-spacing: 0.02em; }
       .cro-problem-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 4rem; }
       .cro-problem-card { padding: 2.5rem 2rem; border: 1px solid ${T.border}; border-radius: 4px; background: rgba(255,255,255,0.01); }
       .cro-problem-num { display: block; font-size: 3rem; font-weight: 800; color: rgba(197, 168, 128, 0.08); margin-bottom: 1rem; letter-spacing: -0.04em; line-height: 1; }
@@ -261,40 +263,49 @@ function ProblemSection() {
           
           {/* Left Side: Simulated WhatsApp chat log */}
           <Reveal>
-            <div className="max-w-[450px] mx-auto bg-[#0C0A09] rounded-2xl border border-[rgba(197,168,128,0.15)] overflow-hidden shadow-2xl">
+            <div className="max-w-[450px] mx-auto rounded-2xl overflow-hidden shadow-2xl">
               {/* WhatsApp chat header */}
-              <div className="bg-[#1C1917] px-4 py-3.5 border-b border-[rgba(197,168,128,0.1)] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[11px] font-bold tracking-wider text-[#F5F5F4] uppercase">Chat con Invitados</span>
+              <div className="bg-[#008069] px-4 py-3 flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/25 text-base">
+                  💍
                 </div>
-                <span className="text-[10px] text-[#A8A29E] font-medium uppercase tracking-wider">Hoy</span>
+                <div className="min-w-0">
+                  <p className="m-0 text-[0.9rem] font-semibold leading-tight text-white">Invitados · Boda</p>
+                  <p className="m-0 text-[0.7rem] leading-tight text-white/80">Tía Rosy, Carlos, Gaby, Juan, Sofía…</p>
+                </div>
               </div>
-              
+
               {/* Chat bubbles container */}
-              <div className="p-5 flex flex-col gap-4 max-h-[380px] overflow-y-auto">
+              <div className="bg-[#ECE5DD] p-4 flex flex-col gap-2.5 max-h-[380px] overflow-y-auto">
+                <div className="cro-chat-date-chip">Hoy</div>
+
                 <div className="cro-chat-bubble">
-                  <span className="cro-chat-sender">Tía Rosy</span>
+                  <span className="cro-chat-sender" style={{ color: '#E542A3' }}>Tía Rosy</span>
                   ¿Dónde es la boda?
+                  <span className="cro-chat-time">10:02</span>
                 </div>
-                
+
                 <div className="cro-chat-bubble">
-                  <span className="cro-chat-sender">Carlos (Amigo)</span>
+                  <span className="cro-chat-sender" style={{ color: '#1F7AEC' }}>Carlos (Amigo)</span>
                   ¿A qué hora empieza?
+                  <span className="cro-chat-time">10:15</span>
                 </div>
 
                 <div className="cro-chat-bubble">
-                  <span className="cro-chat-sender">Prima Gaby</span>
+                  <span className="cro-chat-sender" style={{ color: '#FA6533' }}>Prima Gaby</span>
                   ¿Cómo confirmo?
+                  <span className="cro-chat-time">10:31</span>
                 </div>
 
                 <div className="cro-chat-bubble">
-                  <span className="cro-chat-sender">Tío Juan</span>
+                  <span className="cro-chat-sender" style={{ color: '#7F66FF' }}>Tío Juan</span>
                   ¿Cuál es el código de vestimenta?
+                  <span className="cro-chat-time">11:07</span>
                 </div>
                 <div className="cro-chat-bubble">
-                  <span className="cro-chat-sender">Sofía (Dama de Honor)</span>
+                  <span className="cro-chat-sender" style={{ color: '#06B0B5' }}>Sofía (Dama de Honor)</span>
                   ¿Dónde está la mesa de regalos?
+                  <span className="cro-chat-time">11:24</span>
                 </div>
               </div>
             </div>
