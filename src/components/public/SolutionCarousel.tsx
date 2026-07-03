@@ -18,15 +18,6 @@ import {
   Heart,
 } from 'lucide-react';
 
-const T = {
-  black:  '#0C0A09',
-  onyx:   '#1C1917',
-  ink:    '#F5F5F4',
-  cyan:   '#C5A880',
-  muted:  '#A8A29E',
-  border: 'rgba(197, 168, 128, 0.15)',
-} as const;
-
 const SOLUTIONS = [
   { icon: Sparkles, title: 'Portada con los nombres de los novios', text: 'Presenta tu boda desde el primer momento con una portada elegante.' },
   { icon: CalendarClock, title: 'Cuenta regresiva', text: 'Muestra cuánto falta para el gran día.' },
@@ -82,9 +73,9 @@ export function SolutionCarousel() {
   const btnStyle = (side: 'left' | 'right'): React.CSSProperties => ({
     flexShrink: 0,
     alignSelf: 'center',
-    background: T.onyx,
-    border: `1px solid ${T.border}`,
-    color: T.cyan,
+    background: 'var(--site-color-blanco)',
+    border: '1px solid var(--site-color-border-subtle)',
+    color: 'var(--site-color-rosa-antiguo)',
     width: 40,
     height: 40,
     borderRadius: '50%',
@@ -94,7 +85,8 @@ export function SolutionCarousel() {
     cursor: 'pointer',
     fontSize: '1.25rem',
     lineHeight: 1,
-    transition: 'background 0.2s',
+    boxShadow: '0 10px 24px rgba(74, 59, 53, 0.08)',
+    transition: 'background 0.2s, transform 0.2s',
     zIndex: 10,
   });
 
@@ -105,8 +97,14 @@ export function SolutionCarousel() {
         onClick={() => scroll('left')}
         aria-label="Anterior"
         style={btnStyle('left')}
-        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(197,168,128,0.1)')}
-        onMouseLeave={e => (e.currentTarget.style.background = T.onyx)}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = 'rgba(156, 107, 112, 0.08)';
+          e.currentTarget.style.transform = 'translateY(-1px)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = 'var(--site-color-blanco)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
       >
         ‹
       </button>
@@ -122,10 +120,15 @@ export function SolutionCarousel() {
         onMouseMove={onMouseMove}
       >
         {SOLUTIONS.map(({ icon: Icon, title, text }) => (
-          <div key={title} className="cro-sol-card">
-            <Icon size={24} className="cro-sol-icon" strokeWidth={1.5} />
-            <h3>{title}</h3>
-            <p>{text}</p>
+          <div
+            key={title}
+            className="min-h-[230px] w-[230px] flex-none rounded-2xl border border-site-border-subtle bg-site-blanco p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
+          >
+            <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-site-crema text-site-rosa-antiguo">
+              <Icon size={22} strokeWidth={1.5} />
+            </span>
+            <h3 className="m-0 font-site-serif text-xl font-semibold leading-tight text-site-marron">{title}</h3>
+            <p className="mt-3 font-site-sans text-sm leading-6 text-site-marron/70">{text}</p>
           </div>
         ))}
       </div>
@@ -135,8 +138,14 @@ export function SolutionCarousel() {
         onClick={() => scroll('right')}
         aria-label="Siguiente"
         style={btnStyle('right')}
-        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(197,168,128,0.1)')}
-        onMouseLeave={e => (e.currentTarget.style.background = T.onyx)}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = 'rgba(156, 107, 112, 0.08)';
+          e.currentTarget.style.transform = 'translateY(-1px)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = 'var(--site-color-blanco)';
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}
       >
         ›
       </button>

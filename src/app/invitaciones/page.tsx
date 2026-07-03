@@ -23,6 +23,8 @@ import Hero3D from '@/components/public/Hero3D';
 import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
 import { InvitacionesFooter } from '@/components/public/InvitacionesFooter';
 import { TestimonialsSection } from '@/components/public/TestimonialsSection';
+import { FadeIn } from '@/components/public/FadeIn';
+import { SiteButton } from '@/components/public/Button';
 import { availableProducts } from '@/domain/products';
 import { PlanSelector } from '@/components/plans/PlanSelector';
 
@@ -317,16 +319,16 @@ function ProblemSection() {
 
 function SolutionSection() {
   return (
-    <section className="cro-section" style={{ background: T.black }}>
-      <div className="cro-shell">
-        <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
-          <p className="cro-eyebrow">Todo en un solo lugar</p>
-          <h2 className="cro-title-xl">Todo lo importante de tu boda en una sola invitación digital</h2>
-          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+    <section className="bg-site-crema py-16 md:py-24">
+      <div className="mx-auto w-[min(1200px,calc(100%-40px))]">
+        <FadeIn className="mx-auto max-w-3xl text-center">
+          <p className="site-eyebrow">Todo en un solo lugar</p>
+          <h2 className="site-h2">Todo lo importante de tu boda en una sola invitación digital</h2>
+          <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/72">
             Incluye secciones para compartir la información que tus invitados necesitan. La disponibilidad de algunas secciones depende del plan que elijas.
           </p>
-        </Reveal>
-        <div style={{ marginTop: '3.5rem' }}>
+        </FadeIn>
+        <div className="mt-14">
           <SolutionCarousel />
         </div>
       </div>
@@ -360,10 +362,10 @@ function ProcessSection() {
   return (
     <section id="como-funciona" className="cro-section" style={{ background: T.black }}>
       <div className="cro-shell">
-        <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
+        <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="cro-eyebrow">¿Cómo funciona?</p>
           <h2 className="cro-title-xl">¿Cómo funciona?</h2>
-        </Reveal>
+        </FadeIn>
         <Stagger className="cro-process-grid" gap={0.12}>
           {PROCESS_STEPS.map(({ num, title, text }) => (
             <Item key={num} style={{ display: 'flex' }}>
@@ -418,15 +420,15 @@ const TIMELINE_STEPS = [
 
 function WhatHappensSection() {
   return (
-    <section className="cro-section" style={{ background: T.onyx }}>
-      <div className="cro-shell">
-        <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
+    <section className="bg-site-blanco py-16 md:py-24">
+      <div className="mx-auto w-[min(1200px,calc(100%-40px))]">
+        <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="cro-eyebrow">Diferenciador</p>
           <h2 className="cro-title-xl">Una invitación digital bonita, práctica y sin pagos mensuales</h2>
           <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
             KOMPRALO está pensado para parejas que quieren una invitación elegante sin complicarse. Puedes elegir tu plan, personalizar tu invitación y compartirla por WhatsApp con tus invitados.
           </p>
-        </Reveal>
+        </FadeIn>
         
         <div className="cro-timeline">
           {TIMELINE_STEPS.map(({ title, text }) => (
@@ -461,23 +463,29 @@ const TRUST_POINTS = [
 
 function TrustSection() {
   return (
-    <section className="cro-section" style={{ background: T.onyx }}>
-      <div className="cro-shell">
-        <Reveal style={{ textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
-          <p className="cro-eyebrow">Beneficios</p>
-          <h2 className="cro-title-xl">Diseñada para organizar mejor la información de tu boda</h2>
-          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+    <section className="bg-site-blanco py-16 md:py-24">
+      <div className="mx-auto w-[min(1200px,calc(100%-40px))]">
+        <FadeIn className="mx-auto max-w-3xl text-center">
+          <p className="site-eyebrow">Beneficios</p>
+          <h2 className="site-h2">Diseñada para organizar mejor la información de tu boda</h2>
+          <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/72">
             Comparte los detalles importantes en una invitación digital fácil de ver, personalizar y enviar por WhatsApp.
           </p>
-        </Reveal>
+        </FadeIn>
         
-        <div className="cro-trust-container">
+        <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
           {TRUST_POINTS.map(({ icon: Icon, title, text }, i) => (
-            <Reveal key={i} className="cro-trust-card">
-              <Icon size={32} className="cro-trust-card-icon" strokeWidth={1.5} />
-              <h4>{title}</h4>
-              <p>{text}</p>
-            </Reveal>
+            <FadeIn
+              key={i}
+              className="rounded-2xl border border-site-border-subtle bg-site-crema/55 p-7 shadow-sm"
+              style={{ transitionDelay: `${i * 70}ms` }}
+            >
+              <span className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-site-blanco text-site-rosa-antiguo shadow-sm">
+                <Icon size={24} strokeWidth={1.5} />
+              </span>
+              <h3 className="m-0 font-site-serif text-2xl font-semibold leading-tight text-site-marron">{title}</h3>
+              <p className="mt-4 font-site-sans text-sm leading-6 text-site-marron/70">{text}</p>
+            </FadeIn>
           ))}
         </div>
       </div>
@@ -650,40 +658,29 @@ function FAQ() {
 
 function CallToAction() {
   return (
-    <section className="cro-section-vh" style={{ minHeight: '60svh', borderBottom: 0 }}>
-      <div className="cro-hero-bg">
-        <Image
-          className="cro-hero-img"
-          src="/images/invitaciones/xv-event-editorial.webp"
-          alt="Kompralo Final"
-          fill
-          sizes="100vw"
-        />
-        <div className="cro-hero-overlay" style={{ background: 'radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, #0C0A09 100%)' }}></div>
-      </div>
-      <div className="cro-shell">
-        <Reveal className="cro-hero-content" style={{ alignItems: 'center', textAlign: 'center', margin: '0 auto', maxWidth: 800 }}>
-          <h2 className="cro-title-mega" style={{ fontSize: 'clamp(1.8rem, 5vw, 4rem)', textShadow: '0 4px 15px rgba(0,0,0,0.6)' }}>
+    <section className="bg-site-marron py-16 md:py-24">
+      <div className="mx-auto w-[min(1200px,calc(100%-40px))]">
+        <FadeIn className="mx-auto max-w-3xl text-center">
+          <p className="site-eyebrow !text-[#E8B8BE]">Siguiente paso</p>
+          <h2 className="font-site-serif text-[clamp(2.2rem,5vw,4.5rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-site-crema">
             ¿Listos para elegir el plan ideal para su boda?
           </h2>
-          <p className="cro-copy mt-6" style={{ maxWidth: 640, color: '#E7E5E4' }}>
+          <p className="mx-auto mt-6 max-w-2xl font-site-sans text-lg leading-8 text-site-crema/78">
             Crea una invitación digital elegante, fácil de personalizar y pensada para compartirse por WhatsApp.
           </p>
-          <div className="cro-hero-actions" style={{ justifyContent: 'center' }}>
-            <a
+          <div className="mt-10 flex justify-center">
+            <SiteButton
               href="#planes"
-              className="cro-btn cro-btn-cyan text-center flex items-center justify-center font-bold tracking-wider"
-              style={{ textDecoration: 'none' }}
               data-cta="cta-final"
               data-event="click-cta-final"
             >
               Ver planes
-            </a>
+            </SiteButton>
           </div>
-          <p className="text-xs text-[#A8A29E] mt-4 tracking-wider uppercase font-semibold">
+          <p className="mt-5 font-site-sans text-xs font-semibold uppercase tracking-[0.15em] text-site-crema/55">
             Pago único · Sin mensualidades · Desde $499 MXN
           </p>
-        </Reveal>
+        </FadeIn>
       </div>
     </section>
   );
