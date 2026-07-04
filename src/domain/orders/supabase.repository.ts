@@ -55,6 +55,7 @@ function mapRow(row: OrderRow): Order {
     confirmationEmailSentAt: row.confirmation_email_sent_at ?? null,
     confirmationEmailError:  row.confirmation_email_error  ?? null,
     cartItemIndex:           row.cart_item_index ?? 0,
+    isTest:                  row.is_test ?? false,
     createdAt:               row.created_at,
     updatedAt:               row.updated_at,
   };
