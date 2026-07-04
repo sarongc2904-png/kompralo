@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { requireAdmin } from '@/lib/admin';
 import { publicUrl, previewUrl, editorUrl, clientDashboardUrl } from '@/lib/admin';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { OrderActions } from './OrderActions';
 
 export const metadata: Metadata = { title: 'Detalle orden — Admin Kompralo' };
 
@@ -85,6 +86,23 @@ export default async function AdminOrderDetailPage({ params }: Props) {
 
         {/* Links & actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {order.stripe_payment_intent_id && (
+            <a
+              href={`https://dashboard.stripe.com/payments/${order.stripe_payment_intent_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ ...linkBtn, background: '#635BFF', color: '#FFFFFF' }}
+            >
+              ↗ Ver pago en Stripe
+            </a>
+          )}
+
+          <OrderActions
+            orderId={order.id as string}
+            currentEmail={(order.customer_email as string | null) ?? null}
+            hasInvitation={!!order.invitation_id}
+          />
+
           {inv && (
             <div style={{ background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12, padding: '1rem' }}>
               <p style={{ fontSize: '.7rem', textTransform: 'uppercase', letterSpacing: '.1em', color: '#7A6A5B', fontWeight: 700, margin: '0 0 .75rem' }}>

@@ -11,6 +11,7 @@ const NAV = [
   { href: '/admin/invitations',     label: 'Invitaciones',     icon: '✉' },
   { href: '/admin/invitations/new', label: 'Crear invitación', icon: '+' },
   { href: '/admin/recovery',        label: 'Recuperar compra', icon: '↺' },
+  { href: '/admin/orphans',         label: 'Pagos huérfanos',  icon: '⚠' },
   { href: '/admin/users',           label: 'Usuarios',         icon: '◎' },
   { href: '/admin/logs',            label: 'Logs',             icon: '≡' },
 ];

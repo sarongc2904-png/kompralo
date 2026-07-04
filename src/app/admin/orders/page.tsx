@@ -45,14 +45,16 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   const filterPlan     = sp.plan      ?? '';
   const filterEmail    = sp.email     ?? '';
   const filterSession  = sp.session   ?? '';
+  const filterSlug     = sp.slug      ?? '';
   const filterEmailErr = sp.email_error ?? '';
   // Las órdenes de prueba (is_test) quedan fuera por defecto; ?test=1 las incluye.
   const showTest       = sp.test === '1';
 
   const svc = createServiceRoleSupabaseClient();
+  // Con filtro de slug se usa inner join para poder filtrar sobre la invitación.
   let query = svc
     .from('orders')
-    .select('*, invitations(slug)')
+    .select(filterSlug ? '*, invitations!inner(slug)' : '*, invitations(slug)')
     .order('created_at', { ascending: false })
     .limit(200);
 
@@ -61,6 +63,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   if (filterPlan)     query = query.eq('plan_id', filterPlan);
   if (filterEmail)    query = query.ilike('customer_email', `%${filterEmail}%`);
   if (filterSession)  query = query.ilike('stripe_session_id', `%${filterSession}%`);
+  if (filterSlug)     query = query.ilike('invitations.slug', `%${filterSlug}%`);
   if (filterEmailErr) query = query.not('confirmation_email_error', 'is', null);
 
   const { data: ordersRaw } = await query;
@@ -75,7 +78,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
     .reduce((s, o) => s + (Number(o.amount_total) || 0), 0);
   const currency    = ((orders[0] as Record<string, unknown>)?.currency as string ?? 'mxn').toUpperCase();
 
-  const hasFilters = !!(filterStatus || filterPlan || filterEmail || filterSession || filterEmailErr);
+  const hasFilters = !!(filterStatus || filterPlan || filterEmail || filterSession || filterSlug || filterEmailErr);
 
   return (
     <div>
@@ -109,6 +112,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
       {/* Filters */}
       <form method="get" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', marginBottom: '1.5rem', padding: '1rem 1.25rem', background: '#FFFBF4', border: '1px solid #E5D2A8', borderRadius: 12 }}>
         <input name="email"   defaultValue={filterEmail}   placeholder="Email cliente"             style={inputStyle} />
+        <input name="slug"    defaultValue={filterSlug}    placeholder="Slug invitación"           style={inputStyle} />
         <input name="session" defaultValue={filterSession} placeholder="Session ID (cs_...)"        style={{ ...inputStyle, width: 200 }} />
         <select name="status" defaultValue={filterStatus}  style={selectStyle}>
           <option value="">Todos los status</option>
