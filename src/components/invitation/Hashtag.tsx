@@ -8,6 +8,7 @@ import { Copy, Check, Heart, MessageCircle, Bookmark, MoreHorizontal, ThumbsUp, 
 import SectionShell from './SectionShell';
 import SectionHeader from './SectionHeader';
 import { EditableText } from '@/components/visual-editor/EditableText';
+import { formatWeddingHashtag } from '@/lib/invitations/formatWeddingHashtag';
 
 interface HashtagProps {
   social: SocialConfig;
@@ -35,9 +36,8 @@ function sanitizeSocial(social: SocialConfig, brideName?: string, groomName?: st
   // Hashtag: auto-generate from names if stored value is empty or the fixture default
   const storedHashtag = stripHash(social.hashtag);
   if (!storedHashtag || storedHashtag === FIXTURE_HASHTAG) {
-    const n1 = (brideName ?? '').replace(/\s+/g, '');
-    const n2 = (groomName ?? '').replace(/\s+/g, '');
-    cleaned.hashtag = n1 && n2 ? `${n1}Y${n2}` : (n1 || n2 || '');
+    // Regla única centralizada (conector "y" minúscula).
+    cleaned.hashtag = formatWeddingHashtag(brideName, groomName);
   }
 
   // Instagram handle: replace fixture value with auto-generated handle from names
@@ -45,7 +45,7 @@ function sanitizeSocial(social: SocialConfig, brideName?: string, groomName?: st
   if (!storedInsta || storedInsta === FIXTURE_INSTAGRAM) {
     const n1 = (brideName ?? '').replace(/\s+/g, '').toLowerCase();
     const n2 = (groomName ?? '').replace(/\s+/g, '').toLowerCase();
-    cleaned.instagramHandle = n1 || n2 ? `${n1}Y${n2}` : undefined;
+    cleaned.instagramHandle = n1 || n2 ? `${n1}y${n2}` : undefined;
   }
 
   // TikTok handle: same pattern
@@ -53,7 +53,7 @@ function sanitizeSocial(social: SocialConfig, brideName?: string, groomName?: st
   if (!storedTiktok || storedTiktok === FIXTURE_TIKTOK) {
     const n1 = (brideName ?? '').replace(/\s+/g, '').toLowerCase();
     const n2 = (groomName ?? '').replace(/\s+/g, '').toLowerCase();
-    cleaned.tiktokHandle = n1 || n2 ? `${n1}Y${n2}` : undefined;
+    cleaned.tiktokHandle = n1 || n2 ? `${n1}y${n2}` : undefined;
   }
 
   return cleaned;

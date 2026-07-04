@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { startWeddingQuickStart } from '@/app/dashboard/invitations/[id]/edit/actions';
 import { WIZARD_THEME_OPTIONS } from '@/domain/themes-v2/style-to-theme-map';
 import type { ThemeIdV2 } from '@/domain/themes-v2/types';
+import { formatWeddingHashtag } from '@/lib/invitations/formatWeddingHashtag';
 
 export interface WeddingQuickStartWizardProps {
   invitationId: string;
@@ -381,7 +382,7 @@ function StepNames({
           className="rounded-xl px-4 py-3 text-sm"
           style={{ background: '#FBF8F2', border: '1px solid #E8DFD5', color: '#746B62' }}
         >
-          Tu hashtag: <strong style={{ color: '#B99752' }}>#{normalizeForDisplay(data.brideName)}Y{normalizeForDisplay(data.groomName)}</strong>
+          Tu hashtag: <strong style={{ color: '#B99752' }}>#{formatWeddingHashtag(data.brideName, data.groomName)}</strong>
         </div>
       )}
     </div>
@@ -821,14 +822,4 @@ function SuccessScreen({
       </div>
     </div>
   );
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function normalizeForDisplay(name: string): string {
-  return name
-    .trim()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-zA-Z0-9]/g, '');
 }
