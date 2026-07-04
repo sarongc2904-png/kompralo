@@ -344,6 +344,25 @@ function LoginForm() {
   // Dismiss the URL-param link error when the user actively interacts (switches mode or submits).
   const [linkErrorDismissed, setLinkErrorDismissed] = useState(false);
 
+  // Usuarios ya autenticados van directo a su panel. Se omite cuando llegan con
+  // ?mode= explícito (p.ej. mode=forgot desde update-password, con sesión activa).
+  useEffect(() => {
+    if (modeParam) return;
+    const supabase = createSupabaseBrowserClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      const safeRedirect =
+        redirectParam.startsWith('/') &&
+        !redirectParam.startsWith('//') &&
+        !redirectParam.includes('http://') &&
+        !redirectParam.includes('https://')
+          ? redirectParam
+          : '/cliente';
+      window.location.replace(safeRedirect);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Link errors (expired/invalid token) are separate from credential errors.
   // Only show them as a soft notice — never block the password form.
   const isLinkError = errorParam === 'expired_link' || errorParam === 'invalid_link';
@@ -445,7 +464,16 @@ export default function LoginPage() {
       <div aria-hidden style={{ position: 'absolute', top: '-80px', right: '-80px', width: '280px', height: '280px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(196,169,98,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
       <div aria-hidden style={{ position: 'absolute', bottom: '-60px', left: '-60px', width: '220px', height: '220px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(196,169,98,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      <Link href="/invitaciones" style={{ position: 'absolute', top: '1.25rem', left: '1.25rem', fontSize: '.8125rem', color: T.light, textDecoration: 'none', fontWeight: 500 }}>
+      {/* fixed + zIndex: con position absolute quedaba recortado/tapado por la
+          card cuando el contenido centrado excede el viewport (móvil). */}
+      <Link href="/invitaciones" style={{
+        position: 'fixed', top: '.75rem', left: '.75rem', zIndex: 20,
+        display: 'inline-flex', alignItems: 'center',
+        minHeight: '44px', minWidth: '44px', padding: '.5rem .875rem',
+        fontSize: '.8125rem', color: T.light, fontWeight: 600, textDecoration: 'none',
+        background: 'rgba(241,227,200,0.9)', border: `1px solid ${T.border}`,
+        borderRadius: '.625rem',
+      }}>
         ← Volver
       </Link>
 

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { SupabaseOrderRepository } from '@/domain/orders';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { AccessFromSessionButton } from './AccessFromSessionButton';
+import { ClearCartOnSuccess } from './ClearCartOnSuccess';
 
 export const metadata: Metadata = { title: 'Pago exitoso — Kompralo' };
 
@@ -107,6 +108,7 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
     }}>
       <div className="paper-noise" />
       <PageStyles />
+      <ClearCartOnSuccess />
 
       {/* Decorative label */}
       <div aria-hidden style={{
