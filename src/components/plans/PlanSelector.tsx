@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import type { Product } from '@/domain/products';
 import { SiteButton } from '@/components/public/Button';
@@ -544,6 +545,37 @@ function CartDrawer({
 }
 
 // ─── PlanSelector (main export) ───────────────────────────────────────────────
+/**
+ * Abre el drawer cuando la URL trae ?cart=open y consume el param. Aislado en su
+ * propio componente (envuelto en Suspense por el consumidor) para que
+ * useSearchParams no fuerce bailout de SSR en el resto de la página. Renderiza
+ * null. onOpen = setIsDrawerOpen (setter estable).
+ */
+function CartDeepLinkOpener({ onOpen }: { onOpen: (v: boolean) => void }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  // Depender del VALOR string del param, no del objeto searchParams (que cambia
+  // de identidad en cada render → el efecto se re-ejecutaría y su cleanup
+  // cancelaría el setTimeout antes de consumir el param).
+  const cart = searchParams.get('cart');
+  useEffect(() => {
+    if (cart !== 'open') return;
+    onOpen(true);
+    // Consumir el param fuera del ciclo de la navegación en curso (un replace
+    // síncrono aquí se traga durante el soft-nav del Link).
+    const t = setTimeout(() => {
+      const params = new URLSearchParams(Array.from(searchParams.entries()));
+      params.delete('cart');
+      const qs = params.toString();
+      router.replace(pathname + (qs ? `?${qs}` : ''), { scroll: false });
+    }, 0);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart, pathname, router]);
+  return null;
+}
+
 export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorProps) {
   const { items, addItem } = useKompraloCart();
   const [isDrawerOpen,  setIsDrawerOpen]  = useState(false);
@@ -596,6 +628,9 @@ export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorP
   return (
     <>
       <style>{CSS}</style>
+      <Suspense fallback={null}>
+        <CartDeepLinkOpener onOpen={setIsDrawerOpen} />
+      </Suspense>
       <div className="ps-cards-grid" style={{ maxWidth: '1040px', margin: '0 auto' }}>
         {products.map((p) => (
           <PlanCard
