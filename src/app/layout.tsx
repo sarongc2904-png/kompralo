@@ -3,6 +3,7 @@ import { Playfair_Display, Inter, Pinyon_Script, Cinzel, Lora, Cormorant_Garamon
 import "./globals.css";
 import SmoothScroll from "@/components/invitation/SmoothScroll";
 import { VirtualAssistantMount } from "@/features/virtual-assistant";
+import MetaPixel from "@/components/pixel/MetaPixel";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -80,6 +81,7 @@ export default function RootLayout({
       </head>
 
       <body className="min-h-screen relative font-sans">
+        <MetaPixel />
         <SmoothScroll>
           {children}
         </SmoothScroll>

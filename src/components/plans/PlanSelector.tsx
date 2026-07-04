@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { Product } from '@/domain/products';
 import { SiteButton } from '@/components/public/Button';
-import { useKompraloCart, type CartItem } from '@/components/cart/useKompraloCart';
+import { useKompraloCart, CART_PLANS, type CartItem } from '@/components/cart/useKompraloCart';
+import { trackInitiateCheckout } from '@/lib/pixel';
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 // Claves legadas remapeadas a la paleta Editorial Elegante:
@@ -253,6 +254,7 @@ function CartDrawerContent({ items, total, onRemove, onClear, onClose }: {
     setCheckoutState('loading');
     setErrorMsg(null);
     try {
+      trackInitiateCheckout({ value: total / 100, numItems: items.length });
       const res  = await fetch('/api/checkout/multi', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
       const data = await res.json() as unknown;
       if (!res.ok) throw new Error(data && typeof data === 'object' && 'error' in data ? String((data as Record<string, unknown>).error) : `Error del servidor (${res.status})`);
@@ -563,6 +565,7 @@ export function PlanSelector({ products, featuredId = 'premium' }: PlanSelectorP
     setPayingId(id);
     setDirectError(null);
     try {
+      trackInitiateCheckout({ value: (CART_PLANS[id]?.price ?? 0) / 100, numItems: 1 });
       const res  = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

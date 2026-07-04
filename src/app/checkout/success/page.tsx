@@ -4,6 +4,7 @@ import { SupabaseOrderRepository } from '@/domain/orders';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
 import { AccessFromSessionButton } from './AccessFromSessionButton';
 import { ClearCartOnSuccess } from './ClearCartOnSuccess';
+import { PurchaseTracker } from '@/components/pixel/PurchaseTracker';
 
 export const metadata: Metadata = { title: 'Pago exitoso — Kompralo' };
 
@@ -51,6 +52,8 @@ interface OrderSummary {
   customerEmail:string | null;
   /** One entry per purchased invitation (multi-cart = N entries). */
   items:        { planId: string; amount: number }[];
+  /** Test purchase (livemode=false) — no dispara Pixel Purchase. */
+  isTest:       boolean;
 }
 
 async function tryGetOrder(sessionId:string|undefined): Promise<OrderSummary|null> {
@@ -67,6 +70,7 @@ async function tryGetOrder(sessionId:string|undefined): Promise<OrderSummary|nul
       currency:      first.currency,
       customerEmail: first.customerEmail,
       items:         orders.map((o) => ({ planId: o.planId, amount: o.amountTotal })),
+      isTest:        orders.some((o) => o.isTest),
     };
   } catch { return null; }
 }
@@ -109,6 +113,13 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
       <div className="paper-noise" />
       <PageStyles />
       <ClearCartOnSuccess />
+      {order && session_id && (
+        <PurchaseTracker
+          sessionId={session_id}
+          value={order.amountTotal / 100}
+          isTest={order.isTest}
+        />
+      )}
 
       {/* Decorative label */}
       <div aria-hidden style={{

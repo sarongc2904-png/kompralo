@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import type { ProductId } from '@/domain/products';
+import { getProductById } from '@/domain/products';
+import { trackInitiateCheckout } from '@/lib/pixel';
 
 export type CheckoutButtonProps = {
   productId: ProductId;
@@ -30,6 +32,8 @@ export function CheckoutButton({
     let data: unknown;
 
     try {
+      trackInitiateCheckout({ value: (getProductById(productId)?.price ?? 0) / 100, numItems: 1 });
+
       const body: Record<string, string> = { productId };
       if (invitationId) body.invitationId = invitationId;
 

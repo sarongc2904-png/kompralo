@@ -9,6 +9,8 @@ import {
   type CartPlanId as PlanId,
 } from './useKompraloCart';
 
+import { trackInitiateCheckout } from '@/lib/pixel';
+
 // Re-export para consumidores existentes (p.ej. /api/checkout/multi importa el tipo desde aquí)
 export type { CartItem } from './useKompraloCart';
 
@@ -229,6 +231,7 @@ export function MultiEventCart() {
     setPayState('loading');
     setPayError(null);
     try {
+      trackInitiateCheckout({ value: total / 100, numItems: items.length });
       const res  = await fetch('/api/checkout/multi', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },

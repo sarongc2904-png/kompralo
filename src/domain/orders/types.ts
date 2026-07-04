@@ -29,6 +29,8 @@ export interface Order {
   confirmationEmailError: string | null;
   /** Position within a multi-cart checkout (0 for single purchases). */
   cartItemIndex: number;
+  /** Test purchase (Stripe livemode=false). Excluded from sales metrics & Pixel Purchase. */
+  isTest: boolean;
   createdAt: string;
   updatedAt: string;
 }
