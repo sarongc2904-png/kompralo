@@ -206,7 +206,7 @@ const CSS = `
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function MultiEventCart() {
-  const { items, total, addItem, removeItem, clear } = useKompraloCart();
+  const { items, total, addItem, removeItem } = useKompraloCart();
   const [selectedEvent, setEvent]   = useState<string>(EVENT_TYPES[0].id);
   const [selectedPlan, setPlan]     = useState<PlanId>('premium');
   const [payState, setPayState]     = useState<'idle' | 'loading' | 'error'>('idle');
@@ -244,8 +244,8 @@ export function MultiEventCart() {
       if (!data || typeof data !== 'object' || !('url' in data) || typeof (data as Record<string, unknown>).url !== 'string') {
         throw new Error('Respuesta inválida del servidor.');
       }
-      // Clear cart and redirect
-      clear();
+      // El carrito NO se vacía aquí: si el usuario cancela en Stripe y regresa,
+      // debe encontrar sus items. Se vacía en /checkout/success (pago confirmado).
       window.location.href = (data as { url: string }).url;
     } catch (err) {
       setPayError(err instanceof TypeError ? 'Sin conexión. Verifica tu red.' : err instanceof Error ? err.message : 'Error inesperado.');

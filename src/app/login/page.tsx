@@ -344,6 +344,25 @@ function LoginForm() {
   // Dismiss the URL-param link error when the user actively interacts (switches mode or submits).
   const [linkErrorDismissed, setLinkErrorDismissed] = useState(false);
 
+  // Usuarios ya autenticados van directo a su panel. Se omite cuando llegan con
+  // ?mode= explícito (p.ej. mode=forgot desde update-password, con sesión activa).
+  useEffect(() => {
+    if (modeParam) return;
+    const supabase = createSupabaseBrowserClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      const safeRedirect =
+        redirectParam.startsWith('/') &&
+        !redirectParam.startsWith('//') &&
+        !redirectParam.includes('http://') &&
+        !redirectParam.includes('https://')
+          ? redirectParam
+          : '/cliente';
+      window.location.replace(safeRedirect);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Link errors (expired/invalid token) are separate from credential errors.
   // Only show them as a soft notice — never block the password form.
   const isLinkError = errorParam === 'expired_link' || errorParam === 'invalid_link';
