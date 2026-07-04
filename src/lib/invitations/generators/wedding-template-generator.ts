@@ -17,6 +17,7 @@ import type {
 } from '@/domain/invitations/types';
 import type { WeddingStyle } from '@/domain/themes-v2/style-to-theme-map';
 import { MUSIC_LIBRARY } from '@/lib/music/musicLibrary';
+import { formatWeddingHashtag } from '@/lib/invitations/formatWeddingHashtag';
 
 /**
  * Generated content for invitation_content table.
@@ -437,24 +438,11 @@ function generateHotels(): Hotel[] {
 }
 
 /**
- * Normalize a name for hashtag: remove accents, spaces, special chars.
- */
-function normalizeForHashtag(name: string): string {
-  return name
-    .trim()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-zA-Z0-9]/g, '');
-}
-
-/**
  * Generate social config with hashtag from bride & groom names.
+ * Regla única centralizada (conector "y" minúscula, año al final).
  */
-function generateSocial(brideName?: string, groomName?: string): SocialConfig {
-  const b = brideName ? normalizeForHashtag(brideName) : '';
-  const g = groomName ? normalizeForHashtag(groomName) : '';
-  const hashtag = b && g ? `${b}y${g}` : '';
-  return { hashtag };
+function generateSocial(brideName?: string, groomName?: string, year?: string): SocialConfig {
+  return { hashtag: formatWeddingHashtag(brideName, groomName, year) };
 }
 
 // ─── Main generator ────────────────────────────────────────────────────────────
@@ -477,6 +465,7 @@ export function generateWeddingTemplate(
   const {
     brideName,
     groomName,
+    weddingDate,
     weddingTime,
     receptionTime,
     planId,
@@ -593,7 +582,7 @@ export function generateWeddingTemplate(
     if (hasRealSocial(existingContent.social)) {
       result.social = existingContent.social as SocialConfig;
     } else {
-      result.social = generateSocial(brideName, groomName);
+      result.social = generateSocial(brideName, groomName, weddingDate?.slice(0, 4));
     }
   }
 

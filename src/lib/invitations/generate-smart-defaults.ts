@@ -1,4 +1,5 @@
 import type { ItineraryItem, InvitationProtagonist, ItineraryIcon } from '@/domain/invitations/types';
+import { formatWeddingHashtag } from '@/lib/invitations/formatWeddingHashtag';
 
 export type CeremonyType = 'solo_civil' | 'civil_e_iglesia' | 'solo_religiosa';
 
@@ -141,15 +142,9 @@ function uid(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-}
-
 function buildHashtag(novioName: string, noviaName: string, date: string): string {
-  const year = date.slice(0, 4);
-  const n1 = noviaName.split(' ')[0].replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ]/g, '');
-  const n2 = novioName.split(' ')[0].replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ]/g, '');
-  return `${capitalize(n1)}y${capitalize(n2)}${year}`;
+  // Regla única centralizada (novia primero, conector "y" minúscula, año al final).
+  return formatWeddingHashtag(noviaName, novioName, date.slice(0, 4));
 }
 
 function buildItinerary(input: WizardMinimalInput): ItineraryItem[] {
