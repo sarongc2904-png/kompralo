@@ -59,6 +59,8 @@ export interface MultiCartSessionLike {
   metadata: Record<string, string> | null | undefined;
   customer_details?: { email?: string | null; name?: string | null } | null;
   customer_email?: string | null;
+  /** Stripe livemode flag; false ⇒ sesión creada con keys de test. */
+  livemode?: boolean;
 }
 
 export interface MultiCartEmailArgs {
@@ -178,6 +180,9 @@ export async function handleMultiCartSession(
           customerName,
           ownerUserId,
           cartItemIndex:         item.index,
+          // livemode=false explícito ⇒ compra con keys/tarjetas de test — no cuenta
+          // como venta. undefined (callers que no lo pasan) se trata como real.
+          isTest:                session.livemode === false,
         });
         createdOrders++;
       } catch (err) {

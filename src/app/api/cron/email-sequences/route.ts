@@ -98,6 +98,7 @@ export async function GET(req: NextRequest) {
     .from('orders')
     .select('customer_email, customer_name, invitation_id, email_sequence_step, created_at')
     .eq('status', 'paid')
+    .eq('is_test', false)
     .eq('email_sequence_step', 0)
     .lt('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
     .not('customer_email', 'is', null);
@@ -150,6 +151,7 @@ export async function GET(req: NextRequest) {
     .from('orders')
     .select('customer_email, customer_name, invitation_id, email_sequence_step, last_sequence_email_at, created_at')
     .eq('status', 'paid')
+    .eq('is_test', false)
     .lt('email_sequence_step', 2)
     .lt('created_at', new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString())
     .not('customer_email', 'is', null);

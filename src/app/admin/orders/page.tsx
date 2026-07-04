@@ -46,6 +46,8 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
   const filterEmail    = sp.email     ?? '';
   const filterSession  = sp.session   ?? '';
   const filterEmailErr = sp.email_error ?? '';
+  // Las órdenes de prueba (is_test) quedan fuera por defecto; ?test=1 las incluye.
+  const showTest       = sp.test === '1';
 
   const svc = createServiceRoleSupabaseClient();
   let query = svc
@@ -54,6 +56,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
     .order('created_at', { ascending: false })
     .limit(200);
 
+  if (!showTest)      query = query.eq('is_test', false);
   if (filterStatus)   query = query.eq('status', filterStatus);
   if (filterPlan)     query = query.eq('plan_id', filterPlan);
   if (filterEmail)    query = query.ilike('customer_email', `%${filterEmail}%`);
@@ -119,6 +122,10 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
           <input type="checkbox" name="email_error" value="1" defaultChecked={!!filterEmailErr} />
           Solo errores email
         </label>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem', fontSize: '.8125rem', color: '#7A6A5B', cursor: 'pointer' }}>
+          <input type="checkbox" name="test" value="1" defaultChecked={showTest} />
+          Incluir pruebas
+        </label>
         <button type="submit" style={btnDark}>Filtrar</button>
         <Link href="/admin/orders" style={{ ...btnLight, display: 'inline-flex', alignItems: 'center' }}>Limpiar</Link>
       </form>
@@ -160,7 +167,16 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                     </p>
                     <p style={{ margin: 0, fontSize: '.75rem', color: '#7A6A5B' }}>{(o.customer_email as string) ?? '—'}</p>
                   </td>
-                  <td style={tdStyle}><PlanBadge plan={o.plan_id as string} /></td>
+                  <td style={tdStyle}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.375rem' }}>
+                      <PlanBadge plan={o.plan_id as string} />
+                      {!!o.is_test && (
+                        <span style={{ display: 'inline-block', background: '#F2F2F0', color: '#7A6A5B', fontSize: '.65rem', fontWeight: 800, padding: '.2rem .5rem', borderRadius: 20, letterSpacing: '.06em' }}>
+                          TEST
+                        </span>
+                      )}
+                    </span>
+                  </td>
                   <td style={tdStyle}>
                     <span style={{ fontSize: '.875rem', fontWeight: 700, color: o.status === 'paid' ? '#241A14' : '#7A6A5B', whiteSpace: 'nowrap' }}>
                       {fmt(o.amount_total as number, o.currency as string)}

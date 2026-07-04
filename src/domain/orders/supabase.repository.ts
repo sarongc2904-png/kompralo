@@ -92,6 +92,7 @@ export class SupabaseOrderRepository implements IOrderRepository {
         customer_name:            input.customerName  ?? null,
         owner_user_id:            input.ownerUserId   ?? null,
         cart_item_index:          input.cartItemIndex ?? 0,
+        is_test:                  input.isTest        ?? false,
       })
       .select()
       .single();

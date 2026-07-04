@@ -170,6 +170,8 @@ export async function POST(request: NextRequest) {
             customerEmail,
             customerName,
             ownerUserId,
+            // livemode=false ⇒ compra con keys/tarjetas de test — no cuenta como venta.
+            isTest: !session.livemode,
           };
           order = await orderRepo.create(orderInput);
           console.log('[webhook/stripe] order created — session=%s productId=%s', session.id, productId);

@@ -96,13 +96,15 @@ export default async function AdminDashboardPage() {
     logCount = 145;
   } else {
     const svc = createServiceRoleSupabaseClient();
+    // is_test = true (datos pre-campaña / tarjetas de test) queda fuera de todas
+    // las métricas y listados del resumen. Se pueden ver en /admin/orders?test=1.
     const [ordersRes, invRes, usersRes, logsRes, recentOrdersRes, recentInvRes] = await Promise.all([
-      svc.from('orders').select('id, status, plan_id, amount_total, currency, confirmation_email_sent_at, confirmation_email_error, invitation_id, created_at'),
-      svc.from('invitations').select('id, status, user_id, customer_email, created_at'),
+      svc.from('orders').select('id, status, plan_id, amount_total, currency, confirmation_email_sent_at, confirmation_email_error, invitation_id, created_at').eq('is_test', false),
+      svc.from('invitations').select('id, status, user_id, customer_email, created_at').eq('is_test', false),
       svc.from('users').select('id', { count: 'exact', head: true }),
       svc.from('admin_audit_logs').select('id', { count: 'exact', head: true }),
-      svc.from('orders').select('id, status, plan_id, amount_total, currency, customer_email, customer_name, invitation_id, created_at').order('created_at', { ascending: false }).limit(5),
-      svc.from('invitations').select('id, slug, title, status, plan_id, customer_email, created_at').order('created_at', { ascending: false }).limit(5),
+      svc.from('orders').select('id, status, plan_id, amount_total, currency, customer_email, customer_name, invitation_id, created_at').eq('is_test', false).order('created_at', { ascending: false }).limit(5),
+      svc.from('invitations').select('id, slug, title, status, plan_id, customer_email, created_at').eq('is_test', false).order('created_at', { ascending: false }).limit(5),
     ]);
 
     orders       = (ordersRes.data ?? []) as Record<string, unknown>[];

@@ -48,4 +48,6 @@ export interface CreateOrderInput {
   ownerUserId?:          string | null;
   /** Position within a multi-cart checkout. Defaults to 0. */
   cartItemIndex?:        number;
+  /** Test purchase (Stripe livemode=false). Excluded from sales metrics. Defaults to false. */
+  isTest?:               boolean;
 }
