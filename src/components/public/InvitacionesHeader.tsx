@@ -4,6 +4,47 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { SiteButton } from '@/components/public/Button';
+import { useKompraloCart } from '@/components/cart/useKompraloCart';
+
+/** Icono de carrito sobrio en currentColor — consistente con el candado de los
+ *  botones de pago (trazo, no emoji). */
+function CartIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="9" cy="20" r="1.4" />
+      <circle cx="18" cy="20" r="1.4" />
+      <path d="M2.5 3h2.2l2.3 12.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.3L21.5 7H6.2" />
+    </svg>
+  );
+}
+
+/**
+ * Enlace al carrito con burbuja de conteo. SSR-safe: useKompraloCart arranca
+ * en [] y se hidrata tras montar (evita hydration mismatch); el CustomEvent del
+ * hook mantiene el badge en vivo al agregar/quitar. Con carrito vacío se muestra
+ * solo el icono (más limpio y descubrible que ocultarlo — decisión reportada).
+ */
+function CartLink({ onClick }: { onClick?: () => void }) {
+  const { items } = useKompraloCart();
+  const count = items.length;
+  return (
+    <Link
+      href="/invitaciones/precios"
+      onClick={onClick}
+      data-event="ClickCart"
+      aria-label={count > 0 ? `Carrito, ${count} ${count === 1 ? 'artículo' : 'artículos'}` : 'Carrito'}
+      className="relative inline-flex h-11 w-11 items-center justify-center rounded-full text-site-marron no-underline transition-colors duration-300 hover:text-site-rosa-antiguo"
+    >
+      <CartIcon />
+      {count > 0 && (
+        <span className="absolute right-1 top-1 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-site-rosa-antiguo px-1 text-[11px] font-bold leading-none text-site-crema">
+          {count}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 const navLinks = [
   { href: '/invitaciones#como-funciona', label: 'Cómo funciona', event: 'click-header-como-funciona', cta: undefined },
@@ -49,19 +90,23 @@ export function InvitacionesHeader() {
                 {link.label}
               </Link>
             ))}
+            <CartLink />
             <SiteButton href="/dashboard" data-event="click-header-acceso-cliente">
               Acceso cliente
             </SiteButton>
           </div>
 
-          <button
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-site-border-subtle bg-site-blanco/60 text-site-marron transition-colors duration-300 hover:text-site-rosa-antiguo lg:hidden"
+          <div className="flex items-center gap-1 lg:hidden">
+            <CartLink />
+            <button
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-site-border-subtle bg-site-blanco/60 text-site-marron transition-colors duration-300 hover:text-site-rosa-antiguo"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+            </button>
+          </div>
         </div>
       </nav>
 

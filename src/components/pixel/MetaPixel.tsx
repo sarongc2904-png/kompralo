@@ -37,30 +37,41 @@ export default function MetaPixel() {
   const pathname = usePathname();
   const enabled = isPixelEnabled();
   const onSalesRoute = isSalesRoute(pathname);
-  const firstRun = useRef(true);
 
-  // PageView en cada cambio de ruta (App Router). El snippet base ya dispara el
-  // PageView inicial, por eso saltamos la primera ejecución del efecto.
-  // ViewContent('precios') sí corre siempre que estemos en /invitaciones/precios.
+  // Ref siempre actualizado con el pathname actual, para gatear el listener de
+  // clics (que vive fuera del ciclo de render de React).
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
+
+  // PageView SIEMPRE desde el efecto, gateado contra el allowlist con el pathname
+  // vigente — nunca desde el script inline. Así una navegación SPA a /i/[slug] no
+  // dispara PageView aunque fbevents.js siga cargado en memoria. Espera a que fbq
+  // exista (el script base es afterInteractive) antes de disparar el PageView
+  // inicial, para no perderlo por carrera de tiempos.
   useEffect(() => {
     if (!enabled || !onSalesRoute) return;
 
-    if (firstRun.current) {
-      firstRun.current = false;
-    } else {
-      trackPageView();
-    }
+    let tries = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const fire = () => {
+      if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+        trackPageView();
+        if (pathname === '/invitaciones/precios') trackViewContent('precios');
+      } else if (tries++ < 20) {
+        timer = setTimeout(fire, 100);
+      }
+    };
+    fire();
 
-    if (pathname === '/invitaciones/precios') {
-      trackViewContent('precios');
-    }
+    return () => { if (timer) clearTimeout(timer); };
   }, [pathname, enabled, onSalesRoute]);
 
-  // Delegación global: un solo listener lee el data-event del elemento clicado.
-  // No toca el JSX existente ni depende de onClick por componente.
+  // Delegación global de clics. Gateada contra el allowlist con el pathname
+  // vigente: un clic fuera del sitio de venta no dispara ningún evento.
   useEffect(() => {
     if (!enabled) return;
     function onClick(e: MouseEvent) {
+      if (!isSalesRoute(pathnameRef.current)) return;
       const target = e.target as HTMLElement | null;
       const el = target?.closest?.('[data-event]');
       if (!el) return;
@@ -73,6 +84,7 @@ export default function MetaPixel() {
   }, [enabled]);
 
   // El script base solo se inyecta en producción real y en rutas de venta.
+  // Hace SOLO init — el PageView lo dispara el efecto de arriba (allowlist-safe).
   if (!enabled || !onSalesRoute) return null;
 
   return (
@@ -87,7 +99,6 @@ export default function MetaPixel() {
         s.parentNode.insertBefore(t,s)}(window,document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '${META_PIXEL_ID}');
-        fbq('track', 'PageView');
       `}
     </Script>
   );
