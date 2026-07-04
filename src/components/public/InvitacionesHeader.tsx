@@ -6,6 +6,8 @@ import { Menu, X } from 'lucide-react';
 import { SiteButton } from '@/components/public/Button';
 import { useKompraloCart } from '@/components/cart/useKompraloCart';
 
+const PRICING_PATH = '/invitaciones/precios';
+
 /** Icono de carrito sobrio en currentColor — consistente con el candado de los
  *  botones de pago (trazo, no emoji). */
 function CartIcon() {
@@ -28,9 +30,14 @@ function CartIcon() {
 function CartLink({ onClick }: { onClick?: () => void }) {
   const { items } = useKompraloCart();
   const count = items.length;
+
+  // La URL es la única fuente de verdad: navega a ?cart=open (incluso estando
+  // ya en /precios, es una navegación suave que actualiza los searchParams que
+  // el PlanSelector lee de forma reactiva para abrir el drawer y consumir el
+  // param). Simple, sin cross-component events.
   return (
     <Link
-      href="/invitaciones/precios"
+      href={`${PRICING_PATH}?cart=open`}
       onClick={onClick}
       data-event="ClickCart"
       aria-label={count > 0 ? `Carrito, ${count} ${count === 1 ? 'artículo' : 'artículos'}` : 'Carrito'}
