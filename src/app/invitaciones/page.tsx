@@ -374,7 +374,6 @@ function ProcessSection() {
     <section id="como-funciona" className="cro-section" style={{ background: T.black }}>
       <div className="cro-shell">
         <FadeIn className="mx-auto max-w-3xl text-center">
-          <p className="cro-eyebrow">¿Cómo funciona?</p>
           <h2 className="cro-title-xl">¿Cómo funciona?</h2>
         </FadeIn>
         <Stagger className="cro-process-grid" gap={0.12}>
