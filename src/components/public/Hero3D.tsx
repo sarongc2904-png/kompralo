@@ -21,9 +21,9 @@ export default function Hero3D() {
         fill
         priority
         sizes="100vw"
-        className="absolute inset-0 -z-20 object-cover opacity-35"
+        className="absolute inset-0 -z-20 object-cover opacity-60"
       />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,var(--site-color-crema)_0%,rgba(250,243,238,0.92)_34%,rgba(250,243,238,0.62)_62%,rgba(250,243,238,0.18)_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(250,243,238,0.86)_0%,rgba(250,243,238,0.72)_34%,rgba(250,243,238,0.38)_62%,rgba(250,243,238,0.05)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-t from-site-crema to-transparent" />
 
       <div className="mx-auto grid w-[min(1200px,calc(100%-40px))] grid-cols-1 items-center gap-12 lg:grid-cols-[1.04fr_0.96fr] lg:gap-16">
