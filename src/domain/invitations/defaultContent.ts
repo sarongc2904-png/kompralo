@@ -2,6 +2,26 @@ import { sofiaAlejandroWeddingInvitation } from '@/domain/invitations/fixtures';
 import type { InvitationContent } from '@/domain/invitations/types';
 
 /**
+ * Gift registry del fixture SIN los datos bancarios demo. El fixture trae
+ * "Banca Premier" / CLABE falsa / "Sofía y Alejandro" para la demo de la
+ * landing, pero NUNCA deben sembrarse en invitaciones reales: el titular lo
+ * interpola el wizard con los nombres reales (generate-smart-defaults) y
+ * banco/CLABE los captura el cliente. Con CLABE vacía la tarjeta de
+ * transferencia no se renderiza en el público (GiftRegistry.tsx).
+ */
+function sanitizedGiftRegistry(): InvitationContent['giftRegistry'] {
+  const giftRegistry = sofiaAlejandroWeddingInvitation.giftRegistry;
+  return {
+    ...giftRegistry,
+    items: (giftRegistry?.items ?? []).map((item) =>
+      item.logoType === 'bank'
+        ? { ...item, bankDetails: { bankName: '', clabe: '', accountOwner: '' } }
+        : item,
+    ),
+  };
+}
+
+/**
  * Build default invitation content based on the final approved template fixture
  * (src/domain/invitations/fixtures/wedding.sofia-alejandro.ts).
  *
@@ -39,7 +59,7 @@ export function buildDefaultInvitationContent(): Omit<
     timeline: fixture.timeline,
     itinerary: fixture.itinerary,
     dressCode: fixture.dressCode,
-    giftRegistry: fixture.giftRegistry,
+    giftRegistry: sanitizedGiftRegistry(),
     finalMessage: fixture.finalMessage,
     parents: fixture.parents,
     padrinos: fixture.padrinos,
@@ -74,7 +94,7 @@ export function buildDefaultInvitationContentForSupabase(invitationId: string) {
     timeline: fixture.timeline,
     itinerary: fixture.itinerary,
     dress_code: fixture.dressCode,
-    gift_registry: fixture.giftRegistry,
+    gift_registry: sanitizedGiftRegistry(),
     music: fixture.music,
     final_message: fixture.finalMessage,
     parents: fixture.parents,

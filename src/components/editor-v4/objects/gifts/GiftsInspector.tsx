@@ -171,6 +171,19 @@ function GiftCard({
           {/* TIPO C — Transferencia bancaria */}
           {item.logoType === 'bank' && (
             <>
+              {!item.bankDetails.clabe.trim() && (
+                <div style={{
+                  background: '#FAF3EE',
+                  border: '1px dashed #4A3B35',
+                  borderRadius: 8,
+                  padding: '8px 10px',
+                  fontSize: 11.5,
+                  lineHeight: 1.45,
+                  color: '#4A3B35',
+                }}>
+                  ⚠ Agrega tus datos bancarios para que esta tarjeta aparezca en tu invitación.
+                </div>
+              )}
               <div style={fieldS}>
                 <label style={labelS}>Nombre / Banco *</label>
                 <input type="text" value={item.provider} onChange={(e) => onChange({ provider: e.target.value })} placeholder="Ej: BBVA" style={inputS} />

@@ -34,6 +34,16 @@ export default function GiftRegistry({
 
   if (!items || items.length === 0) return null;
 
+  // Transferencia bancaria sin CLABE capturada: se oculta al público (los
+  // defaults nunca traen datos bancarios). En el editor sí se muestra, con un
+  // aviso para capturarlos. No filtrar en editablePreview también preserva los
+  // índices de los fieldPath editables.
+  const visibleItems = editablePreview
+    ? items
+    : items.filter((item) => item.logoType !== 'bank' || !!item.bankDetails?.clabe?.trim());
+
+  if (visibleItems.length === 0) return null;
+
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
@@ -89,7 +99,7 @@ export default function GiftRegistry({
 
       {/* Registry — flex wrap so 1 or 2 cards stay centred */}
       <div className="flex flex-wrap justify-center gap-6 md:gap-8 mt-12">
-        {items.map((item, idx) => {
+        {visibleItems.map((item, idx) => {
           const isRevealed = !!revealedIds[item.id];
           const isInternalAnchor = !item.link || item.link.startsWith('#');
           const actionHref = item.link || '#rsvp-name';
@@ -127,6 +137,15 @@ export default function GiftRegistry({
                     <p className={`text-[13px] md:text-[14px] opacity-75 mb-2 max-w-[200px] mx-auto ${theme.bodyFont}`} style={{ color: 'var(--v2-color-text-secondary, #5C4A3E)' }}>
                       Información bancaria para realizar transferencias.
                     </p>
+
+                    {editablePreview && !item.bankDetails.clabe?.trim() && (
+                      <div
+                        className="w-full mt-2 rounded-lg px-3 py-2.5 text-[12px] font-medium text-left"
+                        style={{ background: '#FAF3EE', border: '1px dashed #4A3B35', color: '#4A3B35' }}
+                      >
+                        ⚠ Agrega tus datos bancarios para que esta tarjeta aparezca en tu invitación.
+                      </div>
+                    )}
                     
                     <AnimatePresence initial={false}>
                       {isRevealed && (
