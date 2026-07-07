@@ -412,8 +412,13 @@ export default async function InvitationDashboard({ params }: Props) {
     .eq('id', id)
     .single();
 
-  const isOwnerByUserId = !!(inv && inv.user_id && inv.user_id === userId);
-  const isOwnerByEmail  = !!(inv && typeof inv.customer_email === 'string' &&
+  if (!inv) {
+    console.log('[clienteInv] invitación no encontrada id=%s', id);
+    notFound();
+  }
+
+  const isOwnerByUserId = !!(inv.user_id && inv.user_id === userId);
+  const isOwnerByEmail  = !!(typeof inv.customer_email === 'string' &&
     inv.customer_email.toLowerCase() === email.toLowerCase());
 
   console.log('[clienteInv] sessionUserId=%s sessionEmail=%s', userId, email);
@@ -423,18 +428,19 @@ export default async function InvitationDashboard({ params }: Props) {
   const hasAccess = isOwnerByUserId || isOwnerByEmail;
 
   if (!hasAccess) {
+    // Los admins pueden VER el panel del cliente (botón "Panel cliente" del
+    // admin). Antes se les rebotaba a /admin/invitations/[id], lo que dejaba
+    // ese botón sin efecto. Autorizar por sesión de admin cubre invitaciones
+    // con cuenta y cookie-only (user_id null) por igual.
     const isAdmin = await isAdminUser(userId, email);
-    const authorized = isAdmin;
-    console.log('[clienteInv] isAdmin=%s authorized=%s', isAdmin, authorized);
-    if (isAdmin) {
-      console.log('[clienteInv] redirectTarget=/admin/invitations/%s reason=admin-redirect', id);
-      redirect(`/admin/invitations/${id}`);
+    console.log('[clienteInv] isAdmin=%s', isAdmin);
+    if (!isAdmin) {
+      console.log('[clienteInv] authorized=false reason=not-owner-not-admin');
+      notFound();
     }
-    console.log('[clienteInv] authorized=false reason=not-owner-not-admin');
-    notFound();
   }
 
-  const grantReason = isOwnerByUserId ? 'user_id-match' : 'email-match';
+  const grantReason = isOwnerByUserId ? 'user_id-match' : isOwnerByEmail ? 'email-match' : 'admin-view';
   console.log('[clienteInv] authorized=true reason=%s', grantReason);
 
   // 3. Fetch RSVP responses
