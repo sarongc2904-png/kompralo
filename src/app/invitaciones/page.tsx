@@ -430,8 +430,14 @@ const TIMELINE_STEPS = [
 
 function WhatHappensSection() {
   return (
-    <section className="bg-site-blanco py-16 md:py-24">
-      <div className="mx-auto w-[min(1200px,calc(100%-40px))]">
+    <section
+      className="relative isolate overflow-hidden bg-site-blanco bg-cover bg-center bg-no-repeat py-16 md:py-24"
+      style={{
+        backgroundImage: "url('/landing/section-differentiator-bg.webp')",
+      }}
+    >
+      <div className="pointer-events-none absolute inset-0 z-0 bg-white/25" />
+      <div className="relative z-10 mx-auto w-[min(1200px,calc(100%-40px))]">
         <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="site-eyebrow">Diferenciador</p>
           <h2 className="site-h2">Una invitación digital bonita, práctica y sin pagos mensuales</h2>
