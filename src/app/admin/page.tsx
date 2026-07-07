@@ -29,9 +29,9 @@ const STATUS_BADGE: Record<string, { bg: string; color: string; label: string }>
 };
 
 const PLAN_BADGE: Record<string, { bg: string; color: string; label: string }> = {
-  basic:   { bg: 'rgba(37, 99, 235, 0.1)', color: '#2563EB', label: 'Elegante' },
-  premium: { bg: 'rgba(124, 58, 237, 0.1)', color: '#7C3AED', label: 'Sin Caos' },
-  deluxe:  { bg: 'rgba(200,169,91,0.15)', color: '#A07C2E', label: 'Premium' },
+  basic:   { bg: 'rgba(37, 99, 235, 0.1)', color: '#2563EB', label: 'Basic' },
+  premium: { bg: 'rgba(124, 58, 237, 0.1)', color: '#7C3AED', label: 'Premium' },
+  deluxe:  { bg: 'rgba(200,169,91,0.15)', color: '#A07C2E', label: 'Deluxe' },
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -44,9 +44,9 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function PlanBadge({ plan }: { plan: string }) {
-  const p = PLAN_BADGE[plan] ?? { bg: '#F2F2F0', color: '#7A6A5B', label: plan };
+  const p = PLAN_BADGE[plan] ?? { bg: '#F2F2F0', color: '#7A6A5B', label: plan || '—' };
   return (
-    <span style={{ display: 'inline-block', background: p.bg, color: p.color, fontSize: '.7rem', fontWeight: 700, padding: '.2rem .6rem', borderRadius: 20, whiteSpace: 'nowrap' }}>
+    <span style={{ display: 'inline-block', background: p.bg, color: p.color, fontSize: '.7rem', fontWeight: 700, padding: '.2rem .6rem', borderRadius: 20, whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '.05em' }}>
       {p.label}
     </span>
   );
