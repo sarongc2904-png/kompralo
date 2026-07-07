@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ArrowRight, CalendarCheck2, LockKeyhole, QrCode, Send } from 'lucide-react';
 import { FadeIn } from '@/components/public/FadeIn';
@@ -12,9 +13,47 @@ const heroBenefits = [
 ];
 
 export default function Hero3D() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [parallaxY, setParallaxY] = useState(0);
+
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (prefersReducedMotion.matches) return;
+
+    let frame = 0;
+
+    const updateParallax = () => {
+      frame = 0;
+      const section = sectionRef.current;
+      if (!section) return;
+
+      const rect = section.getBoundingClientRect();
+      const nextY = Math.max(-34, Math.min(46, rect.top * -0.08));
+      setParallaxY((currentY) => (Math.abs(currentY - nextY) < 0.5 ? currentY : nextY));
+    };
+
+    const requestUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateParallax);
+    };
+
+    updateParallax();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate);
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+    };
+  }, []);
+
   return (
-    <section className="relative isolate flex min-h-[calc(100svh-73px)] w-full items-center overflow-hidden bg-[#FAF3EE] px-0 py-12 md:min-h-[90svh] md:py-16 lg:py-20">
-      <div className="absolute inset-y-0 right-0 -z-30 hidden w-[66%] md:block">
+    <section ref={sectionRef} className="relative isolate flex min-h-[calc(100svh-73px)] w-full items-center overflow-hidden bg-[#FAF3EE] px-0 py-12 md:min-h-[90svh] md:py-16 lg:py-20">
+      <div
+        className="absolute -top-[8%] bottom-[-8%] right-0 -z-30 hidden w-[66%] will-change-transform md:block"
+        style={{ transform: `translate3d(0, ${parallaxY}px, 0)` }}
+      >
         <Image
           src="/landing/hero-couple-bg.webp"
           alt=""
@@ -24,7 +63,10 @@ export default function Hero3D() {
           className="object-cover object-center"
         />
       </div>
-      <div className="absolute inset-x-0 bottom-0 -z-30 h-[48%] md:hidden">
+      <div
+        className="absolute inset-x-0 bottom-[-8%] -z-30 h-[56%] will-change-transform md:hidden"
+        style={{ transform: `translate3d(0, ${parallaxY * 0.45}px, 0)` }}
+      >
         <Image
           src="/landing/hero-couple-bg.webp"
           alt=""
