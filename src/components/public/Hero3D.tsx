@@ -14,22 +14,26 @@ const heroBenefits = [
 export default function Hero3D() {
   return (
     <section className="relative isolate flex min-h-[calc(100svh-73px)] w-full items-center overflow-hidden bg-[#FAF3EE] px-0 py-12 md:min-h-[90svh] md:py-16 lg:py-20">
-      <Image
-        src="/landing/hero-bg.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="absolute inset-0 -z-30 hidden object-cover opacity-75 md:block"
-      />
-      <Image
-        src="/landing/hero-bg-mobile.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="absolute inset-0 -z-30 object-cover opacity-45 md:hidden"
-      />
+      <div className="absolute inset-y-0 right-0 -z-30 hidden w-[66%] md:block">
+        <Image
+          src="/landing/hero-couple-bg.webp"
+          alt=""
+          fill
+          priority
+          sizes="66vw"
+          className="object-cover object-center"
+        />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 -z-30 h-[48%] md:hidden">
+        <Image
+          src="/landing/hero-couple-bg.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-top opacity-20"
+        />
+      </div>
       <Image
         src="/landing/texture-paper.webp"
         alt=""
@@ -38,9 +42,8 @@ export default function Hero3D() {
         sizes="100vw"
         className="absolute inset-0 -z-20 object-cover opacity-35 mix-blend-multiply"
       />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_77%_35%,rgba(255,248,243,0.18)_0%,rgba(255,248,243,0.72)_36%,rgba(250,243,238,0.95)_68%),linear-gradient(90deg,rgba(250,243,238,0.98)_0%,rgba(250,243,238,0.92)_44%,rgba(250,243,238,0.58)_100%)]" />
-      <div className="absolute -right-28 top-8 -z-10 hidden h-[72svh] w-[48vw] rotate-[-10deg] rounded-[50%] bg-white/55 blur-3xl lg:block" />
-      <div className="absolute left-[52%] top-0 -z-10 hidden h-full w-[34vw] -skew-x-12 bg-white/25 blur-xl lg:block" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(250,243,238,0.99)_0%,rgba(250,243,238,0.96)_38%,rgba(250,243,238,0.62)_61%,rgba(250,243,238,0.18)_100%)]" />
+      <div className="absolute left-[48%] top-0 -z-10 hidden h-full w-[28vw] -skew-x-12 bg-white/20 blur-xl lg:block" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-28 bg-gradient-to-t from-[#FAF3EE] to-transparent" />
 
       <div className="mx-auto grid w-[min(1220px,calc(100%-32px))] grid-cols-1 items-center gap-3 md:w-[min(1220px,calc(100%-48px))] md:gap-8 lg:grid-cols-[0.96fr_1.04fr] lg:gap-10 xl:gap-14">
