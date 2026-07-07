@@ -180,10 +180,16 @@ function PremiumButton({ onClick, label = 'Abrir Invitación' }: { onClick: () =
 // ─── NAMES DISPLAY ────────────────────────────────────────────────────────────
 
 function NamesDisplay({ protagonists, onHeartClick }: { protagonists: InvitationProtagonist[]; onHeartClick: () => void }) {
+  // Great Vibes (--font-script) y su escala +35% (--intro-name-scale) solo
+  // existen en el árbol /i/[slug]; fuera de él (landing, editor, previews)
+  // caen al font especial del tema con el tamaño original. La escala compensa
+  // la x-height pequeña de la caligrafía; line-height 1.4 y sin tracking para
+  // no cortar swashes ni romper ligaduras.
   const nameStyle: React.CSSProperties = {
-    fontSize: 'clamp(32px, 6.5svh, 68px)',
-    lineHeight: 1.2,
-    fontFamily: 'var(--v2-font-special, var(--v2-font-heading, inherit))',
+    fontSize: 'calc(clamp(32px, 6.5svh, 68px) * var(--intro-name-scale, 1))',
+    lineHeight: 1.4,
+    letterSpacing: 'normal',
+    fontFamily: 'var(--font-script, var(--v2-font-special, var(--v2-font-heading, inherit)))',
   };
 
   if (protagonists.length >= 2) {
@@ -195,11 +201,11 @@ function NamesDisplay({ protagonists, onHeartClick }: { protagonists: Invitation
         className="font-calligraphy flex flex-col items-center w-full"
         style={nameStyle}
       >
-        <span className="text-black glow-pulse px-10 py-2 leading-[1.3] inline-block">
+        <span className="text-black glow-pulse px-6 pt-2 pb-4 leading-[1.4] inline-block">
           {protagonists[0].name}
         </span>
         <GoldenHeart onClick={onHeartClick} showConjunction={true} />
-        <span className="text-black glow-pulse px-10 py-2 leading-[1.3] inline-block">
+        <span className="text-black glow-pulse px-6 pt-2 pb-4 leading-[1.4] inline-block">
           {protagonists[1].name}
         </span>
       </motion.h1>
@@ -214,7 +220,7 @@ function NamesDisplay({ protagonists, onHeartClick }: { protagonists: Invitation
       className="font-calligraphy flex flex-col items-center w-full"
       style={nameStyle}
     >
-      <span className="text-black glow-pulse px-10 py-2 leading-[1.3] inline-block">
+      <span className="text-black glow-pulse px-6 pt-2 pb-4 leading-[1.4] inline-block">
         {protagonists[0]?.name ?? ''}
       </span>
       <GoldenHeart onClick={onHeartClick} showConjunction={false} />
