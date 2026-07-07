@@ -296,7 +296,7 @@ export default function GiftRegistry({
                     }}
                   >
                     {acknowledgedIds[item.id] ? (
-                      <><Check className="w-3.5 h-3.5" /> ✓ GRACIAS</>
+                      <><Check className="w-3.5 h-3.5" /> GRACIAS</>
                     ) : 'CONFIRMO'}
                   </button>
                 ) : (
