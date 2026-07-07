@@ -141,7 +141,7 @@ export default function Hero3D() {
               data-cta="hero-pricing"
               data-event="click-hero-pricing"
             >
-              Ver ejemplos
+              Ver planes
             </SiteButton>
           </div>
 
