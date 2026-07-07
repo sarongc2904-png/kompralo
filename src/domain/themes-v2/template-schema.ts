@@ -27,6 +27,7 @@ export interface TemplateThemeJson {
   divider: Record<string, unknown>;
   backgrounds: Record<string, string>;
   assets: Record<string, string>;
+  introBackground?: { desktop: string; mobile: string };
   dressCodeSwatches: string[];
   cssVariables: Record<string, string>;
 }
@@ -159,6 +160,10 @@ export function templateJsonToThemeV2(t: TemplateJson): InvitationThemeV2 {
     divider:          th.divider   as unknown as InvitationThemeV2['divider'],
     backgrounds:      th.backgrounds as unknown as InvitationThemeV2['backgrounds'],
     assets:           th.assets    as unknown as InvitationThemeV2['assets'],
+    // La textura del tema ES su imagen de fondo real — se reutiliza como
+    // preview en el selector de plantillas.
+    previewImage:     th.assets?.texture || undefined,
+    introBackground:  th.introBackground,
     dressCodeSwatches: th.dressCodeSwatches,
     cssVariables:     th.cssVariables,
   };

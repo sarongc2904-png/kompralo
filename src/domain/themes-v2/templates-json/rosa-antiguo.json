@@ -114,6 +114,10 @@
       "textureOpacity": 0.85,
       "textureSize": "100% auto"
     },
+    "introBackground": {
+      "desktop": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/intro-floral-desktop.webp",
+      "mobile": "https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/intro-floral-mobile.webp"
+    },
     "dressCodeSwatches": [
       "#FAF3EE",
       "#FFFFFF",

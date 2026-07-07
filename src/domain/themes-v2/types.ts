@@ -155,6 +155,19 @@ export interface InvitationThemeV2 {
   backgrounds: ThemeBackgroundsV2;
   assets: ThemeAssetsV2;
 
+  /**
+   * Imagen de fondo real del tema (URL absoluta) para la tarjeta del selector
+   * de plantillas. undefined = el tema usa textura CSS/color sólido y la
+   * tarjeta muestra un gradiente construido con la paleta.
+   */
+  previewImage?: string;
+
+  /**
+   * Fondo del CinematicIntro por orientación (URLs absolutas de Storage).
+   * undefined = el intro conserva el fondo sólido del tema.
+   */
+  introBackground?: { desktop: string; mobile: string };
+
   dressCodeSwatches: string[];
 
   /**

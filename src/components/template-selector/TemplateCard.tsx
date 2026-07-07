@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import type { ThemeCatalogEntry } from '@/domain/themes-v2/themesCatalog';
+import { themeRegistryV2 } from '@/domain/themes-v2/registry';
 
 interface TemplateCardProps {
   entry: ThemeCatalogEntry;
@@ -12,6 +14,11 @@ interface TemplateCardProps {
 
 export function TemplateCard({ entry, isCurrent = false, isSelected = false, onClick }: TemplateCardProps) {
   const showBadge = isCurrent || entry.isNewTheme;
+
+  // Fondo real del tema (assets.texture del registry) con fallback al catálogo
+  // legacy; si el tema no usa imagen, la tarjeta muestra un gradiente de paleta.
+  const previewImage = themeRegistryV2[entry.id]?.previewImage ?? entry.previewImageUrl;
+  const paletteGradient = `linear-gradient(135deg, ${entry.previewColor} 0%, ${entry.previewColor} 45%, ${entry.accentColor}55 100%)`;
 
   return (
     <button
@@ -39,23 +46,45 @@ export function TemplateCard({ entry, isCurrent = false, isSelected = false, onC
         height: 320,
       }}
     >
-      {/* Color header — 280×180 area, flex-based */}
+      {/* Preview header — imagen real del tema o gradiente de paleta */}
       <div
         style={{
           backgroundColor: entry.previewColor,
-          backgroundImage: entry.previewImageUrl ? `url(${entry.previewImageUrl})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundImage: previewImage ? undefined : paletteGradient,
           flex: '0 0 180px',
           position: 'relative',
+          overflow: 'hidden',
           display: 'flex',
           alignItems: 'flex-end',
           justifyContent: 'flex-end',
           padding: 10,
         }}
       >
+        {previewImage && (
+          <>
+            <Image
+              src={previewImage}
+              alt={`Vista previa de ${entry.label}`}
+              fill
+              sizes="(max-width: 600px) 86vw, (max-width: 900px) 44vw, 400px"
+              style={{ objectFit: 'cover' }}
+            />
+            {/* Scrim suave para que swatches y badges sigan legibles */}
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                background:
+                  'linear-gradient(180deg, rgba(26,20,16,0.10) 0%, transparent 32%, transparent 58%, rgba(26,20,16,0.22) 100%)',
+              }}
+            />
+          </>
+        )}
+
         {/* Accent swatch row */}
-        <div style={{ position: 'absolute', bottom: 12, left: 12, display: 'flex', gap: 6 }}>
+        <div style={{ position: 'absolute', bottom: 12, left: 12, display: 'flex', gap: 6, zIndex: 1 }}>
           <span style={{
             width: 18, height: 18, borderRadius: '50%',
             background: entry.previewColor,
@@ -71,7 +100,7 @@ export function TemplateCard({ entry, isCurrent = false, isSelected = false, onC
         </div>
 
         {/* Badges */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
           {isCurrent && (
             <span style={{
               fontSize: 10, fontWeight: 700, letterSpacing: '0.06em',

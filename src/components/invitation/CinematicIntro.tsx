@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Theme } from '@/domain/themes/types';
 import type { InvitationThemeV2 } from '@/domain/themes-v2/types';
 import type { InvitationProtagonist } from '@/domain/invitations/types';
@@ -247,8 +248,13 @@ export default function CinematicIntro({
   const contentRef      = useRef<HTMLDivElement>(null);
   const leftCurtainRef  = useRef<HTMLDivElement>(null);
   const rightCurtainRef = useRef<HTMLDivElement>(null);
+  const introBgRef      = useRef<HTMLDivElement>(null);
 
   const formattedDate = formatEventDate(eventDate);
+  // El fondo floral aplica en invitaciones reales (público, /preview, editor).
+  // La demo del playground vive en "/" y debe conservar el fondo sólido.
+  const pathname = usePathname();
+  const introBackground = pathname === '/' ? undefined : themeV2?.introBackground;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -305,6 +311,11 @@ export default function CinematicIntro({
 
     const tl = gsap.timeline({ onComplete: () => setIsDismissed(true) });
     tl.to(contentRef.current, { opacity: 0, scale: 0.95, y: -16, duration: 0.7, ease: 'power3.inOut' });
+    // El fondo floral se desvanece junto con el contenido para que la apertura
+    // de las cortinas (debajo en el orden de pintado) quede visible.
+    if (introBgRef.current) {
+      tl.to(introBgRef.current, { opacity: 0, duration: 0.7, ease: 'power3.inOut' }, 0);
+    }
 
     if (leftCurtainRef.current && rightCurtainRef.current) {
       tl.to(leftCurtainRef.current,  { xPercent: -100, duration: 1.1, ease: 'power4.inOut' }, '-=0.35');
@@ -328,6 +339,40 @@ export default function CinematicIntro({
       {/* Curtains — fixed to the viewport, behind scrollable content */}
       <div ref={leftCurtainRef}  className={`fixed inset-y-0 left-0 w-1/2 ${curtainBg} border-r ${theme.cardBorder}`} />
       <div ref={rightCurtainRef} className={`fixed inset-y-0 right-0 w-1/2 ${curtainBg}`} />
+
+      {/* Fondo floral del intro (por tema) — encima de las cortinas, debajo del
+          contenido. El intro es el LCP: se precarga SOLO la variante que matchea
+          la orientación (los preload y los <source> usan la misma media query,
+          así el navegador nunca descarga ambas). Sin background-attachment:
+          fixed (roto en iOS Safari) — es un <img> object-cover en capa fixed. */}
+      {introBackground && (
+        <>
+          <link rel="preload" as="image" href={introBackground.mobile}  media="(orientation: portrait)" />
+          <link rel="preload" as="image" href={introBackground.desktop} media="(orientation: landscape)" />
+          <div ref={introBgRef} className="fixed inset-0 pointer-events-none" aria-hidden>
+            <picture>
+              <source media="(orientation: portrait)" srcSet={introBackground.mobile} />
+              <img
+                src={introBackground.desktop}
+                alt=""
+                fetchPriority="high"
+                decoding="async"
+                className="h-full w-full object-cover object-center"
+              />
+            </picture>
+            {/* Scrim radial casi imperceptible: centro apenas crema para
+                garantizar la legibilidad de los nombres sobre la imagen */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background:
+                  'radial-gradient(ellipse 60% 52% at 50% 46%, rgba(250,247,240,0.40) 0%, rgba(250,247,240,0.18) 55%, rgba(250,247,240,0) 100%)',
+              }}
+            />
+          </div>
+        </>
+      )}
 
       {/*
         Centering wrapper: min-h-full so it fills the viewport when content is short

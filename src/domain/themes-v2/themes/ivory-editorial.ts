@@ -108,6 +108,13 @@ export const ivoryEditorialTheme: InvitationThemeV2 = {
     backgroundLayer3: '/layers/bg_layer3_champagne.png',
   },
 
+  previewImage: 'https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/fondo_1.webp',
+
+  introBackground: {
+    desktop: 'https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/intro-floral-desktop.webp',
+    mobile:  'https://djztbgidfrhpkmyvhuyo.supabase.co/storage/v1/object/public/invitation-assets/backgrounds/intro-floral-mobile.webp',
+  },
+
   dressCodeSwatches: ['#111111', '#1F2A44', '#6B1E2D', '#4F5D4A', '#C9A646'],
 
   cssVariables: {
