@@ -128,6 +128,11 @@ export default function AdminNewInvitationPage() {
             </p>
           )}
 
+          {form.status === 'draft' && (
+            <div style={{ marginBottom: '1rem', padding: '.75rem 1rem', background: '#FBF5E3', border: '1px solid #E8D8AD', borderRadius: 8, fontSize: '.8rem', color: '#7A6A5B' }}>
+              ⚠ Se creó con status <strong>draft</strong>: el link público mostrará 404 hasta que cambies el status a paid o published desde el detalle de la invitación.
+            </div>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.75rem' }}>
             {[
               { label: 'Link público (invitados)', url: result.publicLink,          key: 'pub'  },
@@ -196,7 +201,7 @@ export default function AdminNewInvitationPage() {
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </Field>
-            <Field label="Status inicial">
+            <Field label="Status inicial" hint={form.status === 'draft' ? 'Con "draft" el link público mostrará 404. Usa "paid" para que los invitados puedan verla.' : undefined}>
               <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value as typeof STATUSES[number] }))} style={inputStyle}>
                 {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
