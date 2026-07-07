@@ -267,8 +267,18 @@ export default function CinematicIntro({
     // FIX 1 — capturar el timer para poder cancelarlo en cleanup.
     // Sin clearTimeout, si el componente desmonta antes de 50 ms (Strict Mode,
     // remount) el callback dispara DESPUÉS del cleanup y re-bloquea el scroll.
+    // FIX 5 — anclar el scroll a 0 ANTES de congelarlo. En navegación
+    // client-side desde la landing, Next resetea el scroll pero Lenis re-aplica
+    // suavemente su posición anterior; stop() a los 50 ms lo congelaba a medio
+    // camino y la invitación quedaba con el hero recortado detrás del intro.
     const timerId = window.setTimeout(() => {
-      (window as unknown as Record<string, { stop?: () => void }>).lenis?.stop?.();
+      const lenis = (window as unknown as Record<string, {
+        stop?: () => void;
+        scrollTo?: (target: number, opts?: { immediate?: boolean }) => void;
+      }>).lenis;
+      lenis?.scrollTo?.(0, { immediate: true });
+      window.scrollTo(0, 0);
+      lenis?.stop?.();
       document.body.style.overflow = 'hidden';
     }, 50);
     return () => {
