@@ -166,25 +166,25 @@ export default function Hero3D() {
           <div className="pointer-events-none absolute left-[4%] top-[7%] hidden h-[82%] w-[82%] rotate-[-14deg] rounded-[46%] border border-white/70 bg-white/20 shadow-[0_0_90px_rgba(255,255,255,0.42)] backdrop-blur-[1px] md:block" />
           <div className="pointer-events-none absolute right-[2%] top-[10%] hidden h-[76%] w-[46%] rounded-full border border-[#C9A46A]/24 md:block" />
 
-          <div className="absolute left-[7%] top-[8%] hidden w-48 rounded-2xl border border-white/70 bg-white/70 p-4 font-site-sans text-[#4A3B35] shadow-[0_18px_46px_rgba(74,59,53,0.14)] backdrop-blur-xl md:block">
+          <div className="absolute left-[-3%] top-[9%] z-30 hidden w-52 rounded-2xl border border-white/70 bg-white/80 p-4 font-site-sans text-[#4A3B35] shadow-[0_18px_46px_rgba(74,59,53,0.14)] backdrop-blur-xl md:block xl:left-[1%]">
             <div className="mb-2 flex items-center gap-2 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9C6B70]">
               <MessageCircle size={14} strokeWidth={1.8} />
               WhatsApp listo
             </div>
-            <p className="m-0 text-sm font-bold leading-5">Link con mapa, horarios y confirmación.</p>
+            <p className="m-0 text-sm font-bold leading-5">Mapa, horarios y confirmación en un link.</p>
           </div>
 
-          <div className="absolute right-[3%] top-[17%] hidden w-44 rounded-2xl border border-white/75 bg-white/72 p-4 font-site-sans text-[#4A3B35] shadow-[0_18px_46px_rgba(74,59,53,0.13)] backdrop-blur-xl lg:block">
+          <div className="absolute right-[-2%] top-[17%] z-30 hidden w-48 rounded-2xl border border-white/75 bg-white/82 p-4 font-site-sans text-[#4A3B35] shadow-[0_18px_46px_rgba(74,59,53,0.13)] backdrop-blur-xl lg:block xl:right-[1%]">
             <div className="mb-3 flex items-center justify-between">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F1E3DF] text-[#9C6B70]">
                 <CalendarCheck2 size={18} strokeWidth={1.7} />
               </span>
               <span className="rounded-full bg-[#EEF7EE] px-2 py-1 text-[0.65rem] font-extrabold uppercase tracking-[0.1em] text-[#3C7B47]">Confirmado</span>
             </div>
-            <p className="m-0 text-sm font-bold leading-5">2 invitados confirmaron desde el celular.</p>
+            <p className="m-0 text-sm font-bold leading-5">Invitados confirmando desde su celular.</p>
           </div>
 
-          <div className="relative mx-auto mt-0 aspect-[905/1737] w-[min(57vw,220px)] rotate-[-5deg] drop-shadow-[0_38px_70px_rgba(74,59,53,0.28)] sm:w-[min(51vw,300px)] md:w-[min(35vw,350px)] lg:mt-3 lg:w-[min(29vw,395px)] xl:w-[420px]">
+          <div className="relative z-20 mx-auto mt-0 aspect-[905/1737] w-[min(57vw,220px)] rotate-[-5deg] drop-shadow-[0_38px_70px_rgba(74,59,53,0.28)] sm:w-[min(51vw,300px)] md:w-[min(35vw,350px)] lg:mt-3 lg:w-[min(29vw,395px)] xl:w-[420px]">
             <div className="absolute -inset-[3%] rounded-[3rem] bg-[linear-gradient(145deg,rgba(255,255,255,0.55),rgba(197,164,106,0.08))] blur-xl" />
             <Image
               src="/images/invitaciones/landing/wedding-premium-phone-mockup.png"
