@@ -92,7 +92,7 @@ export function TestimonialsSection() {
                     <GoogleReviewsIcon />
                   </div>
  
-                  <div className="mb-5 flex items-center gap-2" aria-label="Calificación de cinco estrellas">
+                  <div className="mb-5 flex flex-wrap items-center gap-2" aria-label="Calificación de cinco estrellas">
                     <div className="flex text-[18px] leading-none tracking-[0.02em] text-[#F4B400]" aria-hidden="true">
                       <span>★</span>
                       <span>★</span>
@@ -100,7 +100,10 @@ export function TestimonialsSection() {
                       <span>★</span>
                       <span>★</span>
                     </div>
-                    <VerifiedIcon />
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8F0FE] px-2.5 py-1 font-site-sans text-[11px] font-bold uppercase tracking-[0.08em] text-[#1A73E8]">
+                      <VerifiedIcon />
+                      Verificada
+                    </span>
                   </div>
  
                   <p className="m-0 flex-1 font-site-sans text-base leading-7 text-[#222222] sm:text-[17px] sm:leading-8">

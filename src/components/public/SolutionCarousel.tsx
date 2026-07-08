@@ -6,7 +6,6 @@ import {
   Gift,
   Images,
   MapPin,
-  Smartphone,
   Users,
   Link2,
   QrCode,
@@ -20,12 +19,12 @@ import {
 
 const SOLUTIONS = [
   { icon: Sparkles, title: 'Portada con los nombres de los novios', text: 'Presenta tu boda desde el primer momento con una portada elegante.' },
-  { icon: CalendarClock, title: 'Cuenta regresiva', text: 'Muestra cuánto falta para el gran día.' },
+  { icon: CalendarClock, title: 'Cuenta regresiva', text: 'Indica cuánto falta para el gran día.' },
   { icon: Heart, title: 'Historia de la pareja', text: 'Comparte un relato breve y especial sobre ustedes.' },
   { icon: Images, title: 'Galería de fotos', text: 'Agrega recuerdos importantes en una sección visual.' },
   { icon: MapPin, title: 'Ubicación del evento', text: 'Incluye el lugar de la ceremonia o recepción.' },
   { icon: Shirt, title: 'Código de vestimenta', text: 'Ayuda a tus invitados a elegir cómo asistir.' },
-  { icon: Users, title: 'Familias y padrinos', text: 'Muestra a las personas importantes de la celebración.' },
+  { icon: Users, title: 'Familias y padrinos', text: 'Destaca a las personas importantes de la celebración.' },
   { icon: Gift, title: 'Mesa de regalos', text: 'Comparte la información de regalos de forma clara.' },
   { icon: Hash, title: 'Hashtag', text: 'Reúne las fotos y mensajes de tus invitados.' },
   { icon: Music, title: 'Mensaje final', text: 'Cierra la invitación con una nota especial.' },
@@ -70,7 +69,7 @@ export function SolutionCarousel() {
     scrollRef.current.scrollBy({ left: dir === 'right' ? 640 : -640, behavior: 'smooth' });
   }, []);
 
-  const btnStyle = (side: 'left' | 'right'): React.CSSProperties => ({
+  const btnStyle = (): React.CSSProperties => ({
     flexShrink: 0,
     alignSelf: 'center',
     background: 'var(--site-color-blanco)',
@@ -96,7 +95,7 @@ export function SolutionCarousel() {
       <button
         onClick={() => scroll('left')}
         aria-label="Anterior"
-        style={btnStyle('left')}
+        style={btnStyle()}
         onMouseEnter={e => {
           e.currentTarget.style.background = 'rgba(156, 107, 112, 0.08)';
           e.currentTarget.style.transform = 'translateY(-1px)';
@@ -137,7 +136,7 @@ export function SolutionCarousel() {
       <button
         onClick={() => scroll('right')}
         aria-label="Siguiente"
-        style={btnStyle('right')}
+        style={btnStyle()}
         onMouseEnter={e => {
           e.currentTarget.style.background = 'rgba(156, 107, 112, 0.08)';
           e.currentTarget.style.transform = 'translateY(-1px)';
