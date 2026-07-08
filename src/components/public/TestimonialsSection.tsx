@@ -4,7 +4,6 @@ import { MOCK_TESTIMONIALS } from '@/data/testimonials.mock';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
 
 const items = TESTIMONIALS.length > 0 ? TESTIMONIALS : MOCK_TESTIMONIALS;
-const hasRealTestimonials = TESTIMONIALS.length > 0;
 
 function GoogleReviewsIcon() {
   return (
@@ -60,8 +59,8 @@ export function TestimonialsSection() {
           style={{ marginTop: '3.5rem' }}
         >
           {items.map((item, index) => {
-            const reviewerName = hasRealTestimonials ? item.couple : 'Cliente KOMPRALO';
-            const reviewDate = hasRealTestimonials ? item.detail : 'hace 1 año';
+            const reviewerName = item.couple;
+            const reviewDate = item.detail;
  
             return (
               <Item key={`testimonial-${index}`} style={{ display: 'flex' }}>

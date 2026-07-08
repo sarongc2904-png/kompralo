@@ -47,6 +47,26 @@ const REVIEWS: Record<string, { name: string; city: string; text: string; event:
   deluxe:  { name: 'Daniela G.', city: 'Guadalajara', text: 'La intro cinemática hizo que la invitación se sintiera muy especial.', event: 'Boda · Mar 2025' },
 };
 
+const PLAN_COPY: Record<PlanId, { eyebrow: string; description: string; microcopy?: string; cta: string }> = {
+  basic: {
+    eyebrow: 'Para bodas sencillas',
+    description: 'Para parejas que quieren una invitación elegante con lo esencial: fecha, ubicación, itinerario, código de vestimenta y confirmación de asistencia.',
+    cta: 'Elegir este plan',
+  },
+  premium: {
+    eyebrow: 'Recomendado para la mayoría de las bodas',
+    description: 'La opción más equilibrada si quieres una invitación más completa, con historia, fotos, mesa de regalos y todo listo para compartir por WhatsApp.',
+    microcopy: 'Más vendido para bodas con familia, amigos y mesa de regalos.',
+    cta: 'Empezar con Premium',
+  },
+  deluxe: {
+    eyebrow: 'Para bodas más completas o invitados de fuera',
+    description: 'Ideal si quieres una experiencia más premium con padrinos, línea de tiempo, hospedaje e intro cinemática para sorprender desde el primer segundo.',
+    microcopy: 'Recomendado si quieres una invitación más completa y memorable.',
+    cta: 'Crear mi invitación',
+  },
+};
+
 // ─── CSS ──────────────────────────────────────────────────────────────────────
 const CSS = `
   .ps-cards-grid {
@@ -139,6 +159,7 @@ function PlanCard({
     product.id === 'basic'   ? '/images/invitaciones/invitation-paper-detail.webp' :
     product.id === 'premium' ? '/images/invitaciones/wedding-details.webp' :
                                '/images/invitaciones/xv-event-editorial.webp';
+  const planCopy = PLAN_COPY[product.id as PlanId];
 
   return (
     <div className={featured ? 'ps-featured-scale' : undefined} style={{ height: '100%' }}>
@@ -175,9 +196,17 @@ function PlanCard({
           <h2 style={{ margin: '0 0 .375rem', fontSize: '1.625rem', fontWeight: 600, color: T.dark, fontFamily: 'var(--site-font-serif)' }}>
             {product.name}
           </h2>
-          <p style={{ margin: '0 0 1.5rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.55, minHeight: '2.5em' }}>
-            {product.description}
+          <p style={{ margin: '0 0 .55rem', fontSize: '.75rem', color: T.gold, lineHeight: 1.35, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em' }}>
+            {planCopy.eyebrow}
           </p>
+          <p style={{ margin: '0 0 .75rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.55, minHeight: '5.25em' }}>
+            {planCopy.description}
+          </p>
+          {planCopy.microcopy && (
+            <p style={{ margin: '0 0 1.25rem', fontSize: '.78rem', color: T.gold, lineHeight: 1.45, fontWeight: 700 }}>
+              {planCopy.microcopy}
+            </p>
+          )}
           <div style={{ marginBottom: '1.625rem' }}>
             <span style={{ fontSize: '2.75rem', fontWeight: 600, color: T.dark, lineHeight: 1, fontFamily: 'var(--site-font-serif)' }}>
               <span style={{ fontFamily: 'var(--site-font-sans)', fontWeight: 500, marginRight: '0.05em' }}>$</span>
@@ -202,7 +231,7 @@ function PlanCard({
             >
               {paying
                 ? <><span style={{ display: 'inline-block', width: '1rem', height: '1rem', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />Procesando…</>
-                : <><LockIcon />Pagar ahora</>}
+                : <><LockIcon />{planCopy.cta}</>}
             </SiteButton>
             <SiteButton
               type="button"
@@ -352,7 +381,7 @@ function CartDrawerContent({ items, total, onRemove, onClear, onClose }: {
         >
           {checkoutState === 'loading' ? (
             <><span style={{ display: 'inline-block', width: '1rem', height: '1rem', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} aria-hidden="true" />Procesando…</>
-          ) : 'Pagar ahora →'}
+          ) : 'Crear mi invitación →'}
         </button>
         {checkoutState === 'error' && errorMsg && (
           <span style={{ fontSize: '.75rem', color: '#C62828', lineHeight: 1.4 }} role="alert">{errorMsg}</span>
@@ -459,7 +488,10 @@ function CartDrawer({
 }) {
   const { items, total, removeItem, clear } = useKompraloCart();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setMounted(true), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   // Body scroll lock — compensate scrollbar width to prevent layout shift
   useEffect(() => {

@@ -1,21 +1,10 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import {
-  CalendarClock,
   Check,
-  Gift,
-  Images,
   MapPin,
-  Smartphone,
   Users,
-  Link2,
-  QrCode,
-  Music,
-  Shirt,
-  Hotel,
-  Hash,
   Sparkles,
-  Heart,
 } from 'lucide-react';
 import { Item, Reveal, Stagger } from '@/components/public/Motion';
 import { SolutionCarousel } from '@/components/public/SolutionCarousel';
@@ -31,7 +20,7 @@ import { PlanSelector } from '@/components/plans/PlanSelector';
 export const metadata: Metadata = {
   title: 'Invitaciones digitales de boda | Kompralo',
   description:
-    'Invitaciones digitales de boda listas para personalizar. Pago único, sin mensualidades y fáciles de compartir por WhatsApp.',
+    'Invitaciones digitales de boda en un solo link con ubicación, horarios, confirmaciones y detalles listos para compartir por WhatsApp.',
 };
 
 const T = {
@@ -315,10 +304,13 @@ function ProblemSection() {
           <Reveal>
             <span className="cro-eyebrow">La realidad de organizar tu boda</span>
             <h2 className="cro-title-xl">
-              Deja de responder "¿dónde es?" 50 veces
+              Deja de responder &ldquo;¿dónde es?&rdquo; 50 veces
             </h2>
             <p className="cro-copy mt-6">
-              Una imagen por WhatsApp genera las mismas preguntas una y otra vez: ¿cómo llego?, ¿puedo llevar niños?, ¿cuál es el código de vestimenta?, ¿dónde está la mesa de regalos? Tu invitación KOMPRALO responde todo por ti. Tú solo ves llegar las confirmaciones.
+              Antes de la boda, todos preguntan lo mismo: dónde es, a qué hora empieza, cómo confirmar, qué deben usar o dónde está la mesa de regalos. Con KOMPRALO, todo vive en una sola invitación digital lista para enviar por WhatsApp.
+            </p>
+            <p className="mt-7 font-site-sans text-base leading-7 text-[#C5A880]">
+              Tus invitados abren el link, ven los detalles y confirman desde su celular.
             </p>
           </Reveal>
 
@@ -339,11 +331,16 @@ function SolutionSection() {
       <div className="pointer-events-none absolute inset-0 z-0 bg-site-crema/35" />
       <div className="relative z-10 mx-auto w-[min(1200px,calc(100%-40px))]">
         <FadeIn className="mx-auto max-w-3xl text-center">
-          <p className="site-eyebrow">Todo en un solo lugar</p>
-          <h2 className="site-h2">Todo lo importante de tu boda en una sola invitación digital</h2>
+          <p className="site-eyebrow">Todo en un solo link</p>
+          <h2 className="site-h2">Todo lo importante de tu boda, en un solo link</h2>
           <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/72">
-            Incluye secciones para compartir la información que tus invitados necesitan. La disponibilidad de algunas secciones depende del plan que elijas.
+            Tu invitación puede incluir la ubicación, itinerario, confirmación de asistencia, galería, historia, mesa de regalos, padrinos, hospedaje y más, según el plan que elijas.
           </p>
+          <div className="mt-8 flex justify-center">
+            <SiteButton href="#planes" data-cta="solution-plans" data-event="click-solution-plans">
+              Ver planes
+            </SiteButton>
+          </div>
         </FadeIn>
         <div className="mt-14">
           <SolutionCarousel />
@@ -446,9 +443,9 @@ function WhatHappensSection() {
       <div className="relative z-10 mx-auto w-[min(1200px,calc(100%-40px))]">
         <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="site-eyebrow">Diferenciador</p>
-          <h2 className="site-h2">Una invitación digital bonita, práctica y sin pagos mensuales</h2>
+          <h2 className="site-h2">Más completa que una imagen, más fácil que perseguir confirmaciones</h2>
           <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/80">
-            KOMPRALO está pensado para parejas que quieren una invitación elegante sin complicarse. Puedes elegir tu plan, personalizar tu invitación y compartirla por WhatsApp con tus invitados.
+            Tus invitados reciben una experiencia elegante desde el celular y tú concentras detalles, cambios y confirmaciones en un solo lugar.
           </p>
         </FadeIn>
         
@@ -474,13 +471,22 @@ function WhatHappensSection() {
 
 // ─── Trust / Reassurance Section ──────────────────────────────────────────────
 
-const TRUST_POINTS = [
-  { icon: Sparkles, title: 'Invitación elegante', text: 'Pensada para parejas que quieren una presentación bonita para su boda.' },
-  { icon: Smartphone, title: 'Fácil de personalizar', text: 'Agrega tus datos desde celular o computadora sin conocimientos técnicos.' },
-  { icon: CalendarClock, title: 'Vista previa en tiempo real', text: 'Revisa cómo se ve tu invitación mientras la personalizas.' },
-  { icon: Users, title: 'Confirmación de asistencia', text: 'Tus invitados pueden confirmar su asistencia desde la invitación.' },
-  { icon: Gift, title: 'Mesa de regalos', text: 'Organiza la información de regalos en una sección clara.' },
-  { icon: MapPin, title: 'Ubicación del evento', text: 'Comparte los datos importantes del lugar de tu boda.' },
+const BENEFIT_GROUPS = [
+  {
+    icon: MapPin,
+    title: 'Evita preguntas repetidas',
+    items: ['Ubicación con mapa', 'Horarios e itinerario', 'Código de vestimenta', 'Mesa de regalos', 'Hospedaje'],
+  },
+  {
+    icon: Sparkles,
+    title: 'Haz que se sienta especial',
+    items: ['Portada elegante', 'Historia de la pareja', 'Galería de fotos', 'Línea del tiempo', 'Intro cinemática'],
+  },
+  {
+    icon: Users,
+    title: 'Organiza mejor a tus invitados',
+    items: ['Confirmación de asistencia', 'Compartir por WhatsApp', 'Lista de invitados', 'Código QR', 'Cambios editables'],
+  },
 ];
 
 function TrustSection() {
@@ -489,14 +495,14 @@ function TrustSection() {
       <div className="mx-auto w-[min(1200px,calc(100%-40px))]">
         <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="site-eyebrow">Beneficios</p>
-          <h2 className="site-h2">Diseñada para organizar mejor la información de tu boda</h2>
+          <h2 className="site-h2">No es sólo una invitación bonita: también te ayuda a organizar</h2>
           <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/72">
-            Comparte los detalles importantes en una invitación digital fácil de ver, personalizar y enviar por WhatsApp.
+            KOMPRALO ordena la información que más se pregunta antes de una boda y la presenta de forma clara para tus invitados.
           </p>
         </FadeIn>
         
         <div className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3">
-          {TRUST_POINTS.map(({ icon: Icon, title, text }, i) => (
+          {BENEFIT_GROUPS.map(({ icon: Icon, title, items }, i) => (
             <FadeIn
               key={i}
               className="rounded-2xl border border-site-border-subtle bg-site-crema/55 p-7 shadow-sm"
@@ -506,7 +512,14 @@ function TrustSection() {
                 <Icon size={24} strokeWidth={1.5} />
               </span>
               <h3 className="m-0 font-site-serif text-2xl font-semibold leading-tight text-site-marron">{title}</h3>
-              <p className="mt-4 font-site-sans text-sm leading-6 text-site-marron/70">{text}</p>
+              <ul className="mt-5 space-y-3 p-0">
+                {items.map((item) => (
+                  <li key={item} className="flex items-start gap-2 font-site-sans text-sm leading-6 text-site-marron/72">
+                    <Check className="mt-1 h-4 w-4 shrink-0 text-site-rosa-antiguo" strokeWidth={1.8} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </FadeIn>
           ))}
         </div>
@@ -565,48 +578,64 @@ function Editions() {
 
 // ─── Technical Specs ──────────────────────────────────────────────────────────
 
-const TECH_SPECS: [string, boolean, boolean, boolean][] = [
-  ['Confirmación de asistencia',       false, false, true ],
-  ['Ubicación con mapas GPS',          false, false, true ],
-  ['Cuenta regresiva',                 false, false, true ],
-  ['Galería de fotos de su historia',  false, false, true ],
-  ['Mesa de regalos organizada',       false, false, true ],
-  ['Itinerario y horarios',            false, false, true ],
-  ['Código de vestimenta sugerido',    false, false, true ],
-  ['Fácil de compartir por WhatsApp',  true,  false, true ],
-  ['Pago único sin mensualidades',     true,  true,  true ],
+const COMPARISON_COLUMNS = [
+  {
+    title: 'Imagen por WhatsApp',
+    items: [
+      'Se pierde entre mensajes',
+      'No tiene confirmaciones',
+      'No se actualiza si cambia algo',
+      'Los invitados siguen preguntando',
+      'No se siente como experiencia premium',
+    ],
+  },
+  {
+    title: 'KOMPRALO',
+    featured: true,
+    items: [
+      'Se comparte con un solo link',
+      'Incluye mapa, horarios y detalles',
+      'Permite confirmación de asistencia',
+      'Puedes editar la información',
+      'Se ve elegante desde el celular',
+    ],
+  },
 ];
 
 function TechnicalSpecs() {
   return (
     <section className="cro-section" style={{ background: T.onyx }}>
       <div className="cro-shell">
-        <Reveal style={{ textAlign: 'center' }}>
+        <Reveal style={{ textAlign: 'center', maxWidth: 780, margin: '0 auto' }}>
           <p className="cro-eyebrow">Comparativa</p>
-          <h2 className="cro-title-xl">¿Por qué elegir KOMPRALO?</h2>
+          <h2 className="cro-title-xl">Una imagen por WhatsApp se pierde. Una invitación KOMPRALO organiza tu boda.</h2>
         </Reveal>
 
-        <Reveal className="cro-table-wrapper" delay={0.2}>
-          <table className="cro-table">
-            <thead>
-              <tr>
-                <th>Comparación</th>
-                <th>Imagen</th>
-                <th>Impresa</th>
-                <th className="col-pro">KOMPRALO</th>
-              </tr>
-            </thead>
-            <tbody>
-              {TECH_SPECS.map(([label, basic, pro, deluxe]) => (
-                <tr key={label}>
-                  <td>{label}</td>
-                  <td>{basic  ? <span style={{ color: T.ink }}>✓</span>  : <span style={{ color: T.muted }}>—</span>}</td>
-                  <td>{pro ? <span style={{ color: T.ink }}>✓</span> : <span style={{ color: T.muted }}>—</span>}</td>
-                  <td className="col-pro">{deluxe ? <span>✓</span> : <span style={{ color: T.muted }}>—</span>}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <Reveal className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2" delay={0.2}>
+          {COMPARISON_COLUMNS.map((column) => (
+            <div
+              key={column.title}
+              className={`rounded-2xl border p-7 ${
+                column.featured
+                  ? 'border-[#C5A880]/55 bg-[#C5A880]/10'
+                  : 'border-white/10 bg-white/[0.02]'
+              }`}
+            >
+              <h3 className="m-0 font-site-serif text-2xl font-semibold text-[#F5F5F4]">{column.title}</h3>
+              <ul className="mt-6 space-y-4 p-0">
+                {column.items.map((item) => (
+                  <li key={item} className="flex items-start gap-3 font-site-sans text-base leading-7 text-[#E7E5E4]/82">
+                    {column.featured ? (
+                      <Check className="mt-1 h-5 w-5 shrink-0 text-[#C5A880]" strokeWidth={1.8} />
+                    ) : (
+                      <span className="mt-3 h-px w-5 shrink-0 bg-[#A8A29E]/55" />
+                    )}
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </Reveal>
       </div>
     </section>
@@ -617,36 +646,28 @@ function TechnicalSpecs() {
 
 const FAQ_ITEMS = [
   {
+    q: '¿Mis invitados necesitan descargar una app?',
+    a: 'No. Solo reciben un link por WhatsApp y lo abren desde su celular.',
+  },
+  {
+    q: '¿Puedo editar la invitación después?',
+    a: 'Sí. Puedes actualizar datos importantes como horarios, ubicación o detalles del evento sin volver a crear otra invitación.',
+  },
+  {
     q: '¿Qué pasa después de pagar?',
-    a: 'Recibes acceso inmediato a tu invitación y un correo con tu link de acceso. Entras al editor, personalizas tus datos con el asistente de 3 pasos y publicas cuando estés lista.',
+    a: 'Recibes acceso para personalizar tu invitación y compartirla con tus invitados cuando esté lista.',
   },
   {
-    q: '¿Puedo hacer cambios después de publicar?',
-    a: 'Sí, cambios ilimitados sin costo extra. Cambió el horario, el salón o quieres otra foto: editas y tu link se actualiza al instante para todos tus invitados.',
+    q: '¿Puedo usarla aunque mis invitados no sean muy tecnológicos?',
+    a: 'Sí. Está pensada para abrirse fácil desde WhatsApp, como cualquier página web.',
   },
   {
-    q: '¿Cuánto tardo en tenerla lista?',
-    a: 'El asistente te guía en 3 pasos y la mayoría de las parejas la tiene lista el mismo día. Puedes publicarla de inmediato o guardarla como borrador.',
+    q: '¿El pago es mensual?',
+    a: 'No. Es pago único según el plan que elijas.',
   },
   {
-    q: '¿Mis invitados necesitan descargar algo?',
-    a: 'No. Reciben un link por WhatsApp y la invitación se abre en su navegador, en cualquier celular, tablet o computadora.',
-  },
-  {
-    q: '¿Cómo confirman asistencia mis invitados?',
-    a: 'Directo desde la invitación, con un par de toques. Tú ves las confirmaciones en tu panel, sin Excel y sin perseguir a nadie por chat.',
-  },
-  {
-    q: '¿Qué formas de pago aceptan?',
-    a: 'Tarjeta de crédito o débito a través de Stripe, con pago 100% seguro. Es un pago único: sin suscripciones ni mensualidades.',
-  },
-  {
-    q: '¿Por cuánto tiempo está activa mi invitación?',
-    a: 'Tu invitación queda activa desde que la publicas y hasta 12 meses después de tu boda, sin costo adicional — tiempo de sobra para que tus invitados la revivan y compartan recuerdos.',
-  },
-  {
-    q: '¿Y si necesito ayuda?',
-    a: 'Escríbenos por WhatsApp y te acompañamos en el proceso. Estamos para que tu invitación quede perfecta.',
+    q: '¿Me pueden ayudar si no sé cómo acomodar la información?',
+    a: 'Sí. Puedes recibir acompañamiento para dejar tu invitación clara, bonita y lista para compartir.',
   },
 ];
 
@@ -685,22 +706,23 @@ function CallToAction() {
         <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="site-eyebrow !text-[#E8B8BE]">Siguiente paso</p>
           <h2 className="font-site-serif text-[clamp(2.2rem,5vw,4.5rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-site-crema">
-            ¿Listos para elegir el plan ideal para su boda?
+            Empieza tu invitación digital desde $499 MXN
           </h2>
           <p className="mx-auto mt-6 max-w-2xl font-site-sans text-lg leading-8 text-site-crema/78">
-            Crea una invitación digital elegante, fácil de personalizar y pensada para compartirse por WhatsApp.
+            Crea una invitación elegante, fácil de compartir y pensada para que tus invitados tengan toda la información de tu boda en un solo lugar.
           </p>
           <div className="mt-10 flex justify-center">
             <SiteButton
               href="#planes"
+              className="min-h-14 border-[#F8EFE7] bg-[#F8EFE7] px-10 text-base font-extrabold text-site-marron shadow-[0_18px_42px_rgba(0,0,0,0.28)] hover:border-white hover:bg-white"
               data-cta="cta-final"
               data-event="click-cta-final"
             >
-              Ver planes
+              Crear mi invitación
             </SiteButton>
           </div>
           <p className="mt-5 font-site-sans text-xs font-semibold uppercase tracking-[0.15em] text-site-crema/55">
-            Pago único · Sin mensualidades · Desde $499 MXN
+            Pago único · Sin apps · Lista para WhatsApp
           </p>
         </FadeIn>
       </div>
@@ -718,13 +740,13 @@ export default function InvitacionesPage() {
       <Hero3D />
       <ProblemSection />
       <SolutionSection />
+      <TrustSection />
+      <TechnicalSpecs />
+      <Editions />
       <ProcessSection />
       <EventsGallery />
       <TestimonialsSection />
       <WhatHappensSection />
-      <Editions />
-      <TrustSection />
-      <TechnicalSpecs />
       <FAQ />
       <CallToAction />
       <InvitacionesFooter />

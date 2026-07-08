@@ -8,8 +8,8 @@ import { InvitacionesHeader } from '@/components/public/InvitacionesHeader';
 import { InvitacionesFooter } from '@/components/public/InvitacionesFooter';
 
 export const metadata: Metadata = {
-  title: 'Planes de invitaciones digitales de boda — Kompralo',
-  description: 'Elige el plan ideal para tu boda. Basic $499, Premium $899 y Deluxe $1,499 MXN. Pago único y sin mensualidades.',
+  title: 'Planes de invitaciones digitales de boda | Kompralo',
+  description: 'Elige entre Basic $499, Premium $899 y Deluxe $1,499 MXN. Invitaciones digitales de boda con pago único, sin apps y listas para WhatsApp.',
 };
 
 // Oculta la sección multi-cart hasta nuevo aviso: con AVAILABLE_EVENT_TYPES
@@ -50,10 +50,10 @@ export default function PreciosPage() {
         <Reveal style={{ textAlign:'center', marginBottom:'3.5rem', maxWidth:'38rem', margin:'0 auto 3.5rem' }}>
           <p className="site-eyebrow">Planes</p>
           <h1 className="site-h1" style={{ margin:'0 0 1.125rem', fontSize:'clamp(2.25rem,5vw,3rem)' }}>
-            Elige el plan ideal para tu boda
+            Elige cómo quieres organizar tu boda por WhatsApp
           </h1>
           <p style={{ color:T.marron, fontSize:'1rem', lineHeight:1.65, margin:0 }}>
-            Invitaciones digitales de boda listas para personalizar.<br />Pago único, sin mensualidades.
+            Tres planes con pago único para compartir ubicación, horarios, confirmaciones y detalles importantes en un solo link.
           </p>
         </Reveal>
 
@@ -86,10 +86,10 @@ export default function PreciosPage() {
           }}>
             <div className="pr2-trust-row">
               {[
-                { icon:'🔒', text:'Pago seguro con Stripe' },
-                { icon:'🏆', text:'Garantía 48 horas — devolución completa sin preguntas' },
-                { icon:'📧', text:'Después del pago recibirás acceso inmediato para editar tu invitación' },
-                { icon:'💬', text:'Comparte tu invitación por WhatsApp con tus invitados' },
+                { icon:'🔒', text:'Pago seguro' },
+                { icon:'🏆', text:'Pago único, sin mensualidades' },
+                { icon:'📧', text:'Acceso para personalizar tu invitación después del pago' },
+                { icon:'💬', text:'Lista para compartir por WhatsApp' },
               ].map(({ icon, text }) => (
                 <div key={text} style={{ display:'flex', alignItems:'center', gap:'.5rem', fontSize:'.8125rem', color:T.marron, fontWeight:500 }}>
                   <span>{icon}</span> <span>{text}</span>
