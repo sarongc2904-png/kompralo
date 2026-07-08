@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import type { IInvitationRepository } from '@/domain/invitations';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { isReservedSlug } from '@/lib/admin';
 import { requireInvitationWriteAccess, WRITE_ACCESS_DENIED_MESSAGE } from '@/lib/access/requireInvitationWriteAccess';
 import type { FeatureOverrides, InvitationFeatureKey } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
@@ -445,6 +446,10 @@ export async function updateInvitationBasicInfo(
 
   const { id } = input;
   const newSlug = input.slug.trim();
+
+  if (isReservedSlug(newSlug)) {
+    return { success: false, error: 'Este nombre de link está reservado, elige otro.' };
+  }
 
   const current = await invitationRepository.getById(id);
   if (!current) return { success: false, error: 'Invitación no encontrada.' };

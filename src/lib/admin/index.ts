@@ -221,6 +221,9 @@ export const RESERVED_SLUGS = new Set([
   'pass', 'entrada', 'invitaciones', 'invitacion', 'modelos', 'pricing',
   'checkout', 'success', 'cancel', 'i', 'error', 'not-found',
   '_next', 'favicon.ico',
+  // Páginas informativas públicas (rutas estáticas en src/app/(informativas))
+  'contacto', 'gracias', 'como-funciona', 'aviso-de-privacidad',
+  'politica-de-cookies', 'terminos-y-condiciones', 'politica-de-reembolsos',
 ]);
 
 export function isReservedSlug(slug: string): boolean {

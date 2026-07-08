@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { isReservedSlug } from '@/lib/admin';
 
 const SLUG_RE = /^[a-z0-9][a-z0-9-]*[a-z0-9]$/;
 
@@ -10,6 +11,10 @@ export async function GET(req: NextRequest) {
 
   if (!slug || slug.length < 3 || !SLUG_RE.test(slug)) {
     return NextResponse.json({ available: false, reason: 'invalid' });
+  }
+
+  if (isReservedSlug(slug)) {
+    return NextResponse.json({ available: false, reason: 'reserved' });
   }
 
   try {
