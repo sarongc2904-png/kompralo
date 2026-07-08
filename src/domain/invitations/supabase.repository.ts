@@ -24,6 +24,7 @@ import type { IInvitationRepository, ActivateAfterPaymentInput, CreateFromPaidOr
 import type { FeatureOverrides } from '@/domain/plans/types';
 import { normalizePlanId } from '@/domain/plans/types';
 import { buildDefaultInvitationContentForSupabase } from '@/domain/invitations/defaultContent';
+import { buildAutoSlug, extractFirstNameToken } from '@/lib/slug-format';
 import type {
   InvitationContent,
   InvitationBasicInfoInput,
@@ -886,9 +887,30 @@ export class SupabaseInvitationRepository implements IInvitationRepository {
   async createFromPaidOrder(input: CreateFromPaidOrderInput): Promise<CreateFromPaidOrderResult> {
     const now = new Date().toISOString();
 
-    // Generate a slug that is virtually guaranteed to be unique.
-    const randomPart = Math.random().toString(36).slice(2, 8);
-    const slug = `invitacion-${Date.now().toString(36)}-${randomPart}`;
+    // Slug legible cuando el nombre del pagador lo permite: boda-<nombre>-<rand5>
+    // (mismo formato que generateBaseSlug del admin). El sufijo aleatorio hace
+    // imposible chocar con RESERVED_SLUGS; la unicidad se verifica en BD y el
+    // wizard lo renombrará a boda-<novia>-y-<novio> en su primera completada.
+    // Cualquier falla cae al fallback histórico — la creación post-pago jamás
+    // debe romperse por el slug.
+    const fallbackSlug = () =>
+      `invitacion-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+    let slug = fallbackSlug();
+    const payerToken = extractFirstNameToken(input.customerName);
+    if (payerToken) {
+      try {
+        const candidate = buildAutoSlug(input.category ?? 'wedding', payerToken);
+        const { data: taken } = await this.supabase
+          .from('invitations')
+          .select('id')
+          .eq('slug', candidate)
+          .maybeSingle();
+        if (!taken) slug = candidate;
+      } catch {
+        // conserva el fallback
+      }
+    }
 
     // ── 1. Insert into invitations ───────────────────────────────────────────
     // user_id is null — requires invitations_7y6_auto_create_patch.sql to have been applied.

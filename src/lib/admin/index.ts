@@ -11,6 +11,7 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { createServerSupabaseClient, createServiceRoleSupabaseClient } from '@/lib/supabase/server';
+import { buildAutoSlug, normalizeSlugPart } from '@/lib/slug-format';
 
 // Re-export URL helpers so server components can keep using '@/lib/admin'.
 export {
@@ -231,22 +232,8 @@ export function isReservedSlug(slug: string): boolean {
 }
 
 export function generateBaseSlug(category: string, namePart = ''): string {
-  const catMap: Record<string, string> = {
-    wedding:      'boda',
-    baptism:      'bautizo',
-    'baby-shower': 'baby-shower',
-    birthday:     'cumple',
-  };
-  const cat = catMap[category] ?? category;
-  const name = namePart
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 30);
-  const random = Math.random().toString(36).slice(2, 7);
-  return name ? `${cat}-${name}-${random}` : `${cat}-${random}`;
+  // Formato delegado al helper puro compartido con los repositories.
+  return buildAutoSlug(category, namePart);
 }
 
 export async function generateUniqueSlug(
@@ -267,5 +254,31 @@ export async function generateUniqueSlug(
     if (!data) return slug;
   }
   // Fallback with timestamp
+  return `invitacion-${Date.now().toString(36)}`;
+}
+
+/**
+ * Slug único a partir de una base legible ya construida (ej. "boda-ana-y-luis"):
+ * intenta la base TAL CUAL (sin sufijo) y solo en colisión/reservado agrega un
+ * sufijo aleatorio de 4 chars. Fallback final con timestamp.
+ */
+export async function generateUniqueSlugFromBase(base: string): Promise<string> {
+  const clean = normalizeSlugPart(base, 50);
+  if (clean.length >= 3) {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const suffix = attempt === 0 ? '' : `-${Math.random().toString(36).slice(2, 6)}`;
+      const slug = `${clean}${suffix}`;
+      if (isReservedSlug(slug)) continue;
+
+      const svc = createServiceRoleSupabaseClient();
+      const { data } = await svc
+        .from('invitations')
+        .select('id')
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (!data) return slug;
+    }
+  }
   return `invitacion-${Date.now().toString(36)}`;
 }

@@ -29,6 +29,7 @@ import type { IInvitationRepository, ActivateAfterPaymentInput, CreateFromPaidOr
 import type { FeatureOverrides } from '@/domain/plans/types';
 import type { InvitationStatus } from '@/domain/invitations/status';
 import { SupabaseInvitationRepository } from '@/domain/invitations/supabase.repository';
+import { buildAutoSlug, extractFirstNameToken } from '@/lib/slug-format';
 import { tryGetSupabaseEnv } from '@/lib/supabase/env';
 import { createClient } from '@supabase/supabase-js';
 
@@ -508,7 +509,12 @@ class LocalInvitationRepository implements IInvitationRepository {
   async createFromPaidOrder(input: CreateFromPaidOrderInput): Promise<CreateFromPaidOrderResult> {
     const randomPart = Math.random().toString(36).slice(2, 8);
     const id = `auto-${Date.now().toString(36)}-${randomPart}`;
-    const slug = `invitacion-${id}`;
+    // Slug legible con el primer nombre del pagador; fallback histórico si no
+    // es derivable. (Repo en memoria: sin verificación de unicidad en BD.)
+    const payerToken = extractFirstNameToken(input.customerName);
+    const slug = payerToken
+      ? buildAutoSlug(input.category ?? 'wedding', payerToken)
+      : `invitacion-${id}`;
 
     // Build default content from the final approved template fixture
     const defaultContent = buildDefaultInvitationContent();
