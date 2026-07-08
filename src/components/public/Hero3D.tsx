@@ -8,18 +8,14 @@ import {
   LockKeyhole,
   MapPin,
   MessageCircle,
-  PencilLine,
-  Send,
   Smartphone,
 } from 'lucide-react';
-import { FadeIn } from '@/components/public/FadeIn';
 import { SiteButton } from '@/components/public/Button';
 
 const heroBenefits = [
-  { label: 'Sin apps para tus invitados', icon: Smartphone },
-  { label: 'Lista para compartir por WhatsApp', icon: Send },
-  { label: 'Pago único, sin mensualidades', icon: LockKeyhole },
-  { label: 'Puedes editarla cuando lo necesites', icon: PencilLine },
+  { label: 'Se abre sin apps', icon: Smartphone },
+  { label: 'Confirmaciones en tiempo real', icon: CalendarCheck2 },
+  { label: 'Pago único desde $499 MXN', icon: LockKeyhole },
 ];
 
 export default function Hero3D() {
@@ -103,7 +99,7 @@ export default function Hero3D() {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-28 bg-gradient-to-t from-[#F7EFE8] to-transparent" />
 
       <div className="mx-auto grid w-[min(1240px,calc(100%-32px))] grid-cols-1 items-center gap-4 md:w-[min(1240px,calc(100%-48px))] md:gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 xl:gap-16">
-        <FadeIn className="relative z-10 max-w-3xl pt-2 text-center md:text-left lg:pt-0">
+        <div className="relative z-10 max-w-3xl pt-2 text-center md:text-left lg:pt-0">
           <div className="mx-auto mb-5 flex w-fit items-center gap-3 rounded-full border border-[#9C6B70]/16 bg-white/42 px-4 py-2 shadow-[0_12px_34px_rgba(74,59,53,0.08)] backdrop-blur-md md:mx-0">
             <span className="h-px w-8 bg-[#C9A46A]/60" />
             <p className="m-0 font-site-sans text-[0.68rem] font-extrabold uppercase tracking-[0.22em] text-[#9C6B70]">
@@ -114,22 +110,22 @@ export default function Hero3D() {
 
           <h1 className="m-0 text-[#9C6B70]">
             <span className="block font-site-serif text-[clamp(2.82rem,6.15vw,5.85rem)] font-semibold leading-[0.92] tracking-[-0.025em]">
-              La invitación digital que organiza tu boda
+              Deja de responder las mismas
             </span>
             <span className="mt-2 block font-site-serif text-[clamp(2.95rem,6.3vw,6.15rem)] font-normal italic leading-[0.88] tracking-[-0.01em] text-[#7F565B]">
-              por WhatsApp
+              preguntas de tu boda
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-[650px] font-site-sans text-base leading-7 text-[#4A3B35]/84 md:mx-0 md:mt-7 md:text-lg md:leading-8">
-            Envía un solo link con ubicación, horarios, confirmación de asistencia, mesa de regalos, fotos y todos los detalles que tus invitados siempre preguntan.
+            Crea una invitación digital elegante con ubicación, horarios, mesa de regalos y confirmación de asistencia en un solo link para WhatsApp.
           </p>
 
-          <div className="mx-auto mt-7 grid max-w-[650px] grid-cols-2 gap-2.5 md:mx-0 md:mt-8 sm:grid-cols-4">
+          <div className="mx-auto mt-6 grid max-w-[650px] grid-cols-3 gap-2 md:mx-0 md:mt-8 md:gap-2.5">
             {heroBenefits.map(({ label, icon: Icon }) => (
               <div
                 key={label}
-                className="flex min-h-[88px] flex-col items-center justify-start gap-2.5 rounded-xl border border-white/70 bg-white/50 px-2.5 py-3 text-center font-site-sans text-[0.72rem] font-bold leading-4 tracking-normal text-[#4A3B35]/82 shadow-[0_14px_34px_rgba(74,59,53,0.07)] backdrop-blur-md sm:text-xs md:min-h-[96px] md:gap-3 md:px-3"
+                className="flex min-h-[82px] flex-col items-center justify-start gap-2 rounded-xl border border-white/70 bg-white/50 px-2 py-3 text-center font-site-sans text-[0.62rem] font-bold leading-3 tracking-normal text-[#4A3B35]/82 shadow-[0_14px_34px_rgba(74,59,53,0.07)] backdrop-blur-md sm:text-xs md:min-h-[96px] md:gap-3 md:px-3 md:leading-4"
               >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F1E3DF] text-[#9C6B70]">
                   <Icon size={20} strokeWidth={1.7} />
@@ -141,21 +137,21 @@ export default function Hero3D() {
 
           <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row md:mt-9 md:items-start">
             <SiteButton
-              href="#planes"
+              href="/i/nuestrabodaarletteymayorga"
               className="min-h-14 w-full border-[#7F565B] bg-[#7F565B] px-8 text-center text-site-crema shadow-[0_20px_48px_rgba(127,86,91,0.28)] hover:border-[#654347] hover:bg-[#654347] sm:w-auto"
               data-cta="hero-primary"
-              data-event="click-hero-primary"
-            >
-              Crear mi invitación
-            </SiteButton>
-            <SiteButton
-              href="/i/nuestrabodaarletteymayorga"
-              variant="secondary"
-              className="min-h-14 w-full border-[#9C6B70]/45 bg-white/54 px-7 text-center text-[#7F565B] shadow-[0_14px_32px_rgba(74,59,53,0.08)] backdrop-blur-md hover:bg-white/80 sm:w-auto"
-              data-cta="hero-demo"
-              data-event="click-hero-demo"
+              data-event="view_demo"
             >
               Ver demo real
+            </SiteButton>
+            <SiteButton
+              href="#planes"
+              variant="secondary"
+              className="min-h-14 w-full border-[#9C6B70]/45 bg-white/54 px-7 text-center text-[#7F565B] shadow-[0_14px_32px_rgba(74,59,53,0.08)] backdrop-blur-md hover:bg-white/80 sm:w-auto"
+              data-cta="hero-plans"
+              data-event="view_plans"
+            >
+              Ver planes
             </SiteButton>
           </div>
 
@@ -163,9 +159,9 @@ export default function Hero3D() {
             <LockKeyhole size={13} strokeWidth={1.7} />
             Desde $499 MXN · Pago único · Acceso inmediato
           </p>
-        </FadeIn>
+        </div>
 
-        <FadeIn className="relative -mt-3 min-h-[345px] overflow-visible md:mt-0 md:min-h-[540px] lg:min-h-[650px]" style={{ transitionDelay: '120ms' }}>
+        <div className="relative -mt-3 min-h-[345px] overflow-visible md:mt-0 md:min-h-[540px] lg:min-h-[650px]">
           <div className="pointer-events-none absolute left-1/2 top-8 h-[86%] w-[82%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(circle,rgba(255,255,255,0.92)_0%,rgba(255,248,243,0.66)_44%,rgba(255,248,243,0)_72%)] blur-sm" />
           <div className="pointer-events-none absolute left-[4%] top-[7%] hidden h-[82%] w-[82%] rotate-[-14deg] rounded-[46%] border border-white/70 bg-white/20 shadow-[0_0_90px_rgba(255,255,255,0.42)] backdrop-blur-[1px] md:block" />
           <div className="pointer-events-none absolute right-[2%] top-[10%] hidden h-[76%] w-[46%] rounded-full border border-[#C9A46A]/24 md:block" />
@@ -215,7 +211,7 @@ export default function Hero3D() {
               En un link
             </div>
           </div>
-        </FadeIn>
+        </div>
       </div>
     </section>
   );

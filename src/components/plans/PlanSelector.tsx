@@ -42,28 +42,28 @@ function fmtPrice(centavos: number): string {
 
 // ─── Reviews per plan ─────────────────────────────────────────────────────────
 const REVIEWS: Record<string, { name: string; city: string; text: string; event: string }> = {
-  basic:   { name: 'Karla M.',   city: 'Monterrey',   text: 'Súper fácil de usar, mis invitados encontraron todos los detalles de la boda.', event: 'Boda · Feb 2025' },
-  premium: { name: 'Sofía R.',   city: 'CDMX',        text: 'La galería y la música hicieron llorar a mi mamá. Totalmente recomendado.',      event: 'Boda · Abr 2025' },
-  deluxe:  { name: 'Daniela G.', city: 'Guadalajara', text: 'La intro cinemática hizo que la invitación se sintiera muy especial.', event: 'Boda · Mar 2025' },
+  basic:   { name: 'K. M.', city: 'Monterrey',   text: 'Fue fácil compartir la ubicación, horarios y confirmación desde el mismo link.', event: 'Boda familiar' },
+  premium: { name: 'S. R.', city: 'CDMX',        text: 'Nos ayudó a tener fotos, mesa de regalos y detalles importantes en una sola invitación.', event: 'Boda con recepción' },
+  deluxe:  { name: 'D. G.', city: 'Guadalajara', text: 'El hospedaje y el itinerario quedaron claros para los invitados de fuera.', event: 'Boda con invitados de fuera' },
 };
 
 const PLAN_COPY: Record<PlanId, { eyebrow: string; description: string; microcopy?: string; cta: string }> = {
   basic: {
-    eyebrow: 'Para bodas sencillas',
-    description: 'Para parejas que quieren una invitación elegante con lo esencial: fecha, ubicación, itinerario, código de vestimenta y confirmación de asistencia.',
-    cta: 'Elegir este plan',
+    eyebrow: 'Plan Basic',
+    description: 'Para una invitación sencilla, elegante y lista para compartir.',
+    cta: 'Elegir Basic',
   },
   premium: {
-    eyebrow: 'Recomendado para la mayoría de las bodas',
-    description: 'La opción más equilibrada si quieres una invitación más completa, con historia, fotos, mesa de regalos y todo listo para compartir por WhatsApp.',
-    microcopy: 'Más vendido para bodas con familia, amigos y mesa de regalos.',
-    cta: 'Empezar con Premium',
+    eyebrow: 'Más vendido',
+    description: 'Para parejas que quieren organizar mejor a sus invitados.',
+    microcopy: 'Incluye más recursos visuales y mesa de regalos para centralizar detalles clave.',
+    cta: 'Elegir Premium',
   },
   deluxe: {
-    eyebrow: 'Para bodas más completas o invitados de fuera',
-    description: 'Ideal si quieres una experiencia más premium con padrinos, línea de tiempo, hospedaje e intro cinemática para sorprender desde el primer segundo.',
-    microcopy: 'Recomendado si quieres una invitación más completa y memorable.',
-    cta: 'Crear mi invitación',
+    eyebrow: 'Experiencia completa',
+    description: 'Para bodas con más detalles, invitados y experiencia completa.',
+    microcopy: 'Pensado para bodas con hospedaje, padrinos, línea de tiempo e intro.',
+    cta: 'Elegir Deluxe',
   },
 };
 
@@ -223,6 +223,7 @@ function PlanCard({
               variant="primary"
               onClick={() => onPayDirect(product.id as PlanId)}
               disabled={paying}
+              data-event={`select_plan_${product.id}`}
               style={{
                 width: '100%',
                 cursor: paying ? 'not-allowed' : 'pointer',
@@ -237,6 +238,7 @@ function PlanCard({
               type="button"
               variant="secondary"
               onClick={() => onSelect(product.id as PlanId)}
+              data-event={`select_plan_${product.id}_cart`}
               style={{
                 width: '100%',
                 background: selected ? 'rgba(156,107,112,0.08)' : undefined,
@@ -251,7 +253,7 @@ function PlanCard({
               color: T.light,
               textAlign: 'center',
             }}>
-              ✓ Cambios ilimitados&nbsp;&nbsp;✓ Pago único, sin mensualidades&nbsp;&nbsp;✓ Soporte por WhatsApp
+              ✓ Pago único, sin mensualidades&nbsp;&nbsp;✓ Link listo para WhatsApp&nbsp;&nbsp;✓ Acceso para personalizar
             </p>
           </div>
         </div>
@@ -314,8 +316,8 @@ function CartDrawerContent({ items, total, onRemove, onClear, onClose }: {
 
       {/* Urgency bar */}
       <div style={{ background: T.dark, color: T.cream, padding: '.5rem 1.25rem', fontSize: '.75rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexShrink: 0 }}>
-        <span>🔥 Más de 80 eventos creados este mes · Disponibilidad limitada</span>
-        <span style={{ whiteSpace: 'nowrap', opacity: 0.65 }}>Sin IVA adicional</span>
+        <span>Pago único · Invitación lista para compartir por WhatsApp</span>
+        <span style={{ whiteSpace: 'nowrap', opacity: 0.65 }}>Planes desde $499 MXN</span>
       </div>
 
       {/* Order summary */}
@@ -458,7 +460,7 @@ function CartDrawerContent({ items, total, onRemove, onClear, onClose }: {
           </div>
           <p style={{ margin: '0 0 .375rem', fontSize: '.875rem', color: T.mid, lineHeight: 1.5 }}>&ldquo;{review.text}&rdquo;</p>
           <p style={{ margin: 0, fontSize: '.75rem', color: T.light }}>{review.event}</p>
-          <p style={{ margin: '.75rem 0 0', fontSize: '.8125rem', color: T.mid, fontWeight: 500 }}>👥 +320 parejas ya compartieron su invitación con Kompralo</p>
+          <p style={{ margin: '.75rem 0 0', fontSize: '.8125rem', color: T.mid, fontWeight: 500 }}>Tus invitados reciben ubicación, horarios y confirmación en un solo link.</p>
         </div>
       )}
 

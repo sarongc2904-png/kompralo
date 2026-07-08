@@ -55,15 +55,17 @@ function CartLink({ onClick }: { onClick?: () => void }) {
 
 const navLinks = [
   { href: '/invitaciones#como-funciona', label: 'Cómo funciona', event: 'click-header-como-funciona', cta: undefined },
-  { href: '/i/nuestrabodaarletteymayorga', label: 'Demo real', event: 'click-header-demo', cta: undefined },
-  { href: '/invitaciones#planes', label: 'Ver planes', event: 'click-header-planes', cta: 'nav-planes' },
+  { href: '/invitaciones#demo-real', label: 'Demo real', event: 'view_demo', cta: undefined },
+  { href: '/invitaciones#planes', label: 'Ver planes', event: 'view_plans', cta: 'nav-planes' },
+  { href: '/invitaciones#preguntas-frecuentes', label: 'FAQ', event: 'click-header-faq', cta: undefined },
   { href: '/login', label: 'Iniciar sesión', event: 'click-header-login', cta: undefined },
 ] as const;
 
 const mobileNavLinks = [
   { href: '/invitaciones#como-funciona', label: 'Cómo funciona', event: 'click-mobile-header-como-funciona' },
-  { href: '/i/nuestrabodaarletteymayorga', label: 'Demo real', event: 'click-mobile-header-demo' },
-  { href: '/invitaciones#planes', label: 'Ver planes', event: 'click-mobile-header-planes' },
+  { href: '/invitaciones#demo-real', label: 'Demo real', event: 'view_demo' },
+  { href: '/invitaciones#planes', label: 'Ver planes', event: 'view_plans' },
+  { href: '/invitaciones#preguntas-frecuentes', label: 'FAQ', event: 'click-mobile-header-faq' },
   { href: '/login', label: 'Iniciar sesión', event: 'click-mobile-header-login' },
 ] as const;
 

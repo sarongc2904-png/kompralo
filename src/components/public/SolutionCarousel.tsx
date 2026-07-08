@@ -7,30 +7,20 @@ import {
   Images,
   MapPin,
   Users,
-  Link2,
-  QrCode,
-  Music,
   Shirt,
   Hotel,
-  Hash,
   Sparkles,
-  Heart,
 } from 'lucide-react';
 
 const SOLUTIONS = [
-  { icon: Sparkles, title: 'Portada con los nombres de los novios', text: 'Presenta tu boda desde el primer momento con una portada elegante.' },
-  { icon: CalendarClock, title: 'Cuenta regresiva', text: 'Indica cuánto falta para el gran día.' },
-  { icon: Heart, title: 'Historia de la pareja', text: 'Comparte un relato breve y especial sobre ustedes.' },
-  { icon: Images, title: 'Galería de fotos', text: 'Agrega recuerdos importantes en una sección visual.' },
-  { icon: MapPin, title: 'Ubicación del evento', text: 'Incluye el lugar de la ceremonia o recepción.' },
-  { icon: Shirt, title: 'Código de vestimenta', text: 'Ayuda a tus invitados a elegir cómo asistir.' },
-  { icon: Users, title: 'Familias y padrinos', text: 'Destaca a las personas importantes de la celebración.' },
-  { icon: Gift, title: 'Mesa de regalos', text: 'Comparte la información de regalos de forma clara.' },
-  { icon: Hash, title: 'Hashtag', text: 'Reúne las fotos y mensajes de tus invitados.' },
-  { icon: Music, title: 'Mensaje final', text: 'Cierra la invitación con una nota especial.' },
-  { icon: QrCode, title: 'Itinerario y línea de tiempo', text: 'Ordena los momentos principales de tu boda.' },
-  { icon: Hotel, title: 'Hospedaje', text: 'Comparte opciones útiles para invitados que viajan.' },
-  { icon: Link2, title: 'Intro cinemática', text: 'Da una entrada más emotiva a la invitación.' },
+  { icon: MapPin, title: 'Ubicación con mapa', text: 'Tus invitados saben dónde llegar sin pedirte la dirección otra vez.' },
+  { icon: Users, title: 'Confirmación de asistencia', text: 'Cada invitado puede responder desde la misma invitación.' },
+  { icon: Gift, title: 'Mesa de regalos', text: 'Comparte el link o datos importantes de regalos de forma clara.' },
+  { icon: CalendarClock, title: 'Itinerario', text: 'Ordena ceremonia, recepción y momentos clave en un solo lugar.' },
+  { icon: Images, title: 'Galería e historia', text: 'Agrega fotos y una historia breve para que se sienta personal.' },
+  { icon: Hotel, title: 'Hospedaje', text: 'Ayuda a invitados de fuera con opciones y detalles útiles.' },
+  { icon: Shirt, title: 'Código de vestimenta', text: 'Evita dudas sobre colores, formalidad o estilo del evento.' },
+  { icon: Sparkles, title: 'Cuenta regresiva', text: 'Mantén visible cuánto falta para el día de la boda.' },
 ];
 
 export function SolutionCarousel() {

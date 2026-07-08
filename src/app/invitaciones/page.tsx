@@ -18,9 +18,16 @@ import { availableProducts } from '@/domain/products';
 import { PlanSelector } from '@/components/plans/PlanSelector';
 
 export const metadata: Metadata = {
-  title: 'Invitaciones digitales de boda | Kompralo',
+  metadataBase: new URL('https://kompralo.com.mx'),
+  title: 'Invitaciones Digitales de Boda por WhatsApp | KOMPRALO',
   description:
-    'Invitaciones digitales de boda en un solo link con ubicación, horarios, confirmaciones y detalles listos para compartir por WhatsApp.',
+    'Crea una invitación digital de boda con ubicación, horarios, mesa de regalos y confirmación de asistencia. Pago único desde $499 MXN.',
+  openGraph: {
+    title: 'Invitaciones Digitales de Boda por WhatsApp | KOMPRALO',
+    description:
+      'Crea una invitación digital de boda con ubicación, horarios, mesa de regalos y confirmación de asistencia. Pago único desde $499 MXN.',
+    images: ['/images/invitaciones/landing/wedding-premium-phone-mockup.png'],
+  },
 };
 
 const T = {
@@ -304,13 +311,13 @@ function ProblemSection() {
           <Reveal>
             <span className="cro-eyebrow">La realidad de organizar tu boda</span>
             <h2 className="cro-title-xl">
-              Deja de responder &ldquo;¿dónde es?&rdquo; 50 veces
+              Una imagen por WhatsApp no organiza una boda
             </h2>
             <p className="cro-copy mt-6">
-              Antes de la boda, todos preguntan lo mismo: dónde es, a qué hora empieza, cómo confirmar, qué deben usar o dónde está la mesa de regalos. Con KOMPRALO, todo vive en una sola invitación digital lista para enviar por WhatsApp.
+              Cuando mandas solo una imagen, empiezan las preguntas: ¿dónde es?, ¿a qué hora?, ¿cuál es el código de vestimenta?, ¿dónde confirmo?, ¿hay mesa de regalos?
             </p>
             <p className="mt-7 font-site-sans text-base leading-7 text-[#C5A880]">
-              Tus invitados abren el link, ven los detalles y confirman desde su celular.
+              Mejor mándales un solo link.
             </p>
           </Reveal>
 
@@ -332,12 +339,12 @@ function SolutionSection() {
       <div className="relative z-10 mx-auto w-[min(1200px,calc(100%-40px))]">
         <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="site-eyebrow">Todo en un solo link</p>
-          <h2 className="site-h2">Todo lo importante de tu boda, en un solo link</h2>
+          <h2 className="site-h2">Todo lo importante de tu boda, en una sola invitación</h2>
           <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/72">
             Tu invitación puede incluir la ubicación, itinerario, confirmación de asistencia, galería, historia, mesa de regalos, padrinos, hospedaje y más, según el plan que elijas.
           </p>
           <div className="mt-8 flex justify-center">
-            <SiteButton href="#planes" data-cta="solution-plans" data-event="click-solution-plans">
+            <SiteButton href="#planes" data-cta="solution-plans" data-event="view_plans">
               Ver planes
             </SiteButton>
           </div>
@@ -345,6 +352,108 @@ function SolutionSection() {
         <div className="mt-14">
           <SolutionCarousel />
         </div>
+      </div>
+    </section>
+  );
+}
+
+const RSVP_STATS = [
+  { label: 'Confirmados', value: '127', tone: 'bg-[#ECFDF3] text-[#166534]' },
+  { label: 'No asistirán', value: '18', tone: 'bg-[#FEF2F2] text-[#991B1B]' },
+  { label: 'Pendientes', value: '35', tone: 'bg-[#FFF7ED] text-[#9A3412]' },
+  { label: 'Acompañantes', value: '42', tone: 'bg-[#F3E8FF] text-[#6B21A8]' },
+];
+
+function RsvpSection() {
+  return (
+    <section className="bg-site-blanco py-16 md:py-24">
+      <div className="mx-auto grid w-[min(1200px,calc(100%-40px))] grid-cols-1 items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
+        <FadeIn>
+          <p className="site-eyebrow">Confirmaciones</p>
+          <h2 className="site-h2">Tus invitados confirman solos</h2>
+          <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/72">
+            Recibe respuestas de asistencia sin perseguir a nadie por mensaje. Ideal para organizar lugares, banquete y acompañantes.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <SiteButton href="/i/nuestrabodaarletteymayorga" data-cta="rsvp-demo" data-event="view_demo">
+              Ver demo real
+            </SiteButton>
+            <SiteButton href="#planes" variant="secondary" data-cta="rsvp-plans" data-event="view_plans">
+              Ver planes
+            </SiteButton>
+          </div>
+        </FadeIn>
+
+        <Reveal className="rounded-[28px] border border-site-border-subtle bg-site-crema/70 p-4 shadow-[0_24px_70px_rgba(74,59,53,0.12)] sm:p-6">
+          <div className="rounded-[22px] bg-white p-5 shadow-sm sm:p-7">
+            <div className="flex items-center justify-between gap-4 border-b border-site-border-subtle pb-5">
+              <div>
+                <p className="m-0 font-site-sans text-xs font-extrabold uppercase tracking-[0.16em] text-site-rosa-antiguo">
+                  Panel RSVP
+                </p>
+                <h3 className="m-0 mt-2 font-site-serif text-2xl font-semibold text-site-marron">
+                  Lista de invitados
+                </h3>
+              </div>
+              <span className="rounded-full bg-[#ECFDF3] px-3 py-1.5 font-site-sans text-xs font-extrabold uppercase tracking-[0.1em] text-[#166534]">
+                En vivo
+              </span>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              {RSVP_STATS.map((stat) => (
+                <div key={stat.label} className={`rounded-2xl p-4 ${stat.tone}`}>
+                  <p className="m-0 font-site-serif text-3xl font-semibold leading-none">{stat.value}</p>
+                  <p className="m-0 mt-2 font-site-sans text-xs font-bold uppercase tracking-[0.1em]">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 space-y-3">
+              {['Ana P. confirmó 2 lugares', 'Luis M. agregó acompañante', 'Familia García pendiente'].map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-2xl border border-site-border-subtle bg-site-blanco px-4 py-3 font-site-sans text-sm font-semibold text-site-marron/78">
+                  <Check className="h-4 w-4 shrink-0 text-site-rosa-antiguo" strokeWidth={1.8} />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function DemoSection() {
+  return (
+    <section id="demo-real" className="relative isolate overflow-hidden bg-site-crema py-16 md:py-24">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(156,107,112,0.10),transparent_34%),radial-gradient(circle_at_86%_24%,rgba(201,164,106,0.13),transparent_32%)]" />
+      <div className="mx-auto grid w-[min(1200px,calc(100%-40px))] grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_0.92fr] lg:gap-16">
+        <Reveal className="relative min-h-[420px] overflow-hidden rounded-[28px] border border-site-border-subtle bg-site-blanco shadow-[0_28px_80px_rgba(74,59,53,0.12)]">
+          <Image
+            src="/images/invitaciones/landing/wedding-premium-phone-mockup.png"
+            alt="Demo de invitación digital de boda KOMPRALO abierta en celular"
+            fill
+            sizes="(max-width: 1024px) 100vw, 52vw"
+            className="object-contain p-8"
+          />
+        </Reveal>
+
+        <FadeIn>
+          <p className="site-eyebrow">Demo real</p>
+          <h2 className="site-h2">Ve cómo se siente una invitación KOMPRALO</h2>
+          <p className="mt-6 font-site-sans text-lg leading-8 text-site-marron/72">
+            Explora una demo completa antes de elegir tu plan. Revisa cómo se ven la ubicación, los horarios, la mesa de regalos y la confirmación desde el celular.
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <SiteButton href="/i/nuestrabodaarletteymayorga" data-cta="demo-real" data-event="view_demo">
+              Ver demo real
+            </SiteButton>
+            <SiteButton href="#planes" variant="secondary" data-cta="demo-plans" data-event="view_plans">
+              Ver planes
+            </SiteButton>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );
@@ -578,64 +687,69 @@ function Editions() {
 
 // ─── Technical Specs ──────────────────────────────────────────────────────────
 
-const COMPARISON_COLUMNS = [
-  {
-    title: 'Imagen por WhatsApp',
-    items: [
-      'Se pierde entre mensajes',
-      'No tiene confirmaciones',
-      'No se actualiza si cambia algo',
-      'Los invitados siguen preguntando',
-      'No se siente como experiencia premium',
-    ],
-  },
-  {
-    title: 'KOMPRALO',
-    featured: true,
-    items: [
-      'Se comparte con un solo link',
-      'Incluye mapa, horarios y detalles',
-      'Permite confirmación de asistencia',
-      'Puedes editar la información',
-      'Se ve elegante desde el celular',
-    ],
-  },
+const COMPARISON_COLUMNS = ['Imagen por WhatsApp', 'PDF', 'Invitación impresa', 'KOMPRALO'] as const;
+
+const COMPARISON_ROWS = [
+  { label: 'Se abre desde el celular', values: [true, true, false, true] },
+  { label: 'Incluye ubicación', values: ['Texto o imagen', 'Limitado', 'Limitado', true] },
+  { label: 'Confirma asistencia', values: [false, false, false, true] },
+  { label: 'Puede actualizarse', values: [false, 'Reenviando archivo', false, true] },
+  { label: 'Tiene mesa de regalos', values: [false, 'Limitado', 'Limitado', true] },
+  { label: 'Incluye itinerario', values: [false, 'Limitado', 'Limitado', true] },
+  { label: 'Se comparte por WhatsApp', values: [true, true, false, true] },
+  { label: 'Centraliza toda la información', values: [false, 'Parcial', 'No digital', true] },
 ];
 
 function TechnicalSpecs() {
   return (
-    <section className="cro-section" style={{ background: T.onyx }}>
+    <section id="comparativa" className="cro-section" style={{ background: T.onyx }}>
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 780, margin: '0 auto' }}>
           <p className="cro-eyebrow">Comparativa</p>
-          <h2 className="cro-title-xl">Una imagen por WhatsApp se pierde. Una invitación KOMPRALO organiza tu boda.</h2>
+          <h2 className="cro-title-xl">Más útil que una invitación tradicional</h2>
+          <p className="cro-copy" style={{ marginTop: '1.5rem' }}>
+            Cada opción puede funcionar, pero KOMPRALO reúne la información, los cambios y las confirmaciones en un solo link.
+          </p>
         </Reveal>
 
-        <Reveal className="mt-14 grid grid-cols-1 gap-5 md:grid-cols-2" delay={0.2}>
-          {COMPARISON_COLUMNS.map((column) => (
-            <div
-              key={column.title}
-              className={`rounded-2xl border p-7 ${
-                column.featured
-                  ? 'border-[#C5A880]/55 bg-[#C5A880]/10'
-                  : 'border-white/10 bg-white/[0.02]'
-              }`}
-            >
-              <h3 className="m-0 font-site-serif text-2xl font-semibold text-[#F5F5F4]">{column.title}</h3>
-              <ul className="mt-6 space-y-4 p-0">
-                {column.items.map((item) => (
-                  <li key={item} className="flex items-start gap-3 font-site-sans text-base leading-7 text-[#E7E5E4]/82">
-                    {column.featured ? (
-                      <Check className="mt-1 h-5 w-5 shrink-0 text-[#C5A880]" strokeWidth={1.8} />
-                    ) : (
-                      <span className="mt-3 h-px w-5 shrink-0 bg-[#A8A29E]/55" />
-                    )}
-                    <span>{item}</span>
-                  </li>
+        <Reveal className="cro-table-wrapper" delay={0.2}>
+          <table className="cro-table" aria-label="Comparativa de invitaciones">
+            <thead>
+              <tr>
+                <th>Función</th>
+                {COMPARISON_COLUMNS.map((column) => (
+                  <th key={column} className={column === 'KOMPRALO' ? 'col-pro' : undefined}>
+                    {column}
+                  </th>
                 ))}
-              </ul>
-            </div>
-          ))}
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON_ROWS.map((row) => (
+                <tr key={row.label}>
+                  <td>{row.label}</td>
+                  {row.values.map((value, index) => {
+                    const column = COMPARISON_COLUMNS[index];
+                    const isKompralo = column === 'KOMPRALO';
+                    return (
+                      <td key={`${row.label}-${column}`} className={isKompralo ? 'text-[#C5A880]' : undefined}>
+                        {value === true ? (
+                          <span className="inline-flex items-center justify-center gap-1 font-semibold">
+                            <Check className="h-4 w-4" strokeWidth={1.9} />
+                            Sí
+                          </span>
+                        ) : value === false ? (
+                          <span className="text-[#A8A29E]/75">No</span>
+                        ) : (
+                          <span>{value}</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Reveal>
       </div>
     </section>
@@ -647,33 +761,37 @@ function TechnicalSpecs() {
 const FAQ_ITEMS = [
   {
     q: '¿Mis invitados necesitan descargar una app?',
-    a: 'No. Solo reciben un link por WhatsApp y lo abren desde su celular.',
+    a: 'No, abren la invitación desde un link.',
   },
   {
-    q: '¿Puedo editar la invitación después?',
-    a: 'Sí. Puedes actualizar datos importantes como horarios, ubicación o detalles del evento sin volver a crear otra invitación.',
+    q: '¿Puedo compartirla por WhatsApp?',
+    a: 'Sí, está pensada para compartirse fácilmente por WhatsApp.',
   },
   {
-    q: '¿Qué pasa después de pagar?',
-    a: 'Recibes acceso para personalizar tu invitación y compartirla con tus invitados cuando esté lista.',
+    q: '¿Puedo hacer cambios después?',
+    a: 'Sí, de acuerdo con las condiciones del plan actual.',
   },
   {
-    q: '¿Puedo usarla aunque mis invitados no sean muy tecnológicos?',
-    a: 'Sí. Está pensada para abrirse fácil desde WhatsApp, como cualquier página web.',
+    q: '¿Incluye confirmación de asistencia?',
+    a: 'Sí, la confirmación de asistencia está incluida desde el plan Basic.',
   },
   {
-    q: '¿El pago es mensual?',
-    a: 'No. Es pago único según el plan que elijas.',
+    q: '¿Puedo agregar mesa de regalos?',
+    a: 'Sí, la mesa de regalos está disponible desde el plan Premium.',
   },
   {
-    q: '¿Me pueden ayudar si no sé cómo acomodar la información?',
-    a: 'Sí. Puedes recibir acompañamiento para dejar tu invitación clara, bonita y lista para compartir.',
+    q: '¿Cuánto cuesta?',
+    a: 'Desde $499 MXN, pago único.',
+  },
+  {
+    q: '¿Cuánto tarda estar lista?',
+    a: 'Depende del plan y la información que nos compartas.',
   },
 ];
 
 function FAQ() {
   return (
-    <section className="cro-section" style={{ background: T.black }}>
+    <section id="preguntas-frecuentes" className="cro-section" style={{ background: T.black }}>
       <div className="cro-shell">
         <Reveal style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
           <p className="cro-eyebrow">Preguntas frecuentes</p>
@@ -706,19 +824,28 @@ function CallToAction() {
         <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="site-eyebrow !text-[#E8B8BE]">Siguiente paso</p>
           <h2 className="font-site-serif text-[clamp(2.2rem,5vw,4.5rem)] font-semibold leading-[1.05] tracking-[-0.02em] text-site-crema">
-            Empieza tu invitación digital desde $499 MXN
+            Tu boda ya tiene fecha. Ahora dale un link que lo tenga todo.
           </h2>
           <p className="mx-auto mt-6 max-w-2xl font-site-sans text-lg leading-8 text-site-crema/78">
-            Crea una invitación elegante, fácil de compartir y pensada para que tus invitados tengan toda la información de tu boda en un solo lugar.
+            Crea una invitación digital elegante, fácil de compartir y pensada para que tus invitados tengan toda la información clara.
           </p>
-          <div className="mt-10 flex justify-center">
+          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <SiteButton
               href="#planes"
               className="min-h-14 border-[#F8EFE7] bg-[#F8EFE7] px-10 text-base font-extrabold text-site-marron shadow-[0_18px_42px_rgba(0,0,0,0.28)] hover:border-white hover:bg-white"
               data-cta="cta-final"
-              data-event="click-cta-final"
+              data-event="view_plans"
             >
-              Crear mi invitación
+              Ver planes
+            </SiteButton>
+            <SiteButton
+              href="/i/nuestrabodaarletteymayorga"
+              variant="secondary"
+              className="min-h-14 border-site-crema/45 bg-transparent px-10 text-base font-extrabold text-site-crema hover:bg-site-crema hover:text-site-marron"
+              data-cta="cta-final-demo"
+              data-event="view_demo"
+            >
+              Ver demo real
             </SiteButton>
           </div>
           <p className="mt-5 font-site-sans text-xs font-semibold uppercase tracking-[0.15em] text-site-crema/55">
@@ -740,6 +867,8 @@ export default function InvitacionesPage() {
       <Hero3D />
       <ProblemSection />
       <SolutionSection />
+      <RsvpSection />
+      <DemoSection />
       <TrustSection />
       <TechnicalSpecs />
       <Editions />
