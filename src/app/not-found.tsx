@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { buildWhatsAppHref } from '@/lib/contact';
 
 export default function NotFound() {
   return (
@@ -48,7 +49,7 @@ export default function NotFound() {
           fontFamily: 'Georgia, "Times New Roman", serif',
         }}
       >
-        Esta invitación no está disponible
+        Esta página no está disponible
       </h1>
 
       {/* Subtítulo */}
@@ -56,22 +57,38 @@ export default function NotFound() {
         className="text-sm md:text-base max-w-sm leading-relaxed mb-10"
         style={{ color: '#7A5C35' }}
       >
-        Puede que el enlace haya cambiado o que la invitación ya no esté activa.
+        Pero podemos ayudarte a encontrar tu invitación o resolver tus dudas.
       </p>
 
-      {/* CTA */}
-      <Link
-        href="/"
-        className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.25em] transition-opacity duration-200 hover:opacity-70"
-        style={{
-          border: '1px solid #C5A880',
-          borderRadius: 8,
-          color: '#8B6940',
-          background: 'transparent',
-        }}
-      >
-        Volver al inicio
-      </Link>
+      {/* CTAs */}
+      <div className="flex flex-col items-center gap-3 sm:flex-row">
+        <Link
+          href="/"
+          className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.25em] transition-opacity duration-200 hover:opacity-70"
+          style={{
+            border: '1px solid #C5A880',
+            borderRadius: 8,
+            color: '#8B6940',
+            background: 'transparent',
+          }}
+        >
+          Volver al inicio
+        </Link>
+        <a
+          href={buildWhatsAppHref()}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-8 py-3 text-[11px] uppercase tracking-[0.25em] transition-opacity duration-200 hover:opacity-80"
+          style={{
+            border: '1px solid #C5A880',
+            borderRadius: 8,
+            color: '#FAF3EE',
+            background: '#8B6940',
+          }}
+        >
+          Contactar por WhatsApp
+        </a>
+      </div>
 
       {/* Ornamento inferior */}
       <svg
