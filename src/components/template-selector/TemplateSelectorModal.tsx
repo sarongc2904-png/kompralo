@@ -22,8 +22,10 @@ function TemplateSelectorModalContent({
   const [selectedThemeId, setSelected]  = useState<string | undefined>(currentThemeId);
   const [applying, setApplying]         = useState(false);
 
-  const allEntries      = weddingThemesCatalog;
-  const featuredEntries = getFeaturedWeddingThemes();
+  // Solo templates activos son seleccionables; los inactivos siguen en el
+  // registry para invitaciones que ya los tengan asignados.
+  const allEntries      = weddingThemesCatalog.filter((e) => e.active !== false);
+  const featuredEntries = getFeaturedWeddingThemes().filter((e) => e.active !== false);
 
   // Lock body scroll while open
   useEffect(() => {

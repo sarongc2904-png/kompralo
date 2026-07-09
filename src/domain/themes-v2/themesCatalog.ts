@@ -11,6 +11,8 @@ export interface ThemeCatalogEntry {
   accentColor: string;
   previewImageUrl?: string;
   isNewTheme?: boolean;
+  /** false = no seleccionable en el selector de plantillas (sigue renderizable). */
+  active?: boolean;
 }
 
 /**

@@ -10,11 +10,15 @@ import {
 import ivoryEditorial from './templates-json/ivory-editorial.json';
 import blancoDeluxe   from './templates-json/blanco-deluxe.json';
 import rosaAntiguo    from './templates-json/rosa-antiguo.json';
+import jardinSecreto  from './templates-json/jardin-secreto.json';
 
 const TEMPLATES_JSON = [
   ivoryEditorial,
   blancoDeluxe,
   rosaAntiguo,
+  // Inactivo (catalog.active: false): en el registry para render/editor, pero
+  // no seleccionable hasta aprobación visual.
+  jardinSecreto,
 ] as unknown[];
 
 // ─── Loader ──────────────────────────────────────────────────────────────────

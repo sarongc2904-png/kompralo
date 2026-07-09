@@ -11,6 +11,12 @@ export interface TemplateCatalogJson {
   category: 'wedding' | 'traditional' | 'modern' | 'playful';
   isNewTheme: boolean;
   featured: boolean;
+  /**
+   * false = el template existe en el registry (render/editor pueden usarlo si
+   * una invitación ya lo tiene asignado) pero NO se lista en el selector de
+   * plantillas. Ausente/true = seleccionable (default de los templates activos).
+   */
+  active?: boolean;
 }
 
 export interface TemplateThemeJson {
@@ -27,6 +33,8 @@ export interface TemplateThemeJson {
   divider: Record<string, unknown>;
   backgrounds: Record<string, string>;
   assets: Record<string, string>;
+  /** Preview dedicado para la tarjeta del selector; si falta, cae a assets.texture. */
+  previewImage?: string;
   introBackground?: { desktop: string; mobile: string };
   dressCodeSwatches: string[];
   cssVariables: Record<string, string>;
@@ -77,6 +85,7 @@ function validateCatalog(raw: unknown, errors: string[]): raw is TemplateCatalog
     isString(raw.category)     || (errors.push('catalog.category must be a string'), false),
     isBoolean(raw.isNewTheme)  || (errors.push('catalog.isNewTheme must be a boolean'), false),
     isBoolean(raw.featured)    || (errors.push('catalog.featured must be a boolean'), false),
+    (raw.active === undefined || isBoolean(raw.active)) || (errors.push('catalog.active must be a boolean when present'), false),
   ];
   return ok.every(Boolean);
 }
@@ -160,9 +169,9 @@ export function templateJsonToThemeV2(t: TemplateJson): InvitationThemeV2 {
     divider:          th.divider   as unknown as InvitationThemeV2['divider'],
     backgrounds:      th.backgrounds as unknown as InvitationThemeV2['backgrounds'],
     assets:           th.assets    as unknown as InvitationThemeV2['assets'],
-    // La textura del tema ES su imagen de fondo real — se reutiliza como
-    // preview en el selector de plantillas.
-    previewImage:     th.assets?.texture || undefined,
+    // Preview dedicado si el template lo declara; si no, la textura del tema
+    // (su imagen de fondo real) se reutiliza como preview en el selector.
+    previewImage:     th.previewImage || th.assets?.texture || undefined,
     introBackground:  th.introBackground,
     dressCodeSwatches: th.dressCodeSwatches,
     cssVariables:     th.cssVariables,
@@ -178,5 +187,6 @@ export function templateJsonToCatalogEntry(t: TemplateJson): ThemeCatalogEntry {
     accentColor: t.catalog.accentColor,
     category: t.catalog.category,
     isNewTheme: t.catalog.isNewTheme || undefined,
+    active: t.catalog.active !== false,
   };
 }
