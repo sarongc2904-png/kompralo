@@ -196,8 +196,8 @@ export default function Hero3D() {
             />
           </div>
 
-          <div className="absolute bottom-8 left-1/2 flex w-[min(92%,430px)] -translate-x-1/2 items-center justify-between gap-3 rounded-2xl border border-white/75 bg-white/72 px-4 py-3 font-site-sans text-[#4A3B35] shadow-[0_20px_50px_rgba(74,59,53,0.16)] backdrop-blur-xl md:bottom-5 lg:left-[48%] lg:w-[430px]">
-            <div className="flex min-w-0 items-center gap-3">
+          <div className="absolute bottom-8 left-1/2 z-30 flex w-[min(98%,430px)] -translate-x-1/2 items-center justify-between gap-3 rounded-2xl border border-white/75 bg-white/72 px-3 py-3 font-site-sans text-[#4A3B35] shadow-[0_20px_50px_rgba(74,59,53,0.16)] backdrop-blur-xl md:bottom-5 md:px-4 lg:left-[48%] lg:w-[430px]">
+            <div className="flex min-w-0 items-center gap-2 md:gap-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F1E3DF] text-[#9C6B70]">
                 <MapPin size={18} strokeWidth={1.7} />
               </span>
