@@ -16,6 +16,7 @@ const footerLegalLinks = [
   { href: '/politica-de-cookies', label: 'Política de cookies' },
   { href: '/terminos-y-condiciones', label: 'Términos y condiciones' },
   { href: '/politica-de-reembolsos', label: 'Política de reembolsos' },
+  { href: '/informacion-legal', label: 'Información legal' },
 ] as const;
 
 function FooterLink({ href, children }: { href: string; children: ReactNode }) {
