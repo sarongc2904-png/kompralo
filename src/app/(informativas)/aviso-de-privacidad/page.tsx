@@ -22,8 +22,8 @@ export default function AvisoDePrivacidadPage() {
       <InfoHero eyebrow="Legal" title="Aviso de Privacidad" />
       <LegalArticle>
         <LegalIntro>
-          KOMPRALO, con domicilio en Av. Independencia No. 1312, Sector Centro, C.P. 88000,
-          Nuevo Laredo, Tamaulipas, México, es responsable del tratamiento de los datos
+          KOMPRALO, con domicilio en Av. Rosa del Norte 4, Col. Infonavit El Rosario, C.P. 29049,
+          Tuxtla Gutiérrez, Chiapas, México, es responsable del tratamiento de los datos
           personales que nos proporciones a través de nuestro sitio web, WhatsApp, correo
           electrónico, formularios o cualquier otro medio de contacto.
         </LegalIntro>

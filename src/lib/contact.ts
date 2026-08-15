@@ -11,7 +11,7 @@ export const CONTACT = {
   whatsappNumber: '528672453620',
   email: 'soporte@kompralo.com.mx',
   address:
-    'Av. Independencia No. 1312, Sector Centro, C.P. 88000, Nuevo Laredo, Tamaulipas, México.',
+    'Av. Rosa del Norte 4, Col. Infonavit El Rosario, C.P. 29049, Tuxtla Gutiérrez, Chiapas, México.',
   schedule: 'Lunes a sábado de 9:00 a.m. a 7:00 p.m.',
   responseTime: '10 minutos dentro de nuestro horario de atención',
 } as const;
