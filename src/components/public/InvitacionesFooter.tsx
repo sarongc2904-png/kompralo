@@ -17,6 +17,7 @@ const footerLegalLinks = [
   { href: '/terminos-y-condiciones', label: 'Términos y condiciones' },
   { href: '/politica-de-reembolsos', label: 'Política de reembolsos' },
   { href: '/informacion-legal', label: 'Información legal' },
+  { href: '/eliminacion-de-datos', label: 'Eliminación de datos' },
 ] as const;
 
 function FooterLink({ href, children }: { href: string; children: ReactNode }) {
