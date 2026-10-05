@@ -107,7 +107,69 @@ export default function AvisoDePrivacidadPage() {
           <LegalContactBlock />
         </LegalSection>
 
-        <LegalUpdatedAt>Última actualización: julio de 2026</LegalUpdatedAt>
+        <LegalSection title="9. Servicio de CRM y atención por WhatsApp">
+          <p className="m-0">
+            Soluciones Tecnológicas (José Iván Gómez Mayorga) opera una plataforma de CRM y
+            atención a clientes por WhatsApp (Vocero), utilizada por negocios para gestionar la
+            comunicación con sus propios clientes mediante WhatsApp Business Platform de Meta.
+          </p>
+
+          <p className="m-0">
+            <strong>Datos que se reciben.</strong> Cuando una persona se comunica mediante
+            WhatsApp con un negocio que utiliza la plataforma, pueden recibirse y almacenarse
+            datos como su número telefónico, nombre de perfil de WhatsApp, contenido de los
+            mensajes, archivos o documentos enviados, así como la fecha y hora de las
+            comunicaciones.
+          </p>
+
+          <p className="m-0">
+            <strong>Finalidades.</strong> Estos datos se utilizan para permitir que el negocio
+            atienda, administre y dé seguimiento a las conversaciones con sus clientes, gestione
+            citas, mantenga un historial de atención y proporcione los servicios solicitados.
+            Algunas respuestas pueden ser generadas o asistidas automáticamente mediante
+            sistemas de inteligencia artificial. El personal autorizado del negocio puede
+            intervenir en las conversaciones cuando la operación del servicio así lo requiera.
+          </p>
+
+          <p className="m-0">
+            <strong>Responsabilidades.</strong> El negocio que utiliza la plataforma determina
+            las finalidades para las cuales trata los datos personales de sus clientes y es
+            responsable de dicho tratamiento conforme a la legislación aplicable. Soluciones
+            Tecnológicas procesa los datos necesarios para prestar y operar la plataforma por
+            cuenta del negocio y no vende los datos personales de los usuarios.
+          </p>
+
+          <p className="m-0">
+            <strong>Proveedores y terceros.</strong> Para la prestación del servicio pueden
+            intervenir proveedores tecnológicos necesarios para la transmisión, procesamiento y
+            almacenamiento de información, incluyendo Meta Platforms, Inc., a través de WhatsApp
+            Business Platform, así como proveedores de infraestructura, hosting, bases de datos y
+            servicios tecnológicos utilizados para operar la plataforma.
+          </p>
+
+          <p className="m-0">
+            <strong>Conservación.</strong> Las conversaciones y datos asociados podrán conservarse
+            mientras la cuenta del negocio permanezca activa y hasta 90 días después de su baja.
+            Una vez concluido dicho plazo, los datos serán eliminados o anonimizados cuando ya no
+            sean necesarios para las finalidades que justificaron su tratamiento, salvo aquellos
+            que deban conservarse o bloquearse durante un periodo adicional para cumplir
+            obligaciones legales, contractuales o atender posibles responsabilidades.
+          </p>
+
+          <p className="m-0">
+            <strong>Eliminación y derechos ARCO.</strong> Las personas que hayan interactuado con
+            un negocio que utiliza esta plataforma pueden solicitar el acceso, rectificación,
+            cancelación u oposición respecto de sus datos personales conforme a la sección 5 de
+            este Aviso de Privacidad. También pueden solicitar la eliminación de sus datos
+            mediante la página{' '}
+            <Link href="/eliminacion-de-datos" className="font-semibold text-site-rosa-antiguo underline-offset-2 hover:underline">
+              Eliminación de datos
+            </Link>{' '}
+            o escribiendo a soporte@kompralo.com.mx.
+          </p>
+        </LegalSection>
+
+        <LegalUpdatedAt>Última actualización: octubre de 2026</LegalUpdatedAt>
       </LegalArticle>
     </>
   );
